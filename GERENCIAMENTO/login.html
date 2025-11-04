@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gestão de Eventos</title>
+    <style>
+        /* Estilos Básicos */
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f4; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            /* Min-height garante que ele ocupe a altura da tela, mesmo em dispositivos móveis */
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px; /* Adiciona padding para evitar que o container cole nas bordas da tela */
+            box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura */
+        }
+        .login-container { 
+            background-color: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            width: 100%; /* Largura total por padrão (telas menores) */
+            max-width: 400px; /* Define uma largura máxima para telas maiores */
+        }
+        h2 { 
+            text-align: center; 
+            color: #333; 
+            margin-top: 10px; 
+        } 
+        .logo-container { 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+        /* A logo já é responsiva com max-width: 100% */
+        .logo { 
+            width: 250px; 
+            height: auto; 
+            max-width: 100%; 
+        } 
+        input[type="text"], input[type="password"] { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 8px 0 15px 0; 
+            display: inline-block; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            background-color: #4CAF50; 
+            color: white; 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 16px; 
+            transition: background-color 0.3s; 
+        } 
+        button:hover { 
+            background-color: #45a049; 
+        }
+        .error-message { 
+            color: #d9534f; 
+            text-align: center; 
+            margin-top: 10px; 
+            display: none; 
+        } 
+
+        /* --- MÍDIA QUERIES PARA RESPONSIVIDADE --- */
+
+        /* Estilo para telas menores (ex: Celular em modo retrato) */
+        @media (max-width: 600px) {
+            .login-container {
+                /* Diminui o padding em telas muito pequenas */
+                padding: 20px; 
+                /* Remove a sombra para um visual mais limpo em dispositivos móveis */
+                box-shadow: none; 
+            }
+            /* A logo já está OK com max-width: 100% */
+            .logo {
+                width: 200px; /* Reduz um pouco o tamanho da logo */
+            }
+        }
+
+        /* Estilo para telas médias (ex: Tablets) */
+        @media (min-width: 601px) and (max-width: 992px) {
+            .login-container {
+                /* Centraliza e define uma largura fixa para tablets */
+                max-width: 350px; 
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <img src="../img/arena competidor chaveamento.png" alt="Logo da Organização" class="logo"> 
+        </div>
+        <h2>Acesso da Organização</h2>
+        <form id="loginForm">
+            <label for="username">Usuário (E-mail/CPF)</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+
+            <div class="error-message" id="errorMessage">Usuário ou senha incorretos.</div>
+
+            <button type="submit">Entrar na Gestão</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // 1. Obter valores
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            // 2. Tabela de Usuários (Simulação de um banco de dados/API)
+            const users = {
+                // Usuário para o Site (Admin)
+                'admin@arenacompetidor.com': 'Cb250116@',
+                // Usuário para o Evento (Gestor)
+                'gestor@arenacompetidor.com': '12345678',
+                // Usuário para o Evento (emacup)
+                'emacup@arenacompetidor.com': 'emacup123'
+            };
+
+            // 3. Validação
+            if (users[username] && users[username] === password) {
+                // Sucesso: Esconder mensagem de erro e redirecionar
+                errorMessage.style.display = 'none';
+                
+                // Redireciona para o dashboard
+                window.location.href = 'EMACUP/dashboard.html';
+            } else {
+                // Falha: Mostrar mensagem de erro
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
