@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Requisito de Medalhas | Arena Competidor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+
+        /* Variáveis de Cores (Do Painel Financeiro) */
+        :root {
+            --primary-color: #007bff; /* Azul Principal */
+            --primary-dark: #0056b3;
+            --success-color: #28a745; 
+            --warning-color: #ffc107;
+            --danger-color: #dc3545; 
+            --background-color: #f8f9fa; /* Fundo Leve */
+            --text-dark: #343a40;
+            --secondary-color: #6c757d;
+            
+            /* Cores Específicas de Medalha */
+            --medalha-ouro: #FFD700;
+            --medalha-prata: #C0C0C0;
+            --medalha-bronze: #CD7F32;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--background-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0; /* Removido padding do body para gerenciar com container */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        /* CONTAINER PRINCIPAL (Centraliza o conteúdo e aplica padding lateral) */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        /* HEADER (Estilo do Painel Financeiro) */
+        header { 
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            padding: 30px 20px 15px; /* Ajustado padding */
+            margin-bottom: 50px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            text-align: center;
+            border-radius: 0 0 8px 8px; /* Borda arredondada só embaixo */
+            width: 100%;
+            max-width: none; /* Ocupa a largura total */
+            position: relative;
+        }
+        .header-logo img {
+            max-width: 250px;
+            height: auto;
+        }
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            margin: 10px 0 0;
+            font-weight: 700;
+        }
+        
+        /* Botão Voltar: */
+        .btn-voltar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        .btn-voltar:hover {
+            background-color: #5a6268;
+        }
+
+
+        .main-content {
+            width: 100%;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* ESTILOS DA SEÇÃO DE MEDALHAS */
+        #medalhas-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        /* TÍTULOS DAS SEÇÕES */
+        #medalhas-container h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-top: 30px;
+            padding-bottom: 5px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            display: block; 
+        }
+        #medalhas-container h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .resumo-medalhas {
+            display: flex;
+            justify-content: space-between; 
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 20px; 
+        }
+
+        .resumo-medalhas > div {
+            /* Flex-basis garante que dois cards menores ocupem a maior parte do espaço na linha */
+            flex-basis: calc(50% - 10px); /* 50% menos metade do gap */
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+            flex-grow: 1; 
+            border-left: 5px solid var(--primary-color);
+            min-width: 0; /* Essencial para flex-grow em containers pequenos */
+        }
+        
+        /* Estilo do card Total Geral (maior) */
+        .resumo-medalhas > .total-geral-card {
+            flex-basis: 100%; /* Ocupa a linha toda */
+            margin-top: 20px;
+            padding: 30px;
+            background-color: #e9ecef; 
+            border-left: 8px solid var(--primary-dark);
+            min-width: auto;
+        }
+
+
+        .resumo-medalhas h3 {
+            font-size: 1em;
+            color: var(--secondary-color);
+            margin-top: 0;
+            min-height: auto; 
+            margin-bottom: 15px;
+        }
+
+        .total-geral-card h3 {
+            font-size: 1.2em;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .medal-count {
+            display: flex;
+            justify-content: center;
+            gap: 25px; 
+            flex-wrap: wrap; /* Garante que os ícones quebrem se necessário */
+        }
+
+        .medal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            min-width: 50px; /* Garante espaço mínimo para cada medalha */
+        }
+        
+        /* Ícone e número da medalha */
+        .medal-icon {
+            font-size: 1.8rem;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            margin-bottom: 5px;
+            color: #000;
+        }
+        
+        /* Cores específicas dos ícones */
+        .medal.ouro .medal-icon { background-color: var(--medalha-ouro); }
+        .medal.prata .medal-icon { background-color: var(--medalha-prata); }
+        .medal.bronze .medal-icon { background-color: var(--medalha-bronze); }
+        
+        /* Estilos do total */
+        .medal.total span:last-child, 
+        .total-geral-card .medal.total span:last-child {
+            color: var(--primary-dark);
+            font-size: 1.5rem; 
+        }
+        
+        /* Estilos do Total Geral Card */
+        .total-geral-card .medal-count {
+            gap: 40px; 
+        }
+        .total-geral-card .medal {
+             font-size: 1.4rem;
+        }
+        .total-geral-card .medal-icon {
+             font-size: 2rem;
+             width: 50px;
+             height: 50px;
+             line-height: 50px;
+        }
+
+
+        #loading-message {
+            margin-top: 50px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+
+        /* --- MÍDIA QUERIES PARA RESPONSIVIDADE --- */
+
+        /* Telas Pequenas (Celulares) */
+        @media (max-width: 768px) {
+            
+            /* Ajuste de padding e margem para telas pequenas */
+            body { padding: 0; }
+            .container { padding: 0 10px; }
+            
+            header { 
+                padding: 15px 10px; 
+                margin-bottom: 30px;
+                border-radius: 0;
+            }
+            
+            .header-logo img { max-width: 180px; }
+            h1 { font-size: 1.5rem; }
+            
+            .btn-voltar {
+                top: 10px;
+                right: 10px;
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+
+            /* Forçar empilhamento dos cards (2 por linha -> 1 por linha) */
+            .resumo-medalhas {
+                flex-direction: column;
+                gap: 15px; /* Reduz o gap */
+            }
+            
+            .resumo-medalhas > div {
+                flex-basis: 100%; /* Ocupa a largura total */
+                padding: 20px; /* Reduz o padding interno */
+            }
+            
+            /* Ajuste dos elementos internos nos cards empilhados */
+            .resumo-medalhas h3 {
+                font-size: 0.9em;
+            }
+            
+            .medal-count {
+                gap: 15px; /* Reduz o gap entre os ícones */
+            }
+            
+            .medal {
+                font-size: 1.1rem;
+            }
+            
+            .medal-icon {
+                font-size: 1.5rem;
+                width: 35px;
+                height: 35px;
+                line-height: 35px;
+            }
+            
+            .total-geral-card {
+                padding: 20px;
+                margin-top: 15px;
+            }
+            .total-geral-card .medal-count {
+                 gap: 30px;
+            }
+            .total-geral-card .medal span:last-child {
+                font-size: 1.8rem;
+            }
+            
+            #medalhas-container h2 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../../index.html" class="header-logo">
+        <img src="../img/arena competidor chaveamento.png" alt="Arena Competidor Logo">
+        </a>
+        <h1 id="titulo-principal">🥇 Análise de Requisito de Medalhas</h1>
+        <a href="dashboard-event.html" class="btn-voltar">&larr; Voltar</a>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div id="loading-message">Carregando e processando dados...</div>
+
+            <div id="medalhas-container" style="display: none;">
+                
+                <div id="secao-todos">
+                    <h2>👤 Todos os Inscritos (Nominal)</h2>
+                    <div id="resumo-todos-inscritos">
+                        <div class="resumo-medalhas">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="secao-confirmados">
+                    <h2>✅ Apenas Atletas Confirmados (Pagos)</h2>
+                    <div id="resumo-apenas-confirmados">
+                        <div class="resumo-medalhas">
+                            </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+    </div>
+
+    <script>
+        // 🚨 URL DO CSV DA PLANILHA GOOGLE
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR89LS2vhUNiV3M0q22UiWKQ_a1KMpu5lJ99z3zxtrgpLMGOCRINly57RCivJwhpRmfn3lnNCttpJhb/pub?output=csv';
+        
+        const loadingMessage = document.getElementById('loading-message');
+        const medalhasContainer = document.getElementById('medalhas-container');
+        
+        // Novos containers para as duas seções
+        const resumoTodosDiv = document.querySelector('#resumo-todos-inscritos .resumo-medalhas');
+        const resumoConfirmadosDiv = document.querySelector('#resumo-apenas-confirmados .resumo-medalhas');
+
+        let todosOsAtletas = []; 
+
+        // --- FUNÇÕES AUXILIARES DE CÁLCULO E NORMALIZAÇÃO ---
+
+        function normalizeText(text) {
+            if (!text) return '';
+            return String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
+        }
+        
+        function getMedalhas(numAtletas) {
+            // Regra: 1º Ouro, 2º Prata, 3º (dois) Bronze.
+            if (numAtletas === 0) return { ouro: 0, prata: 0, bronze: 0, total: 0 };
+            if (numAtletas === 1) return { ouro: 1, prata: 0, bronze: 0, total: 1 };
+            if (numAtletas === 2) return { ouro: 1, prata: 1, bronze: 0, total: 2 };
+            // 3 ou mais
+            return { ouro: 1, prata: 1, bronze: 2, total: 4 };
+        }
+        
+        function isConfirmed(status) {
+            const normalizedStatus = normalizeText(status);
+            // Considera 'pago', 'confirmado' ou qualquer variação que comece com 'pago' ou 'confirma'
+            return normalizedStatus.includes('pago') || normalizedStatus.includes('confirma');
+        }
+
+        // --- CÁLCULO PRINCIPAL DE MEDALHAS ---
+
+        function calcularMedalhas(data) {
+            const totalMedalhas = {
+                todos: { ouro: 0, prata: 0, bronze: 0, total: 0, categoria: { ouro: 0, prata: 0, bronze: 0, total: 0 }, absoluto: { ouro: 0, prata: 0, bronze: 0, total: 0 } },
+                confirmados: { ouro: 0, prata: 0, bronze: 0, total: 0, categoria: { ouro: 0, prata: 0, bronze: 0, total: 0 }, absoluto: { ouro: 0, prata: 0, bronze: 0, total: 0 } } 
+            };
+
+            const gruposCategoria = {};
+            const gruposAbsoluto = {};
+
+            data.forEach(atleta => {
+                const isAbsoluto = normalizeText(atleta['ABSOLUTO']) === 'sim';
+                const isAtletaConfirmado = isConfirmed(atleta['STATUS DO PAGAMENTO']);
+                
+                // Ignora atletas sem dados de categoria essencial
+                if (!atleta['SUA CATEGORIA'] || !atleta['SUA FAIXA'] || !atleta['SEU PESO'] || !atleta['SEXO']) return;
+
+                // Chave Padrão (Categoria, Faixa, Peso, Gênero)
+                const chavePadrao = `${atleta['SUA CATEGORIA']} - ${atleta['SUA FAIXA']} - ${atleta['SEU PESO']} - ${atleta['SEXO']}`;
+
+                if (!gruposCategoria[chavePadrao]) {
+                    gruposCategoria[chavePadrao] = { todos: [], confirmados: [] };
+                }
+                gruposCategoria[chavePadrao].todos.push(atleta);
+                if (isAtletaConfirmado) {
+                    gruposCategoria[chavePadrao].confirmados.push(atleta);
+                }
+
+                // Chave Absoluto (Faixa, Gênero)
+                if (isAbsoluto) {
+                    const chaveAbsoluto = `ABSOLUTO - ${atleta['SUA FAIXA']} - ${atleta['SEXO']}`;
+                    if (!gruposAbsoluto[chaveAbsoluto]) {
+                        gruposAbsoluto[chaveAbsoluto] = { todos: [], confirmados: [] };
+                    }
+                    gruposAbsoluto[chaveAbsoluto].todos.push(atleta);
+                    if (isAtletaConfirmado) {
+                        gruposAbsoluto[chaveAbsoluto].confirmados.push(atleta);
+                    }
+                }
+            });
+
+            // 2.1. Chaves Padrão (Por Peso)
+            Object.keys(gruposCategoria).forEach(chave => {
+                const grupo = gruposCategoria[chave];
+                
+                const medalhasTodos = getMedalhas(grupo.todos.length);
+                const medalhasConfirmados = getMedalhas(grupo.confirmados.length);
+                
+                // Consolidação de Totais - TODOS (Por Peso)
+                totalMedalhas.todos.categoria.ouro += medalhasTodos.ouro;
+                totalMedalhas.todos.categoria.prata += medalhasTodos.prata;
+                totalMedalhas.todos.categoria.bronze += medalhasTodos.bronze;
+                totalMedalhas.todos.categoria.total += medalhasTodos.total;
+
+                // Consolidação de Totais - CONFIRMADOS (Por Peso)
+                totalMedalhas.confirmados.categoria.ouro += medalhasConfirmados.ouro;
+                totalMedalhas.confirmados.categoria.prata += medalhasConfirmados.prata;
+                totalMedalhas.confirmados.categoria.bronze += medalhasConfirmados.bronze;
+                totalMedalhas.confirmados.categoria.total += medalhasConfirmados.total;
+            });
+
+            // 2.2. Chaves Absoluto
+            Object.keys(gruposAbsoluto).forEach(chave => {
+                const grupo = gruposAbsoluto[chave];
+                
+                const medalhasAbsoluto = getMedalhas(grupo.todos.length);
+                const medalhasAbsolutoConfirmado = getMedalhas(grupo.confirmados.length);
+                
+                // Consolidação de Totais - ABSOLUTO GERAL
+                totalMedalhas.todos.absoluto.ouro += medalhasAbsoluto.ouro;
+                totalMedalhas.todos.absoluto.prata += medalhasAbsoluto.prata;
+                totalMedalhas.todos.absoluto.bronze += medalhasAbsoluto.bronze;
+                totalMedalhas.todos.absoluto.total += medalhasAbsoluto.total;
+
+                // Consolidação de Totais - ABSOLUTO CONFIRMADO
+                totalMedalhas.confirmados.absoluto.ouro += medalhasAbsolutoConfirmado.ouro;
+                totalMedalhas.confirmados.absoluto.prata += medalhasAbsolutoConfirmado.prata;
+                totalMedalhas.confirmados.absoluto.bronze += medalhasAbsolutoConfirmado.bronze;
+                totalMedalhas.confirmados.absoluto.total += medalhasAbsolutoConfirmado.total;
+            });
+            
+            // 3. CÁLCULO DO TOTAL GERAL
+            // Todos Inscritos
+            totalMedalhas.todos.ouro = totalMedalhas.todos.categoria.ouro + totalMedalhas.todos.absoluto.ouro;
+            totalMedalhas.todos.prata = totalMedalhas.todos.categoria.prata + totalMedalhas.todos.absoluto.prata;
+            totalMedalhas.todos.bronze = totalMedalhas.todos.categoria.bronze + totalMedalhas.todos.absoluto.bronze;
+            totalMedalhas.todos.total = totalMedalhas.todos.ouro + totalMedalhas.todos.prata + totalMedalhas.todos.bronze;
+            
+            // Apenas Confirmados
+            totalMedalhas.confirmados.ouro = totalMedalhas.confirmados.categoria.ouro + totalMedalhas.confirmados.absoluto.ouro;
+            totalMedalhas.confirmados.prata = totalMedalhas.confirmados.categoria.prata + totalMedalhas.confirmados.absoluto.prata;
+            totalMedalhas.confirmados.bronze = totalMedalhas.confirmados.categoria.bronze + totalMedalhas.confirmados.absoluto.bronze;
+            totalMedalhas.confirmados.total = totalMedalhas.confirmados.ouro + totalMedalhas.confirmados.prata + totalMedalhas.confirmados.bronze;
+
+
+            return { totalMedalhas };
+        }
+
+
+        // --- RENDERIZAÇÃO DE MEDALHAS ---
+        
+        function renderMedalhas(resultados) {
+            const { totalMedalhas } = resultados;
+
+            // 1. SEÇÃO TODOS OS INSCRITOS
+            resumoTodosDiv.innerHTML = `
+                ${renderMedalhasResumoCard('1. Categoria/Peso (Todos Inscritos)', totalMedalhas.todos.categoria, 'total-nominal')}
+                ${renderMedalhasResumoCard('2. Absoluto (Todos Inscritos)', totalMedalhas.todos.absoluto, 'total-pendente')}
+                ${renderMedalhasGeraisCard('Total Geral (Categoria + Absoluto)', totalMedalhas.todos, 'Todos Inscritos', 'total-geral-card-todos')}
+            `;
+            
+            // 2. SEÇÃO APENAS CONFIRMADOS
+            resumoConfirmadosDiv.innerHTML = `
+                ${renderMedalhasResumoCard('1. Categoria/Peso (Apenas Confirmados)', totalMedalhas.confirmados.categoria, 'total-confirmado')}
+                ${renderMedalhasResumoCard('2. Absoluto (Apenas Confirmados)', totalMedalhas.confirmados.absoluto, 'info-color')}
+                ${renderMedalhasGeraisCard('Total Geral (Categoria + Absoluto)', totalMedalhas.confirmados, 'Apenas Confirmados', 'total-geral-card-confirmados')}
+            `;
+
+
+            loadingMessage.style.display = 'none';
+            medalhasContainer.style.display = 'block'; 
+        }
+
+        function renderMedalhasResumoCard(titulo, dados, classColor) {
+             let colorVar = '';
+             let iconBg = 'var(--secondary-color)';
+             
+             if (classColor === 'total-nominal') { colorVar = 'var(--text-dark)'; iconBg = 'var(--secondary-color)'; }
+             else if (classColor === 'total-confirmado') { colorVar = 'var(--success-color)'; iconBg = 'var(--success-color)'; }
+             else if (classColor === 'total-pendente') { colorVar = 'var(--warning-color)'; iconBg = 'var(--warning-color)'; }
+             else if (classColor === 'info-color') { colorVar = 'var(--primary-color)'; iconBg = 'var(--primary-color)'; }
+
+            return `
+                <div class="card-valor ${classColor}" style="border-left-color: ${colorVar};">
+                    <h3>${titulo}</h3>
+                    <div class="medal-count">
+                        <div class="medal ouro">
+                            <span class="medal-icon">🥇</span>
+                            <span>${dados.ouro}</span>
+                        </div>
+                        <div class="medal prata">
+                            <span class="medal-icon">🥈</span>
+                            <span>${dados.prata}</span>
+                        </div>
+                        <div class="medal bronze">
+                            <span class="medal-icon">🥉</span>
+                            <span>${dados.bronze}</span>
+                        </div>
+                         <div class="medal total" style="color: ${colorVar};">
+                            <span class="medal-icon" style="background-color: ${iconBg}; color: white; font-size: 1.2rem;">Σ</span>
+                            <span class="valor" style="color: ${colorVar};">${dados.total}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderMedalhasGeraisCard(titulo, dados, subTitulo, classOverride) {
+             const colorVar = classOverride.includes('confirmados') ? 'var(--success-color)' : 'var(--primary-dark)';
+             const iconBg = classOverride.includes('confirmados') ? 'var(--success-color)' : 'var(--primary-dark)';
+             
+             return `
+                <div class="total-geral-card ${classOverride}">
+                    <h3>${titulo} (${subTitulo})</h3>
+                    <div class="medal-count">
+                        <div class="medal ouro">
+                            <span class="medal-icon">🥇</span>
+                            <span>${dados.ouro}</span>
+                        </div>
+                        <div class="medal prata">
+                            <span class="medal-icon">🥈</span>
+                            <span>${dados.prata}</span>
+                        </div>
+                        <div class="medal bronze">
+                            <span class="medal-icon">🥉</span>
+                            <span>${dados.bronze}</span>
+                        </div>
+                         <div class="medal total" style="color: ${colorVar};">
+                            <span class="medal-icon" style="background-color: ${iconBg}; color: white; font-size: 1.2rem;">TOTAL</span>
+                            <span class="valor" style="color: ${colorVar}; font-size: 2.2rem;">${dados.total}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // --- FUNÇÃO DE CARREGAMENTO DE DADOS ---
+
+        async function fetchAndProcessData() {
+            loadingMessage.textContent = 'Carregando e processando dados...';
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const csvText = await response.text();
+                // Esta é uma maneira simples de parsear CSV. Pode falhar se dados contiverem vírgulas.
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                if (lines.length < 2) {
+                    loadingMessage.textContent = 'Nenhum dado encontrado.';
+                    return;
+                }
+                
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                todosOsAtletas = lines.slice(1).map(line => {
+                    // Regex mais robusto para lidar com vírgulas dentro de aspas duplas (mas não é 100% garantido sem um parser completo)
+                    const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                    const atleta = {};
+                    headers.forEach((header, i) => {
+                        atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
+                    });
+                    return atleta;
+                }).filter(atleta => atleta['ORD']); // Remove linhas vazias/incompletas
+
+                if (todosOsAtletas.length === 0) {
+                     loadingMessage.textContent = 'Nenhum atleta válido encontrado.';
+                     return;
+                }
+
+                // 1. Calcular e Renderizar Medalhas
+                const resultadosMedalhas = calcularMedalhas(todosOsAtletas);
+                renderMedalhas(resultadosMedalhas);
+
+            } catch (error) {
+                console.error('Erro ao buscar ou processar CSV:', error);
+                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique a URL e o formato do CSV.';
+            }
+        }
+
+        // Inicializa o carregamento dos dados
+        document.addEventListener('DOMContentLoaded', fetchAndProcessData);
+    </script>
+</body>
+</html>

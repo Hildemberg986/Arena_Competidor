@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Inscrições</title>
+    <style>
+        /* [ ... VARIÁVEIS DE CORES ... ] */
+        :root {
+            --primary-color: #007bff; /* Azul Principal */
+            --primary-dark: #0056b3;
+            --secondary-color: #6c757d;
+            --success-color: #28a745; /* Verde para Confirmado */
+            --warning-color: #ffc107; /* Amarelo para Pendente */
+            --danger-color: #dc3545; /* Vermelho para Cancelado */
+            --background-color: #f8f9fa; /* Fundo Leve */
+            --text-dark: #343a40;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--background-color); 
+            margin: 0; 
+            padding: 0; /* Removido padding do body para gerenciar com container */
+            color: var(--text-dark);
+            box-sizing: border-box;
+        }
+
+        /* HEADER & BOTÃO VOLTAR */
+        header { 
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            /* Aumenta o padding superior/inferior para acomodar o botão Voltar */
+            padding: 20px 20px;
+            margin-bottom: 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-radius: 0 0 8px 8px; /* Borda arredondada só embaixo */
+            position: relative;
+        }
+        
+        /* Div de placeholder oculta em mobile */
+        header > div:first-child { 
+            width: 135px;
+            visibility: hidden; /* Mantém o espaço para centralizar o título no desktop */
+        }
+
+        #titulo-evento {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin: 0 10px; /* Margem horizontal para não colar nos botões */
+            font-weight: 600;
+            flex-grow: 1; 
+            text-align: center;
+        }
+
+        .btn-voltar-dashboard {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap; /* Não quebra linha */
+        }
+        .btn-voltar-dashboard:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            padding-bottom: 5px;
+        }
+
+        /* QUADRO RESUMO (FLEX) */
+        .quadro-resumo { 
+            display: flex; 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+
+        .contador { 
+            background-color: #fff; 
+            padding: 25px;
+            border-radius: 10px; 
+            text-align: center; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+            flex-grow: 1; 
+            border-left: 5px solid var(--primary-color);
+            min-width: 0; /* Para flex funcionar em telas pequenas */
+        }
+        
+        .contador h3 { 
+            margin-top: 0; 
+            font-size: 1em; 
+            color: var(--secondary-color);
+        }
+        
+        .contador p { 
+            font-size: 2.5em; 
+            margin: 5px 0 0; 
+            font-weight: bold; 
+        }
+
+        .total { border-left-color: var(--primary-color); }
+        .total p { color: var(--primary-color); }
+        .confirmado { border-left-color: var(--success-color); }
+        .confirmado p { color: var(--success-color); }
+        .pendente { border-left-color: var(--warning-color); }
+        .pendente p { color: var(--warning-color); }
+        .cancelado { border-left-color: var(--danger-color); }
+        .cancelado p { color: var(--danger-color); }
+
+        /* TABELA DE INSCRIÇÕES (ESSENCIAL PARA RESPONSIVIDADE) */
+        .table-responsive {
+            overflow-x: auto; /* Adiciona barra de rolagem horizontal */
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        table { 
+            min-width: 700px; /* Garante que a tabela não encolha demais */
+            border-collapse: collapse; 
+            background-color: #fff; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            border-radius: 8px;
+            overflow: hidden; 
+        }
+        th, td { 
+            padding: 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #e9ecef; 
+            white-space: nowrap; /* Impede a quebra de linha nas células */
+        }
+        th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        tbody tr:hover { 
+            background-color: #f1f1f1; 
+        }
+
+        .status-pendente { color: var(--warning-color); font-weight: bold; }
+        .status-confirmado { color: var(--success-color); font-weight: bold; }
+        .status-cancelado { color: var(--danger-color); font-weight: bold; }
+
+        .btn-confirmar { 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            padding: 8px 12px; 
+            border-radius: 4px; 
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9em;
+        }
+        .btn-confirmar:hover { 
+            background-color: var(--primary-dark); 
+        }
+        .btn-confirmar:disabled {
+            background-color: var(--success-color);
+            cursor: default;
+        }
+
+        /* MODAL RESPONSIVO */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+        }
+        .modal-content { 
+            background-color: #fefefe; 
+            margin: 10% auto; 
+            padding: 30px; 
+            border: none;
+            width: 90%; 
+            max-width: 500px; 
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        /* Para input e textarea no modal */
+        #valorPago, #tipoPagamento {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .modal-buttons {
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px; 
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            flex-grow: 1; /* Permite que os botões se estiquem em mobile */
+        }
+        .btn-voltar { 
+            background-color: #6c757d; 
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-modal-confirmar { 
+            background-color: var(--success-color); 
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-modal-confirmar:hover { background-color: #1e7e34; }
+        
+        /* --- MÍDIA QUERIES PARA RESPONSIVIDADE --- */
+        
+        /* Telas Médias (Tablets) */
+        @media (max-width: 992px) {
+             /* Reduz o tamanho da fonte do título */
+            #titulo-evento {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Telas Pequenas (Celulares) */
+        @media (max-width: 600px) {
+            
+            /* Ajusta o padding para telas pequenas */
+            .container {
+                padding: 0 10px; 
+            }
+            
+            header {
+                padding: 15px 10px;
+                flex-wrap: wrap; /* Permite quebrar a linha se necessário */
+                justify-content: center;
+                gap: 10px;
+                border-radius: 0;
+            }
+            
+            header > div:first-child { 
+                display: none; /* Oculta a div de placeholder em mobile */
+            }
+
+            #titulo-evento {
+                font-size: 1.1rem; /* Título menor no celular */
+                order: 1; /* Coloca o título no topo */
+                width: 100%;
+                text-align: center;
+                margin: 0;
+            }
+            
+            .btn-voltar-dashboard {
+                order: 2; /* Coloca o botão voltar abaixo */
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            /* Quadro Resumo Flex: Empilha em telas muito pequenas */
+            .quadro-resumo {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .contador {
+                padding: 15px;
+            }
+            
+            .contador p {
+                font-size: 2em; /* Valor um pouco menor */
+            }
+
+            /* Modal: Garantir que o conteúdo não fique muito espremido */
+            .modal-content {
+                margin: 5% auto; /* Move para cima no celular */
+                padding: 20px;
+            }
+            
+            .modal-buttons {
+                flex-direction: column; /* Botões empilhados no modal */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="width: 135px;"></div>
+            <h1 id="titulo-evento">Gestão de Inscrições: EVENTO NÃO ENCONTRADO</h1>
+            <a href="dashboard.html" class="btn-voltar-dashboard">&larr; Voltar para Eventos</a>
+        </header>
+        
+        <h2 style="margin-top: 50px;">Quadro de Resumo</h2>
+        <div class="quadro-resumo">
+            <div class="contador total">
+                <h3>Total de Inscritos</h3>
+                <p id="totalInscritos">0</p>
+            </div>
+            <div class="contador confirmado">
+                <h3>Total Confirmados</h3>
+                <p id="totalConfirmados">0</p>
+            </div>
+            <div class="contador pendente">
+                <h3>Total Pendente</h3>
+                <p id="totalPendente">0</p>
+            </div>
+            <div class="contador cancelado">
+                <h3>Total Cancelado</h3>
+                <p id="totalCancelado">0</p>
+            </div>
+        </div>
+
+        <h2>Lista de Inscritos</h2>
+        <div class="table-responsive">
+            <table id="tabelaInscricoes">
+                <thead>
+                    <tr>
+                        <th>Atleta</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>Valor Nominal</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div> <div id="modalConfirmacao" class="modal">
+        <div class="modal-content">
+            <h3>Confirmação de Pagamento</h3>
+            <p>Atleta: <strong id="modalAtletaNome"></strong></p>
+            <p>CPF: <span id="modalAtletaCPF"></span></p>
+            <p>Valor Nominal: <span id="modalAtletaValorNominal"></span></p>
+            <hr>
+
+            <form id="formConfirmacao">
+                <input type="hidden" id="modalAtletaCpfData"> 
+                <input type="hidden" id="modalInscricaoId">
+                
+                <label for="valorPago">Valor Pago (Real)</label>
+                <input type="number" id="valorPago" step="0.01" required>
+
+                <label for="tipoPagamento">Tipo do Pagamento / Descrição</label>
+                <textarea id="tipoPagamento" rows="3" placeholder="Ex: PIX para conta do João, Dinheiro em espécie na secretaria, etc." required></textarea>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn-voltar" onclick="fecharModal()">Voltar</button>
+                    <button type="submit" class="btn-modal-confirmar">Confirmar Inscrição</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // O CÓDIGO JAVASCRIPT PERMANECE INALTERADO, POIS O FOCO ERA O CSS RESPONSIVO
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR89LS2vhUNiV3M0q22UiWKQ_a1KMpu5lJ99z3zxtrgpLMGOCRINly57RCivJwhpRmfn3lnNCttpJhb/pub?output=csv";
+        
+        // 2. NOVA URL DO APP SCRIPT (VOCÊ DEVE INSERIR AQUI A URL GERADA NA PUBLICAÇÃO)
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJsWa_tFoCwZLvGcE5vtyW-2WXB1ipwQSLe0hKuDPgSH7meFabrrElYIH5ZYg-oaiKmw/exec"; 
+        
+        let inscricoesData = []; 
+
+        const formatCurrency = (value) => {
+            const num = parseFloat(value);
+            return isNaN(num) ? 'R$ 0,00' : num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+        
+        const formatPhone = (tel) => {
+            tel = String(tel).replace(/\D/g, ''); 
+            if (tel.length === 10 || tel.length === 11) {
+                return `(${tel.substring(0, 2)}) ${tel.substring(2, tel.length - 4)}-${tel.substring(tel.length - 4)}`;
+            }
+            return tel;
+        };
+
+        async function carregarInscricoes() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                inscricoesData = parseCSV(csvText);
+                
+                renderTabela(inscricoesData);
+                updateContadores(inscricoesData);
+
+            } catch (error) {
+                console.error("Erro ao carregar os dados do CSV:", error);
+                document.getElementById('tabelaInscricoes').querySelector('tbody').innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Não foi possível carregar os dados das inscrições.</td></tr>';
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 2) return [];
+
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+
+            const indexMap = {
+                'NOME COMPLETO': headers.indexOf('NOME COMPLETO'),
+                'CPF': headers.indexOf('CPF'),
+                'CELULAR': headers.indexOf('CELULAR'),
+                'VALOR TOTAL': headers.indexOf('VALOR TOTAL'),
+                'STATUS DO PAGAMENTO': headers.indexOf('STATUS DO PAGAMENTO')
+            };
+            
+            let currentId = 1;
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, '')); 
+                
+                data.push({
+                    id: currentId++,
+                    atleta: values[indexMap['NOME COMPLETO']] || 'N/A',
+                    cpf: values[indexMap['CPF']] || 'N/A',
+                    telefone: values[indexMap['CELULAR']] || 'N/A',
+                    valorNominal: parseFloat(values[indexMap['VALOR TOTAL']].replace(',', '.')) || 0.00,
+                    status: values[indexMap['STATUS DO PAGAMENTO']] ? values[indexMap['STATUS DO PAGAMENTO']].trim() : 'Pendente'
+                });
+            }
+
+            return data;
+        }
+
+        function renderTabela(data) {
+            const tbody = document.getElementById('tabelaInscricoes').querySelector('tbody');
+            tbody.innerHTML = ''; 
+
+            data.forEach(item => {
+                const statusLower = item.status.toLowerCase();
+                const isConfirmado = statusLower === 'confirmado';
+                const statusClass = isConfirmado 
+                    ? 'status-confirmado' 
+                    : statusLower === 'cancelado' 
+                        ? 'status-cancelado'
+                        : 'status-pendente';
+                
+                const buttonHtml = isConfirmado
+                    ? '<button class="btn-confirmar" disabled>Confirmado</button>'
+                    : `<button class="btn-confirmar" onclick="abrirModal(${item.id})" ${statusLower === 'cancelado' ? 'disabled' : ''}>${statusLower === 'cancelado' ? 'Cancelado' : 'Confirmar Inscrição'}</button>`;
+
+                const row = tbody.insertRow();
+                row.setAttribute('data-id', item.id);
+                row.setAttribute('data-atleta', item.atleta);
+                row.setAttribute('data-cpf', item.cpf);
+                row.setAttribute('data-tel', item.telefone);
+                row.setAttribute('data-valor', item.valorNominal); 
+                row.setAttribute('data-status', item.status);
+                
+                row.innerHTML = `
+                    <td>${item.atleta}</td>
+                    <td>${item.cpf}</td>
+                    <td>${formatPhone(item.telefone)}</td>
+                    <td>${formatCurrency(item.valorNominal)}</td>
+                    <td class="${statusClass}">${item.status}</td>
+                    <td>${buttonHtml}</td>
+                `;
+            });
+        }
+
+        function updateContadores(data) {
+            let total = data.length;
+            let confirmado = data.filter(item => item.status.toLowerCase() === 'confirmado').length;
+            let cancelado = data.filter(item => item.status.toLowerCase() === 'cancelado').length;
+            let pendente = total - confirmado - cancelado;
+
+            document.getElementById('totalInscritos').textContent = total;
+            document.getElementById('totalConfirmados').textContent = confirmado;
+            document.getElementById('totalPendente').textContent = pendente;
+            document.getElementById('totalCancelado').textContent = cancelado;
+        }
+
+        // --- LÓGICA DO MODAL (ADICIONADO CAMPO CPF) ---
+        function abrirModal(inscricaoId) {
+            const row = document.querySelector(`tr[data-id="${inscricaoId}"]`);
+            if (!row) return;
+
+            document.getElementById('modalInscricaoId').value = inscricaoId;
+            document.getElementById('modalAtletaNome').textContent = row.dataset.atleta;
+            document.getElementById('modalAtletaCPF').textContent = row.dataset.cpf;
+            
+            // Campo hidden essencial para enviar ao App Script
+            document.getElementById('modalAtletaCpfData').value = row.dataset.cpf; 
+
+            const valorNominal = parseFloat(row.dataset.valor);
+            document.getElementById('modalAtletaValorNominal').textContent = formatCurrency(valorNominal);
+            
+            document.getElementById('valorPago').value = valorNominal.toFixed(2);
+            document.getElementById('tipoPagamento').value = ''; 
+            
+            document.getElementById('modalConfirmacao').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalConfirmacao').style.display = 'none';
+        }
+
+        // 3. NOVO SUBMIT PARA ENVIAR DADOS AO APP SCRIPT
+        document.getElementById('formConfirmacao').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            if (APP_SCRIPT_URL === "SUA_WEB_APP_URL_AQUI") {
+                 alert("ERRO: Por favor, substitua 'SUA_WEB_APP_URL_AQUI' no código JavaScript pela URL real do seu App Script.");
+                 return;
+            }
+
+            const inscricaoId = document.getElementById('modalInscricaoId').value;
+            const cpfAtleta = document.getElementById('modalAtletaCpfData').value;
+            const valorPago = document.getElementById('valorPago').value;
+            const tipoPagamento = document.getElementById('tipoPagamento').value;
+            
+            const formData = new URLSearchParams();
+            formData.append('cpfAtleta', cpfAtleta);
+            formData.append('statusNovo', 'Confirmado');
+            formData.append('valorPago', valorPago.replace('.', ',')); // Volta para vírgula para salvar no GSheets
+            formData.append('descricao', tipoPagamento);
+            formData.append('function', 'updateStatus'); // Chamar a função específica no App Script
+
+            try {
+                // Envio dos dados para o App Script
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData.toString(),
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.resultado === 'sucesso') {
+                    // Atualização na planilha confirmada, agora atualiza o front-end
+                    
+                    // 1. Atualiza a linha localmente
+                    const item = inscricoesData.find(d => d.id == inscricaoId);
+                    if (item) {
+                        item.status = 'Confirmado';
+                        renderTabela(inscricoesData); // Renderiza a tabela novamente (simples)
+                        updateContadores(inscricoesData);
+                    }
+
+                    alert("✅ Pagamento Confirmado e Status atualizado na planilha!");
+                } else {
+                    alert("❌ Erro ao atualizar na planilha: " + result.mensagem);
+                }
+                
+            } catch (error) {
+                console.error("Erro na comunicação com o App Script:", error);
+                alert("Ocorreu um erro de comunicação. Verifique a URL do App Script e a conexão.");
+            }
+
+            fecharModal();
+        });
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventoKey = urlParams.get('evento');
+            const eventos = {
+                'bbc_open': 'BBC OPEN',
+                'EMA_CUP': 'EMA CUP',
+                'senogi_caico': 'SENOGI CAICÓ',
+                'senogi_patos': 'SENOGI PATOS',
+                'open_currais': 'OPEN CURRAIS NOVOS'
+            };
+            
+            const eventoNome = eventos[eventoKey] || 'EMA CUP DE JIU JITSU';
+            document.getElementById('titulo-evento').textContent = `Gestão de Inscrições: ${eventoNome}`;
+
+            carregarInscricoes();
+        });
+    </script>
+</body>
+</html>
