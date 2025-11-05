@@ -830,7 +830,8 @@
 
                     const urlPagamento = `pagamentos.html?atleta=${encodeURIComponent(nomeAtleta)}&categoria=${encodeURIComponent(categoriaIdade)}&valor=${totalPagarValor}`;
 
-                    window.location.href = urlPagamento; 
+                    window.location.href = urlPagamento;
+                    alert("Inscrição Salva!");
                     
                 } else {
                     feedbackElement.textContent = '❌ Erro ao salvar na planilha. Tente novamente.';
