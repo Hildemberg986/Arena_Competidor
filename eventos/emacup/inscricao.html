@@ -43,6 +43,7 @@
         }
 
         header img {
+            /* Certifique-se de que o caminho da imagem está correto */
             max-width: 200px;
         }
 
@@ -109,6 +110,11 @@
         .checkbox-group {
             display: flex;
             align-items: center;
+            flex-direction: row; /* Garante que o checkbox e o label fiquem na mesma linha */
+        }
+        
+        .checkbox-group label {
+            margin-bottom: 0; /* Ajuste para o label do checkbox */
         }
 
         .extrato {
@@ -319,14 +325,15 @@
             
             <div class="form-group checkbox-group" id="absolutoContainer" style="display:none;">
                 <input type="checkbox" id="absoluto" name="absoluto" value="Sim">
-                <label for="absoluto">Participar do Absoluto (+)</label>
+                <label for="absoluto">Participar do Absoluto (R$ 30,00 adicionais)</label>
             </div>
         </form>
 
         <div class="extrato">
             <h2>Extrato da Inscrição</h2>
             <p><span>Categoria, Faixa e Peso:</span> <span id="extratoCategoria">Aguardando preenchimento</span></p>
-            <p><span>Valor da Inscrição:</span> <span id="valorCategoria">R$ 30,00</span></p>
+            <p><span>Valor da Inscrição (Categoria):</span> <span id="valorCategoria">R$ 30,00</span></p>
+            <p id="extratoAbsoluto" style="display:none;"><span>Valor Absoluto:</span> <span id="valorAbsoluto">R$ 30,00</span></p>
             <h3><span>Total a Pagar:</span> <span id="totalPagar">R$ 30,00</span></h3>
         </div>
 
@@ -352,73 +359,78 @@
         const faixaInput = document.getElementById('faixa');
         const pesoInput = document.getElementById('peso');
         const extratoCategoriaSpan = document.getElementById('extratoCategoria');
+        const valorCategoriaSpan = document.getElementById('valorCategoria');
+        const valorAbsolutoSpan = document.getElementById('valorAbsoluto');
         const inscricaoForm = document.getElementById('inscricaoForm');
         const feedbackElement = document.getElementById('feedback');
         
-        // Novos elementos para CPF
         const cpfInput = document.getElementById('cpf');
         const cpfFeedback = document.getElementById('cpfFeedback');
-
-        // Novos elementos para Celular
         const dddInput = document.getElementById('ddd');
         const celularInput = document.getElementById('celular');
         
+        // 💰 VALORES DE INSCRIÇÃO
+        const VALOR_INSCRICAO = 30.00; 
+        const VALOR_ABSOLUTO = 30.00; 
+        
         // ==========================================================
-        // 1. REGRAS DE DIVISÃO E TABELAS DE PESO/FAIXA (AJUSTADAS)
+        // 1. REGRAS DE DIVISÃO E TABELAS DE PESO/FAIXA (CORRIGIDAS)
         // ==========================================================
 
-        /**
-         * Retorna a divisão de idade.
-         * @param {number} idade 
-         * @returns {string | null} 
-         */
-        function obterDivisao(idade) {
-            // As regras de faixa etária foram simplificadas conforme seu código anterior
-            if (idade >= 11 && idade <= 14) return "Infantil";
+        function obterDivisao(dataNascimento, sexo) {
+            const idade = calcularIdade(dataNascimento);
+            
+            if (idade >= 11 && idade <= 14) return "Infantil até 14 anos";
             if (idade >= 15 && idade <= 17) return "Juvenil";
-            if (idade >= 18) return "Adulto"; // Qualquer um com 18 ou mais é Adulto
+            if (idade >= 18) return "Adulto"; 
             
             return null;
         }
 
-        /**
-         * Objeto com pesos por divisão e sexo
-         * (Mantido os pesos, exceto a faixa Azul e Roxa que será tratada à parte)
-         */
+        const faixasPorDivisao = {
+            "Infantil até 14 anos": ["Branca/Cinza"],
+            "Juvenil": ["Branca", "Azul", "Laranja/Amarelo"],
+            "Adulto": ["Branca", "Azul/Roxa"],
+        };
+
         const pesosPorDivisao = {
-            "Infantil": {
-                masculino: ["Leve ate 56.5kg", "Pesado acima de 56.5kg"],
-                feminino: ["Leve ate 56.5kg", "Pesado acima de 56.5kg"]
+            "Adulto": {
+                "branca": {
+                    "masculino": ["Ate 76 KG", "82 KG Ate Sem Limite de Peso"],
+                    "feminino": ["Ate 69 KG", "74 KG Ate Sem Limite de Peso"]
+                },
+                "azul-roxa": { 
+                    "masculino": ["Ate 76 KG", "82 KG Ate Sem Limite de Peso"], 
+                    "feminino": []
+                }
             },
             "Juvenil": {
-                masculino: ["Leve ate 69kg", "Pesado acima de 69kg ate 89kg"],
-                feminino: ["Peso unico de 74kg ate 89.3kg"]
+                "branca": {
+                    "masculino": ["Ate 69 KG", "74 KG Ate Sem Limite de Peso"],
+                    "feminino": ["Ate 56 KG", "60 KG Ate Sem Limite de Peso"]
+                },
+                "azul": {
+                    "masculino": ["Ate 69 KG", "74 KG Ate 89 KG"], 
+                    "feminino": []
+                },
+                "laranja-amarelo": {
+                    "masculino": ["74 KG Ate Sem Limite de Peso"], 
+                    "feminino": ["60 KG Ate Sem Limite de Peso"] 
+                }
             },
-            "Adulto": {
-                masculino: ["Leve ate 76kg", "Pesado acima de 76kg"],
-                feminino: ["Leve ate 69kg", "Pesado acima de 69kg"]
-            },
+            "Infantil até 14 anos": {
+                "branca-cinza": {
+                    "masculino": ["Ate 69 KG", "74 KG Ate Sem Limite de Peso"], 
+                    "feminino": ["Ate 56 KG", "60 KG Ate Sem Limite de Peso"] 
+                }
+            }
         };
 
-        /**
-         * Objeto com faixas por divisão (categoria de idade)
-         */
-        const faixasPorDivisao = {
-        
-            "Infantil": ["Branca"],
-            "Juvenil": ["Branca"],
-            // A faixa "Azul e Roxa" é tratada como uma opção única
-            "Adulto": ["Branca", "Azul e Roxa"], 
-        };
 
         // ==========================================================
-        // 2. FUNÇÕES DE MÁSCARA E VALIDAÇÃO DE CPF/TELEFONE (AJUSTADAS)
+        // 2. FUNÇÕES DE MÁSCARA E VALIDAÇÃO DE CPF/TELEFONE
         // ==========================================================
 
-        /**
-         * Aplica a máscara de CPF (999.999.999-99) ao campo.
-         * @param {Event} e 
-         */
         function aplicarMascaraCPF(e) {
             let value = e.target.value.replace(/\D/g, ''); 
             if (value.length > 11) value = value.substring(0, 11); 
@@ -428,9 +440,6 @@
             e.target.value = value;
         }
 
-        /**
-         * Valida o CPF através do algoritmo dos dígitos verificadores.
-         */
         function validarCPF(cpf) {
             cpf = cpf.replace(/[^\d]+/g, '');
             if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -452,9 +461,6 @@
             return true;
         }
 
-        /**
-         * Combina a máscara e o feedback de validação do CPF.
-         */
         function validarEFormatarCPF(e) {
             aplicarMascaraCPF(e);
             const cpfLimpo = e.target.value.replace(/[^\d]+/g, '');
@@ -481,37 +487,25 @@
             }
         }
         
-        /**
-         * Aplica a máscara de telefone (99999-9999 ou 9999-9999) ao campo celular.
-         * Assumindo que o DDD é preenchido em outro campo.
-         */
         function aplicarMascaraCelular(e) {
             let value = e.target.value.replace(/\D/g, ''); 
-
-            // Formato para 9 dígitos (celular): 99999-9999
             if (value.length > 4) {
                 value = value.replace(/^(\d{4,5})(\d)/, '$1-$2');
             }
-            // Limita a 10 dígitos (9999-9999 ou 99999-9999)
             if (value.length > 10 && value.includes('-')) {
                  value = value.substring(0, 10);
             } else if (value.length > 9 && !value.includes('-')) {
                  value = value.substring(0, 9);
             }
-
             e.target.value = value;
             
-            // Validação simples
-            if (value.length >= 9) {
+            if (value.length >= 8) { 
                 e.target.setCustomValidity('');
             } else {
                 e.target.setCustomValidity("O número deve ter no mínimo 8 ou 9 dígitos.");
             }
         }
         
-        /**
-         * Garante que o DDD tenha exatamente 2 dígitos.
-         */
         function aplicarMascaraDDD(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 2) {
@@ -528,7 +522,7 @@
 
 
         // ==========================================================
-        // 3. FUNÇÕES DE CÁLCULO E POPULAMENTO DE DROPDOWNS (AJUSTADAS)
+        // 3. FUNÇÕES DE CÁLCULO E POPULAMENTO DE DROPDOWNS
         // ==========================================================
         
         function calcularIdade(dataNascimento) {
@@ -542,13 +536,11 @@
             return idade;
         }
 
-        /**
-         * Limpa e desabilita um select.
-         */
         function limparOpcoesSelect(selectElement, defaultText, disable = true) {
             selectElement.innerHTML = `<option value="">${defaultText}</option>`;
             selectElement.disabled = disable;
             selectElement.required = !disable; 
+            
             if (selectElement.id === 'categoria') {
                 limparOpcoesSelect(faixaInput, 'Selecione a Categoria', true);
                 limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
@@ -556,6 +548,8 @@
             if (selectElement.id === 'faixa') {
                 limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
             }
+            
+            // ✅✅✅ CORREÇÃO: A lógica do Absoluto foi REMOVIDA daqui.
         }
 
         function popularCategorias() {
@@ -564,25 +558,21 @@
             const idade = dataNasc ? calcularIdade(dataNasc) : null;
             
             limparOpcoesSelect(categoriaSelect, 'Preencha o Sexo e a Data de Nasc.', true);
-            absolutoContainer.style.display = 'none';
-            absolutoCheckbox.checked = false;
 
-            if (!dataNasc || !sexo || idade < 11) { // Idade mínima alterada para 11
+            if (!dataNasc || !sexo || idade < 11) { 
                 atualizarExtrato();
                 return;
             }
 
-            const categoria = obterDivisao(idade);
+            const categoria = obterDivisao(dataNasc, sexo);
 
             if (categoria) {
                 categoriaSelect.disabled = false;
                 categoriaSelect.required = true;
                 
-                // Popula a categoria automaticamente
                 categoriaSelect.innerHTML = `<option value="${categoria}">${categoria}</option>`;
                 categoriaSelect.value = categoria; 
                 
-                // Popula as faixas imediatamente
                 popularFaixas();
             }
             atualizarExtrato();
@@ -590,79 +580,59 @@
 
         function popularFaixas() {
             const categoria = categoriaSelect.value;
-            const sexo = sexoInput.value; // <-- Adiciona a leitura do sexo
+            const sexo = sexoInput.value;
             
-            // Limpa as opções de faixa e peso, desabilitando-os
             limparOpcoesSelect(faixaInput, 'Selecione a Categoria', true);
-            limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
             
-            // Garante que o Absoluto esteja escondido ao mudar a faixa/categoria
-            absolutoContainer.style.display = 'none';
-            absolutoCheckbox.checked = false; 
-
             if (categoria && faixasPorDivisao[categoria]) {
                 faixaInput.disabled = false;
                 faixaInput.required = true;
                 limparOpcoesSelect(faixaInput, 'Selecione sua faixa', false);
                 
-                // 🚨 LÓGICA DE RESTRIÇÃO PARA FEMININO ADULTO 🚨
                 let faixasDisponiveis = faixasPorDivisao[categoria];
                 
                 if (categoria === 'Adulto' && sexo === 'feminino') {
-                    // Se for Adulto e Feminino, restringe a lista APENAS para 'Branca'
-                    faixasDisponiveis = ["Branca"]; 
+                    faixasDisponiveis = faixasDisponiveis.filter(faixa => faixa !== "Azul/Roxa");
                 }
                 
-                // Usa a lista (original ou restrita) para popular o Select
+                if (categoria === 'Juvenil' && sexo === 'feminino') {
+                    faixasDisponiveis = faixasDisponiveis.filter(faixa => faixa !== "Azul");
+                }
+                
                 faixasDisponiveis.forEach(faixa => {
                     const option = document.createElement('option');
-                    // Cria um valor simplificado (ex: Azul e Roxa -> azul-e-roxa)
-                    const value = faixa.toLowerCase().replace(/\s+/g, '-'); 
+                    const value = faixa.toLowerCase().replace(/[\/\s]/g, '-'); 
                     option.value = value;
                     option.textContent = faixa;
                     faixaInput.appendChild(option);
                 });
             }
-
-            atualizarExtrato();
+            
+            // Precisamos chamar popularPesos aqui para o caso de só haver uma faixa
+            // e também para garantir que a lógica do absoluto seja reavaliada.
+            popularPesos(); 
         }
 
         function popularPesos() {
             const categoria = categoriaSelect.value;
             const sexo = sexoInput.value;
-            const faixa = faixaInput.value;
+            const faixa = faixaInput.value; 
             
-            // Limpa as opções de peso, desabilitando-o
             limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
             
-            // --- NOVA REGRA ABSOLUTO / PESO ---
-            const permiteAbsoluto = (categoria === 'Adulto' && faixa === 'azul-e-roxa');
-            
-            if (permiteAbsoluto) {
-                // Se for Adulto e Faixa Azul e Roxa:
-                // 1. O campo de peso é preenchido automaticamente com "Absoluto"
-                pesoInput.innerHTML = `<option value="absoluto">Absoluto</option>`;
-                pesoInput.value = 'absoluto';
-                pesoInput.disabled = true; // Desabilita para não permitir alteração
-                pesoInput.required = true;
+            // ✅✅✅ CORREÇÃO: A lógica de visibilidade do Absoluto foi REMOVIDA daqui.
+
+            // --- Lógica de Peso Normal ---
+            if (categoria && sexo && faixa && pesosPorDivisao[categoria] && pesosPorDivisao[categoria][faixa] && pesosPorDivisao[categoria][faixa][sexo] && pesosPorDivisao[categoria][faixa][sexo].length > 0) {
                 
-                // 2. O checkbox do Absoluto é mostrado
-                absolutoContainer.style.display = 'flex'; 
-                absolutoCheckbox.checked = true; // Marca como padrão
-                
-            } else {
-                 // Para outras faixas/categorias: usa divisões de peso normais
-                absolutoContainer.style.display = 'none';
-                absolutoCheckbox.checked = false;
-                
-                const categoriaBasePeso = categoria; // Não é mais master, então usa a própria categoria
-                
-                if (categoriaBasePeso && sexo && faixa && pesosPorDivisao[categoriaBasePeso] && pesosPorDivisao[categoriaBasePeso][sexo]) {
+                const pesosDisponiveis = pesosPorDivisao[categoria][faixa][sexo];
+
+                if (pesosDisponiveis && pesosDisponiveis.length > 0) {
                     pesoInput.disabled = false;
                     pesoInput.required = true;
                     limparOpcoesSelect(pesoInput, 'Selecione seu peso (Divisão)', false);
                     
-                    pesosPorDivisao[categoriaBasePeso][sexo].forEach(peso => {
+                    pesosDisponiveis.forEach(peso => {
                         const option = document.createElement('option');
                         const value = peso.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); 
                         option.value = value;
@@ -670,41 +640,69 @@
                         pesoInput.appendChild(option);
                     });
                 }
+                
+            } else if (categoria && sexo && faixa && pesosPorDivisao[categoria] && pesosPorDivisao[categoria][faixa] && !pesosPorDivisao[categoria][faixa][sexo]) {
+                limparOpcoesSelect(pesoInput, 'Categoria de peso não definida.', true);
             }
-
+            
             atualizarExtrato();
         }
         
-        // --- FUNÇÕES DE EXTRACTO E ENVIO ---
+
+        // ==========================================================
+        // 4. LÓGICA DE VISIBILIDADE E ENVIO
+        // ==========================================================
+
+        /**
+         * ✅✅✅ NOVA FUNÇÃO CENTRALIZADA
+         * Esta função decide se o container do Absoluto deve ser mostrado ou não.
+         */
+        function atualizarVisibilidadeAbsoluto() {
+            const categoria = categoriaSelect.value;
+            const sexo = sexoInput.value;
+            const faixa = faixaInput.value;
+            
+            // A condição exata que você especificou:
+            const permiteAbsolutoCheck = (
+                categoria === 'Adulto' && 
+                sexo === 'masculino' && 
+                faixa === 'azul-roxa'
+            );
+
+            if (permiteAbsolutoCheck) {
+                absolutoContainer.style.display = 'flex';
+            } else {
+                absolutoContainer.style.display = 'none';
+                absolutoCheckbox.checked = false; // Desmarca automaticamente se for ocultado
+            }
+        }
+
+        // --- FUNÇÕES DE EXTRATO E ENVIO ---
 
         function atualizarExtrato() {
-            let total = 70.00;
-            const categoria = categoriaSelect.value || 'Aguardando...';
-            // Pega o texto da faixa/peso para o extrato (é mais fácil de ler)
+            // ✅✅✅ CORREÇÃO: Chamamos a função de visibilidade ANTES de calcular o total.
+            atualizarVisibilidadeAbsoluto(); 
+
+            let total = VALOR_INSCRICAO; 
+            
+            const categoriaText = categoriaSelect.value || 'Aguardando...';
             const faixaText = faixaInput.options[faixaInput.selectedIndex]?.text || 'Aguardando...'; 
             const pesoText = pesoInput.options[pesoInput.selectedIndex]?.text || 'Aguardando...'; 
             
-            const valorAbsoluto = 40.00;
-
-            categoriaIdadeInput.value = categoria;
+            categoriaIdadeInput.value = categoriaSelect.value;
             
-            // Verifica a regra exata para Absoluto
-            const isAbsolutoFaixa = (categoria === 'Adulto' && faixaInput.value === 'azul-e-roxa');
-
-            if (isAbsolutoFaixa) {
-                // Se for a faixa Absoluta, o valor do Absoluto é adicionado automaticamente
-                total += valorAbsoluto;
+            // Lógica do Absoluto (Exibe no extrato se estiver marcado E visível)
+            if (absolutoCheckbox.checked && absolutoContainer.style.display === 'flex') {
+                total += VALOR_ABSOLUTO;
                 extratoAbsoluto.style.display = 'flex';
-                // Garante que a checkbox esteja marcada e desabilitada para forçar o Absoluto
-                absolutoCheckbox.checked = true;
-                absolutoCheckbox.disabled = true;
+                valorAbsolutoSpan.innerText = `R$ ${VALOR_ABSOLUTO.toFixed(2).replace('.', ',')}`; 
             } else {
                 extratoAbsoluto.style.display = 'none';
-                absolutoCheckbox.checked = false;
-                absolutoCheckbox.disabled = false;
             }
 
-            extratoCategoriaSpan.innerText = `${categoria}, ${faixaText}, ${pesoText}`;
+            // Atualiza os valores no Extrato
+            extratoCategoriaSpan.innerText = `${categoriaText}, ${faixaText}, ${pesoText}`;
+            valorCategoriaSpan.innerText = `R$ ${VALOR_INSCRICAO.toFixed(2).replace('.', ',')}`;
             totalPagar.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
         
@@ -726,15 +724,8 @@
             const formData = new FormData(inscricaoForm);
             formData.append('valor_total', totalPagar.innerText); 
             
-            const categoriaSelecionada = categoriaSelect.value;
-            const faixaSelecionada = faixaInput.value;
-
-            // Se for Adulto/Azul-Roxa, garante que o Absoluto seja 'Sim' no envio, mesmo se a checkbox estiver desabilitada
-            if (categoriaSelecionada === 'Adulto' && faixaSelecionada === 'azul-e-roxa') {
-                 formData.set('absoluto', 'Sim');
-            } else {
-                 formData.set('absoluto', 'Não');
-            }
+            const absolutoStatus = (absolutoCheckbox.checked && absolutoContainer.style.display === 'flex') ? 'Sim' : 'Não';
+            formData.set('absoluto', absolutoStatus);
             
             const params = new URLSearchParams(formData).toString();
 
@@ -760,10 +751,12 @@
 
                     const urlPagamento = `pagamentos.html?atleta=${encodeURIComponent(nomeAtleta)}&categoria=${encodeURIComponent(categoriaIdade)}&valor=${totalPagarValor}`;
 
-                    window.location.href = urlPagamento; 
+                    // window.location.href = urlPagamento; 
+                    console.log("Redirecionando para:", urlPagamento);
+                    alert("Inscrição Salva!");
                     
                 } else {
-                    feedbackElement.textContent = '❌ Erro ao salvar na planilha. Tente novamente.';
+                    feedbackElement.textContent = `❌ Erro ao salvar na planilha. ${data.mensagem || 'Tente novamente.'}`;
                     feedbackElement.style.backgroundColor = '#f8d7da';
                     feedbackElement.style.color = '#721c24';
                 }
@@ -780,28 +773,23 @@
 
         // --- Event Listeners ---
         dataNascimentoInput.addEventListener('change', popularCategorias);
-        // O listener de sexo foi mantido para popularCategorias, que por sua vez chama popularFaixas
         sexoInput.addEventListener('change', popularCategorias); 
         categoriaSelect.addEventListener('change', popularFaixas); 
         faixaInput.addEventListener('change', popularPesos); 
-
-        // Listener no campo de peso também garante que o extrato seja atualizado
-        pesoInput.addEventListener('change', atualizarExtrato); 
         
-        // NOVO: Máscara e Validação DDD/Celular
+        // Listener no campo de peso e absoluto
+        pesoInput.addEventListener('change', atualizarExtrato); 
+        absolutoCheckbox.addEventListener('change', atualizarExtrato);
+        
+        // Máscara e Validação
         dddInput.addEventListener('input', aplicarMascaraDDD);
         celularInput.addEventListener('input', aplicarMascaraCelular);
-
-        // Event Listeners para Máscara e Validação do CPF
         cpfInput.addEventListener('input', validarEFormatarCPF);
         cpfInput.addEventListener('blur', validarEFormatarCPF); 
 
-        // O absoluto é controlado pela regra, mas o listener está aqui se for necessário
-        // absolutoCheckbox.addEventListener('change', atualizarExtrato);
-        
         inscricaoForm.addEventListener('submit', enviarParaPlanilha);
         
-        // Chama a função inicial para configurar os campos
+        // Chama a função inicial
         popularCategorias(); 
     </script>
 </body>
