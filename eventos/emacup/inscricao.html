@@ -374,61 +374,110 @@
         const VALOR_ABSOLUTO = 30.00; 
         
         // ==========================================================
-        // 1. REGRAS DE DIVISÃO E TABELAS DE PESO/FAIXA (CORRIGIDAS)
+        // 1. REGRAS DE DIVISÃO E TABELAS DE PESO/FAIXA (ATUALIZADAS)
         // ==========================================================
 
-        function obterDivisao(dataNascimento, sexo) {
+        /**
+         * ATUALIZADO: Novas faixas etárias e nomes de divisão.
+         */
+        function obterDivisao(dataNascimento) {
             const idade = calcularIdade(dataNascimento);
             
-            if (idade >= 11 && idade <= 14) return "Infantil até 14 anos";
-            if (idade >= 15 && idade <= 17) return "Juvenil";
-            if (idade >= 18) return "Adulto"; 
+            if (idade >= 8 && idade <= 9) return "Infantil A (8 e 9 anos)";
+            if (idade >= 10 && idade <= 11) return "Infantil B (10 e 11 anos)";
+            if (idade >= 12 && idade <= 13) return "Infanto-Juvenil A (12 e 13 anos)";
+            if (idade >= 14 && idade <= 15) return "Infanto-Juvenil B (14 e 15 anos)";
+            if (idade >= 16 && idade <= 17) return "Juvenil (16 e 17 anos)";
+            if (idade >= 18) return "Adulto (Acima de 18 anos)"; 
             
             return null;
         }
-
+        
+        // As faixas agora serão mais flexíveis e populadas dinamicamente
         const faixasPorDivisao = {
-            "Infantil até 14 anos": ["Branca/Cinza"],
-            "Juvenil": ["Branca", "Azul", "Laranja/Amarelo"],
-            "Adulto": ["Branca", "Azul/Roxa"],
+            "Infantil A (8 e 9 anos)": ["Branca/Cinza", "Amarelo/Laranja"],
+            "Infantil B (10 e 11 anos)": ["Branca/Cinza", "Amarelo/Laranja"],
+            "Infanto-Juvenil A (12 e 13 anos)": ["Branca/Cinza", "Amarelo/Laranja"],
+            "Infanto-Juvenil B (14 e 15 anos)": ["Branca/Cinza", "Amarelo/Laranja"],
+            "Juvenil (16 e 17 anos)": ["Branca"],
+            "Adulto (Acima de 18 anos)": ["Branca", "Azul/Roxa"], 
+        };
+        
+        // Mapeamento das faixas para as chaves internas
+        const MAPA_FAIXAS_CHAVE = {
+            'branca/cinza': 'branca-cinza',
+            'amarelo/laranja': 'amarelo-laranja',
+            'azul/roxa': 'azul-roxa',
+            'branca': 'branca',
         };
 
+        /**
+         * ATUALIZADO: Regras de peso revisadas e novas categorias (Infantil A/B, Infanto-Juvenil A/B).
+         * Os pesos foram padronizados para o formato 'Até XX KG' ou 'XX KG Até YY KG'
+         */
         const pesosPorDivisao = {
-            "Adulto": {
+            "Adulto (Acima de 18 anos)": {
+                // Adulto Masculino
                 "branca": {
-                    "masculino": ["Ate 76 KG", "82 KG Ate Sem Limite de Peso"],
-                    "feminino": ["Ate 69 KG", "74 KG Ate Sem Limite de Peso"]
+                    "masculino": ["Ate 76 KG", "Acima de 76 KG (Sem Limite)"],
+                    "feminino": ["Ate 69 KG", "Acima de 69 KG (Sem Limite)"]
                 },
                 "azul-roxa": { 
-                    "masculino": ["Ate 76 KG", "82 KG Ate Sem Limite de Peso"], 
-                    "feminino": []
+                    "masculino": ["Ate 76 KG", "Acima de 76 KG (Sem Limite)"], 
+                    "feminino": [] // Adulto Feminino só tem Branca
                 }
             },
-            "Juvenil": {
+            "Juvenil (16 e 17 anos)": {
                 "branca": {
-                    "masculino": ["Ate 69 KG", "74 KG Ate Sem Limite de Peso"],
-                    "feminino": ["Ate 56 KG", "60 KG Ate Sem Limite de Peso"]
-                },
-                "azul": {
-                    "masculino": ["Ate 69 KG", "74 KG Ate 89 KG"], 
-                    "feminino": []
-                },
-                "laranja-amarelo": {
-                    "masculino": ["74 KG Ate Sem Limite de Peso"], 
-                    "feminino": ["60 KG Ate Sem Limite de Peso"] 
+                    "masculino": ["Ate 69 KG", "Acima de 69 KG (Sem Limite)"],
+                    "feminino": ["Ate 56 KG", "Acima de 56 KG (Sem Limite)"]
                 }
             },
-            "Infantil até 14 anos": {
+            "Infantil A (8 e 9 anos)": {
                 "branca-cinza": {
-                    "masculino": ["Ate 69 KG", "74 KG Ate Sem Limite de Peso"], 
-                    "feminino": ["Ate 56 KG", "60 KG Ate Sem Limite de Peso"] 
+                    "masculino": ["Ate 33 KG", "Acima de 33 KG Ate 43 KG"], 
+                    "feminino": ["Ate 33 KG", "Acima de 33 KG Ate 43 KG"] 
+                },
+                "amarelo-laranja": {
+                    "masculino": ["Ate 33 KG", "Acima de 33 KG Ate 43 KG"], 
+                    "feminino": ["Ate 33 KG", "Acima de 33 KG Ate 43 KG"] 
+                }
+            },
+            "Infantil B (10 e 11 anos)": {
+                "branca-cinza": {
+                    "masculino": ["Ate 39 KG", "Acima de 39 KG Ate 49 KG"], 
+                    "feminino": ["Ate 39 KG", "Acima de 39 KG Ate 49 KG"] 
+                },
+                "amarelo-laranja": {
+                    "masculino": ["Ate 39 KG", "Acima de 39 KG Ate 49 KG"], 
+                    "feminino": ["Ate 39 KG", "Acima de 39 KG Ate 49 KG"] 
+                }
+            },
+            "Infanto-Juvenil A (12 e 13 anos)": {
+                "branca-cinza": {
+                    "masculino": ["Ate 45 KG", "De 45 KG a 55 KG"], 
+                    "feminino": ["Ate 45 KG", "De 45 KG a 55 KG"] 
+                },
+                "amarelo-laranja": {
+                    "masculino": ["Ate 45 KG", "De 45 KG a 55 KG"], 
+                    "feminino": ["Ate 45 KG", "De 45 KG a 55 KG"] 
+                }
+            },
+            "Infanto-Juvenil B (14 e 15 anos)": {
+                "branca-cinza": {
+                    "masculino": ["Ate 56 KG", "De 56 KG Ate 72 KG"], 
+                    "feminino": ["Ate 56 KG", "Acima de 56 KG Ate 72 KG"] 
+                },
+                "amarelo-laranja": {
+                    "masculino": ["Ate 56 KG", "De 56 KG Ate 72 KG"], 
+                    "feminino": ["Ate 56 KG", "De 56 KG Ate 72 KG"] 
                 }
             }
         };
 
 
         // ==========================================================
-        // 2. FUNÇÕES DE MÁSCARA E VALIDAÇÃO DE CPF/TELEFONE
+        // 2. FUNÇÕES DE MÁSCARA E VALIDAÇÃO DE CPF/TELEFONE (MANTIDAS)
         // ==========================================================
 
         function aplicarMascaraCPF(e) {
@@ -522,7 +571,7 @@
 
 
         // ==========================================================
-        // 3. FUNÇÕES DE CÁLCULO E POPULAMENTO DE DROPDOWNS
+        // 3. FUNÇÕES DE CÁLCULO E POPULAMENTO DE DROPDOWNS (ATUALIZADAS)
         // ==========================================================
         
         function calcularIdade(dataNascimento) {
@@ -548,8 +597,6 @@
             if (selectElement.id === 'faixa') {
                 limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
             }
-            
-            // ✅✅✅ CORREÇÃO: A lógica do Absoluto foi REMOVIDA daqui.
         }
 
         function popularCategorias() {
@@ -559,17 +606,19 @@
             
             limparOpcoesSelect(categoriaSelect, 'Preencha o Sexo e a Data de Nasc.', true);
 
-            if (!dataNasc || !sexo || idade < 11) { 
+            // ATUALIZADO: Idade mínima para competição passa a ser 8 anos
+            if (!dataNasc || !sexo || idade < 8) { 
                 atualizarExtrato();
                 return;
             }
 
-            const categoria = obterDivisao(dataNasc, sexo);
+            const categoria = obterDivisao(dataNasc); // A divisão agora só depende da data de nascimento
 
             if (categoria) {
                 categoriaSelect.disabled = false;
                 categoriaSelect.required = true;
                 
+                // Popula a categoria como única opção
                 categoriaSelect.innerHTML = `<option value="${categoria}">${categoria}</option>`;
                 categoriaSelect.value = categoria; 
                 
@@ -578,6 +627,9 @@
             atualizarExtrato();
         }
 
+        /**
+         * ATUALIZADO: Limita as faixas de Adulto/Juvenil Feminino conforme as regras.
+         */
         function popularFaixas() {
             const categoria = categoriaSelect.value;
             const sexo = sexoInput.value;
@@ -591,28 +643,30 @@
                 
                 let faixasDisponiveis = faixasPorDivisao[categoria];
                 
-                if (categoria === 'Adulto' && sexo === 'feminino') {
-                    faixasDisponiveis = faixasDisponiveis.filter(faixa => faixa !== "Azul/Roxa");
+                // Lógica de restrição de faixa por SEXO/CATEGORIA
+                if (categoria.includes('Adulto') && sexo === 'feminino') {
+                    faixasDisponiveis = ["Branca"]; 
                 }
                 
-                if (categoria === 'Juvenil' && sexo === 'feminino') {
-                    faixasDisponiveis = faixasDisponiveis.filter(faixa => faixa !== "Azul");
-                }
+                // As categorias infantis (Infantil A/B, Infanto-Juvenil A/B)
+                // Usam as faixas definidas em faixasPorDivisao (Branca/Cinza e Amarelo/Laranja)
                 
                 faixasDisponiveis.forEach(faixa => {
                     const option = document.createElement('option');
-                    const value = faixa.toLowerCase().replace(/[\/\s]/g, '-'); 
+                    // Usar o MAPA_FAIXAS_CHAVE para garantir a chave correta
+                    const value = MAPA_FAIXAS_CHAVE[faixa.toLowerCase().replace(/[\/\s]/g, '-')] || faixa.toLowerCase().replace(/[\/\s]/g, '-'); 
                     option.value = value;
                     option.textContent = faixa;
                     faixaInput.appendChild(option);
                 });
             }
             
-            // Precisamos chamar popularPesos aqui para o caso de só haver uma faixa
-            // e também para garantir que a lógica do absoluto seja reavaliada.
             popularPesos(); 
         }
 
+        /**
+         * ATUALIZADO: A lógica de peso agora usa as novas chaves.
+         */
         function popularPesos() {
             const categoria = categoriaSelect.value;
             const sexo = sexoInput.value;
@@ -620,12 +674,12 @@
             
             limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
             
-            // ✅✅✅ CORREÇÃO: A lógica de visibilidade do Absoluto foi REMOVIDA daqui.
-
+            const pesosCategoria = pesosPorDivisao[categoria];
+            
             // --- Lógica de Peso Normal ---
-            if (categoria && sexo && faixa && pesosPorDivisao[categoria] && pesosPorDivisao[categoria][faixa] && pesosPorDivisao[categoria][faixa][sexo] && pesosPorDivisao[categoria][faixa][sexo].length > 0) {
+            if (categoria && sexo && faixa && pesosCategoria && pesosCategoria[faixa] && pesosCategoria[faixa][sexo] && pesosCategoria[faixa][sexo].length > 0) {
                 
-                const pesosDisponiveis = pesosPorDivisao[categoria][faixa][sexo];
+                const pesosDisponiveis = pesosCategoria[faixa][sexo];
 
                 if (pesosDisponiveis && pesosDisponiveis.length > 0) {
                     pesoInput.disabled = false;
@@ -634,6 +688,7 @@
                     
                     pesosDisponiveis.forEach(peso => {
                         const option = document.createElement('option');
+                        // Simplifica o value, mantendo o text mais limpo
                         const value = peso.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); 
                         option.value = value;
                         option.textContent = peso;
@@ -641,7 +696,7 @@
                     });
                 }
                 
-            } else if (categoria && sexo && faixa && pesosPorDivisao[categoria] && pesosPorDivisao[categoria][faixa] && !pesosPorDivisao[categoria][faixa][sexo]) {
+            } else if (categoria && sexo && faixa && pesosCategoria && pesosCategoria[faixa] && !pesosCategoria[faixa][sexo]) {
                 limparOpcoesSelect(pesoInput, 'Categoria de peso não definida.', true);
             }
             
@@ -650,21 +705,21 @@
         
 
         // ==========================================================
-        // 4. LÓGICA DE VISIBILIDADE E ENVIO
+        // 4. LÓGICA DE VISIBILIDADE E ENVIO (MANTIDA)
         // ==========================================================
 
         /**
          * ✅✅✅ NOVA FUNÇÃO CENTRALIZADA
-         * Esta função decide se o container do Absoluto deve ser mostrado ou não.
+         * Mantida a lógica para Absoluto Adulto Masculino Azul/Roxa
          */
         function atualizarVisibilidadeAbsoluto() {
             const categoria = categoriaSelect.value;
             const sexo = sexoInput.value;
             const faixa = faixaInput.value;
             
-            // A condição exata que você especificou:
+            // Condição para Absoluto
             const permiteAbsolutoCheck = (
-                categoria === 'Adulto' && 
+                categoria.includes('Adulto') && 
                 sexo === 'masculino' && 
                 faixa === 'azul-roxa'
             );
