@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição - DTC de Jiu-Jitsu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background-color: #000;
+            border-radius: 8px 8px 0 0; 
+        }
+
+        header img {
+            max-width: 150px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--cor-destaque);
+            color: #fff;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                padding: 15px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            header {
+                border-radius: 0;
+                margin-bottom: 20px;
+                padding: 15px 0;
+            }
+            header img {
+                max-width: 120px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            input {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo"> 
+        </header>
+
+        <h1>DTC de Jiu-Jitsu</h1>
+        
+        <form id="inscricaoForm">
+            <div class="form-group">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+
+            <div class="form-group">
+                <label for="idade">Idade:</label>
+                <input type="number" id="idade" name="idade" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="faixa">Faixa:</label>
+                <input type="text" id="faixa" name="faixa" placeholder="Ex: Branca, Azul/Roxa" required>
+            </div>
+
+            <div class="form-group">
+                <label for="peso">Peso (Divisão):</label>
+                <input type="text" id="peso" name="peso" placeholder="Ex: 76kg" required>
+            </div>
+            
+            <input type="hidden" name="cpf" value="N/A">
+            <input type="hidden" name="sexo" value="N/A">
+            <input type="hidden" name="dataNascimento" value="N/A">
+            <input type="hidden" name="ddd" value="N/A">
+            <input type="hidden" name="celular" value="N/A">
+            <input type="hidden" name="email" value="N/A">
+            <input type="hidden" name="equipe" value="N/A">
+            <input type="hidden" name="professor" value="N/A">
+            <input type="hidden" id="categoriaIdade" name="categoriaIdade" value="N/A"> 
+            <input type="hidden" name="absoluto" value="Não">
+            <input type="hidden" name="valor_total" value="R$ 0,00">
+        </form>
+
+        <button type="submit" form="inscricaoForm">Salvar Inscrição</button>
+        
+        <p id="feedback"></p>
+    </div>
+
+    <script>
+        // 🚨 URL DO GOOGLE SCRIPT FORNECIDA
+        const URL_GOOGLE_SCRIPT = 'https://script.google.com/macros/s/AKfycbzD1ceV0agivkuI1XIqeDqMOTuu3DHzr-gnqFe3dXzEXL1pVyWfA9T0Tj5CKZSxeTxj/exec';
+
+        const inscricaoForm = document.getElementById('inscricaoForm');
+        const feedbackElement = document.getElementById('feedback');
+        const idadeInput = document.getElementById('idade');
+        const categoriaIdadeInput = document.getElementById('categoriaIdade');
+
+        // Função de envio de dados
+        async function lidarComEnvio(event) {
+            event.preventDefault(); 
+            
+            if (!inscricaoForm.checkValidity()) {
+                inscricaoForm.reportValidity(); 
+                return;
+            }
+
+            feedbackElement.style.display = 'block';
+            feedbackElement.textContent = 'Enviando dados... por favor, aguarde.';
+            feedbackElement.style.backgroundColor = '#fff3cd';
+            feedbackElement.style.color = '#856404'; // Amarelo/Aviso
+
+            // 1. Mapear 'Idade' para 'categoriaIdade'
+            // O script espera 'categoriaIdade' na coluna 13.
+            categoriaIdadeInput.value = `Idade: ${idadeInput.value}`;
+
+            // 2. Coletar e formatar dados
+            const formData = new FormData(inscricaoForm);
+            const params = new URLSearchParams(formData).toString();
+            
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: params
+                });
+
+                const data = await response.json();
+
+                if (data.resultado === "sucesso") {
+                    feedbackElement.textContent = '✅ Inscrição Salva com Sucesso!';
+                    feedbackElement.style.backgroundColor = '#d4edda';
+                    feedbackElement.style.color = '#155724';
+                    inscricaoForm.reset(); // Limpa o formulário após o sucesso
+                } else {
+                    feedbackElement.textContent = `❌ Erro ao salvar na planilha. ${data.mensagem || 'Verifique o Google Apps Script.'}`;
+                    feedbackElement.style.backgroundColor = '#f8d7da';
+                    feedbackElement.style.color = '#721c24';
+                }
+
+            } catch (error) {
+                console.error('Erro de conexão ou Apps Script:', error);
+                feedbackElement.textContent = '❌ Erro de rede. Tente novamente ou verifique a URL do Script.';
+                feedbackElement.style.backgroundColor = '#f8d7da';
+                feedbackElement.style.color = '#721c24';
+            }
+        }
+
+        inscricaoForm.addEventListener('submit', lidarComEnvio);
+    </script>
+</body>
+</html>
