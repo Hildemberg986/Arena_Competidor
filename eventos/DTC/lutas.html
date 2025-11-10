@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lutas DTC | Arena Competidor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-primaria: #007bff;
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+            --cor-alerta: #ffc107; /* Amarelo para destaque do aviso */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            max-width: 200px;
+        }
+
+        .main-content {
+            margin-top: 150px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--cor-secundaria);
+            font-weight: 700;
+        }
+
+        /* Novo estilo para a caixa de aviso */
+        .aviso-data {
+            background-color: #fff3cd; /* Amarelo claro de alerta */
+            border: 2px solid var(--cor-alerta);
+            color: #856404; /* Cor de texto escura para contraste */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 500px; 
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .aviso-data h2 {
+            color: #856404;
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .aviso-data p {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 15px 0 0 0;
+        }
+        
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 600px) {
+            .aviso-data {
+                padding: 20px;
+            }
+            .aviso-data h2 {
+                font-size: 1.5rem;
+            }
+            .aviso-data p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html">
+        <img src="img/arena2.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+
+    <div class="main-content">
+        <h1>Alterar Inscrição</h1>
+        
+        <div class="aviso-data">
+            <h2>LUTAS CASADAS</h2>
+            <p>As lutas casadas ficarão disponiveis aqui.</b>.</p>
+            <p>Por favor, retorne próximo a data para acessar.</p>
+        </div>
+        
+        </div>
+    
+    <div class="footer">
+        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+    </div>
+
+    </body>
+</html>
