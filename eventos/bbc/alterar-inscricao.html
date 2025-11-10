@@ -165,7 +165,7 @@
             border-bottom: 2px solid var(--cor-borda);
             padding-bottom: 15px;
             margin-bottom: 20px;
-            text-align: left;
+            text-align: left; /* Padrão desktop: alinhado à esquerda */
         }
 
         .info-table {
@@ -253,6 +253,12 @@
         /* MEDIA QUERY PARA TELAS PEQUENAS (MOBILE) */
         /* ----------------------------------------------------- */
         @media (max-width: 600px) {
+            
+            /* Centraliza o título "Detalhes da Inscrição" */
+            #resultado h2 {
+                text-align: center; 
+            }
+            
             /* Otimizações de cabeçalho e formulário... */
             header { 
                 padding: 10px 0; 
@@ -274,7 +280,7 @@
             .info-table {
                 border-collapse: separate; 
                 border-spacing: 0 10px;    
-                margin: 0 auto; /* Centraliza a tabela na div de resultado */
+                margin: 0 auto; 
                 width: 100%;
             }
 
@@ -284,9 +290,10 @@
             }
 
             .info-table tr {
-                /* CORREÇÃO FINAL DE CENTRALIZAÇÃO: Centraliza cada bloco de informação */
-                margin: 0 auto 15px auto; 
-                max-width: 450px; /* Limita a largura máxima da "carta" para estética */
+                /* GARANTIA DE RESPONSIVIDADE: Usa apenas max-width para limite estético */
+                margin: 0.5rem auto; /* Centraliza cada bloco e adiciona espaçamento vertical */
+                max-width: 400px; 
+                
                 border: 1px solid var(--cor-borda);
                 border-radius: 8px; 
                 overflow: hidden;
@@ -507,7 +514,7 @@
                             } else {
                                 alteracaoConteudo = `
                                     <div style="padding: 15px; background-color: #ffe5e5; border: 1px solid #dc3545; color: #dc3545; border-radius: 5px; margin-top: 20px;">
-                                        ⚠️ Alterações só são permitidas para inscrições com *Status: CONFIRMADO*. Favor regularizar o pagamento.
+                                        ⚠️ Alterações só são permitidas para inscrições com <b>Status: CONFIRMADO</b>. Favor regularizar o pagamento.
                                     </div>
                                 `;
                             }
