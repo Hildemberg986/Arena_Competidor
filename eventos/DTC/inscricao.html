@@ -42,6 +42,7 @@
 
         header img {
             max-width: 150px;
+            /* Placeholder para imagem, ajuste se necessário */
         }
 
         h1 {
@@ -220,30 +221,26 @@
     </div>
 
     <script>
-        // 🚨 URL DO GOOGLE SCRIPT FORNECIDA
+        // 🚨 Substitua pela sua URL REAL do Google Script
         const URL_GOOGLE_SCRIPT = 'https://script.google.com/macros/s/AKfycbzD1ceV0agivkuI1XIqeDqMOTuu3DHzr-gnqFe3dXzEXL1pVyWfA9T0Tj5CKZSxeTxj/exec';
 
         const inscricaoForm = document.getElementById('inscricaoForm');
         const feedbackElement = document.getElementById('feedback');
         
-        // Elementos do Formulário
+        // Elementos do Formulário e Extrato (omiti alguns para concisão)
         const nomeInput = document.getElementById('nome');
         const idadeInput = document.getElementById('idade');
         const faixaInput = document.getElementById('faixa');
         const pesoInput = document.getElementById('peso');
         const categoriaIdadeInput = document.getElementById('categoriaIdade');
 
-        // Elementos do Extrato
         const extratoNome = document.getElementById('extrato-nome');
         const extratoIdade = document.getElementById('extrato-idade');
         const extratoFaixa = document.getElementById('extrato-faixa');
         const extratoPeso = document.getElementById('extrato-peso');
         const extratoValor = document.getElementById('extrato-valor');
 
-        // Valor Fixo da Inscrição
         const VALOR_INSCRICAO = "R$ 75,00";
-
-        // Inicializa o valor no extrato
         extratoValor.textContent = VALOR_INSCRICAO;
 
 
@@ -255,17 +252,15 @@
             extratoPeso.textContent = pesoInput.value || '-';
         }
 
-        // Adiciona listeners para atualizar o extrato sempre que o usuário digita
         [nomeInput, idadeInput, faixaInput, pesoInput].forEach(input => {
             input.addEventListener('input', atualizarExtrato);
             input.addEventListener('change', atualizarExtrato);
         });
 
-        // Chama a função uma vez ao carregar para garantir a exibição inicial
         document.addEventListener('DOMContentLoaded', atualizarExtrato);
 
 
-        // Função de envio de dados
+        // Função de envio de dados e salvamento no localStorage
         async function lidarComEnvio(event) {
             event.preventDefault(); 
             
@@ -274,19 +269,27 @@
                 return;
             }
 
-            // Exibe "Enviando dados..."
+            // Exibe status de envio
             feedbackElement.style.display = 'block';
             feedbackElement.textContent = 'Enviando dados... por favor, aguarde.';
             feedbackElement.style.backgroundColor = '#fff3cd';
-            feedbackElement.style.color = '#856404'; // Amarelo/Aviso
+            feedbackElement.style.color = '#856404'; 
 
-            // 1. Mapear 'Idade' para 'categoriaIdade'
             categoriaIdadeInput.value = `Idade: ${idadeInput.value}`;
 
-            // 2. Coletar e formatar dados
+            // 1. Dados para SALVAR no localStorage (apenas os campos importantes para exibição)
+            const dadosParaPagamento = {
+                nome: nomeInput.value,
+                idade: idadeInput.value ? `${idadeInput.value} anos` : 'N/A', 
+                faixa: faixaInput.value,
+                peso: pesoInput.value,
+                valor: VALOR_INSCRICAO 
+            };
+            
+            // 2. Dados para ENVIAR ao Apps Script
             const formData = new FormData(inscricaoForm);
             const params = new URLSearchParams(formData).toString();
-            
+
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT, {
                     method: 'POST',
@@ -299,25 +302,27 @@
                 const data = await response.json();
 
                 if (data.resultado === "sucesso") {
-                    // Limpa o formulário e esconde o feedback da tela
+                    // Se o Apps Script retornar sucesso:
                     inscricaoForm.reset(); 
                     atualizarExtrato(); 
                     feedbackElement.style.display = 'none';
 
-                    // 🔔 Pop-up de alerta de sucesso
+                    // 🚀 AÇÃO CHAVE: Salva os dados no localStorage ANTES de redirecionar
+                    localStorage.setItem('dadosInscricaoDTC', JSON.stringify(dadosParaPagamento));
+                    
                     alert('✅ Inscrição Salva com Sucesso! Você será redirecionado para a página de pagamentos.');
                     
-                    // Redireciona imediatamente após o usuário clicar em OK no pop-up
                     window.location.href = 'pagamentos.html';
                     
                 } else {
-                    // Em caso de erro, usa a mensagem de feedback na tela
+                    // Erro do Apps Script
                     feedbackElement.textContent = `❌ Erro ao salvar na planilha. ${data.mensagem || 'Verifique o Google Apps Script.'}`;
                     feedbackElement.style.backgroundColor = '#f8d7da';
                     feedbackElement.style.color = '#721c24';
                 }
 
             } catch (error) {
+                // Erro de rede/conexão
                 console.error('Erro de conexão ou Apps Script:', error);
                 feedbackElement.textContent = '❌ Erro de rede. Tente novamente ou verifique a URL do Script.';
                 feedbackElement.style.backgroundColor = '#f8d7da';
