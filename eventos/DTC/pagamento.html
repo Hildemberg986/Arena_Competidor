@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - DTC de Jiu-Jitsu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--cor-destaque);
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: var(--cor-secundaria);
+            font-size: 1.5rem;
+            margin-top: 30px;
+            border-bottom: 2px solid var(--cor-borda);
+            padding-bottom: 10px;
+        }
+
+        .dados-formulario, #pix-info {
+            text-align: left;
+            margin-bottom: 30px;
+            border: 1px solid var(--cor-borda);
+            padding: 20px;
+            border-radius: 4px;
+            background-color: #f1f3f5;
+        }
+        
+        #pix-info strong.atencao {
+            color: #dc3545; /* Vermelho para ATENÇÃO */
+            display: block;
+            margin-top: 10px;
+        }
+
+        .dados-formulario p, #pix-info p {
+            margin: 8px 0;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .total-pagamento {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--cor-destaque);
+            margin-top: 20px;
+            padding: 10px 0;
+            border-top: 2px dashed var(--cor-borda);
+        }
+
+        .qr-code {
+            margin: 30px 0;
+        }
+
+        .qr-code img {
+            max-width: 250px; 
+            border: 1px solid var(--cor-borda);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .pix-copia-cola textarea {
+            width: 100%;
+            resize: none;
+            border: 1px solid var(--cor-borda);
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            background-color: #ffffff;
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .pix-copia-cola button {
+            background-color: #007bff; /* Azul */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .pix-copia-cola button:hover {
+            background-color: #0056b3;
+        }
+
+        .pix-copia-cola button#enviar-whatsapp {
+            background-color: #25d366; /* Verde WhatsApp */
+            padding: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .pix-copia-cola button#enviar-whatsapp:hover {
+            background-color: #1eaf57;
+        }
+
+        #aviso-erro {
+            color: #dc3545;
+            font-weight: bold;
+            display: none;
+            padding: 15px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Confirmação e Pagamento</h1>
+
+        <h2>Dados para Identificação</h2>
+        <div class="dados-formulario">
+             <form id="dadosAtletaForm">
+                <div class="form-group">
+                    <label for="nomeAtleta">Nome Completo:</label>
+                    <input type="text" id="nomeAtleta" required>
+                </div>
+                <div class="form-group">
+                    <label for="idadeAtleta">Idade:</label>
+                    <input type="number" id="idadeAtleta" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="faixaAtleta">Faixa:</label>
+                    <input type="text" id="faixaAtleta" required>
+                </div>
+                <div class="total-pagamento">
+                    Total a Pagar: <span id="info-valor">R$ 75,00</span>
+                </div>
+            </form>
+        </div>
+
+
+        <h2>Efetue o Pagamento via Pix</h2>
+
+        <div id="pix-info">
+            <p><strong>Evento:</strong> DTC de Jiu-Jitsu</p>
+            <p>O pagamento será através de <b>Pix</b> para a seguinte conta:</p>
+            <p><strong>Chave Pix:</strong> 62.810.446/0001-39 (CNPJ)</p>
+            <p><strong>Identificação:</strong> 62.810.446 VALTER SILVA BRASIL</p>
+            <strong class="atencao">ATENÇÃO:</strong>
+            <p>Enviar o <b>Comprovante do Pagamento</b> clicando no botão abaixo. A validação é feita pela organização do campeonato (DTC), favor aguardar. Ao enviar o comprovante, a situação do pagamento fica <b>Em Análise</b> na página de checagem, depois de confirmada pela organização passa para o status de Confirmada.</p>
+        </div>
+
+        <p>Escaneie o QR Code abaixo ou utilize o código Copia e Cola para realizar a transferência de <b><span id="valor-pix">R$ 75,00</span></b>.</p>
+        
+        <div class="qr-code">
+            <img src="../../img/IMG_5482.jpg" alt="QR Code Pix" title="Escaneie para pagar">
+            <p style="font-size: 0.9rem; color: gray;">O valor da transferência deve ser exatamente R$ 75,00.</p>
+        </div>
+
+        <div class="pix-copia-cola">
+            <textarea id="copia-text" rows="3" readonly placeholder="Código Pix será carregado aqui..."></textarea>
+            <button id="copiar-pix-btn">Copiar Código Pix</button>
+
+            <button id="enviar-whatsapp">Enviar Comprovante (WhatsApp)</button>
+        </div>
+
+    </div>
+
+    <script>
+        const pixCopiaECola = '00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA';
+        const copiaText = document.getElementById('copia-text');
+        const copiarPixBtn = document.getElementById('copiar-pix-btn');
+        const enviarWhatsappBtn = document.getElementById('enviar-whatsapp');
+        const dadosAtletaForm = document.getElementById('dadosAtletaForm');
+
+        const nomeInput = document.getElementById('nomeAtleta');
+        const idadeInput = document.getElementById('idadeAtleta');
+        const faixaInput = document.getElementById('faixaAtleta');
+
+        // Valores fixos
+        document.getElementById('info-valor').textContent = 'R$ 75,00';
+        document.getElementById('valor-pix').textContent = 'R$ 75,00';
+        copiaText.value = pixCopiaECola;
+
+        // 1. Função para copiar o Pix
+        function copiarPix() {
+            copiaText.select();
+            copiaText.setSelectionRange(0, 99999);
+            
+            try {
+                navigator.clipboard.writeText(copiaText.value)
+                    .then(() => {
+                        alert('✅ Código Pix Copia e Cola copiado com sucesso!');
+                    });
+            } catch (err) {
+                document.execCommand('copy');
+                alert('✅ Código Pix Copia e Cola copiado com sucesso! (Método antigo)');
+            }
+        }
+        
+        copiarPixBtn.addEventListener('click', copiarPix);
+
+
+        // 2. Função para montar o link do WhatsApp
+        function enviarComprovante(event) {
+            event.preventDefault(); 
+            
+            if (!dadosAtletaForm.checkValidity()) {
+                dadosAtletaForm.reportValidity(); 
+                return;
+            }
+
+            const nome = nomeInput.value;
+            const idade = idadeInput.value;
+            const faixa = faixaInput.value;
+
+            // Identificação do Pix
+            const identificacaoPix = 'CNPJ: 62.810.446/0001-39';
+
+            // Monta a mensagem completa com os dados do atleta e a identificação.
+            const mensagem = `
+Olá! Segue o comprovante de pagamento da inscrição.
+
+**Evento:** DESAFIO TÁTICO CAICÓ (DTC)
+**Identificação PIX:** ${identificacaoPix}
+
+**Dados do Atleta:**
+Nome: ${nome}
+Idade: ${idade} anos
+Faixa: ${faixa}
+Valor: R$ 75,00
+            `.trim(); // Remove espaços em branco do início/fim
+
+            // Codifica a mensagem para a URL
+            const mensagemCodificada = encodeURIComponent(mensagem);
+
+            // Monta a URL final do WhatsApp
+            const urlWhatsApp = `https://api.whatsapp.com/send?phone=5584987513740&text=${mensagemCodificada}`;
+            
+            // Abre o link em uma nova aba
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        // 3. Adiciona listener ao botão de WhatsApp
+        enviarWhatsappBtn.addEventListener('click', enviarComprovante);
+    </script>
+</body>
+</html>
