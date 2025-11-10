@@ -25,10 +25,12 @@
             color: var(--cor-texto);
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
+            /* Garante rolagem correta em mobile */
             align-items: center;
-            min-height: 100vh;
+            min-height: 100%; 
+            padding-top: 100px; 
+            padding-bottom: 50px; 
+            box-sizing: border-box;
         }
 
         header {
@@ -48,12 +50,15 @@
         }
 
         .main-content {
-            margin-top: 150px;
+            /* CENTRALIZAÇÃO HORIZONTAL */
+            margin-top: 50px; 
             width: 90%;
             max-width: 800px;
             text-align: center;
             flex-grow: 1;
             margin-bottom: 50px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         h1 {
@@ -97,15 +102,13 @@
             box-sizing: border-box; 
         }
         
-        /* NOVO ESTILO PARA OBSERVAÇÃO */
         .obs-ord {
             font-size: 0.9rem;
             color: #6c757d;
             text-align: center;
-            margin-top: -10px; /* Reduz o espaço acima */
-            margin-bottom: 25px; /* Adiciona espaço abaixo */
+            margin-top: -10px; 
+            margin-bottom: 25px; 
         }
-        /* FIM NOVO ESTILO */
 
         .btn {
             width: 100%;
@@ -138,7 +141,7 @@
         }
 
         .btn-enviar-wa {
-            background-color: #25d366; /* Cor do WhatsApp */
+            background-color: #25d366; 
         }
         .btn-enviar-wa:hover {
             background-color: #128c7e;
@@ -185,14 +188,12 @@
             background-color: var(--cor-fundo-tabela);
         }
 
-        /* Estilo da primeira coluna (descrição) - Padrão Desktop */
         .info-table td:first-child {
             font-weight: 700;
             color: var(--cor-secundaria);
             width: 35%;
         }
         
-        /* Estilo da segunda coluna (valor) - Padrão Desktop */
         .info-table td:nth-child(2) {
              width: 65%;
         }
@@ -206,17 +207,14 @@
             text-transform: uppercase;
         }
 
-        /* Status Confirmado (Verde) */
         .status-confirmado {
             background-color: var(--cor-sucesso);
         }
 
-        /* Status Pendente (Vermelho) */
         .status-pendente {
             background-color: var(--cor-erro);
         }
         
-        /* Botão para resetar a busca */
         .btn-reset {
             background-color: var(--cor-secundaria);
             margin-top: 15px;
@@ -253,9 +251,24 @@
         /* MEDIA QUERY PARA TELAS PEQUENAS (MOBILE) */
         /* ----------------------------------------------------- */
         @media (max-width: 600px) {
+            /* Otimizações de cabeçalho para mobile */
+            header { 
+                padding: 10px 0; 
+            }
+
+            header img { 
+                max-width: 150px; 
+            }
+            
+            .main-content { 
+                margin-top: 0; 
+            }
+            
             .form-verificacao, #resultado, .form-edicao {
                 padding: 25px;
             }
+            
+            /* Otimização da Tabela para visualização em pilha */
             .info-table, .info-table tbody, .info-table tr, .info-table td {
                 display: block;
                 width: 100%;
@@ -267,19 +280,20 @@
                 overflow: hidden;
             }
             
-            /* Esconde a primeira coluna (Descrição do Desktop) */
+            /* Esconde a primeira coluna (rótulo original) */
             .info-table tr td:first-child {
                 display: none; 
             }
             
-            /* Estiliza a segunda coluna (Valor) para parecer um item de lista */
             .info-table tr td:nth-child(2) {
-                text-align: right;
-                padding-left: 50%; 
+                /* CORREÇÃO PARA FLUIDEZ DO TEXTO: Garante que o texto quebre por palavra, não por letra */
+                text-align: right; 
+                padding-left: 150px; 
                 position: relative;
                 border: none;
-                width: 100%;
                 background-color: var(--cor-fundo-tabela); 
+                box-sizing: border-box; 
+                white-space: normal; /* Permite que o texto flua normalmente e quebre em espaços */
             }
 
             .info-table tr:nth-child(even) {
@@ -294,15 +308,17 @@
                  border-bottom: none;
             }
 
-            /* Mostra a descrição usando o data-label */
+            /* Injeta o rótulo (data-label) no modo mobile */
             .info-table td:nth-child(2):before {
                 content: attr(data-label);
                 position: absolute;
                 left: 15px;
-                width: calc(50% - 30px);
+                width: 120px; 
                 text-align: left;
                 font-weight: 700;
                 color: var(--cor-secundaria);
+                white-space: normal; /* Permite que o rótulo quebre se for muito longo */
+                overflow: visible; 
             }
         }
     </style>
@@ -375,7 +391,7 @@
             const dataNascimentoInput = document.getElementById('dataNascimento');
             const cancelEditBtn = document.getElementById('cancelEditBtn');
 
-            let atletaAtual = null; // Variável para armazenar os dados do atleta encontrado
+            let atletaAtual = null; 
 
             const FAIXAS = ['BRANCA', 'CINZA', 'AMARELA', 'LARANJA', 'VERDE', 'AZUL', 'ROXA', 'MARROM', 'PRETA'];
             const PESOS = ['GALO', 'PLUMA', 'PENA', 'LEVE', 'MÉDIO', 'MEIO-PESADO', 'PESADO', 'SUPER PESADO', 'PESADÍSSIMO'];
@@ -391,7 +407,6 @@
             };
 
             const displayEditForm = () => {
-                // Esta função só é chamada se o status for CONFIRMADO
                 resultadoDiv.style.display = 'none';
                 editFormContainer.style.display = 'block';
 
@@ -399,7 +414,6 @@
                 const novoPesoSelect = document.getElementById('novoPeso');
                 const novaCategoriaInput = document.getElementById('novaCategoria');
 
-                // Limpa as opções anteriores e preenche novamente
                 novaFaixaSelect.innerHTML = '<option value="" disabled selected>Selecione a faixa...</option>';
                 FAIXAS.forEach(faixa => {
                     const option = document.createElement('option');
@@ -422,7 +436,6 @@
                     novoPesoSelect.appendChild(option);
                 });
 
-                // Limpa o campo opcional de categoria
                 novaCategoriaInput.value = ''; 
                 novaCategoriaInput.placeholder = `Atual: ${atletaAtual['SUA CATEGORIA'] || 'Não Informado'}`;
             };
@@ -433,12 +446,12 @@
                 const ordValue = ordInput.value.trim();
                 const dataNascimentoValue = dataNascimentoInput.value;
 
-                // 1. Oculta tudo, exceto o loader, ao iniciar a busca
                 formContainer.style.display = 'none';
                 resultadoDiv.style.display = 'none';
                 editFormContainer.style.display = 'none';
                 loader.style.display = 'block';
 
+                // ** IMPORTANTE: SUBSTITUA ESTA URL PELA SUA URL DE PLANILHA CSV PÚBLICA **
                 const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQSl2JnuwCFfho7DTlBoeMwtIgLi7sJim55WnJcgTi0s28JC8lhZwkt69MdVlLEMcfkSQBKR1R2ziMR/pub?output=csv';
 
                 Papa.parse(sheetURL, {
@@ -452,14 +465,11 @@
                         loader.style.display = 'none';
 
                         if (atletaAtual) {
-                            // CORREÇÃO CRÍTICA: Torna a string da planilha MAIÚSCULA, remove espaços e verifica
                             const statusPlanilha = (atletaAtual['STATUS DO PAGAMENTO'] || '').toUpperCase().trim();
                             const isConfirmado = statusPlanilha === 'CONFIRMADO';
                             
-                            // CLASSE: Usa status-confirmado se CONFIRMADO, senão usa status-pendente
                             const statusClass = isConfirmado ? 'status-confirmado' : 'status-pendente';
 
-                            // Conteúdo condicional para o botão de alteração/aviso
                             let alteracaoConteudo = '';
                             if (isConfirmado) {
                                 alteracaoConteudo = `<button id="editBtn" class="btn btn-alterar">Alterar Inscrição</button>`;
@@ -471,7 +481,6 @@
                                 `;
                             }
                             
-                            // 2. Mostra os detalhes do atleta
                             resultadoDiv.innerHTML = `
                                 <h2>Detalhes da Inscrição</h2>
                                 <table class="info-table">
@@ -521,12 +530,10 @@
 
                             document.getElementById('resetBtn').addEventListener('click', resetView);
                             
-                            // Adiciona o listener para o botão de edição APENAS se isConfirmado for true
                             if (isConfirmado) {
                                 document.getElementById('editBtn').addEventListener('click', displayEditForm);
                             }
                         } else {
-                            // 3. Se não encontrou o atleta, mostra a mensagem e REEXIBE o formulário
                             resultadoDiv.innerHTML = `
                                 <h2>Atleta não encontrado</h2>
                                 <p>Não foi possível encontrar uma inscrição com os dados fornecidos. Verifique se o número de ORD e a data de nascimento estão corretos. Se precisar de ajuda, entre em contato via WhatsApp.</p>
@@ -536,7 +543,6 @@
                         }
                     },
                     error: function(err) {
-                        // 4. Em caso de erro na leitura do CSV
                         loader.style.display = 'none';
                         resultadoDiv.innerHTML = `
                             <h2>Erro ao buscar dados</h2>
@@ -548,7 +554,6 @@
                 });
             });
 
-            // Lógica para submissão do formulário de edição
             editForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
@@ -558,11 +563,9 @@
                     return;
                 }
                 
-                // CORREÇÃO CRÍTICA NA RE-VALIDAÇÃO
                 const statusPlanilha = (atletaAtual['STATUS DO PAGAMENTO'] || '').toUpperCase().trim();
                 if (statusPlanilha !== 'CONFIRMADO') {
                     alert('Alterações só são permitidas para inscrições com Status: CONFIRMADO.');
-                    // Volta para a visualização da inscrição
                     editFormContainer.style.display = 'none';
                     resultadoDiv.style.display = 'block';
                     return;
@@ -572,7 +575,6 @@
                 const novoPeso = document.getElementById('novoPeso').value;
                 const novaCategoria = document.getElementById('novaCategoria').value.trim();
 
-                // 1. Montar a Mensagem
                 let mensagem = `*SOLICITAÇÃO DE ALTERAÇÃO DE INSCRIÇÃO*\n\n`;
                 mensagem += `*Atleta:* ${atletaAtual['NOME COMPLETO']}\n`;
                 mensagem += `*ORD:* ${atletaAtual.ORD}\n`;
@@ -590,20 +592,16 @@
 
                 mensagem += `*OBS:* Solicito a alteração da minha inscrição.`;
 
-                // 2. Formatar para URL e Enviar para o WhatsApp
-                const numeroWhatsApp = '5584987513740'; // O número sem formatação
+                const numeroWhatsApp = '5584987513740'; 
                 const textoCodificado = encodeURIComponent(mensagem);
                 const whatsappURL = `https://wa.me/${numeroWhatsApp}?text=${textoCodificado}`;
 
-                // Abre o WhatsApp
                 window.open(whatsappURL, '_blank');
 
-                // Volta para a visualização da inscrição
                 editFormContainer.style.display = 'none';
                 resultadoDiv.style.display = 'block';
             });
             
-            // Botão Cancelar/Voltar (do formulário de edição)
             cancelEditBtn.addEventListener('click', () => {
                  if (atletaAtual) {
                     editFormContainer.style.display = 'none';
