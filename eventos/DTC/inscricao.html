@@ -76,6 +76,42 @@
             box-sizing: border-box;
         }
 
+        /* Estilo para o Extrato da Inscrição */
+        #extrato-inscricao {
+            border: 1px solid var(--cor-borda);
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 4px;
+            background-color: #e9ecef; /* Cor de fundo suave */
+        }
+
+        #extrato-inscricao h2 {
+            font-size: 1.2rem;
+            color: var(--cor-secundaria);
+            border-bottom: 2px solid var(--cor-destaque);
+            padding-bottom: 5px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        #extrato-inscricao p {
+            margin: 5px 0;
+            color: var(--cor-texto);
+        }
+
+        #extrato-inscricao strong {
+            color: #000;
+        }
+
+        .total {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--cor-destaque);
+            margin-top: 10px;
+            padding-top: 5px;
+            border-top: 1px dashed var(--cor-borda);
+        }
+
         button {
             background-color: var(--cor-destaque);
             color: #fff;
@@ -153,7 +189,7 @@
 
             <div class="form-group">
                 <label for="peso">Peso (Divisão):</label>
-                <input type="text" id="peso" name="peso" placeholder="Ex: 76kg" required>
+                <input type="text" id="peso" name="peso" placeholder="Ex: 76kg, +100kg" required>
             </div>
             
             <input type="hidden" name="cpf" value="N/A">
@@ -164,10 +200,19 @@
             <input type="hidden" name="email" value="N/A">
             <input type="hidden" name="equipe" value="N/A">
             <input type="hidden" name="professor" value="N/A">
-            <input type="hidden" id="categoriaIdade" name="categoriaIdade" value="N/A"> 
+            <input type="hidden" id="categoriaIdade" name="categoriaIdade" value="N/A">
             <input type="hidden" name="absoluto" value="Não">
-            <input type="hidden" name="valor_total" value="R$ 0,00">
+            <input type="hidden" name="valor_total" value="R$ 75,00">
         </form>
+
+        <div id="extrato-inscricao">
+            <h2>Extrato da Inscrição</h2>
+            <p>Nome: <strong id="extrato-nome">-</strong></p>
+            <p>Idade: <strong id="extrato-idade">-</strong></p>
+            <p>Faixa: <strong id="extrato-faixa">-</strong></p>
+            <p>Peso: <strong id="extrato-peso">-</strong></p>
+            <p class="total">Valor Total: <span id="extrato-valor">R$ 75,00</span></p>
+        </div>
 
         <button type="submit" form="inscricaoForm">Salvar Inscrição</button>
         
@@ -180,8 +225,45 @@
 
         const inscricaoForm = document.getElementById('inscricaoForm');
         const feedbackElement = document.getElementById('feedback');
+        
+        // Elementos do Formulário
+        const nomeInput = document.getElementById('nome');
         const idadeInput = document.getElementById('idade');
+        const faixaInput = document.getElementById('faixa');
+        const pesoInput = document.getElementById('peso');
         const categoriaIdadeInput = document.getElementById('categoriaIdade');
+
+        // Elementos do Extrato
+        const extratoNome = document.getElementById('extrato-nome');
+        const extratoIdade = document.getElementById('extrato-idade');
+        const extratoFaixa = document.getElementById('extrato-faixa');
+        const extratoPeso = document.getElementById('extrato-peso');
+        const extratoValor = document.getElementById('extrato-valor');
+
+        // Valor Fixo da Inscrição
+        const VALOR_INSCRICAO = "R$ 75,00";
+
+        // Inicializa o valor no extrato
+        extratoValor.textContent = VALOR_INSCRICAO;
+
+
+        // FUNÇÃO PARA ATUALIZAR O EXTRATO VISUALMENTE
+        function atualizarExtrato() {
+            extratoNome.textContent = nomeInput.value || '-';
+            extratoIdade.textContent = idadeInput.value ? `${idadeInput.value} anos` : '-';
+            extratoFaixa.textContent = faixaInput.value || '-';
+            extratoPeso.textContent = pesoInput.value || '-';
+        }
+
+        // Adiciona listeners para atualizar o extrato sempre que o usuário digita
+        [nomeInput, idadeInput, faixaInput, pesoInput].forEach(input => {
+            input.addEventListener('input', atualizarExtrato);
+            input.addEventListener('change', atualizarExtrato);
+        });
+
+        // Chama a função uma vez ao carregar para garantir a exibição inicial
+        document.addEventListener('DOMContentLoaded', atualizarExtrato);
+
 
         // Função de envio de dados
         async function lidarComEnvio(event) {
@@ -192,13 +274,13 @@
                 return;
             }
 
+            // Exibe "Enviando dados..."
             feedbackElement.style.display = 'block';
             feedbackElement.textContent = 'Enviando dados... por favor, aguarde.';
             feedbackElement.style.backgroundColor = '#fff3cd';
             feedbackElement.style.color = '#856404'; // Amarelo/Aviso
 
             // 1. Mapear 'Idade' para 'categoriaIdade'
-            // O script espera 'categoriaIdade' na coluna 13.
             categoriaIdadeInput.value = `Idade: ${idadeInput.value}`;
 
             // 2. Coletar e formatar dados
@@ -217,11 +299,19 @@
                 const data = await response.json();
 
                 if (data.resultado === "sucesso") {
-                    feedbackElement.textContent = '✅ Inscrição Salva com Sucesso!';
-                    feedbackElement.style.backgroundColor = '#d4edda';
-                    feedbackElement.style.color = '#155724';
-                    inscricaoForm.reset(); // Limpa o formulário após o sucesso
+                    // Limpa o formulário e esconde o feedback da tela
+                    inscricaoForm.reset(); 
+                    atualizarExtrato(); 
+                    feedbackElement.style.display = 'none';
+
+                    // 🔔 Pop-up de alerta de sucesso
+                    alert('✅ Inscrição Salva com Sucesso! Você será redirecionado para a página de pagamentos.');
+                    
+                    // Redireciona imediatamente após o usuário clicar em OK no pop-up
+                    window.location.href = 'pagamentos.html';
+                    
                 } else {
+                    // Em caso de erro, usa a mensagem de feedback na tela
                     feedbackElement.textContent = `❌ Erro ao salvar na planilha. ${data.mensagem || 'Verifique o Google Apps Script.'}`;
                     feedbackElement.style.backgroundColor = '#f8d7da';
                     feedbackElement.style.color = '#721c24';
