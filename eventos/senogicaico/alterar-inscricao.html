@@ -25,7 +25,6 @@
             color: var(--cor-texto);
             margin: 0;
             padding: 0;
-            /* Garante rolagem correta em mobile */
             align-items: center;
             min-height: 100%; 
             padding-top: 100px; 
@@ -50,11 +49,11 @@
         }
 
         .main-content {
-            /* CENTRALIZAÇÃO HORIZONTAL */
+            /* CENTRALIZAÇÃO HORIZONTAL REFORÇADA */
             margin-top: 50px; 
             width: 90%;
             max-width: 800px;
-            text-align: center;
+            text-align: center; /* Centraliza elementos de bloco internos */
             flex-grow: 1;
             margin-bottom: 50px;
             margin-left: auto;
@@ -149,7 +148,7 @@
         
         #resultado {
             margin-top: 40px;
-            text-align: left;
+            text-align: center; 
             padding: 30px;
             border-radius: 8px;
             background-color: #fff;
@@ -166,6 +165,7 @@
             border-bottom: 2px solid var(--cor-borda);
             padding-bottom: 15px;
             margin-bottom: 20px;
+            text-align: left;
         }
 
         .info-table {
@@ -192,10 +192,12 @@
             font-weight: 700;
             color: var(--cor-secundaria);
             width: 35%;
+            text-align: left;
         }
         
         .info-table td:nth-child(2) {
              width: 65%;
+             text-align: left;
         }
         
         .status {
@@ -251,7 +253,7 @@
         /* MEDIA QUERY PARA TELAS PEQUENAS (MOBILE) */
         /* ----------------------------------------------------- */
         @media (max-width: 600px) {
-            /* Otimizações de cabeçalho para mobile */
+            /* Otimizações de cabeçalho e formulário... */
             header { 
                 padding: 10px 0; 
             }
@@ -269,56 +271,85 @@
             }
             
             /* Otimização da Tabela para visualização em pilha */
-            .info-table, .info-table tbody, .info-table tr, .info-table td {
-                display: block;
+            .info-table {
+                border-collapse: separate; 
+                border-spacing: 0 10px;    
+                margin: 0 auto; /* Centraliza a tabela na div de resultado */
                 width: 100%;
             }
+
+            .info-table tbody, .info-table tr, .info-table td {
+                display: block; 
+                width: 100%;
+            }
+
             .info-table tr {
-                margin-bottom: 15px;
+                /* CORREÇÃO FINAL DE CENTRALIZAÇÃO: Centraliza cada bloco de informação */
+                margin: 0 auto 15px auto; 
+                max-width: 450px; /* Limita a largura máxima da "carta" para estética */
                 border: 1px solid var(--cor-borda);
-                border-radius: 4px;
+                border-radius: 8px; 
                 overflow: hidden;
+                background-color: #fff; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
             }
             
-            /* Esconde a primeira coluna (rótulo original) */
+            /* Esconde a primeira coluna (rótulo original do desktop) */
             .info-table tr td:first-child {
                 display: none; 
             }
             
             .info-table tr td:nth-child(2) {
-                /* CORREÇÃO PARA FLUIDEZ DO TEXTO: Garante que o texto quebre por palavra, não por letra */
-                text-align: right; 
-                padding-left: 150px; 
+                /* Estilo do VALOR da informação */
+                text-align: center; 
+                padding: 10px 15px 15px 15px; 
                 position: relative;
                 border: none;
-                background-color: var(--cor-fundo-tabela); 
-                box-sizing: border-box; 
-                white-space: normal; /* Permite que o texto flua normalmente e quebre em espaços */
-            }
-
-            .info-table tr:nth-child(even) {
                 background-color: transparent; 
+                box-sizing: border-box; 
+                white-space: normal; 
+                font-weight: 500; 
+                font-size: 1.1rem; 
+                color: var(--cor-secundaria); 
             }
 
-             .info-table tr:nth-child(odd) td:nth-child(2) {
-                 background-color: #fff;
-             }
+            /* Injeta o rótulo (data-label) no modo mobile, ACIMA do valor */
+            .info-table td:nth-child(2):before {
+                content: attr(data-label);
+                display: block; 
+                position: static; 
+                width: 100%; 
+                text-align: center; 
+                padding: 15px 15px 5px 15px; 
+                font-weight: 700;
+                font-size: 0.9rem; 
+                color: var(--cor-primaria); 
+                background-color: var(--cor-fundo-tabela); 
+                border-bottom: 1px solid var(--cor-borda); 
+                margin-bottom: 10px; 
+                box-sizing: border-box;
+            }
 
+            /* Remove a borda inferior do último TD para evitar duplicação */
             .info-table tr:last-child td {
                  border-bottom: none;
             }
 
-            /* Injeta o rótulo (data-label) no modo mobile */
-            .info-table td:nth-child(2):before {
-                content: attr(data-label);
-                position: absolute;
-                left: 15px;
-                width: 120px; 
-                text-align: left;
-                font-weight: 700;
-                color: var(--cor-secundaria);
-                white-space: normal; /* Permite que o rótulo quebre se for muito longo */
-                overflow: visible; 
+            /* Correção para cores de fundo das "cartas" */
+            .info-table tr:nth-child(even) {
+                background-color: #fff; 
+            }
+             .info-table tr:nth-child(odd) td:nth-child(2) {
+                 background-color: transparent; 
+             }
+
+            /* Estilo específico para o status */
+            .info-table td .status {
+                display: inline-block; 
+                margin-top: 5px;
+                padding: 8px 15px; 
+                border-radius: 20px; 
+                font-size: 1rem; 
             }
         }
     </style>
