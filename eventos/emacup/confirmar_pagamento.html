@@ -150,9 +150,9 @@
            
            <div class="info-box">
                <h2>👋 Próximos Passos</h2>
-               <p>1. Preencha os dados do atleta e escolha o <b>Tipo de Inscrição</b>.</p>
-               <p>2. Se ainda não pagou, use um dos <b>botões de pagamento</b> abaixo da tabela.</p>
-               <p>3. Após o pagamento, preencha o <b>Método de Pagamento</b> e clique no botão <b>Enviar Comprovante pelo WhatsApp</b>.</p>
+               <p>1. Preencha os dados do atleta e escolha o **Tipo de Inscrição**.</p>
+               <p>2. Se ainda não pagou, use um dos **botões de pagamento** abaixo da tabela.</p>
+               <p>3. Após o pagamento, preencha o **Método de Pagamento** e clique no botão **Enviar Comprovante pelo WhatsApp**.</p>
                <p style="font-weight: bold; color: var(--cor-secundaria); margin-top: 15px;">O status da sua inscrição será atualizado para <span style="color: var(--cor-alerta);">EM ANÁLISE</span> após o envio do comprovante.</p>
            </div>
            
@@ -166,7 +166,7 @@
                 <label for="tipo-inscricao">Selecione o Tipo de Inscrição:</label>
                 <select id="tipo-inscricao">
                     <option value="30.00">Inscrição (R$ 30,00)</option>
-                    
+                    <option value="60.00">Inscrição+Absoluto (R$ 60,00)</option>
                 </select>
 
                 <label for="metodo-pagamento">Método de Pagamento Utilizado:</label>
@@ -189,10 +189,13 @@
                </thead>
                <tbody>
                    <tr>
-                       <td id="linha-categoria-desc">Inscrição</td>
+                       <td id="linha-categoria-desc">Inscrição (Categoria + Peso)</td>
                        <td id="linha-categoria-valor">R$ 30,00</td>
                    </tr>
-                
+                   <tr id="linha-absoluto" style="display: none;">
+                       <td>Taxa Absoluto</td>
+                       <td id="linha-absoluto-valor">R$ 30,00</td>
+                   </tr>
                    <tr class="total-row">
                        <th>Total a Pagar</th>
                        <td id="valor-total">R$ 30,00</td>
@@ -249,6 +252,8 @@
         const numeroOrdemInput = document.getElementById('numero-ordem');
         const tipoInscricaoSelect = document.getElementById('tipo-inscricao');
         const metodoPagamentoSelect = document.getElementById('metodo-pagamento'); 
+        
+        // Elementos da tabela de resumo
         const linhaAbsoluto = document.getElementById('linha-absoluto');
         const linhaCategoriaDesc = document.getElementById('linha-categoria-desc');
         const linhaCategoriaValor = document.getElementById('linha-categoria-valor');
@@ -266,10 +271,10 @@
         const pixCopiaEColaCode = document.getElementById('pix-copia-cola-code');
 
         
-        // Mapeamento dos links do Mercado Pago (c/ Taxa) - ATUALIZADO
+        // Mapeamento dos links do Mercado Pago (c/ Taxa) - ATUALIZADO PELO USUÁRIO
         const mercadoPagoLinks = {
-            30.00: 'https://mpago.la/1cmWmEg', // Novo link para R$ 30,00
-            30.00: 'https://mpago.la/1cmWmEg'  // Novo link para R$ 30,00
+            30.00: 'https://mpago.la/1cmWmEg', // Link para R$ 30,00
+            60.00: 'https://mpago.la/2jwFdiz'  // Link para R$ 60,00
         };
 
         // --- FUNÇÃO PARA ATUALIZAR A TABELA E OS BOTÕES ---
@@ -280,31 +285,28 @@
             const metodo = metodoPagamentoSelect.value;
             const valorFormatado = valorTotal.toFixed(2).replace('.', ',');
             
-            let catValor = 30.00; // Novo valor base
-            let absolutoValor = 50.00; // 140 - 90 = 50
-            let catDesc = 'Inscrição (Categoria + Peso)';
-
+            // Valores base:
+            const valorInscricaoBase = 30.00; 
+            const valorAbsolutoAdicional = valorTotal - valorInscricaoBase; 
+            
             // 1. Atualizar Tabela de Resumo
-            if (Math.abs(valorTotal - 30.00) < 0.01) { // R$ 140
-                catValor = 30.00;
-                absolutoValor = 30.00;
-                catDesc = 'Inscrição (Categoria + Peso)';
-                linhaAbsoluto.style.display = 'table-row';
-            } else { // R$ 90 (Default)
-                catValor = 30.00;
-                absolutoValor = 0.00;
-                catDesc = 'Inscrição (Categoria + Peso)';
-                linhaAbsoluto.style.display = 'none';
+            
+            // Linha base de Inscrição
+            linhaCategoriaDesc.innerText = 'Inscrição (Categoria + Peso)';
+            linhaCategoriaValor.innerText = `R$ ${valorInscricaoBase.toFixed(2).replace('.', ',')}`;
+
+            // Linha do Absoluto (Mostra ou Esconde)
+            if (valorAbsolutoAdicional > 0.01) { 
+                linhaAbsoluto.style.display = 'table-row'; 
+                linhaAbsolutoValor.innerText = `R$ ${valorAbsolutoAdicional.toFixed(2).replace('.', ',')}`;
+            } else { 
+                linhaAbsoluto.style.display = 'none'; 
+                linhaAbsolutoValor.innerText = `R$ 0,00`; 
             }
             
-            // O valor do Absoluto é sempre a diferença, mas vamos manter a exibição simplificada
-            // Para R$ 140: Categoria (R$ 90,00) + Absoluto (R$ 50,00)
-            linhaCategoriaDesc.innerText = catDesc;
-            linhaCategoriaValor.innerText = `R$ ${catValor.toFixed(2).replace('.', ',')}`;
-            linhaAbsolutoValor.innerText = `R$ ${absolutoValor.toFixed(2).replace('.', ',')}`;
-            
+            // Total
             valorTotalElement.innerText = `R$ ${valorFormatado}`;
-            pixValorInfo.innerText = `R$ ${valorFormatado}`; // Atualiza o valor na seção PIX
+            pixValorInfo.innerText = `R$ ${valorFormatado}`; 
             
             // 2. Atualizar Botões de Ação de Pagamento
             
@@ -319,7 +321,7 @@
             } else {
                 btnPagarAgora.href = '#';
                 btnPagarAgora.innerText = `Valor R$ ${valorFormatado} - Link Mercado Pago Indisponível`;
-                btnPagarAgora.style.display = 'none'; 
+                btnPagarAgora.style.display = 'block'; 
             }
 
             // Botão PIX Direto (Toggle)
