@@ -288,7 +288,8 @@
         
         // Mapeamento dos links do Mercado Pago por valor (USANDO PONTO PARA FLOAT)
         const mercadoPagoLinks = {
-            30.00: 'https://mpago.la/1cmWmEg'
+            30.00: 'https://mpago.la/1cmWmEg', // Atualizado
+            60.00: 'https://mpago.la/2jwFdiz'  // Novo link adicionado
         };
 
         // Elementos HTML 
@@ -336,10 +337,11 @@
             const params = new URLSearchParams(window.location.search);
             const atleta = params.get('atleta');
             const categoria = params.get('categoria');
-            const valor = parseFloat(params.get('valor'));
-            const valorFormatado = (isNaN(valor) ? '0.00' : valor.toFixed(2));
+            // Garante que o valor seja float e usa 0.00 como fallback seguro
+            const valor = parseFloat(params.get('valor')) || 0.00; 
+            const valorFormatado = valor.toFixed(2);
             
-            if (atleta && categoria && !isNaN(valor)) {
+            if (atleta && categoria && valor > 0) {
                 atletaNome = atleta; // Armazena globalmente
                 
                 document.getElementById('nome-atleta').innerText = atleta;
@@ -347,16 +349,16 @@
                 document.getElementById('valor-pagamento').innerText = `R$ ${valorFormatado.replace('.', ',')}`;
 
                 // --- Lógica do Mercado Pago ---
-                const valorExato = parseFloat(valorFormatado); 
-                const linkMP = mercadoPagoLinks[valorExato];
+                const linkMP = mercadoPagoLinks[valor]; // Busca o link baseado no valor float
 
                 if (linkMP) {
                     btnMercadoPago.href = linkMP;
+                    btnMercadoPago.innerText = `Pagar R$ ${valorFormatado.replace('.', ',')} com MP`;
                 } else {
                     // Fallback para quando o link não é mapeado. 
                     mpCardContainer.innerHTML = `
                         <h3>Cartão de Crédito / PIX (c/ Taxa)</h3>
-                        <p>O valor de R$ ${valorFormatado.replace('.', ',')} não possui um link de checkout automático configurado. Por favor, utilize o PIX Direto.</p>
+                        <p>O valor de R$ ${valorFormatado.replace('.', ',')} não possui um link de checkout automático configurado. Por favor, utilize o PIX Direto (Sem Taxa).</p>
                         <button class="btn-action btn-mpago" disabled>Indisponível</button>
                     `;
                 }
@@ -364,8 +366,9 @@
                 // --- Atualiza o link do WhatsApp ---
                 const whatsappLink = document.getElementById('whatsapp-link'); 
                 if (whatsappLink) {
-                    const baseText = "Ol%C3%A1%2C%20segue%20o%20comprovante%20de%20pagamento%20da%20inscri%C3%A7%C3%A3o%20do%20atleta%20" + encodeURIComponent(atletaNome) + "%20para%20o%20EMA%20CUP%20de%20Jiu-Jitsu.";
-                    whatsappLink.href = `https://api.whatsapp.com/send?phone=5584987513740&text=${baseText}`;
+                    const mensagemBase = "Ol%C3%A1%2C%20segue%20o%20comprovante%20de%20pagamento%20da%20inscri%C3%A7%C3%A3o%20do%20atleta%20";
+                    const mensagemCompleta = mensagemBase + encodeURIComponent(atletaNome) + "%20para%20o%20EMA%20CUP%20de%20Jiu-Jitsu.%20Valor:%20R$%20" + valorFormatado.replace('.', '%2C');
+                    whatsappLink.href = `https://api.whatsapp.com/send?phone=5584987513740&text=${mensagemCompleta}`;
                 }
 
             } else {
