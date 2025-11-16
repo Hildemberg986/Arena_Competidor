@@ -134,7 +134,7 @@
             background-color: #f1f1f1;
         }
 
-        /* Statuses (Mantidos, mas não usados no JS. Poderiam ser removidos do CSS se desejado) */
+        /* Statuses */
         .status-pago, .status-confirmado { 
             color: var(--cor-destaque); 
             font-weight: bold; 
@@ -247,8 +247,7 @@
                 flex-shrink: 0;
                 text-align: left;
             }
-            
-            /* Esta regra de estilo não será mais necessária, pois o td com a classe de status não existe mais */
+
             .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
                 flex-grow: 1;
                 text-align: right;
@@ -293,7 +292,6 @@
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
         
-        /* // FUNÇÃO DE STATUS REMOVIDA
         function normalizeStatus(text) {
             // Normaliza o texto para as classes CSS
             let status = normalizeText(text.replace(' ', '-'));
@@ -303,7 +301,6 @@
             if (status.includes('analise')) return 'status-em-analise'; 
             return 'status-pendente'; 
         }
-        */
         
         // Função Principal de Processamento do CSV
         async function fetchAndProcessData() {
@@ -383,7 +380,8 @@
             // Colunas da planilha que serão exibidas
             const NOME_COLUNA_NOME = 'NOME COMPLETO';
             const NOME_COLUNA_EQUIPE = 'SUA EQUIPE';
-            // 🚨 NOME_COLUNA_STATUS REMOVIDA
+            // 🚨 Use o nome EXATO da sua coluna de status!
+            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
             // Ordena as chaves do grupo alfabeticamente
             Object.keys(inscritosAbsolutoAgrupados).sort().forEach(key => {
@@ -405,24 +403,25 @@
                         <tr>
                             <th>Nome do Atleta</th>
                             <th>Equipe</th>
-                            </tr>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 `;
                 const tbody = table.querySelector('tbody');
 
                 groupData.atletas.forEach(atleta => {
-                    // Lógica de status REMOVIDA
-                    /* const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
-                    const statusClass = normalizeStatus(statusText); 
-                    */
+                    // Puxa o status, ou define como 'Pendente' se estiver vazio.
+                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                    const statusClass = normalizeStatus(statusText);
                     
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
                         <td data-label="Nome do Atleta">${atleta[NOME_COLUNA_NOME]}</td>
                         <td data-label="Equipe">${atleta[NOME_COLUNA_EQUIPE]}</td>
-                        `;
+                        <td data-label="Status" class="${statusClass}">${statusText}</td>
+                    `;
                     tbody.appendChild(row);
                 });
                 
