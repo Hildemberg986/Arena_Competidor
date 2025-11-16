@@ -171,7 +171,7 @@
             background-color: #f1f1f1;
         }
 
-        /* Status de Pagamento - Mantidos no CSS, mas não serão usados no JS */
+        /* Status de Pagamento */
         .status-pago, .status-confirmado { 
             color: var(--cor-destaque); 
             font-weight: bold; 
@@ -288,16 +288,19 @@
              td[data-label="Professor"]::before {
                 content: "Professor";
             }
-            /* REMOVEMOS A REGRA CSS PARA OS STATUS NO MOBILE */
+            /* FIM CORREÇÃO CSS */
+
+            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
+                flex-grow: 1;
+                text-align: right;
+            }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="../../index.html">
         <img src="../../img/arena2.png" alt="Arena Competidor Logo">
-        </a>
     </header>
 
     <div class="main-content">
@@ -374,7 +377,19 @@
             return normalizeText(parts.split('até')[0]);
         }
         
-        /* FUNÇÃO normalizeStatus REMOVIDA */
+        function normalizeStatus(text) {
+            // Normaliza o texto para remover espaços e acentos para comparação
+            let status = normalizeText(text.replace(' ', '-'));
+            
+            // Verifica os status de pagamento e retorna a classe CSS correspondente
+            if (status === 'pago') return 'status-pago';
+            if (status === 'confirmado') return 'status-confirmado'; // Status Confirmado
+            if (status === 'pendente') return 'status-pendente';
+            if (status.includes('analise')) return 'status-em-analise'; // Captura 'Em Análise'
+            
+            // Padrão para qualquer outro caso
+            return 'status-pendente'; 
+        }
         
         // Função Principal de Processamento do CSV
         async function fetchAndProcessData() {
@@ -489,6 +504,7 @@
         function renderInscritos() {
             listaInscritosDiv.innerHTML = ''; 
             
+            // Agora sabemos o nome exato da coluna: "PROFESSOR"
             const NOME_COLUNA_PROFESSOR = 'PROFESSOR'; 
             
             Object.keys(inscritosAgrupados).sort().forEach(key => {
@@ -504,7 +520,7 @@
                 
                 const header = document.createElement('div');
                 header.className = 'accordion-header';
-                header.textContent = key; 
+                header.textContent = key; // Ex: ADULTO - FAIXA ROXA - PENA - MASCULINO
                 
                 const content = document.createElement('div');
                 content.className = 'accordion-content';
@@ -517,18 +533,18 @@
                             <th>Nome</th>
                             <th>Equipe</th>
                             <th>Professor</th>
-                            </tr>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 `;
                 const tbody = table.querySelector('tbody');
 
                 groupData.atletas.forEach(atleta => {
-                    // Lógica de status REMOVIDA
-                    /* const statusClass = normalizeStatus(atleta['STATUS DO PAGAMENTO']);
+                    const statusClass = normalizeStatus(atleta['STATUS DO PAGAMENTO']);
                     const statusText = atleta['STATUS DO PAGAMENTO'] || 'Pendente'; 
-                    */
-
+                    
+                    // Puxando o nome do professor com o cabeçalho EXATO 'PROFESSOR'
                     const professor = atleta[NOME_COLUNA_PROFESSOR] || 'N/A';
                     
                     const row = document.createElement('tr');
@@ -538,7 +554,8 @@
                         <td data-label="Nome">${atleta['NOME COMPLETO']}</td>
                         <td data-label="Equipe">${atleta['SUA EQUIPE']}</td>
                         <td data-label="Professor">${professor}</td> 
-                        `;
+                        <td data-label="Status" class="${statusClass}">${statusText}</td>
+                    `;
                     tbody.appendChild(row);
                 });
                 
