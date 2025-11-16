@@ -109,7 +109,7 @@
 
         .accordion-header.active::after {
             content: '-';
-            transform: rotate(0deg); 
+            transform: rotate(0deg); /* Ajustado para não girar de forma estranha */
         }
 
         .accordion-content {
@@ -120,7 +120,7 @@
         }
 
         .accordion-content.open {
-            max-height: 30000px; 
+            max-height: 2000px; /* Valor alto para listas grandes */
             padding-top: 20px;
         }
 
@@ -144,7 +144,7 @@
             background-color: #f1f1f1;
         }
 
-        /* Statuses (Mantidos no CSS, mas não serão usados no JS/HTML) */
+        /* Statuses */
         .status-pago, .status-confirmado { 
             color: var(--cor-destaque); 
             font-weight: bold; 
@@ -266,22 +266,17 @@
                 text-align: left;
             }
 
-            /* Removendo a regra de alinhamento de status no mobile, pois o status não é mais exibido */
-            /*
             .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
                 flex-grow: 1;
                 text-align: right;
             }
-            */
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="../../index.html">
         <img src="../../img/arena2.png" alt="Arena Competidor Logo">
-        </a>
     </header>
 
     <div class="main-content">
@@ -313,7 +308,14 @@
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
         
-        /* FUNÇÃO normalizeStatus REMOVIDA */
+        function normalizeStatus(text) {
+            let status = normalizeText(text.replace(' ', '-'));
+            if (status === 'pago') return 'status-pago';
+            if (status === 'confirmado') return 'status-confirmado'; 
+            if (status === 'pendente') return 'status-pendente';
+            if (status.includes('analise')) return 'status-em-analise'; 
+            return 'status-pendente'; 
+        }
         
         // Função Principal de Processamento do CSV
         async function fetchAndProcessData() {
@@ -379,7 +381,7 @@
             const NOME_COLUNA_FAIXA = 'SUA FAIXA';
             const NOME_COLUNA_PESO = 'SEU PESO';
             const NOME_COLUNA_CATEGORIA = 'SUA CATEGORIA';
-            // NOME_COLUNA_STATUS REMOVIDA
+            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
             // Ordena as chaves do grupo (opcional, mas ajuda na organização)
             // Ordem: Alfabética por nome da equipe
@@ -407,7 +409,8 @@
                             <th>Faixa</th>
                             <th>Peso</th>
                             <th>Categoria</th>
-                            </tr>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 `;
@@ -415,9 +418,8 @@
 
                 // Itera sobre os atletas da equipe e preenche a tabela
                 groupData.atletas.forEach(atleta => {
-                    // Lógica de status REMOVIDA
-                    /* const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
-                    const statusClass = normalizeStatus(statusText); */
+                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                    const statusClass = normalizeStatus(statusText);
                     
                     const row = document.createElement('tr');
                     
@@ -426,7 +428,8 @@
                         <td data-label="Faixa">${atleta[NOME_COLUNA_FAIXA]}</td>
                         <td data-label="Peso">${atleta[NOME_COLUNA_PESO]}</td>
                         <td data-label="Categoria">${atleta[NOME_COLUNA_CATEGORIA]}</td>
-                        `;
+                        <td data-label="Status" class="${statusClass}">${statusText}</td>
+                    `;
                     tbody.appendChild(row);
                 });
                 
