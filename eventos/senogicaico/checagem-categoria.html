@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checagem de Inscritos (Somente Confirmados) | Arena Competidor</title>
+    <title>Checagem de Inscritos | Arena Competidor</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        /* Importa a fonte Roboto */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
 
         /* ====================================================================
            1. VARIÁVEIS CSS (ROOT)
            ==================================================================== */
         :root {
-            --cor-primaria: #007bff; /* Azul */
-            --cor-secundaria: #343a40; /* Cinza Escuro */
+            /* Cores de Destaque */
+            --cor-primaria: #007bff; /* Azul Vivo para destaque (botões, títulos) */
+            --cor-secundaria: #343a40; /* Cinza Escuro para texto e fundos principais */
             --cor-destaque: #28a745; /* Verde Pago/Confirmado */
+            
+            /* Cores de Fundo e Texto */
             --cor-fundo: #f8f9fa; /* Cinza Claro Fundo */
             --cor-texto: #495057; /* Cinza para Textos */
-            --cor-borda: #dee2e6; /* Cinza para Bordas */
+            --cor-borda: #dee2e6; /* Cinza Suave para Bordas */
+            --cor-header-fundo: #000; /* Preto para o Header */
+            
+            /* Cores de Status */
             --status-analise: #ffc107; /* Amarelo (Em Análise) */
             --status-pendente: #dc3545; /* Vermelho (Pendente) */
-            --cor-header-fundo: #000; /* Preto para o Header */
             --status-confirmado: var(--cor-destaque);
         }
 
         /* ====================================================================
-           2. ESTILOS BASE
+           2. LAYOUT E BASE
            ==================================================================== */
         body {
             font-family: 'Roboto', sans-serif;
@@ -38,17 +44,19 @@
             min-height: 100vh;
         }
 
+        /* TÍTULOS E MENSAGENS */
         h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
+            color: var(--cor-primaria); /* Usando o azul de destaque */
+            font-weight: 900;
             font-size: 2.5rem;
             margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         #loading-message {
             margin-top: 50px;
             font-size: 1.5rem;
-            color: var(--cor-primaria);
+            color: var(--cor-secundaria);
         }
 
         .footer {
@@ -60,25 +68,24 @@
             color: #6c757d;
         }
 
-        /* Statuses */
+        /* STATUS */
         .status-pago, .status-confirmado { 
             color: var(--cor-destaque); 
-            font-weight: bold; 
+            font-weight: 700; 
+            letter-spacing: 0.5px;
         }
         .status-pendente { 
             color: var(--status-pendente); 
-            font-weight: bold; 
+            font-weight: 700; 
         }
         .status-em-analise { 
             color: var(--status-analise); 
-            font-weight: bold; 
+            font-weight: 700; 
         }
 
         /* ====================================================================
-           3. LAYOUT E COMPONENTES GERAIS
+           3. HEADER E CONTEÚDO PRINCIPAL
            ==================================================================== */
-
-        /* HEADER */
         header {
             width: 100%;
             text-align: center;
@@ -88,32 +95,33 @@
             top: 0;
             left: 0;
             z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra mais visível */
         }
 
         header img {
             max-width: 200px;
         }
 
-        /* CONTEÚDO PRINCIPAL */
         .main-content {
-            margin-top: 150px;
+            margin-top: 150px; /* Espaço para o header fixo */
             width: 95%;
             max-width: 1200px;
             text-align: center;
             flex-grow: 1;
         }
 
-        /* FILTROS */
+        /* ====================================================================
+           4. FILTROS
+           ==================================================================== */
         .filtros {
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px; /* Cantos mais arredondados */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
             display: flex;
             justify-content: space-around;
-            align-items: center;
+            align-items: flex-end; /* Alinha labels no topo */
             flex-wrap: wrap;
         }
 
@@ -121,43 +129,49 @@
             display: flex;
             flex-direction: column;
             margin: 10px;
+            min-width: 150px; /* Garante que os selects não fiquem muito estreitos */
         }
 
         label {
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--cor-secundaria);
+            font-size: 0.95rem;
         }
 
         select {
-            padding: 8px;
+            padding: 10px;
             border: 1px solid var(--cor-borda);
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 1rem;
+            background-color: var(--cor-fundo);
+            transition: border-color 0.3s ease;
         }
 
+        select:focus {
+            border-color: var(--cor-primaria);
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+        
         /* ====================================================================
-           4. ACORDEÃO (GRUPOS DE INSCRIÇÃO)
+           5. ACORDEÃO (GRUPOS DE INSCRIÇÃO)
            ==================================================================== */
         .accordion-item {
             width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        /* Apenas grupos de categoria e subgrupos usam este estilo de box-shadow no original */
-        .category-group, .sub-group {
-            background-color: transparent;
-            box-shadow: none;
-            padding: 0;
-            margin-bottom: 0;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para separar os itens */
         }
         
         .accordion-header {
             background-color: var(--cor-secundaria);
             color: #fff;
             padding: 15px 20px;
-            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.2em;
+            font-size: 1.15em;
+            font-weight: 700;
             text-align: left;
             user-select: none;
             display: flex;
@@ -167,43 +181,42 @@
         }
 
         .accordion-header:hover {
-            background-color: #212529;
+            background-color: #495057; /* Cinza um pouco mais claro no hover */
         }
         
         .accordion-header::after {
-            content: '+';
+            content: '▼'; 
             font-weight: bold;
-            font-size: 1.5em;
+            font-size: 0.8em;
             transition: transform 0.3s ease;
         }
 
         .accordion-header.active::after {
-            content: '-';
+            transform: rotate(180deg);
         }
 
         .accordion-content {
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
             max-height: 0;
             padding: 0 20px;
         }
 
         .accordion-content.open {
-            max-height: 2000px;
+            max-height: 50000px; /* Valor alto para transição suave */
             padding: 20px;
         }
-
+        
         /* ====================================================================
-           5. TABELA DE ATLETAS (DESKTOP)
+           6. TABELA DE ATLETAS (DESKTOP)
            ==================================================================== */
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: #fff;
-            margin-bottom: 0; /* Removido margin-bottom de 20px */
+            margin-bottom: 0;
+            border-radius: 0 0 8px 8px; /* Arredondado se o content estiver aberto */
         }
 
         th, td {
@@ -215,6 +228,7 @@
         thead {
             background-color: #e9ecef;
             color: var(--cor-secundaria);
+            font-weight: 700;
         }
 
         tr:hover {
@@ -222,56 +236,68 @@
         }
 
         /* ====================================================================
-           6. MEDIA QUERY (MOBILE)
+           7. MEDIA QUERY (MOBILE) - Prioridade Estética
            ==================================================================== */
 
         @media (max-width: 768px) {
-            /* Ajustes Gerais */
+            
+            /* Ajustes de Layout */
             .main-content {
-                margin-top: 30px; /* Alterado para se ajustar melhor ao header static */
-                width: 98%;
+                margin-top: 20px; 
+                width: 100%;
                 padding: 0 10px;
             }
             
             header {
-                padding: 10px 0;
-                position: static;
+                padding: 15px 0;
+                position: static; /* Header estático para liberar espaço no topo */
             }
 
             header img {
-                max-width: 150px;
+                max-width: 130px;
             }
 
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 15px;
+            }
+
+            /* Otimização dos Filtros */
             .filtros {
                 flex-direction: column;
                 align-items: stretch;
                 padding: 15px;
+                margin-bottom: 20px;
             }
 
             .filtro-grupo {
                 margin: 8px 0;
+                min-width: auto;
             }
             
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
+            select {
+                padding: 12px; /* Maior para toque */
+            }
+            
+            /* Otimização do Acordeão */
+            .accordion-item {
+                margin-bottom: 10px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             }
             
             .accordion-header {
-                padding: 10px 15px;
-                font-size: 1.1rem;
+                padding: 12px 15px;
+                font-size: 1.05rem;
             }
 
             .accordion-content.open {
-                padding: 15px; /* Ajuste o padding interno para mobile */
+                padding: 15px; /* Padding interno menor e ajustado */
             }
 
-            /* Reestruturação da Tabela para Mobile */
+            /* Reestruturação da Tabela para Cartões (Cards) */
             table {
                 display: block;
-                width: 100%;
-                padding: 0;
-                box-shadow: none;
+                box-shadow: none; /* Remove a sombra extra */
             }
             
             thead {
@@ -282,19 +308,19 @@
                 display: flex;
                 flex-direction: column;
                 background-color: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                padding: 15px;
-                margin-bottom: 10px;
-                border-bottom: none;
+                /* Removido box-shadow e padding, pois são aplicados no accordion-item */
+                padding: 10px; /* Padding interno de cada card */
+                margin-bottom: 0;
+                border-radius: 0;
+                border: 1px solid #f1f1f1;
             }
             
             td {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                border-bottom: 1px solid #eee;
-                padding: 10px 0;
+                border-bottom: 1px dotted #eee; /* Linha pontilhada suave */
+                padding: 8px 0;
                 width: 100%;
             }
             
@@ -302,16 +328,18 @@
                 border-bottom: none;
             }
 
-            /* Define o label principal (usa o data-label setado no HTML) */
             td::before {
                 content: attr(data-label);
-                font-weight: bold;
+                font-weight: 700;
                 flex-shrink: 0;
                 text-align: left;
+                color: var(--cor-secundaria);
+                min-width: 90px; /* Ajuda a alinhar o texto do valor */
             }
 
-            /* Classes de status (alinhamento à direita no mobile) */
-            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
+            /* Alinhamento dos valores/statuses */
+            .status-pago, .status-pendente, .status-em-analise, .status-confirmado,
+            td:not(:first-child):not(:last-child) {
                 flex-grow: 1;
                 text-align: right;
             }
@@ -321,7 +349,9 @@
 <body>
 
     <header>
+        <a href="../../index.html">
         <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
     </header>
 
     <div class="main-content">
@@ -367,6 +397,17 @@
         // 🚨 URL DO CSV DA PLANILHA GOOGLE
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQSl2JnuwCFfho7DTlBoeMwtIgLi7sJim55WnJcgTi0s28JC8lhZwkt69MdVlLEMcfkSQBKR1R2ziMR/pub?output=csv';
         
+        // ====================================================================
+        // 🚨 CONFIGURAÇÃO DE COLUNAS DA PLANILHA
+        // ====================================================================
+        const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO';
+        const NOME_COLUNA_PROFESSOR = 'PROFESSOR';
+        // ⚠️ ATENÇÃO: SUBSTITUA 'ORDEM NA PLANILHA' PELO NOME EXATO DA SUA COLUNA DE ORDEM
+        const NOME_COLUNA_ORDEM = 'ORD'; 
+        // Se sua coluna se chama 'Timestamp' ou 'ID', use esse nome aqui.
+        // Se ela se chama 'ORD', use 'ORD' aqui.
+        // ====================================================================
+
         const listaInscritosDiv = document.getElementById('listaInscritos');
         const loadingMessage = document.getElementById('loading-message');
         const filtroGenero = document.getElementById('filtroGenero');
@@ -375,9 +416,6 @@
         const filtroPeso = document.getElementById('filtroPeso');
         const filters = [filtroGenero, filtroCategoria, filtroFaixa, filtroPeso];
         
-        // Coluna de status para filtragem
-        const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO';
-        const NOME_COLUNA_PROFESSOR = 'PROFESSOR';
         
         let inscritosAgrupados = {};
 
@@ -387,7 +425,6 @@
         }
 
         function normalizeCategoria(text) {
-            // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
             return normalizeText(text.split(/\s+-\s*|\s+/)[0]);
         }
         
@@ -396,7 +433,6 @@
         }
 
         function normalizePeso(text) {
-            // Ex: 'Galo/Rooster até 57,5kg' -> 'galo'
             const parts = text.split('/')[0];
             return normalizeText(parts.split('até')[0]);
         }
@@ -424,11 +460,9 @@
                     return;
                 }
                 
-                // Mapeia os cabeçalhos para os índices (remove aspas e espaços)
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
                 
                 const data = lines.slice(1).map(line => {
-                    // Regex mais robusto para lidar com vírgulas dentro de aspas (se necessário)
                     const values = line.match(/(?:[^,"]+|"[^"]*")+/g) || []; 
                     
                     const atleta = {};
@@ -447,12 +481,10 @@
         }
         
         function groupAndRenderData(data) {
-            // Filtra os dados para manter SOMENTE os atletas com status 'Confirmado'
             const filteredData = data.filter(atleta => {
                 const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
-                return normalizeText(statusText) === 'confirmado'; 
+                return normalizeText(statusText) === 'confirmado' || normalizeText(statusText) === 'pago';
             });
-
 
             inscritosAgrupados = {};
             const availableFilters = {
@@ -468,7 +500,6 @@
                 const faixa = atleta['SUA FAIXA'];
                 const peso = atleta['SEU PESO'];
 
-                // Chave de agrupamento para o cabeçalho do acordeão
                 const key = `${categoria} - FAIXA ${faixa} - ${peso} - ${sexo}`;
                 
                 if (!inscritosAgrupados[key]) {
@@ -548,7 +579,7 @@
                 
                 const header = document.createElement('div');
                 header.className = 'accordion-header';
-                header.textContent = key; // Ex: ADULTO - FAIXA ROXA - PENA - MASCULINO
+                header.textContent = key; 
                 
                 const content = document.createElement('div');
                 content.className = 'accordion-content';
@@ -568,16 +599,19 @@
                 `;
                 const tbody = table.querySelector('tbody');
 
-                let order = 1;
+                // Removida a variável 'order' de incremento.
                 groupData.atletas.forEach(atleta => {
                     const statusClass = normalizeStatus(atleta[NOME_COLUNA_STATUS]);
                     const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente'; 
                     const professor = atleta[NOME_COLUNA_PROFESSOR] || 'N/A';
                     
+                    // 🚨 NOVO: Obtendo o número de ordem diretamente da coluna da planilha
+                    const ordemDaPlanilha = atleta[NOME_COLUNA_ORDEM] || 'N/A';
+                    
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td data-label="ORD">${order++}</td> 
+                        <td data-label="ORD">${ordemDaPlanilha}</td> 
                         <td data-label="Nome">${atleta['NOME COMPLETO']}</td>
                         <td data-label="Equipe">${atleta['SUA EQUIPE']}</td>
                         <td data-label="Professor">${professor}</td> 
@@ -623,13 +657,11 @@
                     foundVisible = true;
                 } else {
                     group.style.display = 'none';
-                    // Garante que o acordeão invisível esteja fechado
                     group.querySelector('.accordion-header')?.classList.remove('active');
                     group.querySelector('.accordion-content')?.classList.remove('open');
                 }
             });
             
-            // Adiciona mensagem se nenhum grupo for encontrado
             const notFoundMessage = listaInscritosDiv.querySelector('#not-found-message');
             if (!foundVisible && !notFoundMessage) {
                 const p = document.createElement('p');
