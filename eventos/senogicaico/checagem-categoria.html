@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checagem de Inscritos | Arena Competidor</title>
+    <title>Checagem de Inscritos (Somente Confirmados) | Arena Competidor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+        /* ====================================================================
+           1. VARIÁVEIS CSS (ROOT)
+           ==================================================================== */
         :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
+            --cor-primaria: #007bff; /* Azul */
+            --cor-secundaria: #343a40; /* Cinza Escuro */
             --cor-destaque: #28a745; /* Verde Pago/Confirmado */
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
-            --status-analise: #ffc107;
-            --status-confirmado: var(--cor-destaque); /* Novo status */
+            --cor-fundo: #f8f9fa; /* Cinza Claro Fundo */
+            --cor-texto: #495057; /* Cinza para Textos */
+            --cor-borda: #dee2e6; /* Cinza para Bordas */
+            --status-analise: #ffc107; /* Amarelo (Em Análise) */
+            --status-pendente: #dc3545; /* Vermelho (Pendente) */
+            --cor-header-fundo: #000; /* Preto para o Header */
+            --status-confirmado: var(--cor-destaque);
         }
 
+        /* ====================================================================
+           2. ESTILOS BASE
+           ==================================================================== */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--cor-fundo);
@@ -30,11 +38,52 @@
             min-height: 100vh;
         }
 
+        h1 {
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        #loading-message {
+            margin-top: 50px;
+            font-size: 1.5rem;
+            color: var(--cor-primaria);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Statuses */
+        .status-pago, .status-confirmado { 
+            color: var(--cor-destaque); 
+            font-weight: bold; 
+        }
+        .status-pendente { 
+            color: var(--status-pendente); 
+            font-weight: bold; 
+        }
+        .status-em-analise { 
+            color: var(--status-analise); 
+            font-weight: bold; 
+        }
+
+        /* ====================================================================
+           3. LAYOUT E COMPONENTES GERAIS
+           ==================================================================== */
+
+        /* HEADER */
         header {
             width: 100%;
             text-align: center;
             padding: 20px 0;
-            background-color: #000;
+            background-color: var(--cor-header-fundo);
             position: fixed;
             top: 0;
             left: 0;
@@ -46,6 +95,7 @@
             max-width: 200px;
         }
 
+        /* CONTEÚDO PRINCIPAL */
         .main-content {
             margin-top: 150px;
             width: 95%;
@@ -54,13 +104,7 @@
             flex-grow: 1;
         }
 
-        h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
+        /* FILTROS */
         .filtros {
             background-color: #fff;
             padding: 20px;
@@ -90,18 +134,21 @@
             border-radius: 4px;
             font-size: 1rem;
         }
+
+        /* ====================================================================
+           4. ACORDEÃO (GRUPOS DE INSCRIÇÃO)
+           ==================================================================== */
+        .accordion-item {
+            width: 100%;
+            margin-bottom: 20px;
+        }
         
+        /* Apenas grupos de categoria e subgrupos usam este estilo de box-shadow no original */
         .category-group, .sub-group {
             background-color: transparent;
             box-shadow: none;
             padding: 0;
             margin-bottom: 0;
-        }
-        
-        
-        .accordion-item {
-            width: 100%;
-            margin-bottom: 20px;
         }
         
         .accordion-header {
@@ -145,21 +192,24 @@
         }
 
         .accordion-content.open {
-            max-height: 20000px; /* Valor alto para garantir que todo o conteúdo caiba */
+            max-height: 2000px;
             padding: 20px;
         }
 
+        /* ====================================================================
+           5. TABELA DE ATLETAS (DESKTOP)
+           ==================================================================== */
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: #fff;
-            margin-bottom: 20px;
+            margin-bottom: 0; /* Removido margin-bottom de 20px */
         }
 
         th, td {
             padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--cor-borda);
         }
 
         thead {
@@ -171,39 +221,14 @@
             background-color: #f1f1f1;
         }
 
-        /* Status de Pagamento */
-        .status-pago, .status-confirmado { 
-            color: var(--cor-destaque); 
-            font-weight: bold; 
-        }
-        .status-pendente { 
-            color: #dc3545; 
-            font-weight: bold; 
-        }
-        .status-em-analise { 
-            color: var(--status-analise); 
-            font-weight: bold; 
-        }
-        
-        #loading-message {
-            margin-top: 50px;
-            font-size: 1.5rem;
-            color: var(--cor-primaria);
-        }
+        /* ====================================================================
+           6. MEDIA QUERY (MOBILE)
+           ==================================================================== */
 
-        .footer {
-            margin-top: auto;
-            padding: 20px 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        
         @media (max-width: 768px) {
+            /* Ajustes Gerais */
             .main-content {
-                margin-top: 100px;
+                margin-top: 30px; /* Alterado para se ajustar melhor ao header static */
                 width: 98%;
                 padding: 0 10px;
             }
@@ -237,14 +262,16 @@
                 font-size: 1.1rem;
             }
 
-            
+            .accordion-content.open {
+                padding: 15px; /* Ajuste o padding interno para mobile */
+            }
+
+            /* Reestruturação da Tabela para Mobile */
             table {
-                display: flex;
-                flex-direction: column;
+                display: block;
                 width: 100%;
-                border-spacing: 0;
-                background-color: transparent;
                 padding: 0;
+                box-shadow: none;
             }
             
             thead {
@@ -259,6 +286,7 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 padding: 15px;
                 margin-bottom: 10px;
+                border-bottom: none;
             }
             
             td {
@@ -274,22 +302,15 @@
                 border-bottom: none;
             }
 
+            /* Define o label principal (usa o data-label setado no HTML) */
             td::before {
                 content: attr(data-label);
                 font-weight: bold;
                 flex-shrink: 0;
                 text-align: left;
             }
-            
-            /* Define o label para ORD e Professor no mobile */
-            td[data-label="ORD"]::before {
-                content: "ORD";
-            }
-             td[data-label="Professor"]::before {
-                content: "Professor";
-            }
-            /* FIM CORREÇÃO CSS */
 
+            /* Classes de status (alinhamento à direita no mobile) */
             .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
                 flex-grow: 1;
                 text-align: right;
@@ -304,7 +325,7 @@
     </header>
 
     <div class="main-content">
-        <h1>Checagem de Inscritos</h1>
+        <h1>Checagem de Inscritos (Somente Confirmados)</h1>
 
         <div class="filtros">
             <div class="filtro-grupo">
@@ -335,7 +356,7 @@
 
         <div id="loading-message">Carregando dados da planilha...</div>
         <div id="listaInscritos">
-            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -353,7 +374,11 @@
         const filtroFaixa = document.getElementById('filtroFaixa');
         const filtroPeso = document.getElementById('filtroPeso');
         const filters = [filtroGenero, filtroCategoria, filtroFaixa, filtroPeso];
-
+        
+        // Coluna de status para filtragem
+        const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO';
+        const NOME_COLUNA_PROFESSOR = 'PROFESSOR';
+        
         let inscritosAgrupados = {};
 
         // Funções de Normalização
@@ -362,12 +387,11 @@
         }
 
         function normalizeCategoria(text) {
-             // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
+            // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
             return normalizeText(text.split(/\s+-\s*|\s+/)[0]);
         }
         
         function normalizeFaixa(text) {
-            // Ex: 'Roxa' -> 'roxa'
             return normalizeText(text);
         }
 
@@ -378,16 +402,11 @@
         }
         
         function normalizeStatus(text) {
-            // Normaliza o texto para remover espaços e acentos para comparação
             let status = normalizeText(text.replace(' ', '-'));
-            
-            // Verifica os status de pagamento e retorna a classe CSS correspondente
             if (status === 'pago') return 'status-pago';
-            if (status === 'confirmado') return 'status-confirmado'; // Status Confirmado
+            if (status === 'confirmado') return 'status-confirmado'; 
             if (status === 'pendente') return 'status-pendente';
-            if (status.includes('analise')) return 'status-em-analise'; // Captura 'Em Análise'
-            
-            // Padrão para qualquer outro caso
+            if (status.includes('analise')) return 'status-em-analise'; 
             return 'status-pendente'; 
         }
         
@@ -407,11 +426,10 @@
                 
                 // Mapeia os cabeçalhos para os índices (remove aspas e espaços)
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                const getIndex = (headerName) => headers.indexOf(headerName);
-
+                
                 const data = lines.slice(1).map(line => {
-                    // Simplesmente divide por vírgula. Isso pode falhar se houver vírgulas dentro dos dados.
-                    const values = line.split(','); 
+                    // Regex mais robusto para lidar com vírgulas dentro de aspas (se necessário)
+                    const values = line.match(/(?:[^,"]+|"[^"]*")+/g) || []; 
                     
                     const atleta = {};
                     headers.forEach((header, i) => {
@@ -429,6 +447,13 @@
         }
         
         function groupAndRenderData(data) {
+            // Filtra os dados para manter SOMENTE os atletas com status 'Confirmado'
+            const filteredData = data.filter(atleta => {
+                const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                return normalizeText(statusText) === 'confirmado'; 
+            });
+
+
             inscritosAgrupados = {};
             const availableFilters = {
                 'filtroGenero': new Set(),
@@ -437,7 +462,7 @@
                 'filtroPeso': new Set(),
             };
 
-            data.forEach(atleta => {
+            filteredData.forEach(atleta => { 
                 const sexo = atleta['SEXO'];
                 const categoria = atleta['SUA CATEGORIA'];
                 const faixa = atleta['SUA FAIXA'];
@@ -449,7 +474,6 @@
                 if (!inscritosAgrupados[key]) {
                     inscritosAgrupados[key] = {
                         atletas: [],
-                        // Dados normalizados para o data-* e filtro
                         normalized: {
                             sexo: normalizeText(sexo),
                             categoria: normalizeCategoria(categoria),
@@ -481,7 +505,7 @@
                 
                 options.forEach(optionText => {
                     const option = document.createElement('option');
-                    // Normaliza o valor para corresponder à lógica de filtragem
+                    
                     let optionValue;
                     if (filterId === 'filtroCategoria') {
                         optionValue = normalizeCategoria(optionText);
@@ -504,10 +528,14 @@
         function renderInscritos() {
             listaInscritosDiv.innerHTML = ''; 
             
-            // Agora sabemos o nome exato da coluna: "PROFESSOR"
-            const NOME_COLUNA_PROFESSOR = 'PROFESSOR'; 
-            
-            Object.keys(inscritosAgrupados).sort().forEach(key => {
+            const sortedKeys = Object.keys(inscritosAgrupados).sort();
+
+            if (sortedKeys.length === 0) {
+                 listaInscritosDiv.innerHTML = '<p style="font-size: 1.2rem; color: var(--cor-secundaria);">Nenhum atleta com status CONFIRMADO encontrado ou as colunas da planilha estão incorretas.</p>';
+                 return;
+            }
+
+            sortedKeys.forEach(key => {
                 const groupData = inscritosAgrupados[key];
                 const normalized = groupData.normalized;
                 
@@ -540,17 +568,16 @@
                 `;
                 const tbody = table.querySelector('tbody');
 
+                let order = 1;
                 groupData.atletas.forEach(atleta => {
-                    const statusClass = normalizeStatus(atleta['STATUS DO PAGAMENTO']);
-                    const statusText = atleta['STATUS DO PAGAMENTO'] || 'Pendente'; 
-                    
-                    // Puxando o nome do professor com o cabeçalho EXATO 'PROFESSOR'
+                    const statusClass = normalizeStatus(atleta[NOME_COLUNA_STATUS]);
+                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente'; 
                     const professor = atleta[NOME_COLUNA_PROFESSOR] || 'N/A';
                     
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td data-label="ORD">${atleta['ORD']}</td> 
+                        <td data-label="ORD">${order++}</td> 
                         <td data-label="Nome">${atleta['NOME COMPLETO']}</td>
                         <td data-label="Equipe">${atleta['SUA EQUIPE']}</td>
                         <td data-label="Professor">${professor}</td> 
@@ -569,7 +596,7 @@
             atualizarVisibilidade(); 
         }
         
-        // --- Lógica de Filtro e Acordeão (Inalterada) ---
+        // --- Lógica de Filtro e Acordeão ---
 
         function atualizarVisibilidade() {
             const generoSelecionado = filtroGenero.value;
@@ -577,8 +604,8 @@
             const faixaSelecionada = filtroFaixa.value;
             const pesoSelecionado = filtroPeso.value;
             
-            // Busca os grupos dinamicamente após a renderização
             const subGroups = listaInscritosDiv.querySelectorAll('.sub-group');
+            let foundVisible = false;
 
             subGroups.forEach(group => {
                 const grupoGenero = group.dataset.sexo;
@@ -593,14 +620,30 @@
 
                 if (showGenero && showCategoria && showFaixa && showPeso) {
                     group.style.display = 'block';
+                    foundVisible = true;
                 } else {
                     group.style.display = 'none';
+                    // Garante que o acordeão invisível esteja fechado
+                    group.querySelector('.accordion-header')?.classList.remove('active');
+                    group.querySelector('.accordion-content')?.classList.remove('open');
                 }
             });
+            
+            // Adiciona mensagem se nenhum grupo for encontrado
+            const notFoundMessage = listaInscritosDiv.querySelector('#not-found-message');
+            if (!foundVisible && !notFoundMessage) {
+                const p = document.createElement('p');
+                p.id = 'not-found-message';
+                p.style.fontSize = '1.2rem';
+                p.style.color = 'var(--status-pendente)';
+                p.textContent = 'Nenhum grupo encontrado com os filtros selecionados.';
+                listaInscritosDiv.appendChild(p);
+            } else if (foundVisible && notFoundMessage) {
+                notFoundMessage.remove();
+            }
         }
 
         function setupAccordion() {
-            // Busca os cabeçalhos dinamicamente após a renderização
             const accordionHeaders = listaInscritosDiv.querySelectorAll('.accordion-header');
             
             accordionHeaders.forEach(header => {
@@ -612,16 +655,16 @@
         function handleAccordionClick(event) {
              const header = event.currentTarget;
              const content = header.nextElementSibling;
-                        
-            listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.classList.remove('open');
-                }
-            });
+                      
+             listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
+                 if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                     otherHeader.classList.remove('active');
+                     otherHeader.nextElementSibling.classList.remove('open');
+                 }
+             });
 
-            header.classList.toggle('active');
-            content.classList.toggle('open');
+             header.classList.toggle('active');
+             content.classList.toggle('open');
         }
 
         // Adiciona listeners aos filtros
