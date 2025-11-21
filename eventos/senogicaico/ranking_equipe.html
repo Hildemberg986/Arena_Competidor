@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Ranking de Equipes</title>
+  <style>
+    body { 
+        font-family: 'Inter', sans-serif; 
+        padding: 20px; 
+        background-color: #f4f4f9; 
+        color: #333; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+    h1 { 
+        color: #1e40af; 
+        border-bottom: 2px solid #3b82f6; 
+        padding-bottom: 10px; 
+        margin-bottom: 20px; 
+        text-align: center;
+    }
+    p { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        color: #555; 
+    }
+    table { 
+        width: 100%; /* Ajuste para ser responsivo */
+        max-width: 800px;
+        margin: 0 auto; 
+        border-collapse: separate; 
+        border-spacing: 0; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        border-radius: 8px; 
+        overflow: hidden; 
+        background-color: white; 
+    }
+    th, td { 
+        border: 1px solid #e5e7eb; 
+        padding: 16px; 
+        text-align: left; 
+    }
+    th { 
+        background-color: #3b82f6; 
+        color: white; 
+        font-weight: 600; 
+        border-bottom: 3px solid #1e40af; 
+    }
+    tr:nth-child(even) { background-color: #f9fafb; }
+    .posicao { 
+        text-align: center; 
+        width: 10%; 
+        font-weight: bold; 
+        font-size: 1.2em; 
+        border-right: none;
+    }
+    .equipe { 
+        font-weight: 500; 
+        font-size: 1.1em; 
+        border-left: none;
+    }
+    .pontos { 
+        text-align: right; 
+        width: 15%; 
+        font-weight: bold; 
+        font-size: 1.2em; 
+        color: #1e40af; 
+    }
+    /* Estilos para o TOP 3 */
+    .medalha-ouro { background-color: #fcd34d; color: #333; }
+    .medalha-prata { background-color: #d1d5db; color: #333; }
+    .medalha-bronze { background-color: #f87171; color: white; }
+
+    /* Responsividade */
+    @media (max-width: 600px) {
+        table {
+            width: 95%;
+            font-size: 0.9em;
+        }
+        th, td {
+            padding: 10px;
+        }
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 Ranking de Pontuação das Equipes</h1>
+  <p>atualizados de 15 em 15 min (desde que seja editado).</p>
+  
+  <table id="tabela-ranking">
+    <thead>
+      <tr>
+        <th class="posicao">Posição</th>
+        <th>Equipe</th>
+        <th class="pontos">Total de Pontos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- O ranking será inserido aqui pelo JavaScript -->
+    </tbody>
+  </table>
+
+<script>
+    // ✅ URL para LEITURA (CSV Público fornecido)
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUK0yMyKjPNA9wANFN9hOYmzRwVroixKjGXbZO8GqfkJ3FR-1osTV4yKoQA-sjtGjaLnkV0VRc73Oz/pub?output=csv'; 
+
+    const tabelaCorpo = document.querySelector('#tabela-ranking tbody');
+    
+    // As colunas de pontuação são: D (Medalha 1 - 9pts), E (Medalha 2 - 3pts), F (Medalha 3 - 1pt)
+    // No índice da array de valores CSV: 3, 4, 5.
+    const COLUNA_EQUIPE_INDEX = 2; // Coluna C no CSV
+    const COLUNA_PONTOS_M1_INDEX = 3; // Coluna D no CSV
+    const COLUNA_PONTOS_M2_INDEX = 4; // Coluna E no CSV
+    const COLUNA_PONTOS_M3_INDEX = 5; // Coluna F no CSV
+
+    /**
+     * Analisa o CSV, calcula a pontuação total por equipe e ordena o ranking.
+     * @param {string} csvText - O conteúdo do arquivo CSV.
+     * @returns {Array<object>} - O ranking ordenado.
+     */
+    function parseCSVAndCalculateRanking(csvText) {
+        const lines = csvText.split('\n');
+        if (lines.length < 2) return [];
+
+        const rankingMap = {};
+
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            // Regex simples para dividir por vírgula, tratando strings entre aspas
+            const values = line.match(/(?:[^,"]+|"[^"]*")+/g); 
+            if (!values || values.length < COLUNA_PONTOS_M3_INDEX + 1) continue; 
+            
+            const teamName = values[COLUNA_EQUIPE_INDEX].trim().replace(/"/g, '');
+            
+            // Leitura e parse dos pontos (com fallback para 0)
+            const pointsM1 = parseInt(values[COLUNA_PONTOS_M1_INDEX].trim().replace(/"/g, '') || 0); 
+            const pointsM2 = parseInt(values[COLUNA_PONTOS_M2_INDEX].trim().replace(/"/g, '') || 0); 
+            const pointsM3 = parseInt(values[COLUNA_PONTOS_M3_INDEX].trim().replace(/"/g, '') || 0); 
+            
+            const totalAthletePoints = pointsM1 + pointsM2 + pointsM3;
+
+            // Acumula a pontuação total da equipe
+            rankingMap[teamName] = (rankingMap[teamName] || 0) + totalAthletePoints;
+        }
+
+        // Converte o mapa para um array de objetos para ordenação
+        let rankingArray = Object.keys(rankingMap).map(equipe => ({
+            equipe: equipe,
+            total: rankingMap[equipe]
+        }));
+
+        // Ordena por pontuação total (Decrescente)
+        rankingArray.sort((a, b) => b.total - a.total);
+
+        return rankingArray;
+    }
+
+    /**
+     * Cria e exibe a tabela de ranking no HTML.
+     * @param {Array<object>} ranking - O array de ranking ordenado.
+     */
+    function exibirRanking(ranking) {
+        tabelaCorpo.innerHTML = ''; 
+        if (!ranking || ranking.length === 0) {
+            tabelaCorpo.innerHTML = '<tr><td colspan="3" style="text-align:center;">Nenhuma equipe encontrada. Verifique o link CSV.</td></tr>';
+            return;
+        }
+        
+        ranking.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            const posicao = index + 1;
+            
+            let medalhaClass = '';
+            if (posicao === 1) medalhaClass = 'medalha-ouro';
+            else if (posicao === 2) medalhaClass = 'medalha-prata';
+            else if (posicao === 3) medalhaClass = 'medalha-bronze';
+
+            tr.innerHTML = `
+                <td class="posicao ${medalhaClass}">${posicao}º</td>
+                <td class="equipe">${item.equipe}</td>
+                <td class="pontos">${item.total}</td>
+            `;
+            tabelaCorpo.appendChild(tr);
+        });
+    }
+
+
+    /**
+     * Função principal para carregar dados do CSV.
+     */
+    async function carregarDados() {
+        tabelaCorpo.innerHTML = '<tr><td colspan="3" style="text-align:center;">Calculando ranking...</td></tr>';
+        
+        try {
+            const response = await fetch(CSV_URL);
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! Status: ${response.status}. Verifique se a planilha está publicada em formato CSV.`);
+            }
+            const csvText = await response.text();
+            
+            const rankingFinal = parseCSVAndCalculateRanking(csvText);
+            
+            exibirRanking(rankingFinal);
+            
+        } catch (error) {
+            tabelaCorpo.innerHTML = `<tr><td colspan="3" style="color:red; text-align:center;">Falha ao carregar dados: ${error.message}</td></tr>`;
+            console.error("Erro ao carregar CSV para ranking:", error);
+        }
+    }
+
+    window.onload = carregarDados;
+
+</script>
+</body>
+</html>
