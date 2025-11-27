@@ -1,663 +1,658 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checagem de Inscritos | Arena Competidor</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem de Inscritos | Arena Competidor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-        :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
-            --cor-destaque: #28a745; /* Verde Pago/Confirmado */
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
-            --status-analise: #ffc107;
-            --status-confirmado: var(--cor-destaque); /* Novo status */
-        }
+        :root {
+            --cor-primaria: #007bff;
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745; /* Verde Confirmado (mais claro) */
+            --cor-pago-alternativo: #1e8449; /* Novo verde para Pago (mais escuro) */
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+            --status-analise: #ffc107;
+            --status-confirmado: var(--cor-destaque); /* Novo status */
+        }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-        header {
-            width: 100%;
-            text-align: center;
-            padding: 20px 0;
-            background-color: #000;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-        header img {
-            max-width: 200px;
-        }
+        header img {
+            max-width: 200px;
+        }
 
-        .main-content {
-            margin-top: 150px;
-            width: 95%;
-            max-width: 1200px;
-            text-align: center;
-            flex-grow: 1;
-        }
+        .main-content {
+            margin-top: 150px;
+            width: 95%;
+            max-width: 1200px;
+            text-align: center;
+            flex-grow: 1;
+        }
 
-        h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
+        h1 {
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
 
-        .filtros {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .filtros {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-        .filtro-grupo {
-            display: flex;
-            flex-direction: column;
-            margin: 10px;
-        }
+        .filtro-grupo {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-        select {
-            padding: 8px;
-            border: 1px solid var(--cor-borda);
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        
-        .category-group, .sub-group {
-            background-color: transparent;
-            box-shadow: none;
-            padding: 0;
-            margin-bottom: 0;
-        }
-        
-        
-        .accordion-item {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .accordion-header {
-            background-color: var(--cor-secundaria);
-            color: #fff;
-            padding: 15px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-            text-align: left;
-            user-select: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
+        select {
+            padding: 8px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .category-group, .sub-group {
+            background-color: transparent;
+            box-shadow: none;
+            padding: 0;
+            margin-bottom: 0;
+        }
+        
+        
+        .accordion-item {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .accordion-header {
+            background-color: var(--cor-secundaria);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            text-align: left;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
 
-        .accordion-header:hover {
-            background-color: #212529;
-        }
-        
-        .accordion-header::after {
-            content: '+';
-            font-weight: bold;
-            font-size: 1.5em;
-            transition: transform 0.3s ease;
-        }
+        .accordion-header:hover {
+            background-color: #212529;
+        }
+        
+        .accordion-header::after {
+            content: '+';
+            font-weight: bold;
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
 
-        .accordion-header.active::after {
-            content: '-';
-        }
+        .accordion-header.active::after {
+            content: '-';
+        }
 
-        .accordion-content {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            max-height: 0;
-            padding: 0 20px;
-        }
+        .accordion-content {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            max-height: 0;
+            padding: 0 20px;
+        }
 
-        .accordion-content.open {
-            max-height: 20000px; /* Valor alto para garantir que todo o conteúdo caiba */
-            padding: 20px;
-        }
+        .accordion-content.open {
+            max-height: 2000px; /* Valor alto para garantir que todo o conteúdo caiba */
+            padding: 20px;
+        }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #fff;
-            margin-bottom: 20px;
-        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
 
-        thead {
-            background-color: #e9ecef;
-            color: var(--cor-secundaria);
-        }
+        thead {
+            background-color: #e9ecef;
+            color: var(--cor-secundaria);
+        }
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
 
-        /* Status de Pagamento */
-        .status-pago, .status-confirmado { 
-            color: var(--cor-destaque); 
-            font-weight: bold; 
-        }
-        .status-pendente { 
-            color: #dc3545; 
-            font-weight: bold; 
-        }
-        .status-em-analise { 
-            color: var(--status-analise); 
-            font-weight: bold; 
-        }
-        
-        #loading-message {
-            margin-top: 50px;
-            font-size: 1.5rem;
-            color: var(--cor-primaria);
-        }
+        /* Status de Pagamento - MODIFICADO */
+        .status-pago { 
+            color: var(--cor-pago-alternativo); /* Novo verde (mais escuro) */
+            font-weight: bold; 
+        }
+        .status-confirmado { 
+            color: var(--cor-destaque); /* Mantém o verde vibrante (mais claro) */ 
+            font-weight: bold; 
+        }
+        .status-pendente { 
+            color: #dc3545; 
+            font-weight: bold; 
+        }
+        .status-em-analise { 
+            color: var(--status-analise); 
+            font-weight: bold; 
+        }
+        
+        #loading-message {
+            margin-top: 50px;
+            font-size: 1.5rem;
+            color: var(--cor-primaria);
+        }
 
-        .footer {
-            margin-top: auto;
-            padding: 20px 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
 
-        
-        @media (max-width: 768px) {
-            .main-content {
-                margin-top: 100px;
-                width: 98%;
-                padding: 0 10px;
-            }
-            
-            header {
-                padding: 10px 0;
-                position: static;
-            }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                margin-top: 100px;
+                width: 98%;
+                padding: 0 10px;
+            }
+            
+            header {
+                padding: 10px 0;
+                position: static;
+            }
 
-            header img {
-                max-width: 150px;
-            }
+            header img {
+                max-width: 150px;
+            }
 
-            .filtros {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 15px;
-            }
+            .filtros {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+            }
 
-            .filtro-grupo {
-                margin: 8px 0;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
-            }
-            
-            .accordion-header {
-                padding: 10px 15px;
-                font-size: 1.1rem;
-            }
+            .filtro-grupo {
+                margin: 8px 0;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            
+            .accordion-header {
+                padding: 10px 15px;
+                font-size: 1.1rem;
+            }
 
-            
-            table {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                border-spacing: 0;
-                background-color: transparent;
-                padding: 0;
-            }
-            
-            thead {
-                display: none;
-            }
+            
+            table {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                border-spacing: 0;
+                background-color: transparent;
+                padding: 0;
+            }
+            
+            thead {
+                display: none;
+            }
 
-            tr {
-                display: flex;
-                flex-direction: column;
-                background-color: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                padding: 15px;
-                margin-bottom: 10px;
-            }
-            
-            td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid #eee;
-                padding: 10px 0;
-                width: 100%;
-            }
-            
-            td:last-child {
-                border-bottom: none;
-            }
+            tr {
+                display: flex;
+                flex-direction: column;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+            
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #eee;
+                padding: 10px 0;
+                width: 100%;
+            }
+            
+            td:last-child {
+                border-bottom: none;
+            }
 
-            td::before {
-                content: attr(data-label);
-                font-weight: bold;
-                flex-shrink: 0;
-                text-align: left;
-            }
-            
-            /* Define o label para ORD e Professor no mobile */
-            td[data-label="ORD"]::before {
-                content: "ORD";
-            }
-             td[data-label="Professor"]::before {
-                content: "Professor";
-            }
-            /* FIM CORREÇÃO CSS */
-
-            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
-                flex-grow: 1;
-                text-align: right;
-            }
-        }
-    </style>
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                flex-shrink: 0;
+                text-align: left;
+            }
+            
+            /* Define o label para as colunas no mobile */
+            td[data-label="ORD"]::before {
+                content: "ORD";
+            }
+            td[data-label="Nome"]::before {
+                content: "Nome";
+            }
+            td[data-label="Equipe"]::before {
+                content: "Equipe";
+            }
+            td[data-label="Professor"]::before {
+                content: "Professor";
+            }
+            td[data-label="Status"]::before { /* Adicionado para garantir o label Status */
+                content: "Status";
+            }
+            
+            /* Ajusta o alinhamento do valor do status no mobile */
+            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
+                flex-grow: 1;
+                text-align: right; 
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <header>
-        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
-    </header>
+    <header>
+        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+    </header>
 
-    <div class="main-content">
-        <h1>Checagem de Inscritos</h1>
+    <div class="main-content">
+        <h1>Checagem de Inscritos</h1>
 
-        <div class="filtros">
-            <div class="filtro-grupo">
-                <label for="filtroGenero">Gênero:</label>
-                <select id="filtroGenero">
-                    <option value="todos">Todos</option>
-                </select>
-            </div>
-            <div class="filtro-grupo">
-                <label for="filtroCategoria">Categoria de Idade:</label>
-                <select id="filtroCategoria">
-                    <option value="todos">Todos</option>
-                </select>
-            </div>
-            <div class="filtro-grupo">
-                <label for="filtroFaixa">Faixa:</label>
-                <select id="filtroFaixa">
-                    <option value="todos">Todos</option>
-                </select>
-            </div>
-            <div class="filtro-grupo">
-                <label for="filtroPeso">Peso:</label>
-                <select id="filtroPeso">
-                    <option value="todos">Todos</option>
-                </select>
-            </div>
-        </div>
+        <div class="filtros">
+            <div class="filtro-grupo">
+                <label for="filtroGenero">Gênero:</label>
+                <select id="filtroGenero">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroCategoria">Categoria de Idade:</label>
+                <select id="filtroCategoria">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroFaixa">Faixa:</label>
+                <select id="filtroFaixa">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroPeso">Peso:</label>
+                <select id="filtroPeso">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+        </div>
 
-        <div id="loading-message">Carregando dados da planilha...</div>
-        <div id="listaInscritos">
-            </div>
-    </div>
+        <div id="loading-message">Carregando dados da planilha...</div>
+        <div id="listaInscritos">
+            </div>
+    </div>
 
-    <div class="footer">
-        &copy; 2025 Arena Competidor. Todos os direitos reservados.
-    </div>
+    <div class="footer">
+        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+    </div>
 
-    <script>
-        // 🚨 URL DO CSV DA PLANILHA GOOGLE
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR89LS2vhUNiV3M0q22UiWKQ_a1KMpu5lJ99z3zxtrgpLMGOCRINly57RCivJwhpRmfn3lnNCttpJhb/pub?output=csv';
-        
-        const listaInscritosDiv = document.getElementById('listaInscritos');
-        const loadingMessage = document.getElementById('loading-message');
-        const filtroGenero = document.getElementById('filtroGenero');
-        const filtroCategoria = document.getElementById('filtroCategoria');
-        const filtroFaixa = document.getElementById('filtroFaixa');
-        const filtroPeso = document.getElementById('filtroPeso');
-        const filters = [filtroGenero, filtroCategoria, filtroFaixa, filtroPeso];
+    <script>
+        // 🚨 URL DO CSV DA PLANILHA GOOGLE
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR89LS2vhUNiV3M0q22UiWKQ_a1KMpu5lJ99z3zxtrgpLMGOCRINly57RCivJwhpRmfn3lnNCttpJhb/pub?output=csv';
+        
+        const listaInscritosDiv = document.getElementById('listaInscritos');
+        const loadingMessage = document.getElementById('loading-message');
+        const filtroGenero = document.getElementById('filtroGenero');
+        const filtroCategoria = document.getElementById('filtroCategoria');
+        const filtroFaixa = document.getElementById('filtroFaixa');
+        const filtroPeso = document.getElementById('filtroPeso');
+        const filters = [filtroGenero, filtroCategoria, filtroFaixa, filtroPeso];
 
-        let inscritosAgrupados = {};
+        let inscritosAgrupados = {};
 
-        // Funções de Normalização
-        function normalizeText(text) {
-            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
-        }
+        // Funções de Normalização
+        function normalizeText(text) {
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
+        }
 
-        function normalizeCategoria(text) {
-             // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
-            return normalizeText(text.split(/\s+-\s*|\s+/)[0]);
-        }
-        
-        function normalizeFaixa(text) {
-            // Ex: 'Roxa' -> 'roxa'
-            return normalizeText(text);
-        }
+        function normalizeCategoria(text) {
+             // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
+            return normalizeText(text.split(/\s+-\s*|\s+/)[0]);
+        }
+        
+        function normalizeFaixa(text) {
+            // Ex: 'Roxa' -> 'roxa'
+            return normalizeText(text);
+        }
 
-        function normalizePeso(text) {
-            // Ex: 'Galo/Rooster até 57,5kg' -> 'galo'
-            const parts = text.split('/')[0];
-            return normalizeText(parts.split('até')[0]);
-        }
-        
-        function normalizeStatus(text) {
-            // Normaliza o texto para remover espaços e acentos para comparação
-            let status = normalizeText(text.replace(' ', '-'));
-            
-            // Verifica os status de pagamento e retorna a classe CSS correspondente
-            if (status === 'pago') return 'status-pago';
-            if (status === 'confirmado') return 'status-confirmado'; // Status Confirmado
-            if (status === 'pendente') return 'status-pendente';
-            if (status.includes('analise')) return 'status-em-analise'; // Captura 'Em Análise'
-            
-            // Padrão para qualquer outro caso
-            return 'status-pendente'; 
-        }
-        
-        // Função Principal de Processamento do CSV
-        async function fetchAndProcessData() {
-            loadingMessage.textContent = 'Carregando dados da planilha...';
-            try {
-                const response = await fetch(CSV_URL);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
-                const csvText = await response.text();
-                const lines = csvText.split('\n').filter(line => line.trim() !== '');
-                if (lines.length < 2) {
-                    loadingMessage.textContent = 'Nenhum dado encontrado na planilha.';
-                    return;
-                }
-                
-                // Mapeia os cabeçalhos para os índices (remove aspas e espaços)
-                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                const getIndex = (headerName) => headers.indexOf(headerName);
+        function normalizePeso(text) {
+            // Ex: 'Galo/Rooster até 57,5kg' -> 'galo'
+            const parts = text.split('/')[0];
+            return normalizeText(parts.split('até')[0]);
+        }
+        
+        function normalizeStatus(text) {
+            // Normaliza o texto para remover espaços e acentos para comparação
+            let status = normalizeText(text.replace(' ', '-'));
+            
+            // Verifica os status de pagamento e retorna a classe CSS correspondente
+            if (status === 'pago') return 'status-pago';
+            if (status === 'confirmado') return 'status-confirmado'; // Status Confirmado
+            if (status === 'pendente') return 'status-pendente';
+            if (status.includes('analise')) return 'status-em-analise'; // Captura 'Em Análise'
+            
+            // Padrão para qualquer outro caso
+            return 'status-pendente'; 
+        }
+        
+        // Função Principal de Processamento do CSV
+        async function fetchAndProcessData() {
+            loadingMessage.textContent = 'Carregando dados da planilha...';
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                if (lines.length < 2) {
+                    loadingMessage.textContent = 'Nenhum dado encontrado na planilha.';
+                    return;
+                }
+                
+                // Mapeia os cabeçalhos para os índices (remove aspas e espaços)
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                const getIndex = (headerName) => headers.indexOf(headerName);
 
-                const data = lines.slice(1).map(line => {
-                    // Simplesmente divide por vírgula. Isso pode falhar se houver vírgulas dentro dos dados.
-                    const values = line.split(','); 
-                    
-                    const atleta = {};
-                    headers.forEach((header, i) => {
-                        atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
-                    });
-                    return atleta;
-                });
-                
-                groupAndRenderData(data);
+                const data = lines.slice(1).map(line => {
+                    // Simplesmente divide por vírgula. Isso pode falhar se houver vírgulas dentro dos dados.
+                    const values = line.split(','); 
+                    
+                    const atleta = {};
+                    headers.forEach((header, i) => {
+                        atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
+                    });
+                    return atleta;
+                });
+                
+                groupAndRenderData(data);
 
-            } catch (error) {
-                console.error('Erro ao buscar ou processar CSV:', error);
-                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o link ou a permissão da planilha.';
-            }
-        }
-        
-        function groupAndRenderData(data) {
-            inscritosAgrupados = {};
-            const availableFilters = {
-                'filtroGenero': new Set(),
-                'filtroCategoria': new Set(),
-                'filtroFaixa': new Set(),
-                'filtroPeso': new Set(),
-            };
+            } catch (error) {
+                console.error('Erro ao buscar ou processar CSV:', error);
+                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o link ou a permissão da planilha.';
+            }
+        }
+        
+        function groupAndRenderData(data) {
+            inscritosAgrupados = {};
+            const availableFilters = {
+                'filtroGenero': new Set(),
+                'filtroCategoria': new Set(),
+                'filtroFaixa': new Set(),
+                'filtroPeso': new Set(),
+            };
 
-            data.forEach(atleta => {
-                const sexo = atleta['SEXO'];
-                const categoria = atleta['SUA CATEGORIA'];
-                const faixa = atleta['SUA FAIXA'];
-                const peso = atleta['SEU PESO'];
-                
-                // 🚨 NOVA LÓGICA DE EXCLUSÃO (Azul e Roxa) 🚨
-                const faixaNormalizada = normalizeText(faixa);
-                
-                // Ignora qualquer atleta cuja faixa seja "azul-e-roxa"
-                if (faixaNormalizada === 'azul-e-roxa') {
-                    return; // Pula este atleta e vai para o próximo
-                }
-                // FIM DA LÓGICA DE EXCLUSÃO
+            data.forEach(atleta => {
+                const sexo = atleta['SEXO'];
+                const categoria = atleta['SUA CATEGORIA'];
+                const faixa = atleta['SUA FAIXA'];
+                const peso = atleta['SEU PESO'];
+                
+                // 🚨 NOVA LÓGICA DE EXCLUSÃO (Azul e Roxa) 🚨
+                const faixaNormalizada = normalizeText(faixa);
+                
+                // Ignora qualquer atleta cuja faixa seja "azul-e-roxa"
+                if (faixaNormalizada === 'azul-e-roxa') {
+                    return; // Pula este atleta e vai para o próximo
+                }
+                // FIM DA LÓGICA DE EXCLUSÃO
 
-                // Chave de agrupamento para o cabeçalho do acordeão
-                const key = `${categoria} - FAIXA ${faixa} - ${peso} - ${sexo}`;
-                
-                if (!inscritosAgrupados[key]) {
-                    inscritosAgrupados[key] = {
-                        atletas: [],
-                        // Dados normalizados para o data-* e filtro
-                        normalized: {
-                            sexo: normalizeText(sexo),
-                            categoria: normalizeCategoria(categoria),
-                            faixa: normalizeFaixa(faixa),
-                            peso: normalizePeso(peso)
-                        }
-                    };
-                }
-                inscritosAgrupados[key].atletas.push(atleta);
+                // Chave de agrupamento para o cabeçalho do acordeão
+                const key = `${categoria} - FAIXA ${faixa} - ${peso} - ${sexo}`;
+                
+                if (!inscritosAgrupados[key]) {
+                    inscritosAgrupados[key] = {
+                        atletas: [],
+                        // Dados normalizados para o data-* e filtro
+                        normalized: {
+                            sexo: normalizeText(sexo),
+                            categoria: normalizeCategoria(categoria),
+                            faixa: normalizeFaixa(faixa),
+                            peso: normalizePeso(peso)
+                        }
+                    };
+                }
+                inscritosAgrupados[key].atletas.push(atleta);
 
-                // Popular opções de filtro
-                availableFilters['filtroGenero'].add(sexo);
-                availableFilters['filtroCategoria'].add(categoria);
-                // Adiciona a faixa somente se ela NÃO for "Azul e Roxa" (já filtrado acima, mas mantido para clareza)
-                availableFilters['filtroFaixa'].add(faixa); 
-                availableFilters['filtroPeso'].add(peso);
-            });
-            
-            loadingMessage.style.display = 'none';
-            renderInscritos();
-            populateFilters(availableFilters);
-        }
+                // Popular opções de filtro
+                availableFilters['filtroGenero'].add(sexo);
+                availableFilters['filtroCategoria'].add(categoria);
+                // Adiciona a faixa somente se ela NÃO for "Azul e Roxa" (já filtrado acima, mas mantido para clareza)
+                availableFilters['filtroFaixa'].add(faixa); 
+                availableFilters['filtroPeso'].add(peso);
+            });
+            
+            loadingMessage.style.display = 'none';
+            renderInscritos();
+            populateFilters(availableFilters);
+        }
 
-        function populateFilters(availableFilters) {
-            Object.keys(availableFilters).forEach(filterId => {
-                const selectElement = document.getElementById(filterId);
-                const options = Array.from(availableFilters[filterId]).sort();
-                
-                selectElement.innerHTML = '<option value="todos">Todos</option>';
-                
-                options.forEach(optionText => {
-                    const option = document.createElement('option');
-                    // Normaliza o valor para corresponder à lógica de filtragem
-                    let optionValue;
-                    if (filterId === 'filtroCategoria') {
-                        optionValue = normalizeCategoria(optionText);
-                    } else if (filterId === 'filtroFaixa') {
-                        optionValue = normalizeFaixa(optionText);
-                    } else if (filterId === 'filtroPeso') {
-                        optionValue = normalizePeso(optionText);
-                    } else { // Genero
-                        optionValue = normalizeText(optionText);
-                    }
-                    
-                    option.value = optionValue;
-                    option.textContent = optionText;
-                    selectElement.appendChild(option);
-                });
-            });
-        }
-
-
-        function renderInscritos() {
-            listaInscritosDiv.innerHTML = ''; 
-            
-            // Agora sabemos o nome exato da coluna: "PROFESSOR"
-            const NOME_COLUNA_PROFESSOR = 'PROFESSOR'; 
-            
-            Object.keys(inscritosAgrupados).sort().forEach(key => {
-                const groupData = inscritosAgrupados[key];
-                const normalized = groupData.normalized;
-                
-                const accordionItem = document.createElement('div');
-                accordionItem.className = 'accordion-item sub-group';
-                accordionItem.dataset.sexo = normalized.sexo;
-                accordionItem.dataset.categoria = normalized.categoria;
-                accordionItem.dataset.faixa = normalized.faixa;
-                accordionItem.dataset.peso = normalized.peso;
-                
-                const header = document.createElement('div');
-                header.className = 'accordion-header';
-                header.textContent = key; // Ex: ADULTO - FAIXA ROXA - PENA - MASCULINO
-                
-                const content = document.createElement('div');
-                content.className = 'accordion-content';
-                
-                const table = document.createElement('table');
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>ORD</th> 
-                            <th>Nome</th>
-                            <th>Equipe</th>
-                            <th>Professor</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                `;
-                const tbody = table.querySelector('tbody');
-
-                groupData.atletas.forEach(atleta => {
-                    const statusClass = normalizeStatus(atleta['STATUS DO PAGAMENTO']);
-                    const statusText = atleta['STATUS DO PAGAMENTO'] || 'Pendente'; 
-                    
-                    // Puxando o nome do professor com o cabeçalho EXATO 'PROFESSOR'
-                    const professor = atleta[NOME_COLUNA_PROFESSOR] || 'N/A';
-                    
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td data-label="ORD">${atleta['ORD']}</td> 
-                        <td data-label="Nome">${atleta['NOME COMPLETO']}</td>
-                        <td data-label="Equipe">${atleta['SUA EQUIPE']}</td>
-                        <td data-label="Professor">${professor}</td> 
-                        <td data-label="Status" class="${statusClass}">${statusText}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-                
-                content.appendChild(table);
-                accordionItem.appendChild(header);
-                accordionItem.appendChild(content);
-                listaInscritosDiv.appendChild(accordionItem);
-            });
-            
-            setupAccordion(); 
-            atualizarVisibilidade(); 
-        }
-        
-        // 🚨 NOVA FUNÇÃO: Verifica se o grupo tem pelo menos um status 'Confirmado'
-        function hasConfirmedStatus(groupElement) {
-            // Obtém a chave do grupo (texto do cabeçalho)
-            const headerText = groupElement.querySelector('.accordion-header').textContent;
-            const groupData = inscritosAgrupados[headerText];
-
-            if (!groupData) return false;
-
-            // Verifica se algum atleta neste grupo tem o status 'Confirmado'
-            return groupData.atletas.some(atleta => {
-                const statusNormalizado = normalizeText(atleta['STATUS DO PAGAMENTO'] || '');
-                return statusNormalizado === 'confirmado';
-            });
-        }
-
-        // 🚨 FUNÇÃO MODIFICADA: Inclui a visibilidade para status Confirmado
-        function atualizarVisibilidade() {
-            const generoSelecionado = filtroGenero.value;
-            const categoriaSelecionada = filtroCategoria.value;
-            const faixaSelecionada = filtroFaixa.value;
-            const pesoSelecionado = filtroPeso.value;
-            
-            // Busca os grupos dinamicamente após a renderização
-            const subGroups = listaInscritosDiv.querySelectorAll('.sub-group');
-
-            subGroups.forEach(group => {
-                const grupoGenero = group.dataset.sexo;
-                const grupoCategoria = group.dataset.categoria;
-                const grupoFaixa = group.dataset.faixa;
-                const grupoPeso = group.dataset.peso;
-
-                const showGenero = generoSelecionado === 'todos' || grupoGenero === generoSelecionado;
-                const showCategoria = categoriaSelecionada === 'todos' || grupoCategoria === categoriaSelecionada;
-                const showFaixa = faixaSelecionada === 'todos' || grupoFaixa === faixaSelecionada;
-                const showPeso = pesoSelecionado === 'todos' || grupoPeso === pesoSelecionado;
-                
-                // Verifica se o grupo contém algum atleta com o status "Confirmado"
-                const isConfirmedGroup = hasConfirmedStatus(group);
+        function populateFilters(availableFilters) {
+            Object.keys(availableFilters).forEach(filterId => {
+                const selectElement = document.getElementById(filterId);
+                const options = Array.from(availableFilters[filterId]).sort();
+                
+                selectElement.innerHTML = '<option value="todos">Todos</option>';
+                
+                options.forEach(optionText => {
+                    const option = document.createElement('option');
+                    // Normaliza o valor para corresponder à lógica de filtragem
+                    let optionValue;
+                    if (filterId === 'filtroCategoria') {
+                        optionValue = normalizeCategoria(optionText);
+                    } else if (filterId === 'filtroFaixa') {
+                        optionValue = normalizeFaixa(optionText);
+                    } else if (filterId === 'filtroPeso') {
+                        optionValue = normalizePeso(optionText);
+                    } else { // Genero
+                        optionValue = normalizeText(optionText);
+                    }
+                    
+                    option.value = optionValue;
+                    option.textContent = optionText;
+                    selectElement.appendChild(option);
+                });
+            });
+        }
 
 
-                // Se atender aos filtros OU se for um grupo com status Confirmado, ele é mostrado.
-                if ((showGenero && showCategoria && showFaixa && showPeso) || isConfirmedGroup) {
-                    group.style.display = 'block';
-                } else {
-                    group.style.display = 'none';
-                }
-            });
-        }
+        function renderInscritos() {
+            listaInscritosDiv.innerHTML = ''; 
+            
+            // Agora sabemos o nome exato da coluna: "PROFESSOR"
+            const NOME_COLUNA_PROFESSOR = 'PROFESSOR'; 
+            
+            Object.keys(inscritosAgrupados).sort().forEach(key => {
+                const groupData = inscritosAgrupados[key];
+                const normalized = groupData.normalized;
+                
+                const accordionItem = document.createElement('div');
+                accordionItem.className = 'accordion-item sub-group';
+                accordionItem.dataset.sexo = normalized.sexo;
+                accordionItem.dataset.categoria = normalized.categoria;
+                accordionItem.dataset.faixa = normalized.faixa;
+                accordionItem.dataset.peso = normalized.peso;
+                
+                const header = document.createElement('div');
+                header.className = 'accordion-header';
+                header.textContent = key; // Ex: ADULTO - FAIXA ROXA - PENA - MASCULINO
+                
+                const content = document.createElement('div');
+                content.className = 'accordion-content';
+                
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>ORD</th> 
+                            <th>Nome</th>
+                            <th>Equipe</th>
+                            <th>Professor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
 
-        function setupAccordion() {
-            // Busca os cabeçalhos dinamicamente após a renderização
-            const accordionHeaders = listaInscritosDiv.querySelectorAll('.accordion-header');
-            
-            accordionHeaders.forEach(header => {
-                header.removeEventListener('click', handleAccordionClick); 
-                header.addEventListener('click', handleAccordionClick);
-            });
-        }
-        
-        function handleAccordionClick(event) {
-             const header = event.currentTarget;
-             const content = header.nextElementSibling;
-                        
-            listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.classList.remove('open');
-                }
-            });
+                groupData.atletas.forEach(atleta => {
+                    const statusClass = normalizeStatus(atleta['STATUS DO PAGAMENTO']);
+                    const statusText = atleta['STATUS DO PAGAMENTO'] || 'Pendente'; 
+                    
+                    // Puxando o nome do professor com o cabeçalho EXATO 'PROFESSOR'
+                    const professor = atleta[NOME_COLUNA_PROFESSOR] || 'N/A';
+                    
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td data-label="ORD">${atleta['ORD']}</td> 
+                        <td data-label="Nome">${atleta['NOME COMPLETO']}</td>
+                        <td data-label="Equipe">${atleta['SUA EQUIPE']}</td>
+                        <td data-label="Professor">${professor}</td> 
+                        <td data-label="Status" class="${statusClass}">${statusText}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                content.appendChild(table);
+                accordionItem.appendChild(header);
+                accordionItem.appendChild(content);
+                listaInscritosDiv.appendChild(accordionItem);
+            });
+            
+            setupAccordion(); 
+            atualizarVisibilidade(); 
+        }
+        
+        // --- Lógica de Filtro e Acordeão (Inalterada) ---
 
-            header.classList.toggle('active');
-            content.classList.toggle('open');
-        }
+        function atualizarVisibilidade() {
+            const generoSelecionado = filtroGenero.value;
+            const categoriaSelecionada = filtroCategoria.value;
+            const faixaSelecionada = filtroFaixa.value;
+            const pesoSelecionado = filtroPeso.value;
+            
+            // Busca os grupos dinamicamente após a renderização
+            const subGroups = listaInscritosDiv.querySelectorAll('.sub-group');
 
-        // Adiciona listeners aos filtros
-        filters.forEach(filter => filter.addEventListener('change', atualizarVisibilidade));
+            subGroups.forEach(group => {
+                const grupoGenero = group.dataset.sexo;
+                const grupoCategoria = group.dataset.categoria;
+                const grupoFaixa = group.dataset.faixa;
+                const grupoPeso = group.dataset.peso;
 
-        // Inicializa o carregamento dos dados
-        document.addEventListener('DOMContentLoaded', fetchAndProcessData);
-    </script>
+                const showGenero = generoSelecionado === 'todos' || grupoGenero === generoSelecionado;
+                const showCategoria = categoriaSelecionada === 'todos' || grupoCategoria === categoriaSelecionada;
+                const showFaixa = faixaSelecionada === 'todos' || grupoFaixa === faixaSelecionada;
+                const showPeso = pesoSelecionado === 'todos' || grupoPeso === pesoSelecionado;
+
+                if (showGenero && showCategoria && showFaixa && showPeso) {
+                    group.style.display = 'block';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+        }
+
+        function setupAccordion() {
+            // Busca os cabeçalhos dinamicamente após a renderização
+            const accordionHeaders = listaInscritosDiv.querySelectorAll('.accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                header.removeEventListener('click', handleAccordionClick); 
+                header.addEventListener('click', handleAccordionClick);
+            });
+        }
+        
+        function handleAccordionClick(event) {
+             const header = event.currentTarget;
+             const content = header.nextElementSibling;
+                      
+            listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
+                if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                    otherHeader.classList.remove('active');
+                    otherHeader.nextElementSibling.classList.remove('open');
+                }
+            });
+
+            header.classList.toggle('active');
+            content.classList.toggle('open');
+        }
+
+        // Adiciona listeners aos filtros
+        filters.forEach(filter => filter.addEventListener('change', atualizarVisibilidade));
+
+        // Inicializa o carregamento dos dados
+        document.addEventListener('DOMContentLoaded', fetchAndProcessData);
+    </script>
 </body>
 </html>
