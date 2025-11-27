@@ -301,7 +301,7 @@
 
         <div id="loading-message">Carregando dados...</div>
         <div id="listaEquipes">
-            </div>
+        </div>
         
         <a href="checagem.html" class="link-voltar">Voltar para Opções de Checagem</a>
     </div>
@@ -351,13 +351,14 @@
                 // Mapeia os cabeçalhos
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
                 
-                // Converte CSV para JSON
+                // Converte CSV para JSON (usando regex para melhor tratamento de vírgulas)
                 const todosInscritos = lines.slice(1)
                     .map(line => {
-                        const values = line.split(','); 
+                        const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
                         const atleta = {};
                         headers.forEach((header, i) => {
-                            atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
+                            // Limpa as aspas e o trim
+                            atleta[header] = values[i] ? values[i].replace(/^"|"$/g, '').trim() : '';
                         });
                         return atleta;
                     });
@@ -372,18 +373,28 @@
         
         function groupAndRenderEquipes(data) {
             inscritosPorEquipe = {};
+            
+            // Define o status desejado
+            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO';
+            // Inclui "status-pago" e "status-confirmado" no filtro
+            const STATUSES_CONFIRMADOS = ['status-confirmado', 'status-pago']; 
 
             data.forEach(atleta => {
-                const nomeEquipe = atleta['SUA EQUIPE'] || 'SEM EQUIPE';
+                // Verifica se o status do atleta é o desejado (Confirmado/Pago)
+                const statusAtual = normalizeStatus(atleta[NOME_COLUNA_STATUS] || 'Pendente');
                 
-                if (!inscritosPorEquipe[nomeEquipe]) {
-                    inscritosPorEquipe[nomeEquipe] = {
-                        atletas: [],
-                        total: 0
-                    };
+                if (STATUSES_CONFIRMADOS.includes(statusAtual)) {
+                    const nomeEquipe = atleta['SUA EQUIPE'] || 'SEM EQUIPE';
+                    
+                    if (!inscritosPorEquipe[nomeEquipe]) {
+                        inscritosPorEquipe[nomeEquipe] = {
+                            atletas: [],
+                            total: 0
+                        };
+                    }
+                    inscritosPorEquipe[nomeEquipe].atletas.push(atleta);
+                    inscritosPorEquipe[nomeEquipe].total++;
                 }
-                inscritosPorEquipe[nomeEquipe].atletas.push(atleta);
-                inscritosPorEquipe[nomeEquipe].total++;
             });
             
             loadingMessage.style.display = 'none';
@@ -401,7 +412,15 @@
             const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
             // Ordem: Alfabética por nome da equipe
-            Object.keys(inscritosPorEquipe).sort().forEach(key => {
+            const sortedKeys = Object.keys(inscritosPorEquipe).sort();
+
+            if (sortedKeys.length === 0) {
+                loadingMessage.textContent = 'Nenhuma equipe com atletas confirmados encontrada.';
+                loadingMessage.style.display = 'block';
+                return;
+            }
+
+            sortedKeys.forEach(key => {
                 const groupData = inscritosPorEquipe[key];
                 
                 const accordionItem = document.createElement('div');
@@ -411,7 +430,7 @@
                 header.className = 'accordion-header';
                 header.innerHTML = `
                     <h2>${key}</h2>
-                    <p>Total de Inscritos: ${groupData.total}</p>
+                    <p>Total de Atletas Confirmados: ${groupData.total}</p>
                 `; 
                 
                 const content = document.createElement('div');
@@ -443,7 +462,7 @@
                     
                     const row = document.createElement('tr');
                     
-                    // 🚨 RE-ADICIONADO OS data-label NECESSÁRIOS PARA O LAYOUT DE LISTA MOBILE
+                    // Re-adiciona os data-label necessários para o layout de lista mobile
                     row.innerHTML = `
                         <td data-label="Nome do Atleta">${atleta[NOME_COLUNA_NOME]}</td>
                         <td data-label="Faixa">${atleta[NOME_COLUNA_FAIXA]}</td>
@@ -477,9 +496,9 @@
         }
         
         function handleAccordionClick(event) {
-             const header = event.currentTarget;
-             const content = header.nextElementSibling;
-                             
+            const header = event.currentTarget;
+            const content = header.nextElementSibling;
+                                
             // Fecha outros acordeões abertos
             listaEquipesDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
                 if (otherHeader !== header && otherHeader.classList.contains('active')) {
