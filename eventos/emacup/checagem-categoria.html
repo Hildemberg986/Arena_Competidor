@@ -172,13 +172,13 @@
             background-color: #f1f1f1;
         }
 
-        /* Status de Pagamento - MODIFICADO */
+        /* Status de Pagamento */
         .status-pago { 
-            color: var(--cor-pago-alternativo); /* Novo verde (mais escuro) */
+            color: var(--cor-pago-alternativo);
             font-weight: bold; 
         }
         .status-confirmado { 
-            color: var(--cor-destaque); /* Mantém o verde vibrante (mais claro) */ 
+            color: var(--cor-destaque);
             font-weight: bold; 
         }
         .status-pendente { 
@@ -318,8 +318,7 @@
     </header>
 
     <div class="main-content">
-        <h1>Checagem de Inscritos</h1>
-
+        <h1>Checagem de Inscritos (Somente Confirmados)</h1> 
         <div class="filtros">
             <div class="filtro-grupo">
                 <label for="filtroGenero">Gênero:</label>
@@ -366,7 +365,9 @@
         const filtroCategoria = document.getElementById('filtroCategoria');
         const filtroFaixa = document.getElementById('filtroFaixa');
         const filtroPeso = document.getElementById('filtroPeso');
-        const filters = [filtroGenero, filtroCategoria, filtroFaixa, filtroPeso];
+        // Filtro de status foi removido daqui e do array 'filters'
+
+        const filters = [filtroGenero, filtroCategoria, filtroFaixa, filtroPeso]; // Revertido para os 4 filtros
 
         let inscritosAgrupados = {};
 
@@ -376,17 +377,14 @@
         }
 
         function normalizeCategoria(text) {
-             // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
             return normalizeText(text.split(/\s+-\s*|\s+/)[0]);
         }
         
         function normalizeFaixa(text) {
-            // Ex: 'Roxa' -> 'roxa'
             return normalizeText(text);
         }
 
         function normalizePeso(text) {
-            // Ex: 'Galo/Rooster até 57,5kg' -> 'galo'
             const parts = text.split('/')[0];
             return normalizeText(parts.split('até')[0]);
         }
@@ -395,17 +393,22 @@
             // Normaliza o texto para remover espaços e acentos para comparação
             let status = normalizeText(text.replace(' ', '-'));
             
-            // Verifica os status de pagamento e retorna a classe CSS correspondente
+            // Retorna a classe CSS correspondente
             if (status === 'pago') return 'status-pago';
-            if (status === 'confirmado') return 'status-confirmado'; // Status Confirmado
+            if (status === 'confirmado') return 'status-confirmado'; 
             if (status === 'pendente') return 'status-pendente';
-            if (status.includes('analise')) return 'status-em-analise'; // Captura 'Em Análise'
+            if (status.includes('analise')) return 'status-em-analise'; 
             
-            // Padrão para qualquer outro caso
             return 'status-pendente'; 
         }
+
+        function isStatusConfirmed(statusText) {
+             const status = normalizeText(statusText);
+             // Considera 'pago' e 'confirmado' como status que devem ser visíveis
+             return status === 'pago' || status === 'confirmado';
+        }
         
-        // Função Principal de Processamento do CSV
+        // Função Principal de Processamento do CSV (Inalterada)
         async function fetchAndProcessData() {
             loadingMessage.textContent = 'Carregando dados da planilha...';
             try {
@@ -419,12 +422,9 @@
                     return;
                 }
                 
-                // Mapeia os cabeçalhos para os índices (remove aspas e espaços)
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                const getIndex = (headerName) => headers.indexOf(headerName);
 
                 const data = lines.slice(1).map(line => {
-                    // Simplesmente divide por vírgula. Isso pode falhar se houver vírgulas dentro dos dados.
                     const values = line.split(','); 
                     
                     const atleta = {};
@@ -452,19 +452,23 @@
             };
 
             data.forEach(atleta => {
+                const faixaNormalizada = normalizeText(atleta['SUA FAIXA']);
+                
+                // 1. Lógica de Exclusão "Azul e Roxa" (MANTIDA)
+                if (faixaNormalizada === 'azul-e-roxa') {
+                    return; 
+                }
+
+                // 2. Lógica de Exclusão "Status Confirmado" (NOVO)
+                if (!isStatusConfirmed(atleta['STATUS DO PAGAMENTO'])) {
+                    return; // Pula este atleta, pois não está 'Confirmado' ou 'Pago'.
+                }
+                
+                // Se chegou aqui, o atleta está CONFIRMADO e não é 'Azul e Roxa'
                 const sexo = atleta['SEXO'];
                 const categoria = atleta['SUA CATEGORIA'];
                 const faixa = atleta['SUA FAIXA'];
                 const peso = atleta['SEU PESO'];
-                
-                // 🚨 NOVA LÓGICA DE EXCLUSÃO (Azul e Roxa) 🚨
-                const faixaNormalizada = normalizeText(faixa);
-                
-                // Ignora qualquer atleta cuja faixa seja "azul-e-roxa"
-                if (faixaNormalizada === 'azul-e-roxa') {
-                    return; // Pula este atleta e vai para o próximo
-                }
-                // FIM DA LÓGICA DE EXCLUSÃO
 
                 // Chave de agrupamento para o cabeçalho do acordeão
                 const key = `${categoria} - FAIXA ${faixa} - ${peso} - ${sexo}`;
@@ -483,10 +487,9 @@
                 }
                 inscritosAgrupados[key].atletas.push(atleta);
 
-                // Popular opções de filtro
+                // Popular opções de filtro (só com os atletas confirmados)
                 availableFilters['filtroGenero'].add(sexo);
                 availableFilters['filtroCategoria'].add(categoria);
-                // Adiciona a faixa somente se ela NÃO for "Azul e Roxa" (já filtrado acima, mas mantido para clareza)
                 availableFilters['filtroFaixa'].add(faixa); 
                 availableFilters['filtroPeso'].add(peso);
             });
@@ -496,6 +499,7 @@
             populateFilters(availableFilters);
         }
 
+        // Função de população de filtros (MANTIDA)
         function populateFilters(availableFilters) {
             Object.keys(availableFilters).forEach(filterId => {
                 const selectElement = document.getElementById(filterId);
@@ -505,7 +509,6 @@
                 
                 options.forEach(optionText => {
                     const option = document.createElement('option');
-                    // Normaliza o valor para corresponder à lógica de filtragem
                     let optionValue;
                     if (filterId === 'filtroCategoria') {
                         optionValue = normalizeCategoria(optionText);
@@ -525,10 +528,10 @@
         }
 
 
+        // Função de Renderização (MANTIDA, mas agora só processa confirmados)
         function renderInscritos() {
             listaInscritosDiv.innerHTML = ''; 
             
-            // Agora sabemos o nome exato da coluna: "PROFESSOR"
             const NOME_COLUNA_PROFESSOR = 'PROFESSOR'; 
             
             Object.keys(inscritosAgrupados).sort().forEach(key => {
@@ -544,7 +547,7 @@
                 
                 const header = document.createElement('div');
                 header.className = 'accordion-header';
-                header.textContent = key; // Ex: ADULTO - FAIXA ROXA - PENA - MASCULINO
+                header.textContent = key; 
                 
                 const content = document.createElement('div');
                 content.className = 'accordion-content';
@@ -565,10 +568,10 @@
                 const tbody = table.querySelector('tbody');
 
                 groupData.atletas.forEach(atleta => {
-                    const statusClass = normalizeStatus(atleta['STATUS DO PAGAMENTO']);
-                    const statusText = atleta['STATUS DO PAGAMENTO'] || 'Pendente'; 
+                    // O Status SEMPRE será Pago/Confirmado aqui, mas mantemos o código
+                    const statusText = atleta['STATUS DO PAGAMENTO'] || 'Confirmado';
+                    const statusClass = normalizeStatus(statusText); 
                     
-                    // Puxando o nome do professor com o cabeçalho EXATO 'PROFESSOR'
                     const professor = atleta[NOME_COLUNA_PROFESSOR] || 'N/A';
                     
                     const row = document.createElement('tr');
@@ -590,18 +593,17 @@
             });
             
             setupAccordion(); 
-            atualizarVisibilidade(); 
+            atualizarVisibilidade(); // Chama para aplicar os filtros de Categoria, Faixa, etc.
         }
         
-        // --- Lógica de Filtro e Acordeão (Inalterada) ---
+        // --- Lógica de Filtro (Revertida para filtrar apenas por Categoria, Gênero, Faixa e Peso) ---
 
         function atualizarVisibilidade() {
             const generoSelecionado = filtroGenero.value;
             const categoriaSelecionada = filtroCategoria.value;
             const faixaSelecionada = filtroFaixa.value;
             const pesoSelecionado = filtroPeso.value;
-            
-            // Busca os grupos dinamicamente após a renderização
+
             const subGroups = listaInscritosDiv.querySelectorAll('.sub-group');
 
             subGroups.forEach(group => {
@@ -623,8 +625,9 @@
             });
         }
 
+        // --- Lógica do Acordeão (Inalterada) ---
+
         function setupAccordion() {
-            // Busca os cabeçalhos dinamicamente após a renderização
             const accordionHeaders = listaInscritosDiv.querySelectorAll('.accordion-header');
             
             accordionHeaders.forEach(header => {
