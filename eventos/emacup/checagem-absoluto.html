@@ -16,6 +16,7 @@
             --cor-borda: #dee2e6;
             --status-analise: #ffc107;
             --status-confirmado: var(--cor-destaque);
+            --cor-pago-alternativo: #1e8449; /* Novo verde para Pago (mais escuro) */
         }
 
         body {
@@ -135,7 +136,11 @@
         }
 
         /* Statuses */
-        .status-pago, .status-confirmado { 
+        .status-pago { 
+            color: var(--cor-pago-alternativo); /* Usando o alternativo para Pago */
+            font-weight: bold; 
+        }
+        .status-confirmado { 
             color: var(--cor-destaque); 
             font-weight: bold; 
         }
@@ -264,7 +269,7 @@
     </header>
 
     <div class="main-content">
-        <h1>Checagem de Absoluto</h1>
+        <h1>Checagem de Absoluto (Somente Confirmados)</h1>
 
         <div id="loading-message">Carregando dados...</div>
         <div id="listaInscritosAbsoluto">
@@ -286,6 +291,9 @@
         const loadingMessage = document.getElementById('loading-message');
         
         let inscritosAbsolutoAgrupados = {};
+        
+        // Define o nome da coluna de status
+        const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
 
         // Funções de Normalização
         function normalizeText(text) {
@@ -300,6 +308,12 @@
             if (status === 'pendente') return 'status-pendente';
             if (status.includes('analise')) return 'status-em-analise'; 
             return 'status-pendente'; 
+        }
+
+        function isStatusConfirmed(statusText) {
+             const status = normalizeText(statusText);
+             // Considera 'pago' e 'confirmado' como status que devem ser visíveis
+             return status === 'pago' || status === 'confirmado';
         }
         
         // Função Principal de Processamento do CSV
@@ -331,7 +345,9 @@
                         return atleta;
                     })
                     // 2. FILTRO CHAVE: Apenas atletas onde a coluna 'ABSOLUTO' é 'Sim'
-                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim'); 
+                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim') 
+                    // 3. 🛑 NOVO FILTRO: Apenas atletas onde o status é 'Confirmado' ou 'Pago'
+                    .filter(atleta => isStatusConfirmed(atleta[NOME_COLUNA_STATUS])); 
 
                 groupAndRenderAbsolutoData(inscritosAbsoluto);
 
@@ -344,10 +360,16 @@
         function groupAndRenderAbsolutoData(data) {
             inscritosAbsolutoAgrupados = {};
 
+            if (data.length === 0) {
+                 loadingMessage.style.display = 'block';
+                 loadingMessage.textContent = 'Nenhum atleta confirmado inscrito no Absoluto.';
+                 listaInscritosDiv.innerHTML = '';
+                 return;
+            }
+
             data.forEach(atleta => {
                 const sexo = atleta['SEXO'];
-                // Usamos 'SUA FAIXA' e 'SUA CATEGORIA' (que contém a idade/peso) para agrupar
-                let categoriaIdade = atleta['SUA CATEGORIA']; // Pega o valor original (Ex: Master 1, Adulto)
+                let categoriaIdade = atleta['SUA CATEGORIA']; 
                 const faixa = atleta['SUA FAIXA'];
                 
                 // 🎯 MODIFICAÇÃO: JUNTAR TODOS OS MASTERS EM UM SÓ GRUPO
@@ -360,7 +382,6 @@
                 // FIM DA MODIFICAÇÃO
                 
                 // Chave de agrupamento: ABSOLUTO - FAIXA - CATEGORIA - SEXO
-                // Isso cria grupos como: "ABSOLUTO - FAIXA AZUL - MASTER (TODAS AS IDADES) - MASCULINO"
                 const key = `ABSOLUTO - FAIXA ${faixa.toUpperCase()} - ${categoriaIdade.toUpperCase()} - ${sexo.toUpperCase()}`;
                 
                 if (!inscritosAbsolutoAgrupados[key]) {
@@ -381,8 +402,6 @@
             // Colunas da planilha que serão exibidas
             const NOME_COLUNA_NOME = 'NOME COMPLETO';
             const NOME_COLUNA_EQUIPE = 'SUA EQUIPE';
-            // 🚨 Use o nome EXATO da sua coluna de status!
-            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
             // Ordena as chaves do grupo alfabeticamente
             Object.keys(inscritosAbsolutoAgrupados).sort().forEach(key => {
@@ -412,8 +431,8 @@
                 const tbody = table.querySelector('tbody');
 
                 groupData.atletas.forEach(atleta => {
-                    // Puxa o status, ou define como 'Pendente' se estiver vazio.
-                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                    // Puxa o status, que agora será sempre Confirmado/Pago devido ao filtro.
+                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Confirmado';
                     const statusClass = normalizeStatus(statusText);
                     
                     const row = document.createElement('tr');
