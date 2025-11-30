@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Inscrição | Arena Competidor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --cor-primaria: #007bff;
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+            --cor-sucesso: #28a745;
+            --cor-erro: #dc3545;
+            --cor-fundo-tabela: #f1f3f5;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            min-height: 100%; 
+            padding-top: 100px; 
+            padding-bottom: 50px; 
+            box-sizing: border-box;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            max-width: 200px;
+        }
+
+        .main-content {
+            /* CENTRALIZAÇÃO HORIZONTAL REFORÇADA */
+            margin-top: 50px; 
+            width: 90%;
+            max-width: 800px;
+            text-align: center; /* Centraliza elementos de bloco internos */
+            flex-grow: 1;
+            margin-bottom: 50px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .form-verificacao, .form-edicao {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto 40px auto;
+        }
+        
+        .form-edicao {
+            display: none; 
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--cor-secundaria);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box; 
+        }
+        
+        .obs-ord {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: -10px; 
+            margin-bottom: 25px; 
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            margin-top: 15px;
+        }
+
+        .btn-verificar {
+            background-color: var(--cor-primaria);
+        }
+
+        .btn-verificar:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-alterar {
+            background-color: var(--cor-destaque);
+            margin-top: 20px;
+        }
+        .btn-alterar:hover {
+            background-color: #1e7e34;
+        }
+
+        .btn-enviar-wa {
+            background-color: #25d366; 
+        }
+        .btn-enviar-wa:hover {
+            background-color: #128c7e;
+        }
+        
+        #resultado {
+            margin-top: 40px;
+            text-align: center; 
+            padding: 30px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none; 
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #resultado h2 {
+            color: var(--cor-primaria);
+            margin-top: 0;
+            border-bottom: 2px solid var(--cor-borda);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .info-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--cor-borda);
+            font-size: 1.05rem;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-table tr:nth-child(even) {
+            background-color: var(--cor-fundo-tabela);
+        }
+
+        .info-table td:first-child {
+            font-weight: 700;
+            color: var(--cor-secundaria);
+            width: 35%;
+            text-align: left;
+        }
+        
+        .info-table td:nth-child(2) {
+             width: 65%;
+             text-align: left;
+        }
+        
+        .status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .status-confirmado {
+            background-color: var(--cor-sucesso);
+        }
+
+        .status-pendente {
+            background-color: var(--cor-erro);
+        }
+        
+        .btn-reset {
+            background-color: var(--cor-secundaria);
+            margin-top: 15px;
+        }
+        .btn-reset:hover {
+            background-color: #23272b;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid var(--cor-primaria);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* ----------------------------------------------------- */
+        /* MEDIA QUERY PARA TELAS PEQUENAS (MOBILE) */
+        /* ----------------------------------------------------- */
+        @media (max-width: 600px) {
+            /* Otimizações de cabeçalho e formulário... */
+            header { 
+                padding: 10px 0; 
+            }
+
+            header img { 
+                max-width: 150px; 
+            }
+            
+            .main-content { 
+                margin-top: 0; 
+            }
+            
+            .form-verificacao, #resultado, .form-edicao {
+                padding: 25px;
+            }
+            
+            /* Otimização da Tabela para visualização em pilha */
+            .info-table {
+                border-collapse: separate; 
+                border-spacing: 0 10px;    
+                margin: 0 auto; /* Centraliza a tabela na div de resultado */
+                width: 100%;
+            }
+
+            .info-table tbody, .info-table tr, .info-table td {
+                display: block; 
+                width: 100%;
+            }
+
+            .info-table tr {
+                /* CORREÇÃO FINAL DE CENTRALIZAÇÃO: Centraliza cada bloco de informação */
+                margin: 0 auto 15px auto; 
+                max-width: 450px; /* Limita a largura máxima da "carta" para estética */
+                border: 1px solid var(--cor-borda);
+                border-radius: 8px; 
+                overflow: hidden;
+                background-color: #fff; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            }
+            
+            /* Esconde a primeira coluna (rótulo original do desktop) */
+            .info-table tr td:first-child {
+                display: none; 
+            }
+            
+            .info-table tr td:nth-child(2) {
+                /* Estilo do VALOR da informação */
+                text-align: center; 
+                padding: 10px 15px 15px 15px; 
+                position: relative;
+                border: none;
+                background-color: transparent; 
+                box-sizing: border-box; 
+                white-space: normal; 
+                font-weight: 500; 
+                font-size: 1.1rem; 
+                color: var(--cor-secundaria); 
+            }
+
+            /* Injeta o rótulo (data-label) no modo mobile, ACIMA do valor */
+            .info-table td:nth-child(2):before {
+                content: attr(data-label);
+                display: block; 
+                position: static; 
+                width: 100%; 
+                text-align: center; 
+                padding: 15px 15px 5px 15px; 
+                font-weight: 700;
+                font-size: 0.9rem; 
+                color: var(--cor-primaria); 
+                background-color: var(--cor-fundo-tabela); 
+                border-bottom: 1px solid var(--cor-borda); 
+                margin-bottom: 10px; 
+                box-sizing: border-box;
+            }
+
+            /* Remove a borda inferior do último TD para evitar duplicação */
+            .info-table tr:last-child td {
+                 border-bottom: none;
+            }
+
+            /* Correção para cores de fundo das "cartas" */
+            .info-table tr:nth-child(even) {
+                background-color: #fff; 
+            }
+             .info-table tr:nth-child(odd) td:nth-child(2) {
+                 background-color: transparent; 
+             }
+
+            /* Estilo específico para o status */
+            .info-table td .status {
+                display: inline-block; 
+                margin-top: 5px;
+                padding: 8px 15px; 
+                border-radius: 20px; 
+                font-size: 1rem; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#">
+             <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+    <div class="main-content">
+        <h1>Verificar Inscrição</h1>
+        
+        <div class="form-verificacao">
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="ord">Número de ORD</label>
+                    <input type="text" id="ord" name="ord" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataNascimento">Data de Nascimento</label>
+                    <input type="date" id="dataNascimento" name="dataNascimento" required>
+                </div>
+                <p class="obs-ord">O número de ORD pode ser encontrado na checagem.</p>
+                <button type="submit" class="btn btn-verificar">Verificar</button>
+            </form>
+        </div>
+
+        <div class="form-edicao">
+            <h2>Solicitar Alteração</h2>
+            <p>Selecione as novas opções para a inscrição. Sua solicitação será enviada para o WhatsApp da organização.</p>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="novaFaixa">Nova Faixa</label>
+                    <select id="novaFaixa" name="novaFaixa" required>
+                        <option value="" disabled selected>Selecione a faixa...</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="novoPeso">Novo Peso</label>
+                    <select id="novoPeso" name="novoPeso" required>
+                        <option value="" disabled selected>Selecione o peso...</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="novaCategoria">Nova Categoria (Opcional - Ex: Master 1, Adulto)</label>
+                    <input type="text" id="novaCategoria" name="novaCategoria" placeholder="Deixe em branco se não for alterar a faixa etária/categoria">
+                </div>
+                <button type="submit" class="btn btn-enviar-wa">Enviar Solicitação via WhatsApp</button>
+                <button type="button" class="btn btn-reset" id="cancelEditBtn">Cancelar / Voltar à Inscrição</button>
+            </form>
+        </div>
+
+        <div id="loader" class="loader"></div>
+        <div id="resultado"></div>
+    </div>
+    <div class="footer">
+        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainer = document.querySelector('.form-verificacao');
+            const editFormContainer = document.querySelector('.form-edicao');
+            const verificationForm = document.getElementById('verificationForm');
+            const editForm = document.getElementById('editForm');
+            const resultadoDiv = document.getElementById('resultado');
+            const loader = document.getElementById('loader');
+            const ordInput = document.getElementById('ord');
+            const dataNascimentoInput = document.getElementById('dataNascimento');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+            let atletaAtual = null; 
+
+            const FAIXAS = ['BRANCA', 'CINZA', 'AMARELA', 'LARANJA', 'VERDE', 'AZUL', 'ROXA', 'MARROM', 'PRETA'];
+            const PESOS = ['GALO', 'PLUMA', 'PENA', 'LEVE', 'MÉDIO', 'MEIO-PESADO', 'PESADO', 'SUPER PESADO', 'PESADÍSSIMO'];
+
+            const resetView = () => {
+                formContainer.style.display = 'block';
+                resultadoDiv.style.display = 'none';
+                editFormContainer.style.display = 'none';
+                resultadoDiv.innerHTML = '';
+                ordInput.value = '';
+                dataNascimentoInput.value = '';
+                atletaAtual = null;
+            };
+
+            const displayEditForm = () => {
+                resultadoDiv.style.display = 'none';
+                editFormContainer.style.display = 'block';
+
+                const novaFaixaSelect = document.getElementById('novaFaixa');
+                const novoPesoSelect = document.getElementById('novoPeso');
+                const novaCategoriaInput = document.getElementById('novaCategoria');
+
+                novaFaixaSelect.innerHTML = '<option value="" disabled selected>Selecione a faixa...</option>';
+                FAIXAS.forEach(faixa => {
+                    const option = document.createElement('option');
+                    option.value = faixa;
+                    option.textContent = faixa;
+                    if (atletaAtual['SUA FAIXA'] && atletaAtual['SUA FAIXA'].toUpperCase() === faixa) {
+                        option.selected = true;
+                    }
+                    novaFaixaSelect.appendChild(option);
+                });
+
+                novoPesoSelect.innerHTML = '<option value="" disabled selected>Selecione o peso...</option>';
+                PESOS.forEach(peso => {
+                    const option = document.createElement('option');
+                    option.value = peso;
+                    option.textContent = peso;
+                    if (atletaAtual['SEU PESO'] && atletaAtual['SEU PESO'].toUpperCase() === peso) {
+                        option.selected = true;
+                    }
+                    novoPesoSelect.appendChild(option);
+                });
+
+                novaCategoriaInput.value = ''; 
+                novaCategoriaInput.placeholder = `Atual: ${atletaAtual['SUA CATEGORIA'] || 'Não Informado'}`;
+            };
+
+            verificationForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const ordValue = ordInput.value.trim();
+                const dataNascimentoValue = dataNascimentoInput.value;
+
+                formContainer.style.display = 'none';
+                resultadoDiv.style.display = 'none';
+                editFormContainer.style.display = 'none';
+                loader.style.display = 'block';
+
+                // ** IMPORTANTE: SUBSTITUA ESTA URL PELA SUA URL DE PLANILHA CSV PÚBLICA **
+                const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTUjPCKr7ccCuzfwq2Gt2RCy_IKcfMxuWyXYZarv0IRo7qd3HBrQDYObY5yt6MKyQB0uWp4T4vziT-z/pub?output=csv';
+
+                Papa.parse(sheetURL, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        const dados = results.data;
+                        atletaAtual = dados.find(row => row.ORD === ordValue && row['DATA DE NASCIMENTO'] === dataNascimentoValue);
+
+                        loader.style.display = 'none';
+
+                        if (atletaAtual) {
+                            const statusPlanilha = (atletaAtual['STATUS DO PAGAMENTO'] || '').toUpperCase().trim();
+                            const isConfirmado = statusPlanilha === 'CONFIRMADO';
+                            
+                            const statusClass = isConfirmado ? 'status-confirmado' : 'status-pendente';
+
+                            let alteracaoConteudo = '';
+                            if (isConfirmado) {
+                                alteracaoConteudo = `<button id="editBtn" class="btn btn-alterar">Alterar Inscrição</button>`;
+                            } else {
+                                alteracaoConteudo = `
+                                    <div style="padding: 15px; background-color: #ffe5e5; border: 1px solid #dc3545; color: #dc3545; border-radius: 5px; margin-top: 20px;">
+                                        ⚠️ Alterações só são permitidas para inscrições com *Status: CONFIRMADO*. Favor regularizar o pagamento.
+                                    </div>
+                                `;
+                            }
+                            
+                            resultadoDiv.innerHTML = `
+                                <h2>Detalhes da Inscrição</h2>
+                                <table class="info-table">
+                                    <tbody>
+                                        <tr>
+                                            <td>Nome Completo</td>
+                                            <td data-label="Nome Completo">${atletaAtual['NOME COMPLETO']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Data de Nasc.</td>
+                                            <td data-label="Data de Nasc.">${atletaAtual['DATA DE NASCIMENTO']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Equipe</td>
+                                            <td data-label="Equipe">${atletaAtual['SUA EQUIPE']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Professor</td>
+                                            <td data-label="Professor">${atletaAtual['PROFESSOR']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Faixa</td>
+                                            <td data-label="Faixa">${atletaAtual['SUA FAIXA']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Peso</td>
+                                            <td data-label="Peso">${atletaAtual['SEU PESO']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Categoria</td>
+                                            <td data-label="Categoria">${atletaAtual['SUA CATEGORIA']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Absoluto</td>
+                                            <td data-label="Absoluto">${atletaAtual['ABSOLUTO']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status</td>
+                                            <td data-label="Status"><span class="status ${statusClass}">${atletaAtual['STATUS DO PAGAMENTO']}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                ${alteracaoConteudo}
+                                <button id="resetBtn" class="btn btn-reset">Verificar Outra Inscrição</button>
+                            `;
+                            resultadoDiv.style.display = 'block';
+
+                            document.getElementById('resetBtn').addEventListener('click', resetView);
+                            
+                            if (isConfirmado) {
+                                document.getElementById('editBtn').addEventListener('click', displayEditForm);
+                            }
+                        } else {
+                            resultadoDiv.innerHTML = `
+                                <h2>Atleta não encontrado</h2>
+                                <p>Não foi possível encontrar uma inscrição com os dados fornecidos. Verifique se o número de ORD e a data de nascimento estão corretos. Se precisar de ajuda, entre em contato via WhatsApp.</p>
+                            `;
+                            resultadoDiv.style.display = 'block';
+                            formContainer.style.display = 'block'; 
+                        }
+                    },
+                    error: function(err) {
+                        loader.style.display = 'none';
+                        resultadoDiv.innerHTML = `
+                            <h2>Erro ao buscar dados</h2>
+                            <p>Houve um problema ao tentar acessar os dados da inscrição. Por favor, tente novamente mais tarde.</p>
+                        `;
+                        resultadoDiv.style.display = 'block';
+                        formContainer.style.display = 'block'; 
+                    }
+                });
+            });
+
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (!atletaAtual) {
+                    alert('Erro: Dados do atleta não carregados. Tente verificar a inscrição novamente.');
+                    resetView();
+                    return;
+                }
+                
+                const statusPlanilha = (atletaAtual['STATUS DO PAGAMENTO'] || '').toUpperCase().trim();
+                if (statusPlanilha !== 'CONFIRMADO') {
+                    alert('Alterações só são permitidas para inscrições com Status: CONFIRMADO.');
+                    editFormContainer.style.display = 'none';
+                    resultadoDiv.style.display = 'block';
+                    return;
+                }
+
+                const novaFaixa = document.getElementById('novaFaixa').value;
+                const novoPeso = document.getElementById('novoPeso').value;
+                const novaCategoria = document.getElementById('novaCategoria').value.trim();
+
+                let mensagem = `*SOLICITAÇÃO DE ALTERAÇÃO DE INSCRIÇÃO*\n\n`;
+                mensagem += `*Atleta:* ${atletaAtual['NOME COMPLETO']}\n`;
+                mensagem += `*ORD:* ${atletaAtual.ORD}\n`;
+                mensagem += `*Equipe:* ${atletaAtual['SUA EQUIPE']}\n\n`;
+                
+                mensagem += `*--- DADOS ATUAIS ---*\n`;
+                mensagem += `*Faixa:* ${atletaAtual['SUA FAIXA']}\n`;
+                mensagem += `*Peso:* ${atletaAtual['SEU PESO']}\n`;
+                mensagem += `*Categoria:* ${atletaAtual['SUA CATEGORIA']}\n\n`;
+
+                mensagem += `*--- NOVOS DADOS SOLICITADOS ---*\n`;
+                mensagem += `*Nova Faixa:* ${novaFaixa}\n`;
+                mensagem += `*Novo Peso:* ${novoPeso}\n`;
+                mensagem += `*Nova Categoria:* ${novaCategoria || atletaAtual['SUA CATEGORIA']} (Faixa etária mantida se não alterada)\n\n`;
+
+                mensagem += `*OBS:* Solicito a alteração da minha inscrição.`;
+
+                const numeroWhatsApp = '5584987513740'; 
+                const textoCodificado = encodeURIComponent(mensagem);
+                const whatsappURL = `https://wa.me/${numeroWhatsApp}?text=${textoCodificado}`;
+
+                window.open(whatsappURL, '_blank');
+
+                editFormContainer.style.display = 'none';
+                resultadoDiv.style.display = 'block';
+            });
+            
+            cancelEditBtn.addEventListener('click', () => {
+                 if (atletaAtual) {
+                    editFormContainer.style.display = 'none';
+                    resultadoDiv.style.display = 'block';
+                 } else {
+                     resetView();
+                 }
+            });
+        });
+    </script>
+</body>
+</html>
