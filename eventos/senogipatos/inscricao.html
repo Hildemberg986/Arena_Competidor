@@ -886,7 +886,7 @@
                     const categoriaIdade = categoriaSelect.value;
                     const totalPagarValor = totalPagar.innerText.replace('R$ ', '').replace(',', '.'); 
 
-                    const urlPagamento = `pagamentos.html?atleta=${encodeURIComponent(nomeAtleta)}&categoria=${encodeURIComponent(categoriaIdade)}&valor=${totalPagarValor}`;
+                    const urlPagamento = `pagamento.html?atleta=${encodeURIComponent(nomeAtleta)}&categoria=${encodeURIComponent(categoriaIdade)}&valor=${totalPagarValor}`;
 
                     window.location.href = urlPagamento;
                     alert("Inscrição Salva!");
