@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMA CUP | Arena Competidor</title>
+    <title>Inscrições encerradas | Arena Competidor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -11,11 +11,9 @@
             --cor-primaria: #007bff;
             --cor-secundaria: #343a40;
             --cor-destaque: #28a745;
-            --cor-vermelho: #dc3545;
-            --cor-cinza: #6c757d;
             --cor-fundo: #f8f9fa;
             --cor-texto: #495057;
-            --cor-borda: #e9ecef;
+            --cor-borda: #dee2e6;
         }
 
         body {
@@ -54,110 +52,44 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
         }
 
-        h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
-        .event-menu-container {
-            display: flex;
+        .aviso-container {
             background-color: #fff;
+            padding: 40px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 100%;
-            margin-bottom: 40px;
-        }
-        
-        .event-banner-menu {
-            flex-shrink: 0;
-            flex-basis: 40%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .event-banner-menu img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .menu-opcoes {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 12px;
-            padding: 20px 30px;
-            flex-basis: 60%;
-            box-sizing: border-box;
-        }
-        
-        .btn-menu {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: var(--cor-cinza);
-            color: #fff;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
             text-align: center;
         }
 
-        .btn-menu:hover {
-            background-color: #495057;
-            transform: translateY(-2px);
-        }
-        
-        .btn-menu.destaque {
-            background-color: var(--cor-destaque);
-        }
-        
-        .btn-menu.destaque:hover {
-            background-color: #218838;
-        }
-
-        .btn-menu.vermelho {
-            background-color: var(--cor-vermelho);
-        }
-        
-        .btn-menu.vermelho:hover {
-            background-color: #c82333;
-        }
-
-        .informacoes-evento {
-            width: 100%;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
-
-        .informacoes-evento h2 {
+        .aviso-container h1 {
             color: var(--cor-secundaria);
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 15px;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
         }
 
-        .informacoes-evento p {
-            line-height: 1.6;
-            margin-bottom: 10px;
+        .aviso-container p {
+            font-size: 1.2rem;
+            color: var(--cor-texto);
         }
 
+        .link-voltar {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: var(--cor-secundaria);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .link-voltar:hover {
+            background-color: #212529;
+        }
+        
         .footer {
             margin-top: auto;
             padding: 20px 0;
@@ -165,21 +97,6 @@
             text-align: center;
             font-size: 0.9rem;
             color: #6c757d;
-        }
-
-        
-        @media (max-width: 768px) {
-            .event-menu-container {
-                flex-direction: column;
-            }
-            .event-banner-menu {
-                flex-basis: auto;
-                width: 100%;
-                height: 180px;
-            }
-            .menu-opcoes {
-                flex-basis: auto;
-            }
         }
     </style>
 </head>
@@ -190,28 +107,9 @@
     </header>
 
     <div class="main-content">
-        <h1>EMA CUP DE JIU-JITSU</h1>
-        
-        <div class="event-menu-container">
-            <div class="event-banner-menu">
-                <img src="../../img/EMACUPARENA.png" alt="Banner do EMA CUP de Jiu-Jitsu">
-            </div>
-            <div class="menu-opcoes">
-                <a href="fechadas.html" class="btn-menu">Inscrição</a>
-                <a href="fechadas.html" class="btn-menu">Alterar Inscrição</a>
-                 <a href="fechadas.html" class="btn-menu">Pagar Inscrição</a>
-                <a href="checagem.html" class="btn-menu">Checagem</a>
-                <a href="https://drive.google.com/file/d/1UeKT9Qh8BC6FkkqxzBBL4GzMVVoY9XBu/view?usp=sharing" class="btn-menu" target="_blank">Edital</a>
-                <a href="chaves.html" class="btn-menu vermelho">Chaves</a>
-            </div>
-        </div>
-
-        <div class="informacoes-evento">
-            <h2>Informações do Evento</h2>
-            <p><strong>Data:</strong> 30 de Novembro de 2025</p>
-            <p><strong>Local:</strong> Ginásio Poliesportivo Idelfonso Fernandes de Arruda</p>
-            <p><strong>Horário:</strong> Início às 09:00h</p>
-            <p><strong>Prazos:</strong> Fim das inscrições em 20 de Novembro de 2025</p>
+        <div class="aviso-container">
+            <h1>Inscrições encerradas</h1>
+            <p>Inscrições encerradas, aguarde o próximo evento. Agradecemos a compreensão!</p>
         </div>
     </div>
     
