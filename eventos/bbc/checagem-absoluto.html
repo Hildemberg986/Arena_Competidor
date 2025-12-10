@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checagem Absoluto | Arena Competidor</title>
+    <title>Checagem Absoluto (Somente Confirmados) | Arena Competidor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        /* 1. RESET CRÍTICO: Garante que padding e borda não mudem a largura total. */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
 
         :root {
             --cor-primaria: #514b53;
@@ -35,7 +40,8 @@
             text-align: center;
             padding: 20px 0;
             background-color: #000;
-            position: fixed;
+            /* Header FIXO em telas maiores */
+            position: fixed; 
             top: 0;
             left: 0;
             z-index: 1000;
@@ -47,7 +53,8 @@
         }
 
         .main-content {
-            margin-top: 150px;
+            /* Compensa a altura do header fixo */
+            margin-top: 100px; 
             width: 95%;
             max-width: 1200px;
             text-align: center;
@@ -95,21 +102,23 @@
 
         .accordion-header.active::after {
             content: '-';
-            transform: rotate(0deg);
         }
 
         .accordion-content {
             background-color: #fff;
-            border-radius: 8px;
+            border-radius: 0 0 8px 8px; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            
+            /* A chave para a animação: max-height deve ir de 0 para um valor grande e fixo */
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; 
             max-height: 0;
             padding: 0 20px;
         }
 
         .accordion-content.open {
-            max-height: none; 
+            /* Valor alto fixo para permitir a animação suave */
+            max-height: 20000px; 
             padding: 20px;
         }
         
@@ -124,6 +133,11 @@
             text-align: left;
             border-bottom: 1px solid #dee2e6;
         }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+
 
         thead {
             background-color: #e9ecef;
@@ -176,21 +190,23 @@
             text-align: center;
             font-size: 0.9rem;
             color: #6c757d;
+            background-color: #e9ecef; 
         }
 
         /* Mobile Styles */
         @media (max-width: 768px) {
+            
+            header {
+                position: static; 
+                padding: 15px 0;
+            }
+
             .main-content {
-                margin-top: 100px;
+                margin-top: 30px; 
                 width: 98%;
                 padding: 0 10px;
             }
             
-            header {
-                padding: 10px 0;
-                position: static;
-            }
-
             header img {
                 max-width: 150px;
             }
@@ -205,17 +221,14 @@
                 padding: 15px;
             }
 
+            /* Estilos de Tabela para Lista Vertical (Mobile) */
             table {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                border-spacing: 0;
-                background-color: transparent;
-                padding: 0;
+                display: block; 
+                border-collapse: separate; 
             }
             
             thead {
-                display: none;
+                display: none; 
             }
 
             tr {
@@ -226,6 +239,7 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 padding: 15px;
                 margin-bottom: 10px;
+                border-bottom: none; 
             }
             
             td {
@@ -246,6 +260,7 @@
                 font-weight: bold;
                 flex-shrink: 0;
                 text-align: left;
+                margin-right: 15px;
             }
 
             .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
@@ -264,7 +279,7 @@
     </header>
 
     <div class="main-content">
-        <h1>Checagem de Absoluto</h1>
+        <h1>Checagem de Absoluto (Somente Confirmados)</h1>
 
         <div id="loading-message">Carregando dados...</div>
         <div id="listaInscritosAbsoluto">
@@ -279,7 +294,6 @@
 
     <script>
         // 🚨 URL DO CSV DA PLANILHA GOOGLE
-        // ATUALIZE ESTA URL COM O LINK PÚBLICO DA SUA PLANILHA
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQi4LRK6fnA7WKgf-z-vK5KOZelez2sd0rHat3eDz-pkxiNAsCZuuBTmPbnyJud0nP-RVQIi5uNZ9SR/pub?output=csv';
         
         const listaInscritosDiv = document.getElementById('listaInscritosAbsoluto');
@@ -320,20 +334,23 @@
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
                 
                 // 1. Converte CSV para JSON
-                const inscritosAbsoluto = lines.slice(1)
+                const todosAtletas = lines.slice(1)
                     .map(line => {
-                        // Atenção: Esta separação simples por vírgula pode falhar se houver vírgulas nos dados.
                         const values = line.split(','); 
                         const atleta = {};
                         headers.forEach((header, i) => {
                             atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
                         });
                         return atleta;
-                    })
-                    // 2. FILTRO CHAVE: Apenas atletas onde a coluna 'ABSOLUTO' é 'Sim'
-                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim'); 
+                    });
+                
+                // 2. FILTRAGEM DUPLA: Apenas Absoluto E Status Confirmado
+                const inscritosAbsolutoConfirmado = todosAtletas
+                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim') // Deve estar no Absoluto
+                    // 🚨 NOVO FILTRO: Deve ter status 'Confirmado'
+                    .filter(atleta => normalizeStatus(atleta['STATUS DO PAGAMENTO'] || '') === 'status-confirmado'); 
 
-                groupAndRenderAbsolutoData(inscritosAbsoluto);
+                groupAndRenderAbsolutoData(inscritosAbsolutoConfirmado);
 
             } catch (error) {
                 console.error('Erro ao buscar ou processar CSV:', error);
@@ -344,23 +361,27 @@
         function groupAndRenderAbsolutoData(data) {
             inscritosAbsolutoAgrupados = {};
 
+            if (data.length === 0) {
+                loadingMessage.textContent = 'Nenhum atleta com inscrição no Absoluto e status "Confirmado" foi encontrado.';
+                loadingMessage.style.display = 'block';
+                listaInscritosDiv.innerHTML = '';
+                return;
+            }
+            
+            // O restante da lógica de agrupamento (Master unificado) é mantida
             data.forEach(atleta => {
                 const sexo = atleta['SEXO'];
-                // Usamos 'SUA FAIXA' e 'SUA CATEGORIA' (que contém a idade/peso) para agrupar
-                let categoriaIdade = atleta['SUA CATEGORIA']; // Pega o valor original (Ex: Master 1, Adulto)
+                let categoriaIdade = atleta['SUA CATEGORIA']; 
                 const faixa = atleta['SUA FAIXA'];
                 
-                // 🎯 MODIFICAÇÃO: JUNTAR TODOS OS MASTERS EM UM SÓ GRUPO
+                // MODIFICAÇÃO: JUNTAR TODOS OS MASTERS EM UM SÓ GRUPO
                 const categoriaUpper = categoriaIdade.toUpperCase();
 
                 if (categoriaUpper.includes('MASTER')) {
-                    // Redefine a categoria para um valor unificado para o agrupamento
                     categoriaIdade = 'MASTER (TODAS AS IDADES)'; 
                 }
-                // FIM DA MODIFICAÇÃO
                 
                 // Chave de agrupamento: ABSOLUTO - FAIXA - CATEGORIA - SEXO
-                // Isso cria grupos como: "ABSOLUTO - FAIXA AZUL - MASTER (TODAS AS IDADES) - MASCULINO"
                 const key = `ABSOLUTO - FAIXA ${faixa.toUpperCase()} - ${categoriaIdade.toUpperCase()} - ${sexo.toUpperCase()}`;
                 
                 if (!inscritosAbsolutoAgrupados[key]) {
@@ -378,10 +399,8 @@
         function renderAbsolutoList() {
             listaInscritosDiv.innerHTML = ''; 
             
-            // Colunas da planilha que serão exibidas
             const NOME_COLUNA_NOME = 'NOME COMPLETO';
             const NOME_COLUNA_EQUIPE = 'SUA EQUIPE';
-            // 🚨 Use o nome EXATO da sua coluna de status!
             const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
             // Ordena as chaves do grupo alfabeticamente
@@ -412,8 +431,8 @@
                 const tbody = table.querySelector('tbody');
 
                 groupData.atletas.forEach(atleta => {
-                    // Puxa o status, ou define como 'Pendente' se estiver vazio.
-                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                    // O status será sempre Confirmado, mas mantemos o código para exibição
+                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Confirmado';
                     const statusClass = normalizeStatus(statusText);
                     
                     const row = document.createElement('tr');
@@ -449,7 +468,7 @@
         function handleAccordionClick(event) {
              const header = event.currentTarget;
              const content = header.nextElementSibling;
-                      
+                     
             // Fecha outros acordeões abertos
             listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
                 if (otherHeader !== header && otherHeader.classList.contains('active')) {
