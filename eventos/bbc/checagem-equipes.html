@@ -109,7 +109,7 @@
 
         .accordion-header.active::after {
             content: '-';
-            transform: rotate(0deg); /* Ajustado para não girar de forma estranha */
+            transform: rotate(0deg); 
         }
 
         .accordion-content {
@@ -339,7 +339,8 @@
                 // Converte CSV para JSON
                 const todosInscritos = lines.slice(1)
                     .map(line => {
-                        const values = line.split(','); 
+                        // Regex mais robusto para splitar por vírgula, tratando vírgulas dentro de aspas
+                        const values = line.match(/(?:"[^"]*"|[^,])+/g) || [];
                         const atleta = {};
                         headers.forEach((header, i) => {
                             atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
@@ -355,24 +356,40 @@
             }
         }
         
+        // Função modificada para filtrar APENAS atletas confirmados/pagos
         function groupAndRenderEquipes(data) {
             inscritosPorEquipe = {};
 
+            // Constante para a coluna de Status
+            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
+            
             data.forEach(atleta => {
-                const nomeEquipe = atleta['SUA EQUIPE'] || 'SEM EQUIPE';
+                const statusNormalizado = normalizeStatus(atleta[NOME_COLUNA_STATUS] || 'Pendente');
                 
-                if (!inscritosPorEquipe[nomeEquipe]) {
-                    inscritosPorEquipe[nomeEquipe] = {
-                        atletas: [],
-                        total: 0
-                    };
+                // ➡️ FILTRO APLICADO AQUI: Inclui apenas status 'confirmado' ou 'pago'
+                if (statusNormalizado === 'status-confirmado' || statusNormalizado === 'status-pago') {
+                    
+                    const nomeEquipe = atleta['SUA EQUIPE'] || 'SEM EQUIPE';
+                    
+                    if (!inscritosPorEquipe[nomeEquipe]) {
+                        inscritosPorEquipe[nomeEquipe] = {
+                            atletas: [],
+                            total: 0
+                        };
+                    }
+                    inscritosPorEquipe[nomeEquipe].atletas.push(atleta);
+                    inscritosPorEquipe[nomeEquipe].total++;
                 }
-                inscritosPorEquipe[nomeEquipe].atletas.push(atleta);
-                inscritosPorEquipe[nomeEquipe].total++;
             });
             
             loadingMessage.style.display = 'none';
-            renderEquipeList();
+            
+            // Verifica se há alguma equipe após a filtragem
+            if (Object.keys(inscritosPorEquipe).length === 0) {
+                 listaEquipesDiv.innerHTML = '<p style="font-size: 1.2rem; color: #dc3545;">Nenhum atleta confirmado encontrado.</p>';
+            } else {
+                 renderEquipeList();
+            }
         }
 
         function renderEquipeList() {
@@ -385,7 +402,6 @@
             const NOME_COLUNA_CATEGORIA = 'SUA CATEGORIA';
             const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
-            // Ordena as chaves do grupo (opcional, mas ajuda na organização)
             // Ordem: Alfabética por nome da equipe
             Object.keys(inscritosPorEquipe).sort().forEach(key => {
                 const groupData = inscritosPorEquipe[key];
@@ -444,7 +460,7 @@
             setupAccordion(); 
         }
         
-        // --- Lógica de Acordeão (Reutilizada) ---
+        // --- Lógica de Acordeão ---
 
         function setupAccordion() {
             const accordionHeaders = listaEquipesDiv.querySelectorAll('.accordion-header');
