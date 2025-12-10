@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscrição - BBC Open de Jiu-Jitsu (Projeto Social) | Arena Competidor</title>
+    <title>Inscrições encerradas | Arena Competidor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -22,871 +22,101 @@
             color: var(--cor-texto);
             margin: 0;
             padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
         header {
+            width: 100%;
             text-align: center;
             padding: 20px 0;
-            margin-bottom: 30px;
             background-color: #000;
-            border-bottom: 2px solid var(--cor-borda);
-            border-radius: 8px 8px 0 0; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         header img {
             max-width: 200px;
         }
 
-        h1, h2 {
+        .main-content {
+            margin-top: 150px;
+            width: 90%;
+            max-width: 800px;
             text-align: center;
-            color: var(--cor-secundaria);
-            font-weight: 700;
-        }
-        
-        h1 {
-            margin-top: 0;
-        }
-
-        form {
-            display: grid;
-            gap: 20px;
-        }
-
-        .form-group {
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        input, select {
-            padding: 12px;
-            border: 1px solid var(--cor-borda);
-            border-radius: 4px;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-            /* Estilo para campos desabilitados */
-            background-color: #f1f1f1; 
-            cursor: not-allowed;
-        }
-        
-        select:enabled {
-             background-color: #fff;
-             cursor: pointer;
-        }
-
-
-        input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        .checkbox-group {
-            display: flex;
+            justify-content: center;
             align-items: center;
         }
 
-        .extrato {
-            background-color: #e9ecef;
+        .aviso-container {
+            background-color: #fff;
+            padding: 40px;
             border-radius: 8px;
-            padding: 20px;
-            margin-top: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        .extrato h2 {
-            margin-top: 0;
-            text-align: left;
-            border-bottom: 1px solid var(--cor-borda);
-            padding-bottom: 10px;
+        .aviso-container h1 {
+            color: var(--cor-secundaria);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
         }
 
-        .extrato p, .extrato h3 {
-            margin: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-
-        .extrato h3 {
-            margin-top: 20px;
-            font-size: 1.5rem;
-            color: var(--cor-destaque);
-        }
-
-        button {
-            background-color: var(--cor-destaque);
-            color: #fff;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 4px;
+        .aviso-container p {
             font-size: 1.2rem;
-            cursor: pointer;
-            width: 100%;
+            color: var(--cor-texto);
+        }
+
+        .link-voltar {
+            display: inline-block;
             margin-top: 30px;
+            padding: 12px 25px;
+            background-color: var(--cor-secundaria);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
             transition: background-color 0.3s ease;
         }
 
-        button:hover {
-            background-color: #218838;
+        .link-voltar:hover {
+            background-color: #212529;
         }
-
-        /* Feedback de envio */
-        #feedback {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
+        
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
             text-align: center;
-            font-weight: bold;
-        }
-
-        /* --- Estilos para Responsividade --- */
-        @media (max-width: 768px) {
-            .container {
-                margin: 0;
-                padding: 15px;
-                border-radius: 0;
-                box-shadow: none;
-            }
-
-            header {
-                border-radius: 0;
-                margin-bottom: 20px;
-                padding: 15px 0;
-            }
-            
-            header img {
-                max-width: 150px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            form {
-                gap: 15px;
-            }
-            
-            input, select {
-                padding: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-
-            header img {
-                max-width: 120px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            h2 {
-                font-size: 1.2rem;
-            }
-
-            .extrato p, .extrato h3 {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            
-            .extrato h3 {
-                font-size: 1.2rem;
-            }
-
-            button {
-                font-size: 1rem;
-                padding: 12px;
-            }
+            font-size: 0.9rem;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <a href="../../index.html">
-            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
-            </a>
-        </header>
+    <header>
+        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+    </header>
 
-        <h1>Inscrição (Projeto Social) BBC Open de Jiu-Jitsu</h1>
-        
-        <form id="inscricaoForm">
-            <div class="form-group">
-                <label for="nome">Nome Completo:</label>
-                <input type="text" id="nome" name="nome" required>
-            </div>
-
-            <div class="form-group">
-                <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" required>
-            </div>
-
-            <div class="form-group">
-                <label for="sexo">Sexo:</label>
-                <select id="sexo" name="sexo" required>
-                    <option value="">Selecione...</option>
-                    <option value="masculino">Masculino</option>
-                    <option value="feminino">Feminino</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="dataNascimento">Data de Nascimento:</label>
-                <input type="date" id="dataNascimento" name="dataNascimento" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="ddd">DDD:</label>
-                <input type="text" id="ddd" name="ddd" maxlength="2" required>
-            </div>
-
-            <div class="form-group">
-                <label for="celular">Celular:</label>
-                <input type="text" id="celular" name="celular" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="equipeSelect">Sua Equipe:</label>
-                <select id="equipeSelect" required>
-                    <option value="">Selecione a Equipe...</option>
-                    <option value="Avanti Jiu-jitsu">Avanti Jiu-jitsu</option>
-                    <option value="BTT">BTT</option>
-                    <option value="Cascão Jiu Jitsu">Cascão Jiu Jitsu</option>
-                    <option value="CERES">CERES</option>
-                    <option value="Checkmat">Checkmat</option>
-                    <option value="CT Igor Lima">CT Igor Lima</option>
-                    <option value="Gadelha Team">Gadelha Team</option>
-                    <option value="Infantaria BJJ">Infantaria BJJ</option>
-                    <option value="Jonson Rodrigues">Jonson Rodrigues</option>
-                    <option value="Kimura">Kimura</option>
-                    <option value="Nova Geração Nordeste">Nova Geração Nordeste</option>                  
-                    <option value="Pitbull Brothers">Pitbull Brothers</option>
-                    <option value="Projeto Social Guerreiros da Fé">Projeto Social Guerreiros da Fé</option>
-                    <option value="Rhinos">Rhinos</option>
-                    <option value="Rony BJJ Team">Rony BJJ Team</option>
-                    <option value="ROX BJJ">ROX BJJ</option>
-                    <option value="SZT SN">SZT SN</option>
-                    <option value="Team Fernando Alves">Team Fernando Alves</option>
-                    <option value="Valois Jardim Jiu Jitsu">Valois Jardim Jiu Jitsu</option>
-                    <option value="Outra">Outra (Digitar abaixo)</option>
-                </select>
-            </div>
-            
-            <div class="form-group" id="equipeOutraContainer" style="display:none;">
-                <label for="equipeOutra">Nome da Equipe (Digite):</label>
-                <input type="text" id="equipeOutra">
-            </div>
-            <input type="hidden" id="equipe" name="equipe" required>
-            <div class="form-group">
-                <label for="professorSelect">Professor:</label>
-                <select id="professorSelect" required>
-                    <option value="">Selecione o Professor...</option>
-                    <option value="Baixinho">Baixinho</option>
-                    <option value="Carly Fran">Carly Fran</option>
-                    <option value="Cleanto Pereira">Cleanto Pereira</option>    
-                    <option value="Cleyton Moura">Cleyton Moura</option>
-                    <option value="Danilo Marques">Danilo Marques</option>
-                    <option value="Elenilson Peixotinho">Elenilson Peixotinho</option>
-                    <option value="Felipe Bunes">Felipe Bunes</option>
-                    <option value="Fillipe Azevedo ">Fillipe Azevedo </option>
-                    <option value="Francielly ">Francielly </option>
-                    <option value="Gelson Teixeira">Gelson Teixeira</option>
-                    <option value="George Costa">George Costa</option>
-                    <option value="Heudes Silva">Heudes Silva</option>
-                    <option value="Igor Lima">Igor Lima</option>
-                    <option value="Ivanaldo Ferreira">Ivanaldo Ferreira</option>
-                    <option value="José Victor">José Victor</option>
-                    <option value="Josenilson Albino">Josenilson Albino</option>
-                    <option value="Junior Santos">Junior Santos</option>
-                    <option value="Lázaro Fernandes">Lázaro Fernandes</option>
-                    <option value="Matheus Gadelha">Matheus Gadelha</option>
-                    <option value="Pablo Forlan">Pablo Forlan</option>
-                    <option value="Rafael Batista">Rafael Batista</option>
-                    <option value="Ronysmar">Ronysmar</option>
-                    <option value="Samara Saldanha">Samara Saldanha</option>
-                    <option value="Serginho">Serginho</option>
-                    <option value="Watson">Watson</option>
-                    <option value="Wellinson Medeiros">Wellinson Medeiros</option>
-                    <option value="Outro">Outro (Digitar abaixo)</option>
-                </select>
-            </div>
-
-            <div class="form-group" id="professorOutroContainer" style="display:none;">
-                <label for="professorOutro">Nome do Professor (Digite):</label>
-                <input type="text" id="professorOutro">
-            </div>
-            <input type="hidden" id="professor" name="professor" required>
-            <div class="form-group">
-                <label for="categoria">Sua Categoria de Idade:</label>
-                <select id="categoria" name="categoria" required disabled>
-                    <option value="">Preencha o Sexo e a Data de Nasc.</option>
-                </select>
-                <input type="hidden" id="categoriaIdade" name="categoriaIdade">
-            </div>
-
-            <div class="form-group">
-                <label for="faixa">Sua Faixa:</label>
-                <select id="faixa" name="faixa" required disabled>
-                    <option value="">Selecione a Categoria</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="peso">Seu Peso (Divisão):</label>
-                <select id="peso" name="peso" required disabled>
-                    <option value="">Selecione a Faixa</option>
-                </select>
-            </div>
-            
-            
-            <div class="form-group checkbox-group" id="absolutoContainer" style="display:none;">
-                <input type="checkbox" id="absoluto" name="absoluto" value="Sim">
-                <label for="absoluto">Participar do Absoluto (+ R$ 40,00)</label>
-            </div>
-        </form>
-
-        <div class="extrato">
-            <h2>Extrato da Inscrição</h2>
-            <p><span>Categoria, Faixa e Peso:</span> <span id="extratoCategoria">Aguardando preenchimento</span></p>
-            <p><span>Valor da Inscrição:</span> <span id="valorCategoria">R$ 60,00</span></p>
-            <p id="extratoAbsoluto" style="display:none;"><span>Valor do Absoluto:</span> <span id="valorAbsoluto">R$ 40,00</span></p>
-            <h3><span>Total a Pagar:</span> <span id="totalPagar">R$ 60,00</span></h3>
+    <div class="main-content">
+        <div class="aviso-container">
+            <h1>Inscrições encerradas</h1>
+            <p>Inscrições encerradas, as chaves estão sendo preparadas e estarão disponíveis em breve. Agradecemos a compreensão!</p>
+            <a href="menu-evento.html" class="link-voltar">Voltar para o Menu do Evento</a>
         </div>
-
-        <button type="submit" form="inscricaoForm">Salvar Inscrição e Ir para o Pagamento</button>
-        
-        <p id="feedback"></p>
+    </div>
+    
+    <div class="footer">
+        &copy; 2025 Arena Competidor. Todos os direitos reservados.
     </div>
 
-    <script>
-        // ==========================================================
-        // 🚨 URL DE IMPLANTAÇÃO DA PLANILHA GOOGLE
-        const URL_GOOGLE_SCRIPT = 'https://script.google.com/macros/s/AKfycbzFnyZ2Dwfsz2IYS6eyDLP2yEULP7NO7tmlGcHuj5KAWllPeWyogClEYfhxiScUCnob/exec'; 
-        // ==========================================================
-
-        const dataNascimentoInput = document.getElementById('dataNascimento');
-        const sexoInput = document.getElementById('sexo'); 
-        const categoriaSelect = document.getElementById('categoria'); 
-        const categoriaIdadeInput = document.getElementById('categoriaIdade'); 
-        const absolutoContainer = document.getElementById('absolutoContainer');
-        const absolutoCheckbox = document.getElementById('absoluto');
-        const extratoAbsoluto = document.getElementById('extratoAbsoluto');
-        const totalPagar = document.getElementById('totalPagar');
-        const faixaInput = document.getElementById('faixa');
-        const pesoInput = document.getElementById('peso');
-        const extratoCategoriaSpan = document.getElementById('extratoCategoria');
-        const inscricaoForm = document.getElementById('inscricaoForm');
-        const feedbackElement = document.getElementById('feedback');
-        
-        // NOVAS CONSTANTES PARA EQUIPE E PROFESSOR
-        const equipeSelect = document.getElementById('equipeSelect');
-        const equipeOutraInput = document.getElementById('equipeOutra');
-        const professorSelect = document.getElementById('professorSelect');
-        const professorOutroInput = document.getElementById('professorOutro');
-        // FIM NOVAS CONSTANTES
-
-        // ==========================================================
-        // 1. REGRAS DE DIVISÃO E TABELAS DE PESO/FAIXA (SUAS IDEIAS)
-        // ==========================================================
-
-        /**
-         * Retorna a divisão de idade ou uma lista de categorias Master se for o caso.
-         * @param {number} idade 
-         * @returns {string | string[] | null} 
-         */
-        function obterDivisao(idade) {
-            if (idade === 4) return "Pré-Mirim 1";
-            if (idade === 5) return "Pré-Mirim 2";
-            if (idade === 6) return "Pré-Mirim 3";
-            if (idade === 7) return "Mirim 1";
-            if (idade === 8) return "Mirim 2";
-            if (idade === 9) return "Mirim 3";
-            if (idade === 10) return "Infantil 1";
-            if (idade === 11) return "Infantil 2";
-            if (idade === 12) return "Infantil 3";
-            if (idade === 13) return "Infanto-Juvenil 1";
-            if (idade === 14) return "Infanto-Juvenil 2";
-            if (idade === 15) return "Infanto-Juvenil 3";
-            if (idade >= 16 && idade <= 17) return "Juvenil";
-            if (idade >= 18 && idade <= 29) return "Adulto";
-            if (idade >= 30) {
-                return obterMastersPermitidos(idade);
-            }
-            return null; 
-        }
-
-        /**
-         * Retorna as categorias Master permitidas com base na idade.
-         * @param {number} idade - A idade do atleta.
-         * @returns {string[]} Um array de categorias Master (incluindo Adulto).
-         */
-        function obterMastersPermitidos(idade) {
-            if (idade < 30) return [];
-            const masters = [];
-            // A ordem é importante, pois o "Adulto" deve vir como última opção, se não for o único.
-            if (idade >= 61) masters.push("Master 7");
-            if (idade >= 56) masters.push("Master 6");
-            if (idade >= 51) masters.push("Master 5");
-            if (idade >= 46) masters.push("Master 4");
-            if (idade >= 41) masters.push("Master 3");
-            if (idade >= 36) masters.push("Master 2");
-            if (idade >= 30) masters.push("Master 1");
-            
-            // Adulto é sempre uma opção para Masters (IBJJF Rules)
-            masters.push("Adulto"); 
-            // Remove duplicatas e inverte a ordem para aparecer do mais novo para o mais velho (Adulto, Master 1, Master 2...)
-            // Mas para o Master, a ordem correta na lista de seleção é: Master 1, Master 2... Adulto.
-            // Para isso, faremos a inserção na ordem desejada:
-            const categoriasUnicas = ["Adulto"];
-            if (idade >= 30 && !categoriasUnicas.includes("Master 1")) categoriasUnicas.push("Master 1");
-            if (idade >= 36 && !categoriasUnicas.includes("Master 2")) categoriasUnicas.push("Master 2");
-            if (idade >= 41 && !categoriasUnicas.includes("Master 3")) categoriasUnicas.push("Master 3");
-            if (idade >= 46 && !categoriasUnicas.includes("Master 4")) categoriasUnicas.push("Master 4");
-            if (idade >= 51 && !categoriasUnicas.includes("Master 5")) categoriasUnicas.push("Master 5");
-            if (idade >= 56 && !categoriasUnicas.includes("Master 6")) categoriasUnicas.push("Master 6");
-            if (idade >= 61 && !categoriasUnicas.includes("Master 7")) categoriasUnicas.push("Master 7");
-            
-            return masters.filter((v, i, a) => a.indexOf(v) === i);
-        }
-
-
-        /**
-         * Objeto com pesos por divisão e sexo (MANTIDO)
-         */
-        const pesosPorDivisao = {
-            "Pré-Mirim 1": {
-                masculino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"],
-                feminino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"]
-            },
-            "Pré-Mirim 2": {
-                masculino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"],
-                feminino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"]
-            },
-            "Pré-Mirim 3": {
-                masculino: ["Pluma/Light-Feather até 21kg", "Pena/Feather até 24kg", "Leve/Light até 27,2kg", "Médio/Middle até 30,2kg", "Meio-Pesado/Medium-Heavy até 33,2kg", "Pesado/Heavy até 36,2kg", "Super-Pesado/Super-Heavy até 39,3kg", "Pesadíssimo/Ultra-Heavy acima de 39,3kg"],
-                feminino: ["Pluma/Light-Feather até 21kg", "Pena/Feather até 24kg", "Leve/Light até 27,2kg", "Médio/Middle até 30,2kg", "Meio-Pesado/Medium-Heavy até 33,2kg", "Pesado/Heavy até 36,2kg", "Super-Pesado/Super-Heavy até 39,3kg", "Pesadíssimo/Ultra-Heavy acima de 39,3kg"]
-            },
-            "Mirim 1": {
-                masculino: ["Pluma/Light-Feather até 21kg", "Pena/Feather até 24kg", "Leve/Light até 27,2kg", "Médio/Middle até 30,2kg", "Meio-Pesado/Medium-Heavy até 33,2kg", "Pesado/Heavy até 36,2kg", "Super-Pesado/Super-Heavy até 39,3kg", "Pesadíssimo/Ultra-Heavy acima de 39,3kg"],
-                feminino: ["Pluma/Light-Feather até 21kg", "Pena/Feather até 24kg", "Leve/Light até 27,2kg", "Médio/Middle até 30,2kg", "Meio-Pesado/Medium-Heavy até 33,2kg", "Pesado/Heavy até 36,2kg", "Super-Pesado/Super-Heavy até 39,3kg", "Pesadíssimo/Ultra-Heavy acima de 39,3kg"]
-            },
-            "Mirim 2": {
-                masculino: ["Galo/Rooster até 24kg", "Pluma/Light-Feather até 27kg", "Pena/Feather até 30,2kg", "Leve/Light até 33,2kg", "Médio/Middle até 36,2kg", "Meio-Pesado/Medium-Heavy até 39,3kg", "Pesado/Heavy até 42,3kg", "Super-Pesado/Super-Heavy até 45,3kg", "Pesadíssimo/Ultra-Heavy acima de 45,3kg"],
-                feminino: ["Galo/Rooster até 24kg", "Pluma/Light-Feather até 27kg", "Pena/Feather até 30,2kg", "Leve/Light até 33,2kg", "Médio/Middle até 36,2kg", "Meio-Pesado/Medium-Heavy até 39,3kg", "Pesado/Heavy até 42,3kg", "Super-Pesado/Super-Heavy até 45,3kg", "Pesadíssimo/Ultra-Heavy acima de 45,3kg"]
-            },
-            "Mirim 3": {
-                masculino: ["Galo/Rooster até 24kg", "Pluma/Light-Feather até 27kg", "Pena/Feather até 30,2kg", "Leve/Light até 33,2kg", "Médio/Middle até 36,2kg", "Meio-Pesado/Medium-Heavy até 39,3kg", "Pesado/Heavy até 42,3kg", "Super-Pesado/Super-Heavy até 45,3kg", "Pesadíssimo/Ultra-Heavy acima de 45,3kg"],
-                feminino: ["Galo/Rooster até 24kg", "Pluma/Light-Feather até 27kg", "Pena/Feather até 30,2kg", "Leve/Light até 33,2kg", "Médio/Middle até 36,2kg", "Meio-Pesado/Medium-Heavy até 39,3kg", "Pesado/Heavy até 42,3kg", "Super-Pesado/Super-Heavy até 45,3kg", "Pesadíssimo/Ultra-Heavy acima de 45,3kg"]
-            },
-            "Infantil 1": {
-                masculino: ["Galo/Rooster até 32,2kg", "Pluma/Light-Feather até 36,2kg", "Pena/Feather até 40,3kg", "Leve/Light até 44,3kg", "Médio/Middle até 48,3kg", "Meio-Pesado/Medium-Heavy até 52,5kg", "Pesado/Heavy até 56,5kg", "Super-Pesado/Super-Heavy até 60,5kg", "Pesadíssimo/Ultra-Heavy acima de 60,5kg"],
-                feminino: ["Galo/Rooster até 32,2kg", "Pluma/Light-Feather até 36,2kg", "Pena/Feather até 40,3kg", "Leve/Light até 44,3kg", "Médio/Middle até 48,3kg", "Meio-Pesado/Medium-Heavy até 52,5kg", "Pesado/Heavy até 56,5kg", "Super-Pesado/Super-Heavy até 60,5kg", "Pesadíssimo/Ultra-Heavy acima de 60,5kg"]
-            },
-            "Infantil 2": {
-                masculino: ["Galo/Rooster até 32,2kg", "Pluma/Light-Feather até 36,2kg", "Pena/Feather até 40,3kg", "Leve/Light até 44,3kg", "Médio/Middle até 48,3kg", "Meio-Pesado/Medium-Heavy até 52,5kg", "Pesado/Heavy até 56,5kg", "Super-Pesado/Super-Heavy até 60,5kg", "Pesadíssimo/Ultra-Heavy acima de 60,5kg"],
-                feminino: ["Galo/Rooster até 32,2kg", "Pluma/Light-Feather até 36,2kg", "Pena/Feather até 40,3kg", "Leve/Light até 44,3kg", "Médio/Middle até 48,3kg", "Meio-Pesado/Medium-Heavy até 52,5kg", "Pesado/Heavy até 56,5kg", "Super-Pesado/Super-Heavy até 60,5kg", "Pesadíssimo/Ultra-Heavy acima de 60,5kg"]
-            },
-            "Infantil 3": {
-                masculino: ["Galo/Rooster até 36,2kg", "Pluma/Light-Feather até 40,3kg", "Pena/Feather até 44,3kg", "Leve/Light até 48,3kg", "Médio/Middle até 52,5kg", "Meio-Pesado/Medium-Heavy até 56,5kg", "Pesado/Heavy até 60,5kg", "Super-Pesado/Super-Heavy até 65kg", "Pesadíssimo/Ultra-Heavy acima de 65kg"],
-                feminino: ["Galo/Rooster até 36,2kg", "Pluma/Light-Feather até 40,3kg", "Pena/Feather até 44,3kg", "Leve/Light até 48,3kg", "Médio/Middle até 52,5kg", "Meio-Pesado/Medium-Heavy até 56,5kg", "Pesado/Heavy até 60,5kg", "Super-Pesado/Super-Heavy até 65kg", "Pesadíssimo/Ultra-Heavy acima de 65kg"]
-            },
-            "Infanto-Juvenil 1": {
-                masculino: ["Galo/Rooster até 36,2kg", "Pluma/Light-Feather até 40,3kg", "Pena/Feather até 44,3kg", "Leve/Light até 48,3kg", "Médio/Middle até 52,5kg", "Meio-Pesado/Medium-Heavy até 56,5kg", "Pesado/Heavy até 60,5kg", "Super-Pesado/Super-Heavy até 65kg", "Pesadíssimo/Ultra-Heavy acima de 65kg"],
-                feminino: ["Galo/Rooster até 36,2kg", "Pluma/Light-Feather até 40,3kg", "Pena/Feather até 44,3kg", "Leve/Light até 48,3kg", "Médio/Middle até 52,5kg", "Meio-Pesado/Medium-Heavy até 56,5kg", "Pesado/Heavy até 60,5kg", "Super-Pesado/Super-Heavy até 65kg", "Pesadíssimo/Ultra-Heavy acima de 65kg"]
-            },
-            "Infanto-Juvenil 2": {
-                masculino: ["Galo/Rooster até 44,3kg", "Pluma/Light-Feather até 48,3kg", "Pena/Feather até 52,5kg", "Leve/Light até 56,5kg", "Médio/Middle até 60,5kg", "Meio-Pesado/Medium-Heavy até 65kg", "Pesado/Heavy até 69kg", "Super-Pesado/Super-Heavy até 73kg", "Pesadíssimo/Ultra-Heavy acima de 73kg"],
-                feminino: ["Galo/Rooster até 40,3kg", "Pluma/Light-Feather até 44,3kg", "Pena/Feather até 48,3kg", "Leve/Light até 52,5kg", "Médio/Middle até 56,5kg", "Meio-Pesado/Medium-Heavy até 60,5kg", "Pesado/Heavy até 65kg", "Super-Pesado/Super-Heavy até 69kg", "Pesadíssimo/Ultra-Heavy acima de 69kg"]
-            },
-            "Infanto-Juvenil 3": {
-                 masculino: ["Galo/Rooster até 44,3kg", "Pluma/Light-Feather até 48,3kg", "Pena/Feather até 52,5kg", "Leve/Light até 56,5kg", "Médio/Middle até 60,5kg", "Meio-Pesado/Medium-Heavy até 65kg", "Pesado/Heavy até 69kg", "Super-Pesado/Super-Heavy até 73kg", "Pesadíssimo/Ultra-Heavy acima de 73kg"],
-                feminino: ["Galo/Rooster até 40,3kg", "Pluma/Light-Feather até 44,3kg", "Pena/Feather até 48,3kg", "Leve/Light até 52,5kg", "Médio/Middle até 56,5kg", "Meio-Pesado/Medium-Heavy até 60,5kg", "Pesado/Heavy até 65kg", "Super-Pesado/Super-Heavy até 69kg", "Pesadíssimo/Ultra-Heavy acima de 69kg"]
-            },
-            "Juvenil": {
-                masculino: ["Galo/Rooster até 53,5kg", "Pluma/Light-Feather até 58,5kg", "Pena/Feather até 64kg", "Leve/Light até 69kg", "Médio/Middle até 74kg", "Meio-Pesado/Medium-Heavy até 79,3kg", "Pesado/Heavy até 84,3kg", "Super-Pesado/Super-Heavy até 89,3kg", "Pesadíssimo/Ultra-Heavy acima de 89,3kg"],
-                feminino: ["Galo/Rooster até 44,3kg", "Pluma/Light-Feather até 48,3kg", "Pena/Feather até 52,5kg", "Leve/Light até 56,5kg", "Médio/Middle até 60,5kg", "Meio-Pesado/Medium-Heavy até 65kg", "Pesado/Heavy até 69kg", "Super-Pesado/Super-Heavy até 73kg", "Pesadíssimo/Ultra-Heavy acima de 73kg"]
-            },
-            "Adulto": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 1": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 2": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 3": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 4": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 5": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 6": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-            "Master 7": {
-                masculino: ["Galo/Rooster até 57,5kg", "Pluma/Light-Feather até 64kg", "Pena/Feather até 70kg", "Leve/Light até 76kg", "Médio/Middle até 82,3kg", "Meio-Pesado/Medium-Heavy até 88,3kg", "Pesado/Heavy até 94,3kg", "Super-Pesado/Super-Heavy até 100,5kg", "Pesadíssimo/Ultra-Heavy acima de 100,5kg"],
-                feminino: ["Galo/Rooster até 48,5kg", "Pluma/Light-Feather até 53,5kg", "Pena/Feather até 58,5kg", "Leve/Light até 64kg", "Médio/Middle até 69kg", "Meio-Pesado/Medium-Heavy até 74kg", "Pesado/Heavy até 79,3kg", "Super-Pesado/Super-Heavy até 84,3kg", "Pesadíssimo/Ultra-Heavy acima de 84,3kg"]
-            },
-        };
-
-        /**
-         * Objeto com faixas por divisão (categoria de idade) (MANTIDO)
-         */
-        const faixasPorDivisao = {
-            "Pré-Mirim 1": ["Branca", "Cinza"],
-            "Pré-Mirim 2": ["Branca", "Cinza"],
-            "Pré-Mirim 3": ["Branca", "Cinza"],
-            "Mirim 1": ["Branca", "Cinza", "Amarela"],
-            "Mirim 2": ["Branca", "Cinza", "Amarela"],
-            "Mirim 3": ["Branca", "Cinza", "Amarela"],
-            "Infantil 1": ["Branca", "Cinza", "Amarela", "Laranja"],
-            "Infantil 2": ["Branca", "Cinza", "Amarela", "Laranja"],
-            "Infantil 3": ["Branca", "Cinza", "Amarela", "Laranja"],
-            "Infanto-Juvenil 1": ["Branca", "Cinza", "Amarela", "Laranja", "Verde"],
-            "Infanto-Juvenil 2": ["Branca", "Cinza", "Amarela", "Laranja", "Verde"],
-            "Infanto-Juvenil 3": ["Branca", "Cinza", "Amarela", "Laranja", "Verde"],
-            "Juvenil": ["Branca", "Azul"],
-            "Adulto": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 1": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 2": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 3": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 4": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 5": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 6": ["Branca", "Azul", "Roxa", "Marrom"],
-            "Master 7": ["Branca", "Azul", "Roxa", "Marrom"],
-        };
-
-        // ==========================================================
-        // 2. FUNÇÕES DE CÁLCULO E POPULAMENTO DE DROPDOWNS (CORRIGIDAS)
-        // ==========================================================
-        
-        function calcularIdade(dataNascimento) {
-            const hoje = new Date();
-            const nascimento = new Date(dataNascimento);
-            let idade = hoje.getFullYear() - nascimento.getFullYear();
-            const mes = hoje.getMonth() - nascimento.getMonth();
-            if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-                idade--;
-            }
-            return idade;
-        }
-
-        /**
-         * Limpa e desabilita um select.
-         */
-        function limparOpcoesSelect(selectElement, defaultText, disable = true) {
-            selectElement.innerHTML = `<option value="">${defaultText}</option>`;
-            selectElement.disabled = disable;
-            selectElement.required = !disable; 
-            if (selectElement.id === 'categoria') {
-                // Ao limpar a categoria, garante que os dependentes também sejam limpos e desabilitados
-                limparOpcoesSelect(faixaInput, 'Selecione a Categoria', true);
-                limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
-            }
-            if (selectElement.id === 'faixa') {
-                limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
-            }
-        }
-
-        function popularCategorias() {
-            const dataNasc = dataNascimentoInput.value;
-            const sexo = sexoInput.value;
-            const idade = dataNasc ? calcularIdade(dataNasc) : null;
-            
-            // Limpa o estado atual
-            limparOpcoesSelect(categoriaSelect, 'Preencha o Sexo e a Data de Nasc.', true);
-            absolutoContainer.style.display = 'none';
-            absolutoCheckbox.checked = false;
-
-            if (!dataNasc || !sexo || idade < 4) {
-                atualizarExtrato();
-                return;
-            }
-
-            const categorias = obterDivisao(idade);
-
-            if (categorias) {
-                categoriaSelect.disabled = false;
-                categoriaSelect.required = true;
-
-                // Se for um array (Master/Adulto), adiciona as opções
-                if (Array.isArray(categorias)) {
-                    limparOpcoesSelect(categoriaSelect, 'Selecione uma categoria', false);
-                    categorias.forEach(cat => {
-                        const option = document.createElement('option');
-                        option.value = cat;
-                        option.textContent = cat;
-                        categoriaSelect.appendChild(option);
-                    });
-                } else {
-                    // Se for uma string (Juvenil e menores)
-                    categoriaSelect.innerHTML = `<option value="${categorias}">${categorias}</option>`;
-                    categoriaSelect.value = categorias; // Seleciona automaticamente
-                    // Se a categoria for preenchida, já pode popular as faixas imediatamente
-                    popularFaixas();
-                }
-            }
-            atualizarExtrato();
-        }
-
-        function popularFaixas() {
-            const categoria = categoriaSelect.value;
-            // Limpa as opções de faixa e peso, desabilitando-os
-            limparOpcoesSelect(faixaInput, 'Selecione a Categoria', true);
-            limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
-            
-            // Controle do Absoluto
-            const permiteAbsoluto = ['Adulto', 'Master 1', 'Master 2', 'Master 3', 'Master 4', 'Master 5', 'Master 6', 'Master 7'].includes(categoria);
-            absolutoContainer.style.display = permiteAbsoluto ? 'flex' : 'none';
-            if (!permiteAbsoluto) {
-                absolutoCheckbox.checked = false;
-            }
-
-            if (categoria && faixasPorDivisao[categoria]) {
-                faixaInput.disabled = false;
-                faixaInput.required = true;
-                limparOpcoesSelect(faixaInput, 'Selecione sua faixa', false);
-                
-                faixasPorDivisao[categoria].forEach(faixa => {
-                    const option = document.createElement('option');
-                    option.value = faixa.toLowerCase();
-                    option.textContent = faixa;
-                    faixaInput.appendChild(option);
-                });
-            }
-
-            atualizarExtrato();
-        }
-
-        function popularPesos() {
-            const categoria = categoriaSelect.value;
-            const sexo = sexoInput.value;
-            const faixa = faixaInput.value; // Não usado no filtro, mas garante que a faixa foi selecionada
-            
-            // Limpa as opções de peso, desabilitando-o
-            limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
-
-            if (categoria && sexo && faixa && pesosPorDivisao[categoria] && pesosPorDivisao[categoria][sexo]) {
-                pesoInput.disabled = false;
-                pesoInput.required = true;
-                limparOpcoesSelect(pesoInput, 'Selecione seu peso (Divisão)', false);
-                
-                pesosPorDivisao[categoria][sexo].forEach(peso => {
-                    const option = document.createElement('option');
-                    // Cria um valor (value) simplificado (ex: Galo/Rooster -> galo)
-                    const value = peso.split('/')[0].trim().toLowerCase().replace(' ', '-'); 
-                    option.value = value;
-                    option.textContent = peso;
-                    pesoInput.appendChild(option);
-                });
-            }
-            atualizarExtrato();
-        }
-        
-        // --- FUNÇÕES PARA GERENCIAR SELECT/OUTRA (ADICIONADAS) ---
-        function gerenciarEquipe() {
-            const equipeOutraContainer = document.getElementById('equipeOutraContainer');
-            const equipeHiddenInput = document.getElementById('equipe');
-            const valorSelecionado = equipeSelect.value;
-
-            if (valorSelecionado === 'Outra') {
-                // Se for "Outra", mostra o campo de digitação e o torna obrigatório
-                equipeOutraContainer.style.display = 'flex';
-                equipeOutraInput.required = true;
-                // O valor final é o que for digitado no campo extra
-                equipeHiddenInput.value = equipeOutraInput.value;
-            } else {
-                // Se for uma equipe pré-definida, esconde o campo e o limpa
-                equipeOutraContainer.style.display = 'none';
-                equipeOutraInput.required = false;
-                equipeOutraInput.value = '';
-                
-                // O valor final é o do select
-                equipeHiddenInput.value = valorSelecionado;
-            }
-            
-            // Garante que o hidden input seja required se o select não for selecionado.
-            equipeHiddenInput.required = valorSelecionado === '' ? true : false;
-        }
-
-        function gerenciarProfessor() {
-            const professorOutroContainer = document.getElementById('professorOutroContainer');
-            const professorHiddenInput = document.getElementById('professor');
-            const valorSelecionado = professorSelect.value;
-
-            if (valorSelecionado === 'Outro') {
-                professorOutroContainer.style.display = 'flex';
-                professorOutroInput.required = true;
-                // O valor final é o que for digitado no campo extra
-                professorHiddenInput.value = professorOutroInput.value;
-            } else {
-                professorOutroContainer.style.display = 'none';
-                professorOutroInput.required = false;
-                professorOutroInput.value = '';
-                
-                // O valor final é o do select
-                professorHiddenInput.value = valorSelecionado;
-            }
-
-            professorHiddenInput.required = valorSelecionado === '' ? true : false;
-        }
-        // --- FIM FUNÇÕES SELECT/OUTRA ---
-        
-        // --- FUNÇÕES DE EXTRACTO E ENVIO ---
-
-        function atualizarExtrato() {
-            let total = 60.00;
-            const categoria = categoriaSelect.value || 'Aguardando...';
-            const faixa = faixaInput.options[faixaInput.selectedIndex]?.text || 'Aguardando...';
-            const peso = pesoInput.options[pesoInput.selectedIndex]?.text || 'Aguardando...';
-            const valorAbsoluto = 40.00;
-
-            // Define o valor do campo hidden para ser enviado
-            categoriaIdadeInput.value = categoria;
-            
-            const permiteAbsoluto = ['Juvenil', 'Adulto', 'Master 1', 'Master 2', 'Master 3', 'Master 4', 'Master 5', 'Master 6', 'Master 7'].includes(categoria);
-
-            if (absolutoCheckbox.checked && permiteAbsoluto) {
-                total += valorAbsoluto;
-                extratoAbsoluto.style.display = 'flex';
-            } else {
-                extratoAbsoluto.style.display = 'none';
-            }
-
-            extratoCategoriaSpan.innerText = `${categoria}, ${faixa}, ${peso}`;
-            totalPagar.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-        
-        // --- FUNÇÃO PRINCIPAL DE ENVIO DE DADOS (MANTIDA) ---
-        async function enviarParaPlanilha(event) {
-            event.preventDefault(); 
-            
-            // AJUSTE CRUCIAL: Chama as funções para atualizar o valor final dos campos antes de enviar
-            gerenciarEquipe();
-            gerenciarProfessor();
-
-            if (!inscricaoForm.checkValidity()) {
-                inscricaoForm.reportValidity(); 
-                return;
-            }
-
-            feedbackElement.textContent = 'Enviando dados... por favor, aguarde.';
-            
-            const formData = new FormData(inscricaoForm);
-            formData.append('valor_total', totalPagar.innerText); 
-            
-            const categoriaSelecionada = categoriaSelect.value;
-            const permiteAbsoluto = ['Juvenil', 'Adulto', 'Master 1', 'Master 2', 'Master 3', 'Master 4', 'Master 5', 'Master 6', 'Master 7'].includes(categoriaSelecionada);
-
-            if (absolutoCheckbox.checked && permiteAbsoluto) {
-                formData.set('absoluto', 'Sim');
-            } else {
-                formData.set('absoluto', 'Não');
-            }
-            
-            const params = new URLSearchParams(formData).toString();
-
-            try {
-                const response = await fetch(URL_GOOGLE_SCRIPT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: params
-                });
-
-                const data = await response.json();
-
-                if (data.resultado === "sucesso") {
-                    feedbackElement.textContent = '✅ Inscrição salva! Redirecionando para o Pagamento...';
-                    feedbackElement.style.backgroundColor = '#d4edda';
-                    feedbackElement.style.color = '#155724';
-                    
-                    // 🎯 CAPTURA E PASSA DADOS PARA pagamentos.html VIA URL
-                    const nomeAtleta = document.getElementById('nome').value;
-                    const categoriaIdade = categoriaSelect.value;
-                    const totalPagarValor = totalPagar.innerText.replace('R$ ', '').replace(',', '.'); 
-
-                    const urlPagamento = `pagamentos.html?atleta=${encodeURIComponent(nomeAtleta)}&categoria=${encodeURIComponent(categoriaIdade)}&valor=${totalPagarValor}`;
-
-                    window.location.href = urlPagamento; 
-                    
-                } else {
-                    feedbackElement.textContent = '❌ Erro ao salvar na planilha. Tente novamente.';
-                    feedbackElement.style.backgroundColor = '#f8d7da';
-                    feedbackElement.style.color = '#721c24';
-                }
-
-            } catch (error) {
-                console.error('Erro de conexão ou Apps Script:', error);
-                feedbackElement.textContent = '❌ Erro de rede. Tente novamente.';
-                feedbackElement.style.backgroundColor = '#f8d7da';
-                feedbackElement.style.color = '#721c24';
-            }
-        }
-        // --- FIM DA FUNÇÃO DE ENVIO ---
-
-
-        // --- Event Listeners ---
-        dataNascimentoInput.addEventListener('change', popularCategorias);
-        sexoInput.addEventListener('change', popularCategorias); 
-        categoriaSelect.addEventListener('change', popularFaixas); 
-        faixaInput.addEventListener('change', popularPesos); 
-
-        // NOVOS LISTENERS PARA EQUIPE E PROFESSOR
-        equipeSelect.addEventListener('change', gerenciarEquipe);
-        equipeOutraInput.addEventListener('input', gerenciarEquipe); // Atualiza o hidden input enquanto digita
-
-        professorSelect.addEventListener('change', gerenciarProfessor);
-        professorOutroInput.addEventListener('input', gerenciarProfessor); // Atualiza o hidden input enquanto digita
-        // FIM NOVOS LISTENERS
-
-        // O peso e absoluto só precisam atualizar o extrato
-        pesoInput.addEventListener('change', atualizarExtrato); 
-        absolutoCheckbox.addEventListener('change', atualizarExtrato);
-        
-        inscricaoForm.addEventListener('submit', enviarParaPlanilha);
-        
-        popularCategorias(); // Inicia a UI, garantindo que os campos estejam desabilitados inicialmente.
-    </script>
 </body>
 </html>
