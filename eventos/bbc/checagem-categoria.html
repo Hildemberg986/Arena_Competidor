@@ -15,7 +15,7 @@
             --cor-texto: #495057;
             --cor-borda: #dee2e6;
             --status-analise: #ffc107;
-            --status-confirmado: var(--cor-destaque); /* Novo status */
+            --status-confirmado: var(--cor-destaque);
         }
 
         body {
@@ -281,13 +281,9 @@
                 text-align: left;
             }
             
-            /* Define o label para ORD e Professor no mobile */
-            td[data-label="ORD"]::before {
-                content: "ORD";
-            }
-             td[data-label="Professor"]::before {
-                content: "Professor";
-            }
+            /* AS REGRAS ABAIXO FORAM REMOVIDAS POIS ERAM REDUNDANTES E CAUSAVAM O ERRO: */
+            /* td[data-label="ORD"]::before { content: "ORD"; } */
+            /* td[data-label="Professor"]::before { content: "Professor"; } */
             /* FIM CORREÇÃO CSS */
 
             .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
@@ -364,7 +360,7 @@
         }
 
         function normalizeCategoria(text) {
-             // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
+            // Ex: 'Master 1' -> 'master', 'Juvenil' -> 'juvenil'
             return normalizeText(text.split(/\s+-\s*|\s+/)[0]);
         }
         
@@ -431,6 +427,23 @@
         }
         
         function groupAndRenderData(data) {
+            // 🚨 MODIFICAÇÃO: Filtra os atletas para manter APENAS os com status "Confirmado"
+            data = data.filter(atleta => {
+                // O status "Confirmado" resulta na classe CSS 'status-confirmado'
+                // Incluindo o || '' para segurança caso o campo esteja vazio
+                return normalizeStatus(atleta['STATUS DO PAGAMENTO'] || '') === 'status-confirmado';
+            });
+
+            if (data.length === 0) {
+                loadingMessage.textContent = 'Nenhum inscrito com status "Confirmado" foi encontrado.';
+                loadingMessage.style.display = 'block';
+                listaInscritosDiv.innerHTML = '';
+                // Chama populateFilters com um objeto vazio para garantir que os filtros mostrem apenas a opção "Todos"
+                populateFilters({ 'filtroGenero': new Set(), 'filtroCategoria': new Set(), 'filtroFaixa': new Set(), 'filtroPeso': new Set() });
+                return;
+            }
+            // FIM DA MODIFICAÇÃO
+            
             inscritosAgrupados = {};
             const availableFilters = {
                 'filtroGenero': new Set(),
@@ -571,7 +584,7 @@
             atualizarVisibilidade(); 
         }
         
-        // --- Lógica de Filtro e Acordeão (Inalterada) ---
+        // --- Lógica de Filtro e Acordeão ---
 
         function atualizarVisibilidade() {
             const generoSelecionado = filtroGenero.value;
@@ -581,6 +594,8 @@
             
             // Busca os grupos dinamicamente após a renderização
             const subGroups = listaInscritosDiv.querySelectorAll('.sub-group');
+
+            let foundVisible = false;
 
             subGroups.forEach(group => {
                 const grupoGenero = group.dataset.sexo;
@@ -595,10 +610,19 @@
 
                 if (showGenero && showCategoria && showFaixa && showPeso) {
                     group.style.display = 'block';
+                    foundVisible = true;
                 } else {
                     group.style.display = 'none';
                 }
             });
+
+            // Se nenhum grupo for encontrado, mostra a mensagem de "Nenhum resultado"
+            if (!foundVisible && listaInscritosDiv.children.length > 0) {
+                 loadingMessage.textContent = 'Nenhum resultado encontrado para os filtros selecionados.';
+                 loadingMessage.style.display = 'block';
+            } else if (listaInscritosDiv.children.length > 0) {
+                 loadingMessage.style.display = 'none';
+            }
         }
 
         function setupAccordion() {
@@ -614,16 +638,16 @@
         function handleAccordionClick(event) {
              const header = event.currentTarget;
              const content = header.nextElementSibling;
-                        
-            listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.classList.remove('open');
-                }
-            });
+                             
+             listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
+                 if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                     otherHeader.classList.remove('active');
+                     otherHeader.nextElementSibling.classList.remove('open');
+                 }
+             });
 
-            header.classList.toggle('active');
-            content.classList.toggle('open');
+             header.classList.toggle('active');
+             content.classList.toggle('open');
         }
 
         // Adiciona listeners aos filtros
