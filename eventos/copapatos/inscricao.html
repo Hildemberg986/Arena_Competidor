@@ -383,16 +383,16 @@
             
             <div class="form-group checkbox-group" id="absolutoContainer" style="display:none;">
                 <input type="checkbox" id="absoluto" name="absoluto" value="Sim">
-                <label for="absoluto">Participar do Absoluto (+ R$ 50,00)</label>
+                <label for="absoluto">Participar do Absoluto (+ R$ 60,00)</label>
             </div>
         </form>
 
         <div class="extrato">
             <h2>Extrato da Inscrição</h2>
             <p><span>Categoria, Faixa e Peso:</span> <span id="extratoCategoria">Aguardando preenchimento</span></p>
-            <p><span>Valor da Inscrição:</span> <span id="valorCategoria">R$ 90,00</span></p>
-            <p id="extratoAbsoluto" style="display:none;"><span>Valor do Absoluto:</span> <span id="valorAbsoluto">R$ 50,00</span></p>
-            <h3><span>Total a Pagar:</span> <span id="totalPagar">R$ 90,00</span></h3>
+            <p><span>Valor da Inscrição:</span> <span id="valorCategoria">R$ 100,00</span></p>
+            <p id="extratoAbsoluto" style="display:none;"><span>Valor do Absoluto:</span> <span id="valorAbsoluto">R$ 60,00</span></p>
+            <h3><span>Total a Pagar:</span> <span id="totalPagar">R$ 100,00</span></h3>
         </div>
 
         <button type="submit" form="inscricaoForm">Salvar Inscrição e Ir para o Pagamento</button>
@@ -830,11 +830,11 @@
         // --- FUNÇÕES DE EXTRACTO E ENVIO ---
 
         function atualizarExtrato() {
-            let total = 90.00;
+            let total = 100.00;
             const categoria = categoriaSelect.value || 'Aguardando...';
             const faixa = faixaInput.options[faixaInput.selectedIndex]?.text || 'Aguardando...'; 
             const peso = pesoInput.options[pesoInput.selectedIndex]?.text || 'Aguardando...'; 
-            const valorAbsoluto = 50.00;
+            const valorAbsoluto = 60.00;
 
             categoriaIdadeInput.value = categoria;
             
