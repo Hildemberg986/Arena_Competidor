@@ -163,8 +163,8 @@
 
                 <label for="tipo-inscricao">Selecione o Tipo de Inscrição:</label>
                 <select id="tipo-inscricao">
-                    <option value="90.00">Categoria (R$ 90,00)</option>
-                    <option value="140.00">Categoria + Absoluto (R$ 140,00)</option>
+                    <option value="100.00">Categoria (R$ 100,00)</option>
+                    <option value="160.00">Categoria + Absoluto (R$ 160,00)</option>
                 </select>
 
                 <label for="metodo-pagamento">Método de Pagamento Utilizado (Para Comprovação):</label>
@@ -187,27 +187,27 @@
                <tbody>
                    <tr>
                        <td id="linha-categoria-desc">Inscrição (Categoria + Peso)</td>
-                       <td id="linha-categoria-valor">R$ 90,00</td>
+                       <td id="linha-categoria-valor">R$ 100,00</td>
                    </tr>
                    <tr id="linha-absoluto" style="display:none;">
                        <td>Absoluto</td>
-                       <td id="linha-absoluto-valor">R$ 50,00</td>
+                       <td id="linha-absoluto-valor">R$ 60,00</td>
                    </tr>
                    <tr class="total-row">
                        <th>Total a Pagar</th>
-                       <td id="valor-total">R$ 90,00</td>
+                       <td id="valor-total">R$ 100,00</td>
                    </tr>
                </tbody>
            </table>
            
            <button id="btn-toggle-pix-direto" class="btn-action-main" style="font-size: 1.1rem; padding: 15px; margin-top: 0;">
-               Pagar R$ 90,00 com PIX Direto (Sem Taxa)
+               Pagar R$ 100,00 com PIX Direto (Sem Taxa)
            </button>
            
            <div id="pix-direto-details">
                 <div id="pix-info">
                    <h3>Informações PIX Direto (CNPJ)</h3>
-                   <p>Use o Copia e Cola, ou o QR Code. O valor a ser pago deve ser o mesmo da tabela acima (<span id="pix-valor-info" style="font-weight: bold;">R$ 90,00</span>).</p>
+                   <p>Use o Copia e Cola, ou o QR Code. O valor a ser pago deve ser o mesmo da tabela acima (<span id="pix-valor-info" style="font-weight: bold;">R$ 100,00</span>).</p>
                    
                    <p><strong>Chave Pix:</strong> <span id="chave-pix-cnpj">62.810.446/0001-39</span> (CNPJ)</p>
                    <button id="btn-copy-chave" class="copy-button">Copiar Chave PIX (CNPJ)</button>
@@ -266,12 +266,12 @@
             const metodo = metodoPagamentoSelect.value;
             const valorFormatado = valorTotal.toFixed(2).replace('.', ',');
             
-            let catValor = 90.00; // Valor da Categoria
-            let absolutoValor = 50.00; // Valor do Absoluto
+            let catValor = 100.00; // Valor da Categoria
+            let absolutoValor = 60.00; // Valor do Absoluto
             let catDesc = 'Inscrição (Categoria + Peso)';
 
             // 1. Atualizar Tabela de Resumo
-            if (Math.abs(valorTotal - 140.00) < 0.01) { 
+            if (Math.abs(valorTotal - 160.00) < 0.01) { 
                 linhaAbsoluto.style.display = 'table-row';
             } else { 
                 absolutoValor = 0.00; // Zera o valor se for só Categoria
