@@ -9,12 +9,13 @@
         :root { 
             --cor-primaria: #007bff; 
             --cor-secundaria: #343a40; 
-            --cor-destaque: #28a745; /* Verde para PIX Direto */
+            --cor-destaque: #28a745; 
             --cor-fundo: #f8f9fa; 
             --cor-texto: #495057; 
             --cor-borda: #dee2e6; 
             --cor-whatsapp: #25D366; 
-            --cor-copia: #ff8c00; /* Laranja para o botão Copia e Cola */
+            --cor-copia: #ff8c00;
+            --cor-nubank: #820ad1; /* Cor roxa característica do Nubank */
         } 
         body { 
             font-family: 'Roboto', sans-serif; 
@@ -27,7 +28,6 @@
             align-items: center; 
             min-height: 100vh; 
         }
-        /* --- ESTILOS DA HEADER E LOGO ATUALIZADOS --- */
         header { 
             width: 100%; 
             text-align: center; 
@@ -44,10 +44,10 @@
             max-height: 80px; 
             max-width: 250px; 
         }
-        /* --- FIM ESTILOS DA HEADER E LOGO ATUALIZADOS --- */
 
-        .main-content { margin-top: 100px; width: 90%; max-width: 800px; flex-grow: 1; }
+        .main-content { margin-top: 120px; width: 90%; max-width: 800px; flex-grow: 1; padding-bottom: 50px; }
         h1 { color: var(--cor-secundaria); font-weight: 700; font-size: 2.5rem; text-align: center; margin-bottom: 40px; }
+        
         .payment-container { 
             background-color: #fff; 
             padding: 40px; 
@@ -58,14 +58,40 @@
             align-items: center; 
             text-align: center; 
         }
+        
         .payment-summary { border-bottom: 2px solid var(--cor-borda); padding-bottom: 20px; margin-bottom: 20px; width: 100%; }
         .payment-summary h2, .payment-form h2 { color: var(--cor-secundaria); font-size: 1.8rem; margin-bottom: 15px; }
         .payment-details p { font-size: 1.1rem; margin: 10px 0; text-align: left; }
         .payment-details p strong { color: var(--cor-primaria); }
         .payment-status { font-size: 1.2rem; font-weight: bold; color: #ffc107; margin-top: 10px; }
-        .payment-form { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         
-        .payment-form .btn-pay { 
+        .payment-form { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+        /* --- SEÇÃO DE DESTAQUE NUBANK --- */
+        .nubank-highlight {
+            background-color: #f7ebff;
+            border: 2px solid var(--cor-nubank);
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+        }
+        .btn-nubank {
+            background-color: var(--cor-nubank);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        .btn-nubank:hover { background-color: #6a08aa; }
+
+        .btn-pay { 
             display: block; 
             width: 100%; 
             padding: 15px; 
@@ -81,16 +107,14 @@
             text-align: center; 
             box-sizing: border-box; 
         }
-        .payment-form .btn-pay:hover { background-color: #0056b3; }
-        .payment-form .btn-pay.whatsapp { background-color: var(--cor-whatsapp); margin-top: 15px; } 
-        .payment-form .btn-pay.whatsapp:hover { background-color: #1DA851; }
+        .btn-pay.whatsapp { background-color: var(--cor-whatsapp); margin-top: 15px; } 
+        .btn-pay.whatsapp:hover { background-color: #1DA851; }
         
-        /* ESTILO DO BOTÃO COPIA E COLA PIX */
         .pix-copia-btn {
             display: block;
             width: 100%;
             padding: 15px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             color: #fff;
             background-color: var(--cor-copia);
@@ -101,54 +125,44 @@
             text-decoration: none;
             text-align: center;
             box-sizing: border-box;
-            margin-top: 15px; 
+            margin-top: 10px; 
         }
-        .pix-copia-btn:hover { background-color: #e67e22; }
 
-        /* Estilo da caixa de informação PIX */
         #pix-info { 
             background-color: #f1f8ff; 
             border: 1px solid #b3d9ff; 
             padding: 15px; 
             border-radius: 5px; 
-            margin-top: 20px; 
+            margin-top: 10px; 
             text-align: left; 
             font-size: 1rem; 
             width: 100%; 
             box-sizing: border-box; 
         }
-        #pix-info strong { color: var(--cor-primaria); display: block; margin-top: 5px; }
-        #pix-info .atencao { color: #cc0000; font-weight: bold; margin-top: 10px; display: block; font-size: 0.95rem; }
+        .atencao { color: #cc0000; font-weight: bold; display: block; margin-top: 10px; }
 
-        /* --- CSS PARA O GRID DE OPÇÕES DE PAGAMENTO (Mantido, mas só com 1 item) --- */
-        .payment-options-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* Força 1 coluna */
-            gap: 20px;
+        .divider {
             width: 100%;
-            margin-bottom: 20px;
+            height: 1px;
+            background-color: var(--cor-borda);
+            margin: 30px 0;
+            position: relative;
         }
-        .payment-option-card {
-            border: 1px solid var(--cor-destaque); /* Deixando a borda verde para destacar a única opção */
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            background-color: #f0fff0; /* Fundo mais claro para destaque */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        .divider span {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            padding: 0 15px;
+            color: #999;
+            font-size: 0.9rem;
         }
-        
-        /* --- FIM CSS DE OPÇÕES --- */
 
+        .footer { padding: 20px; text-align: center; color: #777; font-size: 0.9rem; }
 
         @media (max-width: 768px) { 
-            header { 
-                padding: 15px 0; 
-                position: static; 
-            } 
-            header img { 
-                max-width: 180px; 
-                max-height: 50px;
-            } 
+            header { padding: 15px 0; position: static; } 
             .main-content { margin-top: 30px; width: 95%; } 
         }
     </style>
@@ -157,13 +171,14 @@
 
     <header>
         <a href="../../index.html">
-        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
         </a>
     </header>
 
     <div class="main-content">
         <h1>Concluir Pagamento</h1>
         <div class="payment-container">
+            
             <div class="payment-summary">
                 <h2>Resumo da Inscrição</h2>
                 <div class="payment-details">
@@ -176,33 +191,35 @@
             </div>
             
             <div class="payment-form">
-                <h2>PIX Direto</h2>
                 
-                <div id="pix-container" style="margin-top: 20px; width: 100%;">
-                    
-                    <div id="pix-info">
-                        <p><strong>Evento:</strong> SENOGI - Etapa Patos</p>
-                        <p>O pagamento deve ser feito via <b>Pix</b> (CNPJ) no valor exato de <strong id="valor-pix-info">Carregando...</strong> para a seguinte conta:</p>
-                        <p><strong>Chave Pix:</strong> 62.810.446/0001-39 (CNPJ)</p>
-                        <p><strong>Identificação:</strong> 62.810.446 VALTER SILVA BRASIL</p>
-                        <strong class="atencao">ATENÇÃO - Envio do Comprovante é OBRIGATÓRIO:</strong>
-                        <p>Enviar o <b>Comprovante do Pagamento</b> clicando no botão do WhatsApp abaixo. A validação é feita pela organização (SENOGI), favor aguardar. Após o envio, a situação fica <b>Em Análise</b> e depois de confirmada passa para <b>Confirmada</b>.</p>
-                    </div>
-                    
-                    <h3>Escaneie o QR Code</h3>
-                    <img id="pix-qrcode-img" src="../../img/IMG_5482.jpg" alt="PIX QR Code Simulado" style="max-width: 250px; border: 1px solid #ccc; padding: 5px; display: block; margin: 0 auto;">
-                    
-                    <div id="pix-copia-e-cola-container" style="width: 100%;">
-                        <button class="pix-copia-btn" onclick="copiarPix()">
-                            <span id="copia-text">Copiar Código Pix Copia e Cola</span> 📋
-                        </button>
-                    </div>
-                    <a href="#" target="_blank" class="btn-pay whatsapp" id="whatsapp-link">
-                        Envie o comprovante pelo WhatsApp
-                    </a>
-
+                <div class="nubank-highlight">
+                    <h3 style="color: var(--cor-nubank); margin-top: 0;">Pagar com Chave PIX (Nubank)</h3>
+                    <p style="margin-bottom: 15px;">Copie a chave aleatória abaixo e pague em qualquer banco:</p>
+                    <button class="btn-nubank" onclick="copiarTexto('7114989a-9d09-421b-be69-f2215cdb856d', 'nubank-btn-text')">
+                        <span id="nubank-btn-text">Copiar Chave Aleatória</span> 📋
+                    </button>
+                    <small style="display: block; margin-top: 10px; color: #666;">Titular: Valter Silva Brasil</small>
                 </div>
+
+                <div class="divider"><span>OU USE O QR CODE</span></div>
+
+                <h3>Escaneie o QR Code</h3>
+                <img id="pix-qrcode-img" src="../../img/IMG_5482.jpg" alt="PIX QR Code" style="max-width: 200px; border: 1px solid #ccc; padding: 5px; margin-bottom: 10px;">
                 
+                <button class="pix-copia-btn" onclick="copiarTexto('00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA', 'copia-text')">
+                    <span id="copia-text">Copiar Código Pix Copia e Cola</span> 📋
+                </button>
+
+                <div id="pix-info">
+                    <p><strong>Valor exato:</strong> <strong id="valor-pix-info">Carregando...</strong></p>
+                    <strong class="atencao">⚠️ OBRIGATÓRIO: Envie o comprovante!</strong>
+                    <p style="font-size: 0.9rem;">Sua inscrição só será confirmada após o envio do comprovante clicando no botão abaixo.</p>
+                </div>
+
+                <a href="#" target="_blank" class="btn-pay whatsapp" id="whatsapp-link">
+                    Enviar Comprovante pelo WhatsApp
+                </a>
+
             </div>
         </div>
     </div>
@@ -212,61 +229,52 @@
     </div>
 
     <script>
-        // Código PIX Copia e Cola (A string que será copiada)
-        const pixCopiaECola = '00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA';
-        const copiaText = document.getElementById('copia-text');
-        
-        let atletaNome = ''; // Para uso global no link do WhatsApp
+        // Função Genérica para copiar texto
+        function copiarTexto(texto, elementId) {
+            const btnText = document.getElementById(elementId);
+            const originalText = btnText.innerText;
 
-        // --- FUNÇÃO PARA COPIAR O CÓDIGO PIX ---
-        function copiarPix() {
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(pixCopiaECola).then(() => {
-                    copiaText.innerText = 'Copiado! ✅ Cole no seu App do Banco';
-                    setTimeout(() => {
-                        copiaText.innerText = 'Copiar Código Pix Copia e Cola';
-                    }, 3000);
+                navigator.clipboard.writeText(texto).then(() => {
+                    btnText.innerText = 'Copiado com sucesso! ✅';
+                    setTimeout(() => { btnText.innerText = originalText; }, 3000);
                 }).catch(err => {
-                    alert(`Não foi possível copiar automaticamente. Copie o código abaixo:\n\n${pixCopiaECola}`);
+                    fallbackCopy(texto);
                 });
             } else {
-                alert(`Seu navegador não suporta cópia automática. Copie o código abaixo:\n\n${pixCopiaECola}`);
+                fallbackCopy(texto);
             }
         }
-        window.copiarPix = copiarPix;
 
-        // --- CARREGAMENTO INICIAL E CONFIGURAÇÃO DE LINKS ---
+        function fallbackCopy(texto) {
+            alert("Copie a chave manualmente:\n\n" + texto);
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const atleta = params.get('atleta');
             const categoria = params.get('categoria');
             const valor = parseFloat(params.get('valor'));
-            const valorFormatado = (isNaN(valor) ? '0.00' : valor.toFixed(2));
-            const valorReal = `R$ ${valorFormatado.replace('.', ',')}`;
+            
+            const valorFormatado = (isNaN(valor) ? '0,00' : valor.toFixed(2).replace('.', ','));
+            const valorReal = `R$ ${valorFormatado}`;
             
             if (atleta && categoria && !isNaN(valor)) {
-                atletaNome = atleta; // Armazena globalmente
-                
                 document.getElementById('nome-atleta').innerText = atleta;
                 document.getElementById('categoria-atleta').innerText = categoria;
                 document.getElementById('valor-pagamento').innerText = valorReal;
                 document.getElementById('valor-pix-info').innerText = valorReal;
 
-
-                // --- Atualiza o link do WhatsApp ---
+                // Link WhatsApp
                 const whatsappLink = document.getElementById('whatsapp-link'); 
                 if (whatsappLink) {
-                    const baseText = "Ol%C3%A1%2C%20segue%20o%20comprovante%20de%20pagamento%20da%20inscri%C3%A7%C3%A3o%20do%20atleta%20" + encodeURIComponent(atletaNome) + "%20para%20o%20SENOGI%20ETAPA%20PATOS.";
+                    const baseText = encodeURIComponent(`Olá, segue o comprovante de pagamento da inscrição do atleta ${atleta} para o SENOGI ETAPA PATOS.`);
                     whatsappLink.href = `https://api.whatsapp.com/send?phone=5584987513740&text=${baseText}`;
                 }
-
             } else {
-                // Caso os parâmetros falhem
-                document.querySelector('.payment-summary').innerHTML = '<h2>❌ Erro</h2><p>Não foi possível carregar os dados da inscrição. Por favor, volte e tente novamente.</p>';
-                document.querySelector('.payment-form').style.display = 'none';
+                document.querySelector('.payment-container').innerHTML = '<h2>❌ Erro</h2><p>Dados da inscrição não encontrados.</p>';
             }
         });
-
     </script>
 </body>
 </html>
