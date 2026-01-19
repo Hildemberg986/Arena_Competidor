@@ -9,365 +9,202 @@
         :root { 
             --cor-primaria: #007bff; 
             --cor-secundaria: #343a40; 
-            --cor-destaque: #28a745; /* Verde PIX Direto */
+            --cor-destaque: #28a745; 
             --cor-fundo: #f8f9fa; 
             --cor-texto: #495057; 
             --cor-borda: #dee2e6; 
             --cor-whatsapp: #25D366; 
             --cor-alerta: #ffc107; 
-            --cor-pix-direto: var(--cor-destaque);
+            --cor-nubank: #820ad1;
             --cor-copia: #6c757d; 
         } 
         body { font-family: 'Roboto', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         header { width: 100%; text-align: center; padding: 20px 0; background-color: #000; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         header img { max-width: 200px; }
-        .main-content { margin-top: 100px; width: 90%; max-width: 800px; flex-grow: 1; }
+        .main-content { margin-top: 100px; width: 90%; max-width: 800px; flex-grow: 1; padding-bottom: 40px; }
         h1 { color: var(--cor-secundaria); font-weight: 700; font-size: 2.5rem; text-align: center; margin-bottom: 40px; }
         
         .confirmation-container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; align-items: center; text-align: center; }
         
-        /* Box de Informação */
         .info-box { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 20px; border-radius: 5px; margin-bottom: 30px; width: 100%; box-sizing: border-box; }
         .info-box h2 { color: #856404; margin-top: 0; font-size: 1.8rem; }
-        .info-box p { font-size: 1.1rem; }
 
-        /* Campos de Preenchimento */
         .input-fields { width: 100%; margin-bottom: 30px; text-align: left; }
         .input-fields label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--cor-secundaria); }
         .input-fields input, .input-fields select { 
             width: 100%; 
-            padding: 10px; 
+            padding: 12px; 
             margin-bottom: 15px; 
             border: 1px solid var(--cor-borda); 
             border-radius: 4px; 
             box-sizing: border-box; 
+            font-size: 1rem;
         }
 
-        /* Tabela de Resumo */
         .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
         .summary-table th, .summary-table td { border: 1px solid var(--cor-borda); padding: 12px 15px; text-align: left; }
-        .summary-table th { background-color: #f1f1f1; color: var(--cor-secundaria); font-weight: bold; }
+        .summary-table th { background-color: #f1f1f1; }
         .summary-table .total-row th, .summary-table .total-row td { background-color: var(--cor-destaque); color: #fff; font-size: 1.2rem; font-weight: bold; }
         
-        /* Seção de Ações */
-        .pix-section { border-top: 2px solid var(--cor-destaque); padding-top: 30px; width: 100%; }
-        
-        /* Botão Principal de Ação (PIX Direto) */
         .btn-action-main {
-            display: block; 
-            width: 100%; 
-            padding: 18px; 
-            font-size: 1.3rem; 
-            font-weight: bold; 
-            color: #fff; 
-            background-color: var(--cor-pix-direto); 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: background-color 0.3s ease; 
-            text-decoration: none; 
-            text-align: center; 
-            box-sizing: border-box; 
-            margin: 25px 0 15px 0; 
+            display: block; width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold; color: #fff; 
+            background-color: var(--cor-destaque); border: none; border-radius: 8px; cursor: pointer; 
+            transition: 0.3s; text-decoration: none; text-align: center; box-sizing: border-box; 
         }
         .btn-action-main:hover { background-color: #218838; }
 
-        /* Botão do WhatsApp (Envio de Comprovante) */
-        .whatsapp-btn { 
-            display: block; 
-            width: 100%; 
-            padding: 15px; 
-            font-size: 1.2rem; 
-            font-weight: bold; 
-            color: #fff; 
-            background-color: var(--cor-whatsapp); 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            transition: background-color 0.3s ease; 
-            text-decoration: none; 
-            text-align: center; 
-            box-sizing: border-box; 
-            margin-top: 20px; 
-            pointer-events: none; 
-            opacity: 0.5;
+        /* --- ESTILO NUBANK DESTAQUE --- */
+        .nubank-box {
+            background-color: #f7ebff; border: 2px solid var(--cor-nubank); padding: 20px;
+            border-radius: 10px; margin-bottom: 20px; text-align: center;
         }
-        .whatsapp-btn.enabled {
-            pointer-events: auto;
-            opacity: 1;
+        .btn-copy-nubank {
+            background-color: var(--cor-nubank); color: white; border: none; padding: 12px;
+            width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px;
         }
-        .whatsapp-btn.enabled:hover { background-color: #1DA851; }
 
-        /* Detalhes do PIX Direto */
         #pix-direto-details { 
-            display: none; 
-            margin-top: 20px; 
-            padding-top: 15px; 
-            border-top: 1px solid var(--cor-destaque); 
-            background-color: #f1f8ff; 
-            padding: 20px; 
-            border-radius: 8px;
+            display: none; margin-top: 20px; width: 100%; box-sizing: border-box;
+            background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
         }
-        #pix-direto-details h3 { color: var(--cor-destaque); margin-top: 0; }
         
-        /* Botões de Copia */
-        .copy-button {
-            background-color: var(--cor-copia);
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            font-weight: bold;
-            transition: background-color 0.2s;
+        .copy-button { background-color: var(--cor-copia); color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
+        
+        .whatsapp-btn { 
+            display: block; width: 100%; padding: 15px; font-size: 1.2rem; font-weight: bold; color: #fff; 
+            background-color: var(--cor-whatsapp); border: none; border-radius: 5px; text-decoration: none; 
+            text-align: center; box-sizing: border-box; margin-top: 20px; pointer-events: none; opacity: 0.5;
         }
-        .copy-button:hover {
-            background-color: #5a6268;
-        }
-        .qrcode-container { text-align: center; margin-top: 20px; }
-        .qrcode-container img { max-width: 200px; border: 1px solid #ccc; padding: 5px; }
+        .whatsapp-btn.enabled { pointer-events: auto; opacity: 1; }
 
-        .footer { margin-top: auto; padding: 20px 0; width: 100%; text-align: center; font-size: 0.9rem; color: #6c757d; }
+        .divider { margin: 20px 0; border-bottom: 1px solid #ccc; position: relative; }
+        .divider span { position: absolute; top: -10px; background: #f8f9fa; padding: 0 10px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: #777; }
 
-        @media (max-width: 768px) { header { padding: 15px 0; position: static; } header img { max-width: 150px; } .main-content { margin-top: 30px; width: 95%; } h1 { font-size: 2rem; margin-bottom: 20px; } .confirmation-container { padding: 20px; box-shadow: none; } .info-box h2 { font-size: 1.5rem; } .summary-table th, .summary-table td { padding: 10px; font-size: 0.95rem; } .summary-table .total-row th, .summary-table .total-row td { font-size: 1.1rem; } }
+        @media (max-width: 768px) { .main-content { margin-top: 30px; } h1 { font-size: 1.8rem; } }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="../../index.html">
-        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
-        </a>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor Logo"></a>
     </header>
 
     <div class="main-content">
-       <h1>Pagamento e Confirmação de Inscrição</h1>
+       <h1>Pagamento e Confirmação</h1>
        <div class="confirmation-container">
            
            <div class="info-box">
                <h2>👋 Próximos Passos</h2>
-               <p>1. Preencha os dados do atleta e escolha o <b>Tipo de Inscrição</b>.</p>
-               <p>2. Clique no botão verde abaixo para ver os **dados do PIX** e realize o pagamento.</p>
-               <p>3. Após o pagamento, preencha o <b>Método de Pagamento</b> e clique no botão **Enviar Comprovante pelo WhatsApp**.</p>
-               <p style="font-weight: bold; color: var(--cor-secundaria); margin-top: 15px;">O status da sua inscrição será atualizado para <span style="color: var(--cor-alerta);">EM ANÁLISE</span> após o envio do comprovante.</p>
+               <p>1. Preencha seus dados e o tipo de inscrição.</p>
+               <p>2. Clique no botão verde para ver a <b>Chave PIX</b>.</p>
+               <p>3. Pague e envie o comprovante pelo botão do WhatsApp.</p>
            </div>
            
            <div class="input-fields">
-                <label for="nome-atleta">Seu Nome Completo:</label>
-                <input type="text" id="nome-atleta" placeholder="Nome Completo do Atleta" required>
+                <label>Nome do Atleta:</label>
+                <input type="text" id="nome-atleta" placeholder="Nome Completo" required>
 
-                <label for="numero-ordem">Seu Número de Ordem (CPF, etc.):</label>
-                <input type="text" id="numero-ordem" placeholder="Ex: CPF ou Número de Inscrição" required>
+                <label>CPF ou Nº de Ordem:</label>
+                <input type="text" id="numero-ordem" placeholder="Documento do Atleta" required>
 
-                <label for="tipo-inscricao">Selecione o Tipo de Inscrição:</label>
+                <label>Tipo de Inscrição:</label>
                 <select id="tipo-inscricao">
                     <option value="100.00">Categoria (R$ 100,00)</option>
                     <option value="160.00">Categoria + Absoluto (R$ 160,00)</option>
                 </select>
 
-                <label for="metodo-pagamento">Método de Pagamento Utilizado (Para Comprovação):</label>
-                <select id="metodo-pagamento" required>
-                    <option value="" disabled selected>Selecione um método (após o pagamento)</option>
-                    <option value="PIX Direto">PIX Direto (CNPJ)</option>
-                    <option value="PIX QR Code">PIX (QR Code)</option>
-                    <option value="PIX Copia e Cola">PIX (Copia e Cola)</option>
-                    <option value="Dinheiro">Pagamento em Dinheiro (Verificação local)</option>
+                <label>Método utilizado (após pagar):</label>
+                <select id="metodo-pagamento">
+                    <option value="" disabled selected>Selecione após pagar</option>
+                    <option value="Chave Aleatória Nubank">Chave Aleatória (Nubank)</option>
+                    <option value="PIX CNPJ">PIX Direto (CNPJ)</option>
+                    <option value="PIX QR Code">PIX QR Code / Copia e Cola</option>
                 </select>
            </div>
            
            <table class="summary-table">
-               <thead>
-                   <tr>
-                       <th>Descrição</th>
-                       <th>Valor</th>
-                   </tr>
-               </thead>
                <tbody>
-                   <tr>
-                       <td id="linha-categoria-desc">Inscrição (Categoria + Peso)</td>
-                       <td id="linha-categoria-valor">R$ 100,00</td>
-                   </tr>
-                   <tr id="linha-absoluto" style="display:none;">
-                       <td>Absoluto</td>
-                       <td id="linha-absoluto-valor">R$ 60,00</td>
-                   </tr>
-                   <tr class="total-row">
-                       <th>Total a Pagar</th>
-                       <td id="valor-total">R$ 100,00</td>
-                   </tr>
+                   <tr><td>Subtotal</td><td id="linha-categoria-valor">R$ 100,00</td></tr>
+                   <tr id="linha-absoluto" style="display:none;"><td>Absoluto</td><td>R$ 60,00</td></tr>
+                   <tr class="total-row"><th>Total a Pagar</th><td id="valor-total">R$ 100,00</td></tr>
                </tbody>
            </table>
            
-           <button id="btn-toggle-pix-direto" class="btn-action-main" style="font-size: 1.1rem; padding: 15px; margin-top: 0;">
-               Pagar R$ 100,00 com PIX Direto (Sem Taxa)
+           <button id="btn-toggle-pix-direto" class="btn-action-main">
+               VER DADOS PARA PAGAMENTO (R$ 100,00)
            </button>
            
            <div id="pix-direto-details">
-                <div id="pix-info">
-                   <h3>Informações PIX Direto (CNPJ)</h3>
-                   <p>Use o Copia e Cola, ou o QR Code. O valor a ser pago deve ser o mesmo da tabela acima (<span id="pix-valor-info" style="font-weight: bold;">R$ 100,00</span>).</p>
-                   
-                   <p><strong>Chave Pix:</strong> <span id="chave-pix-cnpj">62.810.446/0001-39</span> (CNPJ)</p>
-                   <button id="btn-copy-chave" class="copy-button">Copiar Chave PIX (CNPJ)</button>
-                   
-                   <p style="margin-top: 15px;"><strong>Identificação:</strong> 62.810.446 VALTER SILVA BRASIL</p>
+                <div class="nubank-box">
+                    <strong style="color: var(--cor-nubank);">OPÇÃO 1: Chave Aleatória (Nubank)</strong>
+                    <p style="font-size: 0.9rem; margin: 5px 0;">Copie e cole no seu banco:</p>
+                    <code id="chave-aleatoria" style="background: #eee; padding: 5px; display: block; margin: 10px 0; word-break: break-all;">7114989a-9d09-421b-be69-f2215cdb856d</code>
+                    <button class="btn-copy-nubank" onclick="copiarTexto('7114989a-9d09-421b-be69-f2215cdb856d', this)">Copiar Chave Aleatória 📋</button>
                 </div>
-               
-               <div class="qrcode-container">
-                   <h4>Escaneie o QR Code</h4>
-                   <img id="pix-qrcode-img" src="../../img/IMG_5467.jpg" alt="PIX QR Code" style="max-width: 200px;">
-                   
-                   <input type="hidden" id="pix-copia-cola-code" value="00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA">
-                   
-                   <button id="btn-copy-qrcode" class="copy-button">Copiar PIX Copia e Cola</button>
-                   <p style="font-size: 0.8rem; color: #cc0000; margin-top: 5px;">*Atenção: Você precisará digitar o valor exato no seu App bancário.</p>
-               </div>
+
+                <div class="divider"><span>OU USE O CNPJ / QR CODE</span></div>
+
+                <p><strong>Chave CNPJ:</strong> <span id="chave-pix-cnpj">62.810.446/0001-39</span></p>
+                <button class="copy-button" onclick="copiarTexto('62.810.446/0001-39', this)">Copiar CNPJ 📋</button>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="../../img/IMG_5467.jpg" alt="QR Code" style="max-width: 150px; border: 1px solid #ccc;">
+                    <button class="copy-button" onclick="copiarTexto('00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA', this)">Copiar PIX Copia e Cola 📋</button>
+                </div>
+                <p style="color: red; font-size: 0.8rem; margin-top: 10px;">* Confirme se o valor no App é o mesmo do resumo acima.</p>
            </div>
 
            <a id="whatsapp-link" href="#" target="_blank" class="whatsapp-btn">
-               Preencha os campos para enviar o Comprovante (Após o Pagamento)
+               Preencha os campos para liberar o envio
            </a>
            
        </div>
     </div>
 
-    <div class="footer">
-        &copy; 2025 Arena Competidor. Todos os direitos reservados.
-    </div>
+    <div class="footer">&copy; 2025 Arena Competidor.</div>
 
     <script>
-        const nomeAtletaInput = document.getElementById('nome-atleta');
-        const numeroOrdemInput = document.getElementById('numero-ordem');
-        const tipoInscricaoSelect = document.getElementById('tipo-inscricao');
-        const metodoPagamentoSelect = document.getElementById('metodo-pagamento'); 
-        const linhaAbsoluto = document.getElementById('linha-absoluto');
-        const linhaCategoriaDesc = document.getElementById('linha-categoria-desc');
-        const linhaCategoriaValor = document.getElementById('linha-categoria-valor');
-        const linhaAbsolutoValor = document.getElementById('linha-absoluto-valor');
-        const valorTotalElement = document.getElementById('valor-total');
-        const whatsappLink = document.getElementById('whatsapp-link');
-
-        const btnTogglePixDireto = document.getElementById('btn-toggle-pix-direto');
-        const pixDiretoDetails = document.getElementById('pix-direto-details');
-        const pixValorInfo = document.getElementById('pix-valor-info');
-        const btnCopyChave = document.getElementById('btn-copy-chave');
-        const chavePixCnpj = document.getElementById('chave-pix-cnpj');
-        const btnCopyQrcode = document.getElementById('btn-copy-qrcode');
-        const pixCopiaEColaCode = document.getElementById('pix-copia-cola-code');
-
+        const inputs = ['nome-atleta', 'numero-ordem', 'tipo-inscricao', 'metodo-pagamento'];
         
-        // --- FUNÇÃO PARA ATUALIZAR A TABELA E OS BOTÕES ---
-        function atualizarDados() {
-            const valorTotal = parseFloat(tipoInscricaoSelect.value);
-            const nome = nomeAtletaInput.value.trim();
-            const ordem = numeroOrdemInput.value.trim();
-            const metodo = metodoPagamentoSelect.value;
-            const valorFormatado = valorTotal.toFixed(2).replace('.', ',');
-            
-            let catValor = 100.00; // Valor da Categoria
-            let absolutoValor = 60.00; // Valor do Absoluto
-            let catDesc = 'Inscrição (Categoria + Peso)';
+        function copiarTexto(texto, btn) {
+            navigator.clipboard.writeText(texto).then(() => {
+                const original = btn.innerText;
+                btn.innerText = 'Copiado! ✅';
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
 
-            // 1. Atualizar Tabela de Resumo
-            if (Math.abs(valorTotal - 160.00) < 0.01) { 
-                linhaAbsoluto.style.display = 'table-row';
-            } else { 
-                absolutoValor = 0.00; // Zera o valor se for só Categoria
-                linhaAbsoluto.style.display = 'none';
-            }
-            
-            linhaCategoriaDesc.innerText = catDesc;
-            linhaCategoriaValor.innerText = `R$ ${catValor.toFixed(2).replace('.', ',')}`;
-            linhaAbsolutoValor.innerText = `R$ ${absolutoValor.toFixed(2).replace('.', ',')}`;
-            
-            valorTotalElement.innerText = `R$ ${valorFormatado}`;
-            pixValorInfo.innerText = `R$ ${valorFormatado}`; // Atualiza o valor na seção PIX
-            
-            // 2. Atualizar Botão de Ação de Pagamento (PIX Direto)
-            const inscricaoDesc = tipoInscricaoSelect.options[tipoInscricaoSelect.selectedIndex].text;
-            btnTogglePixDireto.innerText = `Pagar R$ ${valorFormatado} com PIX Direto (Sem Taxa)`;
-            
-            // 3. Atualizar Link do WhatsApp (Todos os campos obrigatórios)
-            if (nome && ordem && metodo) {
-                // Habilitar o botão
-                whatsappLink.classList.add('enabled');
-                whatsappLink.innerText = 'Envie o Comprovante e Detalhes (Após o Pagamento)';
-                
-                // Mensagem personalizada para o WhatsApp
-                const mensagem = 
-                    `✅ COMPROVANTE DE PAGAMENTO ENVIADO\n\n` +
-                    `➡️ Evento: SENOGI ETAPA PATOS\n` +
-                    `👤 Atleta: ${nome}\n` +
-                    `🆔 Ordem/Inscrição: ${ordem}\n` +
-                    `💰 Valor Pago: R$ ${valorFormatado}\n` +
-                    `💳 Método: ${metodo}\n` +
-                    `📝 Detalhes: ${inscricaoDesc}`;
-                    
-                const baseText = encodeURIComponent(mensagem);
-                const numeroOrg = '5584987513740'; 
-                
-                whatsappLink.href = `https://api.whatsapp.com/send?phone=${numeroOrg}&text=${baseText}`;
+        function atualizar() {
+            const nome = document.getElementById('nome-atleta').value;
+            const ordem = document.getElementById('numero-ordem').value;
+            const valor = parseFloat(document.getElementById('tipo-inscricao').value);
+            const metodo = document.getElementById('metodo-pagamento').value;
+            const formatado = valor.toFixed(2).replace('.', ',');
+
+            document.getElementById('valor-total').innerText = `R$ ${formatado}`;
+            document.getElementById('btn-toggle-pix-direto').innerText = `VER DADOS PARA PAGAMENTO (R$ ${formatado})`;
+            document.getElementById('linha-absoluto').style.display = valor > 100 ? 'table-row' : 'none';
+
+            const link = document.getElementById('whatsapp-link');
+            if(nome && ordem && metodo) {
+                link.classList.add('enabled');
+                link.innerText = 'Enviar Comprovante pelo WhatsApp 📱';
+                const msg = encodeURIComponent(`✅ COMPROVANTE\nAtleta: ${nome}\nID: ${ordem}\nValor: R$ ${formatado}\nMétodo: ${metodo}`);
+                link.href = `https://api.whatsapp.com/send?phone=5584987513740&text=${msg}`;
             } else {
-                // Desabilitar o botão
-                whatsappLink.classList.remove('enabled');
-                whatsappLink.href = '#';
-                whatsappLink.innerText = 'Preencha todos os campos para enviar o Comprovante (Após o Pagamento)';
+                link.classList.remove('enabled');
+                link.innerText = 'Preencha os campos para liberar o envio';
             }
         }
 
-        // --- Lógica para mostrar/esconder PIX Direto ---
-        btnTogglePixDireto.addEventListener('click', () => {
-            const isVisible = pixDiretoDetails.style.display === 'block';
-            if (isVisible) {
-                pixDiretoDetails.style.display = 'none';
-                btnTogglePixDireto.innerText = btnTogglePixDireto.innerText.replace(' (Ocultar Detalhes)', '');
-            } else {
-                pixDiretoDetails.style.display = 'block';
-                btnTogglePixDireto.innerText = btnTogglePixDireto.innerText + ' (Ocultar Detalhes)';
-                // Scroll suave para a seção PIX
-                pixDiretoDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+        document.getElementById('btn-toggle-pix-direto').addEventListener('click', function() {
+            const box = document.getElementById('pix-direto-details');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            if(box.style.display === 'block') box.scrollIntoView({behavior: 'smooth'});
         });
 
-        // --- Lógica para Copiar Chave PIX CNPJ (Chave Principal) ---
-        btnCopyChave.addEventListener('click', () => {
-            const textToCopy = chavePixCnpj.innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btnCopyChave.innerText;
-                btnCopyChave.innerText = 'Chave Copiada! (PIX CNPJ)';
-                setTimeout(() => {
-                    btnCopyChave.innerText = originalText;
-                }, 2000);
-            }).catch(err => {
-                alert('Erro ao copiar a chave PIX: ' + err);
-            });
-        });
-        
-        // --- Lógica para Copiar PIX Copia e Cola (String Completa) ---
-        btnCopyQrcode.addEventListener('click', () => {
-            const textToCopy = pixCopiaEColaCode.value; // Pega o valor do input hidden
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btnCopyQrcode.innerText;
-                btnCopyQrcode.innerText = 'Copiado! Cole no seu App Bancário.';
-                setTimeout(() => {
-                    btnCopyQrcode.innerText = originalText;
-                }, 2000);
-            }).catch(err => {
-                alert('Erro ao copiar o código PIX Copia e Cola: ' + err);
-            });
-        });
-
-
-        // --- EVENT LISTENERS ---
-        nomeAtletaInput.addEventListener('input', atualizarDados);
-        numeroOrdemInput.addEventListener('input', atualizarDados);
-        tipoInscricaoSelect.addEventListener('change', atualizarDados);
-        metodoPagamentoSelect.addEventListener('change', atualizarDados); 
-        
-        // Chamada inicial
-        document.addEventListener('DOMContentLoaded', atualizarDados);
+        inputs.forEach(id => document.getElementById(id).addEventListener('input', atualizar));
+        document.addEventListener('DOMContentLoaded', atualizar);
     </script>
 </body>
 </html>
