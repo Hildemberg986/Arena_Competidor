@@ -3,21 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checagem Absoluto | Arena Competidor</title>
+    <title>Checagem Absoluto (Somente Confirmados) | Arena Competidor</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        /* Importa a fonte Roboto */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
 
+        /* ====================================================================
+           1. VARIÁVEIS CSS (ROOT) - Cores Aprimoradas
+           ==================================================================== */
         :root {
-            --cor-primaria: #514b53;
-            --cor-secundaria: #343a40;
-            --cor-destaque: #28a745;
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
-            --status-analise: #ffc107;
+            /* Cor para o cabeçalho do acordeão e textos principais */
+            --cor-primaria: #343a40; 
+            /* Cor para títulos, botões e elementos de destaque */
+            --cor-secundaria: #007bff; 
+            /* Verde para status Confirmado/Pago */
+            --cor-destaque: #28a745; 
+            /* Cinza Claro Fundo */
+            --cor-fundo: #f8f9fa; 
+            /* Cinza Escuro para textos */
+            --cor-texto: #495057; 
+            /* Cinza para Bordas */
+            --cor-borda: #dee2e6; 
+            /* Amarelo (Em Análise) */
+            --status-analise: #ffc107; 
+            /* Vermelho (Pendente) */
+            --status-pendente: #dc3545; 
+            --cor-header-fundo: #000;
             --status-confirmado: var(--cor-destaque);
         }
 
+        /* ====================================================================
+           2. LAYOUT E BASE
+           ==================================================================== */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--cor-fundo);
@@ -34,12 +51,12 @@
             width: 100%;
             text-align: center;
             padding: 20px 0;
-            background-color: #000;
+            background-color: var(--cor-header-fundo);
             position: fixed;
             top: 0;
             left: 0;
             z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra mais forte */
         }
 
         header img {
@@ -55,112 +72,10 @@
         }
 
         h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
+            color: var(--cor-secundaria); /* Usando a cor de destaque (azul) */
+            font-weight: 900; /* Mais impacto */
             font-size: 2.5rem;
             margin-bottom: 30px;
-        }
-
-        
-        .accordion-item {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .accordion-header {
-            background-color: var(--cor-primaria);
-            color: #fff;
-            padding: 15px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-            text-align: left;
-            user-select: none; 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .accordion-header:hover {
-            background-color: #3b373f;
-        }
-        
-        .accordion-header::after {
-            content: '+';
-            font-weight: bold;
-            font-size: 1.5em;
-            transition: transform 0.3s ease;
-        }
-
-        .accordion-header.active::after {
-            content: '-';
-            transform: rotate(0deg);
-        }
-
-        .accordion-content {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            max-height: 0;
-            padding: 0 20px;
-        }
-
-        .accordion-content.open {
-            max-height: none; 
-            padding: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        thead {
-            background-color: #e9ecef;
-            color: var(--cor-secundaria);
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Statuses */
-        .status-pago, .status-confirmado { 
-            color: var(--cor-destaque); 
-            font-weight: bold; 
-        }
-        .status-pendente { 
-            color: #dc3545; 
-            font-weight: bold; 
-        }
-        .status-em-analise { 
-            color: var(--status-analise); 
-            font-weight: bold; 
-        }
-
-        .link-voltar {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background-color: var(--cor-secundaria);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-
-        .link-voltar:hover {
-            background-color: #212529;
         }
 
         #loading-message {
@@ -178,17 +93,131 @@
             color: #6c757d;
         }
 
-        /* Mobile Styles */
+        /* ====================================================================
+           3. ACORDEÃO E TABELA
+           ==================================================================== */
+        .accordion-item {
+            width: 100%;
+            margin-bottom: 15px; /* Espaçamento reduzido para visual mais compacto */
+        }
+        
+        .accordion-header {
+            background-color: var(--cor-primaria);
+            color: #fff;
+            padding: 18px 25px; /* Padding maior para melhor toque/clique */
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.25em; /* Fonte um pouco maior */
+            font-weight: 700;
+            text-align: left;
+            user-select: none; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-header:hover {
+            background-color: #495057; /* Cor levemente mais clara no hover */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .accordion-header::after {
+            content: '▼'; /* Novo ícone de seta */
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            background-color: #fff;
+            border-radius: 0 0 8px 8px; /* Cantos arredondados apenas na parte inferior */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+            max-height: 0;
+            padding: 0 25px;
+        }
+
+        .accordion-content.open {
+            max-height: 50000px; 
+            padding: 20px 25px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--cor-borda);
+        }
+
+        thead {
+            background-color: #e9ecef;
+            color: var(--cor-primaria); /* Cor do texto no cabeçalho da tabela */
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Statuses */
+        .status-pago, .status-confirmado { 
+            color: var(--cor-destaque); 
+            font-weight: 700; 
+            letter-spacing: 0.5px;
+        }
+        .status-pendente { 
+            color: var(--status-pendente); 
+            font-weight: 700; 
+        }
+        .status-em-analise { 
+            color: var(--status-analise); 
+            font-weight: 700; 
+        }
+
+        /* Botão de Voltar */
+        .link-voltar {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 15px 30px;
+            background-color: var(--cor-secundaria); /* Usando o azul de destaque */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+
+        .link-voltar:hover {
+            background-color: #0056b3;
+        }
+
+        /* ====================================================================
+           4. MEDIA QUERY (MOBILE) - Otimização Responsiva
+           ==================================================================== */
         @media (max-width: 768px) {
             .main-content {
-                margin-top: 100px;
+                margin-top: 40px; /* Reduz margem no topo */
                 width: 98%;
                 padding: 0 10px;
             }
             
             header {
-                padding: 10px 0;
-                position: static;
+                padding: 15px 0;
+                position: static; /* Não ocupa a tela no topo */
             }
 
             header img {
@@ -196,22 +225,18 @@
             }
             
             h1 {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
+                font-size: 2.0rem;
+                margin-bottom: 25px;
             }
             
             .accordion-header {
-                font-size: 1em;
-                padding: 15px;
+                font-size: 1.1em;
+                padding: 15px 20px;
             }
 
+            /* Estilo do Card em Mobile */
             table {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                border-spacing: 0;
-                background-color: transparent;
-                padding: 0;
+                display: block;
             }
             
             thead {
@@ -246,11 +271,7 @@
                 font-weight: bold;
                 flex-shrink: 0;
                 text-align: left;
-            }
-
-            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
-                flex-grow: 1;
-                text-align: right;
+                color: var(--cor-primaria); /* Destaca o label */
             }
         }
     </style>
@@ -264,11 +285,11 @@
     </header>
 
     <div class="main-content">
-        <h1>Checagem de Absoluto</h1>
+        <h1>Checagem de Absoluto (Somente Confirmados)</h1>
 
-        <div id="loading-message">Carregando dados...</div>
+        <div id="loading-message">Carregando dados da planilha...</div>
         <div id="listaInscritosAbsoluto">
-            </div>
+        </div>
         
         <a href="checagem.html" class="link-voltar">Voltar para Opções de Checagem</a>
     </div>
@@ -279,7 +300,6 @@
 
     <script>
         // 🚨 URL DO CSV DA PLANILHA GOOGLE
-        // ATUALIZE ESTA URL COM O LINK PÚBLICO DA SUA PLANILHA
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSR3bXmVkYgFDhHWi1jzV1jPJwwWNxbaa6QeVXN0y-JKOlfdL6AcFnWA8B1L1rJtXyj45BzKxmk7ra2/pub?output=csv';
         
         const listaInscritosDiv = document.getElementById('listaInscritosAbsoluto');
@@ -293,7 +313,6 @@
         }
         
         function normalizeStatus(text) {
-            // Normaliza o texto para as classes CSS
             let status = normalizeText(text.replace(' ', '-'));
             if (status === 'pago') return 'status-pago';
             if (status === 'confirmado') return 'status-confirmado'; 
@@ -304,7 +323,7 @@
         
         // Função Principal de Processamento do CSV
         async function fetchAndProcessData() {
-            loadingMessage.textContent = 'Carregando dados...';
+            loadingMessage.textContent = 'Carregando dados da planilha...';
             try {
                 const response = await fetch(CSV_URL);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -312,55 +331,73 @@
                 const csvText = await response.text();
                 const lines = csvText.split('\n').filter(line => line.trim() !== '');
                 if (lines.length < 2) {
-                    loadingMessage.textContent = 'Nenhum dado encontrado.';
+                    loadingMessage.textContent = 'Nenhum dado encontrado na planilha.';
                     return;
                 }
                 
-                // Mapeia os cabeçalhos
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
                 
-                // 1. Converte CSV para JSON
-                const inscritosAbsoluto = lines.slice(1)
-                    .map(line => {
-                        // Atenção: Esta separação simples por vírgula pode falhar se houver vírgulas nos dados.
-                        const values = line.split(','); 
-                        const atleta = {};
-                        headers.forEach((header, i) => {
-                            atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
-                        });
-                        return atleta;
-                    })
-                    // 2. FILTRO CHAVE: Apenas atletas onde a coluna 'ABSOLUTO' é 'Sim'
-                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim'); 
+                // Função mais robusta para split de CSV (lida com vírgulas em dados)
+                const splitCSVLine = (line) => {
+                    const regex = /(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)/g;
+                    const values = [];
+                    let match;
+                    while (match = regex.exec(line)) {
+                        let value = match[1];
+                        if (value.startsWith('"') && value.endsWith('"')) {
+                            value = value.substring(1, value.length - 1).replace(/""/g, '"');
+                        }
+                        values.push(value.trim());
+                    }
+                    return values;
+                };
 
-                groupAndRenderAbsolutoData(inscritosAbsoluto);
+                // 1. Converte CSV para JSON
+                const allData = lines.slice(1).map(line => {
+                    const values = splitCSVLine(line);
+                    const atleta = {};
+                    headers.forEach((header, i) => {
+                        atleta[header] = values[i] || '';
+                    });
+                    return atleta;
+                });
+                
+                // 2. FILTRAGEM DUPLA: Apenas Absoluto E Confirmado
+                const inscritosAbsolutoConfirmados = allData
+                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim') 
+                    .filter(atleta => normalizeText(atleta['STATUS DO PAGAMENTO'] || 'Pendente') === 'confirmado' || normalizeText(atleta['STATUS DO PAGAMENTO'] || 'Pendente') === 'pago'); 
+                    // Aceita 'pago' ou 'confirmado' como sinônimos de confirmação.
+
+                groupAndRenderAbsolutoData(inscritosAbsolutoConfirmados);
 
             } catch (error) {
                 console.error('Erro ao buscar ou processar CSV:', error);
-                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o banco de dados.';
+                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o link ou a permissão da planilha.';
             }
         }
         
         function groupAndRenderAbsolutoData(data) {
             inscritosAbsolutoAgrupados = {};
 
+            if (data.length === 0) {
+                 loadingMessage.textContent = 'Nenhum atleta CONFIRMADO na categoria Absoluto foi encontrado.';
+                 loadingMessage.style.display = 'block';
+                 return;
+            }
+
             data.forEach(atleta => {
                 const sexo = atleta['SEXO'];
-                // Usamos 'SUA FAIXA' e 'SUA CATEGORIA' (que contém a idade/peso) para agrupar
-                let categoriaIdade = atleta['SUA CATEGORIA']; // Pega o valor original (Ex: Master 1, Adulto)
+                let categoriaIdade = atleta['SUA CATEGORIA']; 
                 const faixa = atleta['SUA FAIXA'];
                 
-                // 🎯 MODIFICAÇÃO: JUNTAR TODOS OS MASTERS EM UM SÓ GRUPO
+                // MODIFICAÇÃO PARA UNIFICAR TODAS AS CATEGORIAS MASTER
                 const categoriaUpper = categoriaIdade.toUpperCase();
 
                 if (categoriaUpper.includes('MASTER')) {
-                    // Redefine a categoria para um valor unificado para o agrupamento
                     categoriaIdade = 'MASTER (TODAS AS IDADES)'; 
                 }
-                // FIM DA MODIFICAÇÃO
                 
                 // Chave de agrupamento: ABSOLUTO - FAIXA - CATEGORIA - SEXO
-                // Isso cria grupos como: "ABSOLUTO - FAIXA AZUL - MASTER (TODAS AS IDADES) - MASCULINO"
                 const key = `ABSOLUTO - FAIXA ${faixa.toUpperCase()} - ${categoriaIdade.toUpperCase()} - ${sexo.toUpperCase()}`;
                 
                 if (!inscritosAbsolutoAgrupados[key]) {
@@ -378,10 +415,8 @@
         function renderAbsolutoList() {
             listaInscritosDiv.innerHTML = ''; 
             
-            // Colunas da planilha que serão exibidas
             const NOME_COLUNA_NOME = 'NOME COMPLETO';
             const NOME_COLUNA_EQUIPE = 'SUA EQUIPE';
-            // 🚨 Use o nome EXATO da sua coluna de status!
             const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
             
             // Ordena as chaves do grupo alfabeticamente
@@ -412,7 +447,6 @@
                 const tbody = table.querySelector('tbody');
 
                 groupData.atletas.forEach(atleta => {
-                    // Puxa o status, ou define como 'Pendente' se estiver vazio.
                     const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
                     const statusClass = normalizeStatus(statusText);
                     
@@ -435,7 +469,7 @@
             setupAccordion(); 
         }
         
-        // --- Lógica de Acordeão (Reutilizada) ---
+        // --- Lógica de Acordeão ---
 
         function setupAccordion() {
             const accordionHeaders = listaInscritosDiv.querySelectorAll('.accordion-header');
@@ -450,17 +484,17 @@
              const header = event.currentTarget;
              const content = header.nextElementSibling;
                       
-            // Fecha outros acordeões abertos
-            listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.classList.remove('open');
-                }
-            });
+             // Fecha outros acordeões abertos
+             listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
+                 if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                     otherHeader.classList.remove('active');
+                     otherHeader.nextElementSibling.classList.remove('open');
+                 }
+             });
 
-            // Abre/Fecha o atual
-            header.classList.toggle('active');
-            content.classList.toggle('open');
+             // Abre/Fecha o atual
+             header.classList.toggle('active');
+             content.classList.toggle('open');
         }
 
         // Inicializa o carregamento dos dados ao carregar a página
