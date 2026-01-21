@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,17 +7,25 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+        /* ====================================================================
+           1. VARIÁVEIS CSS (ROOT)
+           ==================================================================== */
         :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
+            --cor-primaria: #007bff; /* Azul */
+            --cor-secundaria: #343a40; /* Cinza Escuro */
             --cor-destaque: #28a745; /* Verde Pago/Confirmado */
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
-            --status-analise: #ffc107;
+            --cor-fundo: #f8f9fa; /* Cinza Claro Fundo */
+            --cor-texto: #495057; /* Cinza para Textos */
+            --cor-borda: #dee2e6; /* Cinza para Bordas */
+            --status-analise: #ffc107; /* Amarelo (Em Análise) */
+            --status-pendente: #dc3545; /* Vermelho (Pendente) */
+            --cor-header-fundo: #000; /* Preto para o Header */
             --status-confirmado: var(--cor-destaque);
         }
 
+        /* ====================================================================
+           2. ESTILOS BASE
+           ==================================================================== */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--cor-fundo);
@@ -31,11 +38,30 @@
             min-height: 100vh;
         }
 
+        h1 {
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        /* Mensagem de carregamento */
+        #loading-message {
+            margin-top: 50px;
+            font-size: 1.5rem;
+            color: var(--cor-primaria);
+        }
+
+        /* ====================================================================
+           3. LAYOUT E COMPONENTES GERAIS
+           ==================================================================== */
+
+        /* HEADER */
         header {
             width: 100%;
             text-align: center;
             padding: 20px 0;
-            background-color: #000;
+            background-color: var(--cor-header-fundo);
             position: fixed;
             top: 0;
             left: 0;
@@ -47,6 +73,7 @@
             max-width: 200px;
         }
 
+        /* CONTEÚDO PRINCIPAL */
         .main-content {
             margin-top: 150px;
             width: 95%;
@@ -55,14 +82,35 @@
             flex-grow: 1;
         }
 
-        h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
+        /* LINK VOLTAR */
+        .link-voltar {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: var(--cor-secundaria);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
-        
-        /* Lista de Equipes */
+
+        .link-voltar:hover {
+            background-color: #212529;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* ====================================================================
+           4. ACORDEÃO (LISTA DE EQUIPES)
+           ==================================================================== */
         #listaEquipes {
             width: 100%;
         }
@@ -75,7 +123,7 @@
             margin-bottom: 30px;
             width: 100%;
         }
-        
+
         .accordion-header {
             display: flex;
             flex-direction: column;
@@ -110,7 +158,7 @@
 
         .accordion-header.active::after {
             content: '-';
-            transform: rotate(0deg); /* Ajustado para não girar de forma estranha */
+            transform: rotate(0deg);
         }
 
         .accordion-content {
@@ -121,10 +169,13 @@
         }
 
         .accordion-content.open {
-            max-height: 30000px; /* Valor alto para listas grandes */
+            max-height: 50000px; /* Valor alto para listas grandes */
             padding-top: 20px;
         }
 
+        /* ====================================================================
+           5. TABELA DE ATLETAS (DESKTOP)
+           ==================================================================== */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -133,7 +184,7 @@
         th, td {
             padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--cor-borda);
         }
 
         thead {
@@ -145,13 +196,13 @@
             background-color: #f1f1f1;
         }
 
-        /* Statuses */
+        /* Statuses - Classes reutilizáveis */
         .status-pago, .status-confirmado { 
             color: var(--cor-destaque); 
             font-weight: bold; 
         }
         .status-pendente { 
-            color: #dc3545; 
+            color: var(--status-pendente); 
             font-weight: bold; 
         }
         .status-em-analise { 
@@ -159,47 +210,22 @@
             font-weight: bold; 
         }
 
-        .link-voltar {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background-color: var(--cor-secundaria);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
 
-        .link-voltar:hover {
-            background-color: #212529;
-        }
+        /* ====================================================================
+           6. MEDIA QUERY (MOBILE-FIRST)
+           ==================================================================== */
 
-        #loading-message {
-            margin-top: 50px;
-            font-size: 1.5rem;
-            color: var(--cor-primaria);
-        }
-        
-        .footer {
-            margin-top: auto;
-            padding: 20px 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        
         @media (max-width: 768px) {
+            /* Ajustes Gerais */
             .main-content {
-                margin-top: 100px;
+                margin-top: 30px; /* Reduz a margem superior para mobile, pois o header é static */
                 width: 98%;
                 padding: 0 10px;
             }
             
             header {
                 padding: 10px 0;
-                position: static;
+                position: static; /* Remove o fixed para mobile */
             }
 
             header img {
@@ -224,17 +250,15 @@
                 font-size: 1rem;
             }
             
+            /* Reestruturação da Tabela para Mobile */
             table {
-                display: flex;
-                flex-direction: column;
+                display: block; /* Tabela como bloco */
                 width: 100%;
-                border-spacing: 0;
-                background-color: transparent;
                 padding: 0;
             }
             
             thead {
-                display: none;
+                display: none; /* Oculta o cabeçalho no mobile */
             }
 
             tr {
@@ -245,6 +269,7 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 padding: 15px;
                 margin-bottom: 10px;
+                border-bottom: none; /* Remove a borda padrão */
             }
             
             td {
@@ -260,11 +285,13 @@
                 border-bottom: none;
             }
 
+            /* Adiciona o label do cabeçalho */
             td::before {
                 content: attr(data-label);
                 font-weight: bold;
                 flex-shrink: 0;
                 text-align: left;
+                margin-right: 10px; /* Espaçamento entre label e valor */
             }
 
             .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
@@ -277,17 +304,15 @@
 <body>
 
     <header>
-        <a href="../../index.html">
         <img src="../../img/arena2.png" alt="Arena Competidor Logo">
-        </a>
     </header>
 
     <div class="main-content">
-        <h1>Checagem por Equipes</h1>
+        <h1>Checagem por Equipes (Somente Confirmados)</h1>
 
-        <div id="loading-message">Carregando dados...</div>
+        <div id="loading-message">Carregando dados da planilha...</div>
         <div id="listaEquipes">
-            </div>
+        </div>
         
         <a href="checagem.html" class="link-voltar">Voltar para Opções de Checagem</a>
     </div>
@@ -305,9 +330,17 @@
         const loadingMessage = document.getElementById('loading-message');
         
         let inscritosPorEquipe = {};
+        
+        // Colunas da planilha que serão exibidas
+        const NOME_COLUNA_NOME = 'NOME COMPLETO';
+        const NOME_COLUNA_FAIXA = 'SUA FAIXA';
+        const NOME_COLUNA_PESO = 'SEU PESO';
+        const NOME_COLUNA_CATEGORIA = 'SUA CATEGORIA';
+        const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO';
 
         // Funções de Normalização
         function normalizeText(text) {
+            // Remove espaços, converte para minúsculas, remove acentos e substitui espaços por hífens
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
         
@@ -322,7 +355,7 @@
         
         // Função Principal de Processamento do CSV
         async function fetchAndProcessData() {
-            loadingMessage.textContent = 'Carregando dados...';
+            loadingMessage.textContent = 'Carregando dados da planilha...';
             try {
                 const response = await fetch(CSV_URL);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -330,7 +363,7 @@
                 const csvText = await response.text();
                 const lines = csvText.split('\n').filter(line => line.trim() !== '');
                 if (lines.length < 2) {
-                    loadingMessage.textContent = 'Nenhum dado encontrado.';
+                    loadingMessage.textContent = 'Nenhum dado encontrado na planilha.';
                     return;
                 }
                 
@@ -340,9 +373,11 @@
                 // Converte CSV para JSON
                 const todosInscritos = lines.slice(1)
                     .map(line => {
-                        const values = line.split(','); 
+                        // Regex simples para lidar com campos entre aspas, mas pode precisar de melhorias para CSVs complexos
+                        const values = line.match(/(?:[^,"]+|"[^"]*")+/g) || []; 
                         const atleta = {};
                         headers.forEach((header, i) => {
+                            // Remove as aspas duplas de cada valor
                             atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
                         });
                         return atleta;
@@ -352,14 +387,21 @@
 
             } catch (error) {
                 console.error('Erro ao buscar ou processar CSV:', error);
-                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o banco de dados.';
+                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o link ou a permissão da planilha.';
             }
         }
         
         function groupAndRenderEquipes(data) {
             inscritosPorEquipe = {};
 
-            data.forEach(atleta => {
+            // Filtra os dados para manter SOMENTE os atletas com status 'Confirmado'
+            const filteredData = data.filter(atleta => {
+                const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                // Compara o status normalizado com 'confirmado'
+                return normalizeText(statusText) === 'confirmado'; 
+            });
+
+            filteredData.forEach(atleta => { // Itera sobre os dados filtrados
                 const nomeEquipe = atleta['SUA EQUIPE'] || 'SEM EQUIPE';
                 
                 if (!inscritosPorEquipe[nomeEquipe]) {
@@ -379,16 +421,15 @@
         function renderEquipeList() {
             listaEquipesDiv.innerHTML = ''; 
             
-            // Colunas da planilha que serão exibidas
-            const NOME_COLUNA_NOME = 'NOME COMPLETO';
-            const NOME_COLUNA_FAIXA = 'SUA FAIXA';
-            const NOME_COLUNA_PESO = 'SEU PESO';
-            const NOME_COLUNA_CATEGORIA = 'SUA CATEGORIA';
-            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
-            
-            // Ordena as chaves do grupo (opcional, mas ajuda na organização)
-            // Ordem: Alfabética por nome da equipe
-            Object.keys(inscritosPorEquipe).sort().forEach(key => {
+            // Ordena as chaves do grupo
+            const sortedKeys = Object.keys(inscritosPorEquipe).sort();
+
+            if (sortedKeys.length === 0) {
+                 listaEquipesDiv.innerHTML = '<p style="font-size: 1.2rem; color: var(--cor-secundaria);">Nenhuma equipe possui atletas com status CONFIRMADO no momento.</p>';
+                 return;
+            }
+
+            sortedKeys.forEach(key => {
                 const groupData = inscritosPorEquipe[key];
                 
                 const accordionItem = document.createElement('div');
@@ -398,7 +439,7 @@
                 header.className = 'accordion-header';
                 header.innerHTML = `
                     <h2>${key}</h2>
-                    <p>Total de Inscritos: ${groupData.total}</p>
+                    <p>Total de Atletas Confirmados: ${groupData.total}</p>
                 `; 
                 
                 const content = document.createElement('div');
@@ -459,18 +500,18 @@
         function handleAccordionClick(event) {
              const header = event.currentTarget;
              const content = header.nextElementSibling;
-                        
-            // Fecha outros acordeões abertos
-            listaEquipesDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.classList.remove('open');
-                }
-            });
+                      
+             // Fecha outros acordeões abertos
+             listaEquipesDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
+                 if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                     otherHeader.classList.remove('active');
+                     otherHeader.nextElementSibling.classList.remove('open');
+                 }
+             });
 
-            // Abre/Fecha o atual
-            header.classList.toggle('active');
-            content.classList.toggle('open');
+             // Abre/Fecha o atual
+             header.classList.toggle('active');
+             content.classList.toggle('open');
         }
 
         // Inicializa o carregamento dos dados ao carregar a página
