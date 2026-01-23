@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaves | Arena Competidor</title>
+    <title>Chaveamento | Arena Competidor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -45,7 +45,7 @@
         }
 
         .main-content {
-            margin-top: 150px;
+            margin-top: 50px; 
             width: 90%;
             max-width: 800px;
             text-align: center;
@@ -54,40 +54,43 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding-bottom: 50px;
         }
 
-        .aviso-container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .aviso-container h1 {
+        h1 {
             color: var(--cor-secundaria);
+            font-weight: 700;
             font-size: 2.5rem;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
 
-        .aviso-container p {
-            font-size: 1.2rem;
-            color: var(--cor-texto);
+        .opcoes-checagem {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .link-voltar {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background-color: var(--cor-secundaria);
+        .btn-checagem {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 20px;
+            background-color: var(--cor-primaria);
             color: #fff;
             text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
-        .link-voltar:hover {
-            background-color: #212529;
+        .btn-checagem:hover {
+            background-color: #0056b3;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         .footer {
@@ -98,24 +101,71 @@
             font-size: 0.9rem;
             color: #6c757d;
         }
+
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 0;
+                position: static;
+            }
+
+            header img {
+                max-width: 150px;
+            }
+
+            .main-content {
+                margin-top: 5px; 
+                padding: 0 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .opcoes-checagem {
+                gap: 15px;
+            }
+
+            .btn-checagem {
+                font-size: 1.1rem;
+                padding: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 25px;
+            }
+
+            .btn-checagem {
+                font-size: 1rem;
+                padding: 14px;
+            }
+        }
     </style>
 </head>
 <body>
 
     <header>
+        <a href="../../index.html">
         <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
     </header>
 
     <div class="main-content">
-        <div class="aviso-container">
-            <h1>Chaves</h1>
-            <p>As chaves estão sendo preparadas e estarão disponíveis em breve. Agradecemos a compreensão!</p>
-            <a href="senogipatos.html" class="link-voltar">Voltar para o Menu do Evento</a>
+        <h1>CHAVEAMENTO SENOGI - ETAPA PATOS</h1>
+        
+        <div class="opcoes-checagem">
+            <a href="https://drive.google.com/file/d/1vabx-nCJjeSuFlqn59nNxAYRYNDpaZx5/view?usp=sharing" class="btn-checagem">CHAVEAMENTO CATEGORIA</a>
+            <a href="https://drive.google.com/file/d/1eidlUCVgqv0qis-ClFVPZkc_CfQ2-1n3/view?usp=sharing" class="btn-checagem">CHAVEAMENTO ABSOLUTO</a>
         </div>
     </div>
     
     <div class="footer">
-        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+        &copy; 2026 Arena Competidor. Todos os direitos reservados.
     </div>
 
 </body>
