@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotos | Arena Competidor</title>
+    <style>
+        /* Estilo do Botão Flutuante (Formato Pílula com Texto Fixo) - Mantido */
+.whatsapp-fixed-text-button {
+    position: fixed;
+    bottom: 25px; 
+    right: 25px; 
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 50px;
+    background-color: #25D366;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-fixed-text-button:hover {
+    transform: scale(1.05);
+    background-color: #128C7E;
+}
+
+.whatsapp-icon-only {
+    width: 24px;
+    height: 24px;
+    color: white;
+    margin-right: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+.whatsapp-text-visible {
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .whatsapp-fixed-text-button {
+        width: 55px;
+        height: 55px;
+        padding: 0; 
+        border-radius: 50%;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .whatsapp-text-visible {
+        display: none;
+    }
+
+    .whatsapp-icon-only {
+        margin-right: 0;
+        width: 30px;
+        height: 30px;
+    }
+}
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-primaria: #007bff;
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+            --cor-footer-bg: #212529;
+            --cor-footer-text: #adb5bd;
+            --cor-nav-bg: #343a40;
+            --cor-nav-link: #ffffff;
+            --cor-nav-link-hover: var(--cor-primaria);
+
+            /* Alturas do Header e Nav para cálculo. Ajuste se necessário! */
+            --header-padding-height: 40px; 
+            --nav-bar-height: 40px; /* Altura dos botões */
+
+            --header-height-fixed: 100px; 
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* HEADER (Logo) - Fixado no topo: 0 */
+        header {
+            width: 100%;
+            /* REMOVIDO: text-align: center; (substituído por flexbox) */
+            padding: 20px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 20px; 
+            box-sizing: content-box;
+            
+            /* ADICIONADO: Flexbox para centralização */
+            display: flex;
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+        }
+
+        header img {
+            max-width: 200px; 
+            max-height: 60px;
+        }
+
+        /* BARRA DE NAVEGAÇÃO PRINCIPAL (Botões) - FIXA E COLADA */
+        .main-nav-bar {
+            width: 100%;
+            background-color: var(--cor-nav-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            /* No desktop (100px de altura total do header), o nav deve começar em 100px */
+            top: 60px; /* AJUSTADO: 20px padding top + 60px img + 20px padding bottom = 100px */
+            left: 0;
+            z-index: 999;
+            box-sizing: border-box;
+            height: var(--nav-bar-height);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-nav-bar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .main-nav-bar li {
+            margin: 0 15px;
+        }
+
+        .main-nav-bar a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: var(--cor-nav-link);
+            font-weight: 700;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .main-nav-bar a:hover {
+            color: var(--cor-nav-link-hover);
+        }
+        
+        /* Adicionado: Estilos para o botão Hamburguer */
+        .menu-toggle {
+            display: none; 
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            padding: 10px;
+            position: absolute; 
+            top: 0;
+            right: 15px;
+            height: var(--nav-bar-height); 
+            z-index: 1001; 
+        }
+
+        .menu-toggle .icon-bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px 0;
+            background-color: var(--cor-nav-link); 
+            transition: all 0.3s;
+        }
+
+        .menu-toggle.active .icon-bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active .icon-bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .menu-toggle.active .icon-bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+
+        /* MAIN CONTENT - Ajuste para o espaçamento total dos elementos fixos */
+        .main-content {
+            /* CÁLCULO CRÍTICO: 100px (Header) + 40px (Nav Bar) = 140px */
+            margin-top: calc(100px + var(--nav-bar-height)); /* Total de 140px */
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+            flex-grow: 1;
+            padding-bottom: 20px;
+        }
+        
+        /* Ajuste de responsividade para a navegação e cabeçalho (Mobile) */
+        @media (max-width: 768px) { 
+            
+            /* Mostrar o Botão Hamburguer */
+            .menu-toggle {
+                display: block; 
+            }
+            
+            /* Ajuste de Altura do Header no Mobile (Mantendo a centralização Flexbox) */
+            header {
+                padding: 10px 0; /* Diminui o padding */
+                height: 40px; /* Deixa a altura ser definida pelo conteúdo */
+            }
+            
+            header img {
+                max-height: 60px; /* MANTÉM ALTURA DO LOGO em 60px */
+                max-width: 200px;
+            }
+
+            /* Novo Top do Nav Bar no Mobile */
+            .main-nav-bar {
+                /* CÁLCULO CRÍTICO Mobile: 10px (top padding) + 60px (max-height da img) + 10px (bottom padding) = 80px */
+                top: 60px; /* AJUSTADO: Posição da nav abaixo do header de 60px */
+                height: 40px; 
+                align-items: flex-start;
+            }
+
+            /* ESCONDE A LISTA DE LINKS POR PADRÃO (Efeito de gaveta) */
+            .main-nav-bar ul {
+                width: 100%;
+                flex-direction: column; 
+                align-items: center;
+                position: absolute;
+                top: var(--nav-bar-height); 
+                left: 0;
+                transform: translateY(-100%); 
+                max-height: 0; 
+                opacity: 0;
+                overflow: hidden;
+                background-color: var(--cor-nav-bg);
+                width: 100vw; 
+            }
+            
+            /* MOSTRA A LISTA QUANDO A CLASSE 'active' É ADICIONADA */
+            .main-nav-bar ul.active {
+                transform: translateY(0); 
+                max-height: 500px; 
+                opacity: 1;
+                padding: 10px 0; 
+            }
+
+            .main-nav-bar li {
+                margin: 0; 
+                width: 100%; 
+                text-align: center;
+                border-top: 1px solid #444; 
+            }
+            
+            .main-nav-bar li:first-child {
+                border-top: none;
+            }
+
+            .main-nav-bar a {
+                padding: 15px 10px; 
+                font-size: 1rem;
+            }
+            
+            .main-content {
+                /* CÁLCULO CRÍTICO Mobile: 80px (Header) + 40px (Nav-Bar colapsada) = 120px */
+                margin-top: 120px; /* AJUSTADO: Compensação de espaço */
+            }
+        }
+
+        /* Estilos dos Eventos (Mantidos) */
+        h1 {
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        .event-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .event-container {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            margin-bottom: 30px;
+            max-width: 250px; 
+            width: 100%;
+        }
+
+        .event-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .event-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .event-info {
+            padding: 20px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .event-info h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.0rem; 
+            color: var(--cor-secundaria);
+        }
+        
+        .event-detail {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.88rem;
+            color: var(--cor-texto);
+            margin-bottom: 5px; 
+        }
+
+        .event-detail .icon {
+            margin-right: 5px;
+            font-size: 1.1rem; 
+            color: var(--cor-primaria);
+        }
+
+        .event-info p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--cor-destaque);
+            margin-top: 10px; 
+        }
+
+        /* Rodapé (Mantido) */
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: var(--cor-footer-bg);
+            color: var(--cor-footer-text);
+            padding: 40px 20px;
+            text-align: left;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-col {
+            padding: 0 15px;
+            min-width: 200px; 
+        }
+        
+        .footer-logo img {
+            max-width: 150px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .footer-social {
+            text-align: center;
+        }
+
+        .footer-social h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .social-link-container {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .social-icon-svg {
+            width: 30px;
+            height: 30px;
+            fill: #fff;
+            margin-bottom: 8px; 
+            transition: fill 0.2s;
+        }
+
+        .social-link {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--cor-destaque);
+            transition: color 0.2s;
+        }
+
+        .social-link-container:hover .social-icon-svg {
+            fill: var(--cor-destaque);
+        }
+
+        .social-link-container:hover .social-link {
+            color: #fff;
+        }
+
+        .footer-links h3 {
+             color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links a {
+            color: var(--cor-footer-text);
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            transition: color 0.2s;
+            font-size: 1rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--cor-primaria);
+        }
+
+        .footer-copyright {
+            width: 100%;
+            text-align: center;
+            border-top: 1px solid #343a40;
+            padding-top: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-col {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 30px;
+                padding: 0;
+            }
+            
+            .footer-logo img {
+                margin: 0 auto 10px auto;
+            }
+            
+            .social-link-container {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .social-icon-svg {
+                margin-right: 8px;
+                margin-bottom: 0;
+            }
+
+            .footer-links ul {
+                display: block; 
+            }
+            
+            .footer-links a {
+                padding: 2px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="img/arena2.png" alt="Arena Competidor Logo">
+    </header>
+
+    <div class="main-content">
+        <h1>FOTOS DOS EVENTOS</h1>
+        <div class="event-list"> 
+            
+            <div class="event-container">
+                <a href="https://isaacssilva.com.br/album/1afcaa-copa-patos-de-jiu-jitsu-2026" class="event-banner">
+                    <img src="img/CopaPatos.jpeg" alt="Banner do copa patos">
+                </a>
+                <div class="event-info">
+                    <h2>FOTOS COPA PATOS</h2>
+                    <div class="event-detail">
+                        <span><b>Data: </b>25/01/2026</span>
+                    </div>
+                    <div class="event-detail">
+                        <span><b>Local: </b>PATOS/PB</span>
+                    </div>
+                    <p class="mt-4 text-base font-bold text-amber-600">CLIQUE NO CARTAZ</p>
+                </div>
+            </div>
+            <div class="event-container">
+                <a href="https://isaacssilva.com.br/album/1afcaa-copa-patos-de-jiu-jitsu-2026" class="event-banner">
+                    <img src="img/SENOGIPATOSAC.jpeg" alt="Banner do Senogi patos">
+                </a>
+                <div class="event-info">
+                    <h2>FOTOS SENOGI PATOS</h2>
+                    <div class="event-detail">
+                        <span><b>Data: </b>25/01/2026</span>
+                    </div>
+                    <div class="event-detail">
+                        <span><b>Local: </b>PATOS/PB</span>
+                    </div>
+                    <p class="mt-4 text-base font-bold text-amber-600">CLIQUE NO CARTAZ</p>
+                </div>
+            </div>
+            <div class="event-container">
+                <a href="https://isaacssilva.com.br/album/19b00f-open-bbc-jiu-jitsu" class="event-banner">
+                    <img src="img/BBCOPENAC.jpeg" alt="Banner do BBC">
+                </a>
+                <div class="event-info">
+                    <h2>FOTOS BBC OPEN</h2>
+                    <div class="event-detail">
+                        <span><b>Data: </b>14/12/2025</span>
+                    </div>
+                    <div class="event-detail">
+                        <span><b>Local: </b>BELEM DO BREJO DO CRUZ/PB</span>
+                    </div>
+                    <p class="mt-4 text-base font-bold text-amber-600">CLIQUE NO CARTAZ</p>
+                </div>
+            </div>
+            <div class="event-container">
+                <a href="https://isaacssilva.com.br/album/189e5a-fotos-oficiais-do-senogi-2025" class="event-banner">
+                    <img src="img/SENOGICAICOAC.jpeg" alt="Banner do Senogi CAICO">
+                </a>
+                <div class="event-info">
+                    <h2>FOTOS SENOGI CAICÓ</h2>
+                    <div class="event-detail">
+                        <span><b>Data: </b>23/11/2025</span>
+                    </div>
+                    <div class="event-detail">
+                        <span><b>Local: </b>CAICÓ/RN</span>
+                    </div>
+                    <p class="mt-4 text-base font-bold text-amber-600">CLIQUE NO CARTAZ</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            
+            <div class="footer-col footer-logo">
+                <img src="img/arena2.png" alt="Arena Competidor Logo" title="Arena Competidor">
+                <small>Sua vitória começa aqui.</small>
+            </div>
+            
+            <div class="footer-col footer-social">
+                <h3>Siga-nos</h3>
+                <a href="https://instagram.com/arenacompetidor" target="_blank" rel="noopener noreferrer" class="social-link-container">
+                    <svg class="social-icon-svg" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 0c-3.35 0-3.79.01-5.12.08-1.33.06-2.27.28-3.07.59s-1.44.75-1.99 1.3c-.55.55-1.02 1.25-1.3 1.99-.31.8-.53 1.74-.59 3.07-.07 1.33-.08 1.77-.08 5.12s.01 3.79.08 5.12c.06 1.33.28 2.27.59 3.07s.75 1.44 1.3 1.99c.55.55 1.25 1.02 1.99 1.3.8.31 1.74.53 3.07.59 1.33.07 1.77.08 5.12.08s3.79-.01 5.12-.08c1.33-.06 2.27-.28 3.07-.59s1.44-.75 1.99-1.3c.55-.55 1.02-1.25 1.3-1.99.31-.8.53-1.74.59-3.07.07-1.33.08-1.77.08-5.12s-.01-3.79-.08-5.12c-.06-1.33-.28-2.27-.59-3.07s-.75-1.44-1.3-1.99c-.55-.55-1.25-1.02-1.99-1.3-.8-.31-1.74-.53-3.07-.59-1.33-.07-1.77-.08-5.12-.08zm0 2.2c3.27 0 3.68.01 4.96.07 1.15.05 1.78.25 2.16.4s.69.41.95.66c.26.26.46.59.66.95.15.38.35 1.01.4 2.16.06 1.28.07 1.69.07 4.96s-.01 3.68-.07 4.96c-.05 1.15-.25 1.78-.4 2.16s-.41.69-.66.95c-.26.26-.59.46-.95.66-.38.15-1.01.35-2.16.4-1.28.06-1.69.07-4.96.07s-3.68-.01-4.96-.07c-1.15-.05-1.78-.25-2.16-.4s-.69-.41-.95-.66c-.26-.26-.46-.59-.66-.95-.15-.38-.35-1.01-.4-2.16-.06-1.28-.07-1.69-.07-4.96s.01-3.68.07-4.96c.05-1.15.25-1.78.4-2.16s.41-.69.66-.95c.26-.26.59-.46.95-.66.38-.15 1.01-.35 2.16-.4 1.28-.06 1.69-.07 4.96-.07zM12 6.8c-2.88 0-5.2 2.32-5.2 5.2s2.32 5.2 5.2 5.2 5.2-2.32 5.2-5.2-2.32-5.2-5.2-5.2zm0 8.2c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm5.75-8.5c-.7 0-1.25.55-1.25 1.25s.55 1.25 1.25 1.25 1.25-.55 1.25-1.25-.55-1.25-1.25-1.25z"/>
+                    </svg>
+                    <span class="social-link">@arenacompetidor</span>
+                </a>
+            </div>
+            
+            <div class="footer-col footer-links">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li><a href="ranking.html">Rankings</a></li>
+                    <li><a href="cadastre_seu_evento.html">Cadastre seu Evento</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </div>
+            
+        </div>
+        <div class="footer-copyright">
+            &copy; 2026 Arena Competidor. Todos os direitos reservados.
+        </div>
+    </footer>
+    <a href="https://wa.me/5584987513740?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
+    <svg class="whatsapp-icon-only" viewBox="0 0 16 16">
+        <path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574zm-1.896-1.042c-.114-.075-.24-.131-.371-.176-.131-.045-.27-.067-.41-.067-.14 0-.279.022-.41.067s-.257.101-.371.176c-.228.147-.492.219-.79.219-.298 0-.562-.072-.79-.219-.228-.147-.393-.341-.497-.577-.104-.236-.156-.499-.156-.789 0-.29.052-.553.156-.789.104-.236.269-.43.497-.577.228-.147.492-.219.79-.219.298 0 .562.072.79.219.228.147.393.341.497.577.104.236.156.499.156.789 0 .29-.052.553-.156.789-.104.236-.269.43-.497.577z"/>
+    </svg>
+    <span class="whatsapp-text-visible">Fale com o Suporte</span>
+</a>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.getElementById('main-menu');
+        const navLinks = navMenu.querySelectorAll('a');
+
+        // Função para alternar o estado do menu
+        function toggleMenu() {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        }
+
+        // Ação de clique no botão hamburguer
+        menuToggle.addEventListener('click', toggleMenu);
+
+        // Fecha o menu ao clicar em um link (útil no mobile)
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Verifica se a largura da tela é menor ou igual a 768px (o ponto de quebra que definimos no CSS)
+                if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
+                    toggleMenu(); // Fecha o menu
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
