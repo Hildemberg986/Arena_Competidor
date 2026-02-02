@@ -4,76 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DESAFIO VIRTUAL SPORTS | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Estilo do Botão Flutuante */
-        .whatsapp-fixed-text-button {
-            position: fixed;
-            bottom: 25px; 
-            right: 25px; 
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 20px;
-            border-radius: 50px;
-            background-color: #25D366;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .whatsapp-fixed-text-button:hover {
-            transform: scale(1.05);
-            background-color: #128C7E;
-        }
-
-        .whatsapp-icon-only {
-            width: 24px;
-            height: 24px;
-            color: white;
-            margin-right: 10px;
-            animation: pulse 1.5s infinite;
-        }
-
-        .whatsapp-text-visible {
-            color: white;
-            font-size: 17px;
-            font-weight: bold;
-            font-family: Arial, sans-serif;
-            white-space: nowrap;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-        :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
-            --cor-destaque: #28a745;
-            --cor-vermelho: #dc3545;
-            --cor-cinza: #6c757d;
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #e9ecef;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
+        /* =========================================
+           CONFIGURAÇÕES DO CABEÇALHO (MANTIDAS)
+           ========================================= */
         header {
             width: 100%;
             text-align: center;
@@ -87,146 +23,323 @@
         }
 
         header img {
-            max-width: 350px;
+            max-width: 200px;
             width: 80%;
             height: auto;
         }
 
-        .main-content {
-            margin-top: 130px;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-            flex-grow: 1;
+        /* Ajuste Mobile do Header */
+        @media (max-width: 768px) {
+            header img { max-width: 220px; }
+        }
+
+        /* =========================================
+           ESTILOS GERAIS E MODERNOS
+           ========================================= */
+        :root {
+            --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 40px;
+            min-height: 100vh;
         }
 
+        /* Container Principal */
+        .main-content {
+            margin-top: 140px; /* Espaço para o header */
+            width: 90%;
+            max-width: 1000px;
+            padding-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Título Principal */
         h1 {
-            color: var(--cor-secundaria);
+            font-family: 'Poppins', sans-serif;
+            color: #111827;
             font-weight: 700;
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            line-height: 1.2;
+            font-size: 2rem;
+            text-align: center;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
         }
 
-        .event-menu-container {
-            display: flex;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-        
-        .event-banner-menu {
-            flex-shrink: 0;
-            flex-basis: 40%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background-color: #f0f0f0;
+        /* =========================================
+           LAYOUT DE GRID (BANNER + BOTÕES)
+           ========================================= */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            align-items: start;
         }
 
-        .event-banner-menu img {
+        /* Card do Banner */
+        .card-banner {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            /* Formato retrato padrão para Desktop */
+            aspect-ratio: 4/5; 
+            position: relative;
+        }
+
+        .card-banner img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            display: block;
+            object-fit: cover; /* Garante que a imagem preencha tudo */
+            object-position: top center; /* Foca no topo da imagem se precisar cortar */
+            transition: transform 0.5s ease;
         }
 
-        .menu-opcoes {
+        .card-banner:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Grid de Botões */
+        .actions-container {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            gap: 12px;
-            padding: 20px;
-            flex-basis: 60%;
-            box-sizing: border-box;
-        }
-        
-        .btn-menu {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background-color: var(--cor-cinza);
-            color: #fff;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            text-align: center;
+            gap: 20px;
         }
 
-        .btn-menu:active {
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 colunas */
+            gap: 12px;
+        }
+
+        /* Estilo dos Botões */
+        .btn-modern {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid transparent;
+        }
+
+        .btn-modern:active {
             transform: scale(0.98);
         }
-        
-        .btn-menu.destaque { background-color: var(--cor-destaque); }
-        .btn-menu.vermelho { background-color: var(--cor-vermelho); }
 
-        .informacoes-evento {
-            width: 100%;
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            box-sizing: border-box;
+        /* Botão Principal (Inscrição) - VERDE DESTAQUE */
+        .btn-primary-action {
+            grid-column: span 2;
+            /* Gradiente Verde Moderno */
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            font-size: 1.1rem;
+            padding: 18px;
+            /* Sombra Verde */
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+            border: none;
         }
 
-        .informacoes-evento h2 {
-            color: var(--cor-secundaria);
-            font-size: 1.5rem;
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, #4ade80 0%, #15803d 100%);
+            box-shadow: 0 6px 15px rgba(34, 197, 94, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Botões Secundários */
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background-color: white;
+            color: var(--accent-red);
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-danger:hover {
+            background-color: #fef2f2;
+            border-color: var(--accent-red);
+        }
+
+        /* =========================================
+           CARD DE INFORMAÇÕES (GRID)
+           ========================================= */
+        .info-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .info-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 15px;
         }
 
-        .informacoes-evento p {
-            line-height: 1.5;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
+        /* Grid de Detalhes */
+        .info-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
         }
 
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-box {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: inline-block;
+        }
+
+        .info-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 25px;
+            font-style: italic;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* =========================================
+           RODAPÉ E WHATSAPP
+           ========================================= */
         .footer {
-            padding: 20px 0;
+            padding: 30px 0;
             width: 100%;
             text-align: center;
             font-size: 0.85rem;
-            color: #6c757d;
-            background: #eee;
+            color: var(--text-secondary);
+            background: transparent;
         }
 
-        /* AJUSTES PARA CELULAR */
-        @media (max-width: 768px) {
-            header img { max-width: 220px; }
-            .main-content { margin-top: 100px; }
-            h1 { font-size: 1.4rem; }
+        /* Botão WhatsApp */
+        .whatsapp-fixed-text-button {
+            position: fixed;
+            bottom: 25px; 
+            right: 25px; 
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 50px;
+            background-color: #25D366;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .whatsapp-fixed-text-button:hover {
+            transform: translateY(-5px) scale(1.02);
+            background-color: #20bd5a;
+            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-icon-only {
+            width: 24px;
+            height: 24px;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .whatsapp-text-visible {
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+        }
+
+        /* =========================================
+           RESPONSIVIDADE (MOBILE) - CORRIGIDA
+           ========================================= */
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
             
-            .event-menu-container {
-                flex-direction: column;
+            /* CORREÇÃO DO BANNER AQUI */
+            .card-banner {
+                /* Mantém o aspecto retrato para não cortar a imagem vertical */
+                aspect-ratio: 4/5; 
+                /* Remove o limite de altura antigo de 300px */
+                max-height: none; 
             }
-            .event-banner-menu {
-                width: 100%;
-                height: auto; /* Ajusta a altura automaticamente */
-                background-color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .main-content { margin-top: 110px; }
+            
+            h1 { font-size: 1.5rem; }
+
+            .actions-grid {
+                grid-template-columns: 1fr; /* 1 coluna no celular */
             }
-            .event-banner-menu img {
-                width: 100%;
-                height: auto; /* Mantém a proporção da imagem */
-                object-fit: contain; /* Garante que a imagem apareça completa */
-            }
-            .menu-opcoes {
-                width: 100%;
-                padding: 20px;
-            }
+
+            .btn-primary-action { grid-column: auto; }
 
             .whatsapp-fixed-text-button {
                 width: 55px;
@@ -237,7 +350,7 @@
                 right: 20px;
             }
             .whatsapp-text-visible { display: none; }
-            .whatsapp-icon-only { margin-right: 0; width: 30px; height: 30px; }
+            .whatsapp-icon-only { margin-right: 0; width: 28px; height: 28px; }
         }
     </style>
 </head>
@@ -250,36 +363,61 @@
     </header>
 
     <div class="main-content">
-        <h1>DESAFIO VIRTUAL SPORTS – ETAPA VIRANDO A CHAVE</h1>
+        <h1>DESAFIO VIRTUAL SPORTS - Etapa Virando a Chave</h1>
         
-        <div class="event-menu-container">
-            <div class="event-banner-menu">
+        <div class="dashboard-grid">
+            <div class="card-banner">
                 <img src="desafio01chave.jpeg" alt="Banner do Desafio">
             </div>
-            <div class="menu-opcoes">
-                <a href="inscricao.html" class="btn-menu destaque">Inscrição</a>
-                <a href="confirmar_pagamento.html" class="btn-menu vermelho">Pagar Inscrição</a>
-                <a href="inscritos.html" class="btn-menu">Atletas Inscritos</a>
+
+            <div class="actions-container">
+                <div class="actions-grid">
+                    <a href="inscricao.html" class="btn-modern btn-primary-action">
+                        Realizar Inscrição Agora
+                    </a>
+
+                    <a href="confirmar_pagamento.html" class="btn-modern btn-secondary">
+                        Pagar Inscrição
+                    </a>
+                    <a href="inscritos.html" class="btn-modern btn-secondary">
+                        Atletas Inscritos
+                    </a>
+                    <a href="../../fotos.html" class="btn-modern btn-secondary" style="color: var(--primary-color); border-color: var(--primary-color);">
+                        Fotos do Evento
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="informacoes-evento">
-            <h2>Informações do Evento</h2>
-            <p><strong>Inscrições:</strong> 17 de Jan a 28 de Fev de 2026</p>
-            <p><strong>Desafio:</strong> 01 de Mar a 31 de Mar de 2026</p>
-            <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">* Datas sujeitas a alteração pela organização.</p>
+        <div class="info-card">
+            <h2>Detalhes do Evento</h2>
+            
+            <div class="info-details-grid">
+                <div class="info-item">
+                    <span class="info-label">Inscrições</span>
+                    <span class="info-value"><span class="icon-box" style="background:#ef4444"></span> 17 de Janeiro a 28 de Fevereiro de 2026</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Desafio</span>
+                    <span class="info-value"><span class="icon-box" style="background:#10b981"></span> 01 de Março a 31 de Março de 2026</span>
+                </div>
+            
+            <div class="info-note">
+                 As datas e horários estão sujeitos a alteração pela organização do evento. Fique atento às atualizações.
+            </div>
         </div>
     </div>
     
     <div class="footer">
-        &copy; 2026 Arena Competidor.
+        &copy; 2026 Arena Competidor. Todos os direitos reservados.
     </div>
 
-    <a href="https://wa.me/5584996189717?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
+    <a href="https://wa.me/5584987513740?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
         <svg class="whatsapp-icon-only" viewBox="0 0 16 16">
             <path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574z"/>
         </svg>
         <span class="whatsapp-text-visible">Suporte</span>
     </a>
+
 </body>
 </html>
