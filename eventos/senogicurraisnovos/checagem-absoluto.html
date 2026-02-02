@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem Absoluto | Arena Competidor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-primaria: #514b53;
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #dee2e6;
+            --status-analise: #ffc107;
+            --status-confirmado: var(--cor-destaque);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            max-width: 200px;
+        }
+
+        .main-content {
+            margin-top: 150px;
+            width: 95%;
+            max-width: 1200px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        h1 {
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        
+        .accordion-item {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .accordion-header {
+            background-color: var(--cor-primaria);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            text-align: left;
+            user-select: none; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: #3b373f;
+        }
+        
+        .accordion-header::after {
+            content: '+';
+            font-weight: bold;
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.active::after {
+            content: '-';
+            transform: rotate(0deg);
+        }
+
+        .accordion-content {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            max-height: 0;
+            padding: 0 20px;
+        }
+
+        .accordion-content.open {
+            max-height: none; 
+            padding: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        thead {
+            background-color: #e9ecef;
+            color: var(--cor-secundaria);
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Statuses */
+        .status-pago, .status-confirmado { 
+            color: var(--cor-destaque); 
+            font-weight: bold; 
+        }
+        .status-pendente { 
+            color: #dc3545; 
+            font-weight: bold; 
+        }
+        .status-em-analise { 
+            color: var(--status-analise); 
+            font-weight: bold; 
+        }
+
+        .link-voltar {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: var(--cor-secundaria);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .link-voltar:hover {
+            background-color: #212529;
+        }
+
+        #loading-message {
+            margin-top: 50px;
+            font-size: 1.5rem;
+            color: var(--cor-primaria);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-top: 100px;
+                width: 98%;
+                padding: 0 10px;
+            }
+            
+            header {
+                padding: 10px 0;
+                position: static;
+            }
+
+            header img {
+                max-width: 150px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            
+            .accordion-header {
+                font-size: 1em;
+                padding: 15px;
+            }
+
+            table {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                border-spacing: 0;
+                background-color: transparent;
+                padding: 0;
+            }
+            
+            thead {
+                display: none;
+            }
+
+            tr {
+                display: flex;
+                flex-direction: column;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+            
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #eee;
+                padding: 10px 0;
+                width: 100%;
+            }
+            
+            td:last-child {
+                border-bottom: none;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                flex-shrink: 0;
+                text-align: left;
+            }
+
+            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
+                flex-grow: 1;
+                text-align: right;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html">
+        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+
+    <div class="main-content">
+        <h1>Checagem de Absoluto</h1>
+
+        <div id="loading-message">Carregando dados...</div>
+        <div id="listaInscritosAbsoluto">
+            </div>
+        
+        <a href="checagem.html" class="link-voltar">Voltar para Opções de Checagem</a>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+    </div>
+
+    <script>
+        // 🚨 URL DO CSV DA PLANILHA GOOGLE
+        // ATUALIZE ESTA URL COM O LINK PÚBLICO DA SUA PLANILHA
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSJfAuniyskp2lFpSfVOLDnN18BiGV7vLSMu96dDDowfoR3zQ097uOGKYYOsmQrXDQqXsUH4k1xP__o/pub?output=csv';
+        
+        const listaInscritosDiv = document.getElementById('listaInscritosAbsoluto');
+        const loadingMessage = document.getElementById('loading-message');
+        
+        let inscritosAbsolutoAgrupados = {};
+
+        // Funções de Normalização
+        function normalizeText(text) {
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
+        }
+        
+        function normalizeStatus(text) {
+            // Normaliza o texto para as classes CSS
+            let status = normalizeText(text.replace(' ', '-'));
+            if (status === 'pago') return 'status-pago';
+            if (status === 'confirmado') return 'status-confirmado'; 
+            if (status === 'pendente') return 'status-pendente';
+            if (status.includes('analise')) return 'status-em-analise'; 
+            return 'status-pendente'; 
+        }
+        
+        // Função Principal de Processamento do CSV
+        async function fetchAndProcessData() {
+            loadingMessage.textContent = 'Carregando dados...';
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const csvText = await response.text();
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                if (lines.length < 2) {
+                    loadingMessage.textContent = 'Nenhum dado encontrado.';
+                    return;
+                }
+                
+                // Mapeia os cabeçalhos
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                // 1. Converte CSV para JSON
+                const inscritosAbsoluto = lines.slice(1)
+                    .map(line => {
+                        // Atenção: Esta separação simples por vírgula pode falhar se houver vírgulas nos dados.
+                        const values = line.split(','); 
+                        const atleta = {};
+                        headers.forEach((header, i) => {
+                            atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
+                        });
+                        return atleta;
+                    })
+                    // 2. FILTRO CHAVE: Apenas atletas onde a coluna 'ABSOLUTO' é 'Sim'
+                    .filter(atleta => atleta['ABSOLUTO'] === 'Sim'); 
+
+                groupAndRenderAbsolutoData(inscritosAbsoluto);
+
+            } catch (error) {
+                console.error('Erro ao buscar ou processar CSV:', error);
+                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o banco de dados.';
+            }
+        }
+        
+        function groupAndRenderAbsolutoData(data) {
+            inscritosAbsolutoAgrupados = {};
+
+            data.forEach(atleta => {
+                const sexo = atleta['SEXO'];
+                // Usamos 'SUA FAIXA' e 'SUA CATEGORIA' (que contém a idade/peso) para agrupar
+                let categoriaIdade = atleta['SUA CATEGORIA']; // Pega o valor original (Ex: Master 1, Adulto)
+                const faixa = atleta['SUA FAIXA'];
+                
+                // 🎯 MODIFICAÇÃO: JUNTAR TODOS OS MASTERS EM UM SÓ GRUPO
+                const categoriaUpper = categoriaIdade.toUpperCase();
+
+                if (categoriaUpper.includes('MASTER')) {
+                    // Redefine a categoria para um valor unificado para o agrupamento
+                    categoriaIdade = 'MASTER (TODAS AS IDADES)'; 
+                }
+                // FIM DA MODIFICAÇÃO
+                
+                // Chave de agrupamento: ABSOLUTO - FAIXA - CATEGORIA - SEXO
+                // Isso cria grupos como: "ABSOLUTO - FAIXA AZUL - MASTER (TODAS AS IDADES) - MASCULINO"
+                const key = `ABSOLUTO - FAIXA ${faixa.toUpperCase()} - ${categoriaIdade.toUpperCase()} - ${sexo.toUpperCase()}`;
+                
+                if (!inscritosAbsolutoAgrupados[key]) {
+                    inscritosAbsolutoAgrupados[key] = {
+                        atletas: [],
+                    };
+                }
+                inscritosAbsolutoAgrupados[key].atletas.push(atleta);
+            });
+            
+            loadingMessage.style.display = 'none';
+            renderAbsolutoList();
+        }
+
+        function renderAbsolutoList() {
+            listaInscritosDiv.innerHTML = ''; 
+            
+            // Colunas da planilha que serão exibidas
+            const NOME_COLUNA_NOME = 'NOME COMPLETO';
+            const NOME_COLUNA_EQUIPE = 'SUA EQUIPE';
+            // 🚨 Use o nome EXATO da sua coluna de status!
+            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
+            
+            // Ordena as chaves do grupo alfabeticamente
+            Object.keys(inscritosAbsolutoAgrupados).sort().forEach(key => {
+                const groupData = inscritosAbsolutoAgrupados[key];
+                
+                const accordionItem = document.createElement('div');
+                accordionItem.className = 'accordion-item';
+                
+                const header = document.createElement('div');
+                header.className = 'accordion-header';
+                header.textContent = key; 
+                
+                const content = document.createElement('div');
+                content.className = 'accordion-content';
+                
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Nome do Atleta</th>
+                            <th>Equipe</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+
+                groupData.atletas.forEach(atleta => {
+                    // Puxa o status, ou define como 'Pendente' se estiver vazio.
+                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
+                    const statusClass = normalizeStatus(statusText);
+                    
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td data-label="Nome do Atleta">${atleta[NOME_COLUNA_NOME]}</td>
+                        <td data-label="Equipe">${atleta[NOME_COLUNA_EQUIPE]}</td>
+                        <td data-label="Status" class="${statusClass}">${statusText}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                content.appendChild(table);
+                accordionItem.appendChild(header);
+                accordionItem.appendChild(content);
+                listaInscritosDiv.appendChild(accordionItem);
+            });
+            
+            setupAccordion(); 
+        }
+        
+        // --- Lógica de Acordeão (Reutilizada) ---
+
+        function setupAccordion() {
+            const accordionHeaders = listaInscritosDiv.querySelectorAll('.accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                header.removeEventListener('click', handleAccordionClick); 
+                header.addEventListener('click', handleAccordionClick);
+            });
+        }
+        
+        function handleAccordionClick(event) {
+             const header = event.currentTarget;
+             const content = header.nextElementSibling;
+                      
+            // Fecha outros acordeões abertos
+            listaInscritosDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
+                if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                    otherHeader.classList.remove('active');
+                    otherHeader.nextElementSibling.classList.remove('open');
+                }
+            });
+
+            // Abre/Fecha o atual
+            header.classList.toggle('active');
+            content.classList.toggle('open');
+        }
+
+        // Inicializa o carregamento dos dados ao carregar a página
+        document.addEventListener('DOMContentLoaded', fetchAndProcessData);
+    </script>
+</body>
+</html>
