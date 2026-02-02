@@ -1,276 +1,181 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checagem por Equipes | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
+        /* =========================================
+           CONFIGURAÇÕES TEMA SENOGI (MANTIDAS)
+           ========================================= */
         :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
-            --cor-destaque: #28a745; /* Verde Pago/Confirmado */
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
-            --status-analise: #ffc107;
-            --status-confirmado: var(--cor-destaque);
+            --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
             min-height: 100vh;
         }
 
         header {
-            width: 100%;
-            text-align: center;
-            padding: 20px 0;
-            background-color: #000;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
         }
+        header img { max-width: 250px; width: 80%; height: auto; }
 
-        header img {
-            max-width: 200px;
-        }
-
+        /* =========================================
+           CONTEÚDO PRINCIPAL
+           ========================================= */
         .main-content {
-            margin-top: 150px;
-            width: 95%;
-            max-width: 1200px;
+            margin-top: 140px;
+            width: 90%;
+            max-width: 1000px;
+            padding-bottom: 60px;
             text-align: center;
-            flex-grow: 1;
         }
 
         h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-        
-        /* Lista de Equipes */
-        #listaEquipes {
-            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            color: #111827;
+            font-weight: 700; font-size: 2rem;
+            margin-bottom: 40px;
         }
 
+        /* ACORDEÃO DE EQUIPES */
         .accordion-item {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            width: 100%;
-        }
-        
-        .accordion-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            transition: opacity 0.3s ease;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            text-align: left;
         }
 
-        .accordion-header h2 {
-            color: var(--cor-primaria);
-            font-size: 2rem;
+        .accordion-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover { background: #f8fafc; }
+
+        .team-info h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            color: var(--primary-color);
             margin: 0;
         }
 
-        .accordion-header p {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--cor-destaque);
-            margin-top: 5px;
-            margin-bottom: 0;
+        .team-info p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin: 4px 0 0 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .accordion-header::after {
             content: '+';
-            font-weight: bold;
-            font-size: 1.5em;
-            color: var(--cor-secundaria);
-            margin-top: 10px;
-            transition: transform 0.3s ease;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 400;
         }
 
-        .accordion-header.active::after {
-            content: '-';
-            transform: rotate(0deg); /* Ajustado para não girar de forma estranha */
-        }
+        .accordion-header.active::after { content: '-'; }
 
         .accordion-content {
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
             max-height: 0;
-            padding: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: #fff;
         }
 
         .accordion-content.open {
-            max-height: 30000px; /* Valor alto para listas grandes */
-            padding-top: 20px;
+            max-height: 5000px; /* Expansível para muitos atletas */
+            padding: 0 25px 25px;
+            border-top: 1px solid #f3f4f6;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        /* TABELA */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { 
+            text-align: left; padding: 12px; 
+            font-size: 0.75rem; color: var(--text-secondary); 
+            text-transform: uppercase; border-bottom: 2px solid #f3f4f6; 
         }
+        td { padding: 14px 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        thead {
-            background-color: #e9ecef;
-            color: var(--cor-secundaria);
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Statuses */
-        .status-pago, .status-confirmado { 
-            color: var(--cor-destaque); 
-            font-weight: bold; 
-        }
-        .status-pendente { 
-            color: #dc3545; 
-            font-weight: bold; 
-        }
-        .status-em-analise { 
-            color: var(--status-analise); 
-            font-weight: bold; 
-        }
+        /* STATUS */
+        .status-pago, .status-confirmado { color: var(--accent-green); font-weight: 700; }
+        .status-pendente { color: var(--accent-red); font-weight: 700; }
+        .status-em-analise { color: #f59e0b; font-weight: 700; }
 
         .link-voltar {
             display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background-color: var(--cor-secundaria);
+            margin-top: 40px;
+            padding: 14px 30px;
+            background-color: #111827;
             color: #fff;
             text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
 
         .link-voltar:hover {
-            background-color: #212529;
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
         #loading-message {
-            margin-top: 50px;
-            font-size: 1.5rem;
-            color: var(--cor-primaria);
+            padding: 50px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
-        
+
         .footer {
             margin-top: auto;
-            padding: 20px 0;
+            padding: 30px 0;
             width: 100%;
             text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
-        
+        /* MOBILE */
         @media (max-width: 768px) {
-            .main-content {
-                margin-top: 100px;
-                width: 98%;
-                padding: 0 10px;
-            }
+            .main-content { margin-top: 110px; }
+            h1 { font-size: 1.6rem; }
+            .accordion-header { padding: 15px 20px; }
+            .team-info h2 { font-size: 1.1rem; }
             
-            header {
-                padding: 10px 0;
-                position: static;
-            }
-
-            header img {
-                max-width: 150px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
-            }
-
-            .accordion-item {
-                padding: 15px;
-                margin-bottom: 20px;
-            }
-
-            .accordion-header h2 {
-                font-size: 1.5rem;
-            }
-
-            .accordion-header p {
-                font-size: 1rem;
-            }
-            
-            table {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                border-spacing: 0;
-                background-color: transparent;
-                padding: 0;
-            }
-            
-            thead {
-                display: none;
-            }
-
-            tr {
-                display: flex;
-                flex-direction: column;
-                background-color: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                padding: 15px;
-                margin-bottom: 10px;
-            }
-            
-            td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid #eee;
-                padding: 10px 0;
-                width: 100%;
-            }
-            
-            td:last-child {
-                border-bottom: none;
-            }
-
-            td::before {
-                content: attr(data-label);
-                font-weight: bold;
-                flex-shrink: 0;
-                text-align: left;
-            }
-
-            .status-pago, .status-pendente, .status-em-analise, .status-confirmado {
-                flex-grow: 1;
-                text-align: right;
-            }
+            thead { display: none; }
+            tr { display: block; border-bottom: 2px solid #f3f4f6; padding: 10px 0; }
+            td { display: flex; justify-content: space-between; border: none; padding: 6px 0; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -278,27 +183,25 @@
 
     <header>
         <a href="../../index.html">
-        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
         </a>
     </header>
 
     <div class="main-content">
         <h1>Checagem por Equipes</h1>
 
-        <div id="loading-message">Carregando dados...</div>
-        <div id="listaEquipes">
-            </div>
+        <div id="loading-message">Sincronizando banco de dados...</div>
         
-        <a href="checagem.html" class="link-voltar">Voltar para Opções de Checagem</a>
+        <div id="listaEquipes"></div>
+        
+        <a href="checagem.html" class="link-voltar">Voltar para Opções</a>
     </div>
 
     <div class="footer">
-        &copy; 2025 Arena Competidor. Todos os direitos reservados.
+        &copy; 2026 Arena Competidor. Todos os direitos reservados.
     </div>
 
     <script>
-        // 🚨 URL DO CSV DA PLANILHA GOOGLE
-        // ATUALIZE ESTA URL COM O LINK PÚBLICO DA SUA PLANILHA
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSJfAuniyskp2lFpSfVOLDnN18BiGV7vLSMu96dDDowfoR3zQ097uOGKYYOsmQrXDQqXsUH4k1xP__o/pub?output=csv';
         
         const listaEquipesDiv = document.getElementById('listaEquipes');
@@ -306,53 +209,39 @@
         
         let inscritosPorEquipe = {};
 
-        // Funções de Normalização
         function normalizeText(text) {
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
         
         function normalizeStatus(text) {
             let status = normalizeText(text.replace(' ', '-'));
-            if (status === 'pago') return 'status-pago';
-            if (status === 'confirmado') return 'status-confirmado'; 
-            if (status === 'pendente') return 'status-pendente';
+            if (status.includes('pago') || status.includes('confirmado')) return 'status-pago';
+            if (status.includes('pendente')) return 'status-pendente';
             if (status.includes('analise')) return 'status-em-analise'; 
             return 'status-pendente'; 
         }
         
-        // Função Principal de Processamento do CSV
         async function fetchAndProcessData() {
-            loadingMessage.textContent = 'Carregando dados...';
             try {
                 const response = await fetch(CSV_URL);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
                 const csvText = await response.text();
                 const lines = csvText.split('\n').filter(line => line.trim() !== '');
-                if (lines.length < 2) {
-                    loadingMessage.textContent = 'Nenhum dado encontrado.';
-                    return;
-                }
                 
-                // Mapeia os cabeçalhos
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
                 
-                // Converte CSV para JSON
-                const todosInscritos = lines.slice(1)
-                    .map(line => {
-                        const values = line.split(','); 
-                        const atleta = {};
-                        headers.forEach((header, i) => {
-                            atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
-                        });
-                        return atleta;
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(','); 
+                    const atleta = {};
+                    headers.forEach((header, i) => {
+                        atleta[header] = values[i] ? values[i].replace(/"/g, '').trim() : '';
                     });
+                    return atleta;
+                });
 
-                groupAndRenderEquipes(todosInscritos);
+                groupAndRenderEquipes(data);
 
             } catch (error) {
-                console.error('Erro ao buscar ou processar CSV:', error);
-                loadingMessage.textContent = '❌ Erro ao carregar dados. Verifique o banco de dados.';
+                loadingMessage.textContent = '❌ Erro ao carregar dados.';
             }
         }
         
@@ -361,12 +250,8 @@
 
             data.forEach(atleta => {
                 const nomeEquipe = atleta['SUA EQUIPE'] || 'SEM EQUIPE';
-                
                 if (!inscritosPorEquipe[nomeEquipe]) {
-                    inscritosPorEquipe[nomeEquipe] = {
-                        atletas: [],
-                        total: 0
-                    };
+                    inscritosPorEquipe[nomeEquipe] = { atletas: [], total: 0 };
                 }
                 inscritosPorEquipe[nomeEquipe].atletas.push(atleta);
                 inscritosPorEquipe[nomeEquipe].total++;
@@ -379,101 +264,63 @@
         function renderEquipeList() {
             listaEquipesDiv.innerHTML = ''; 
             
-            // Colunas da planilha que serão exibidas
-            const NOME_COLUNA_NOME = 'NOME COMPLETO';
-            const NOME_COLUNA_FAIXA = 'SUA FAIXA';
-            const NOME_COLUNA_PESO = 'SEU PESO';
-            const NOME_COLUNA_CATEGORIA = 'SUA CATEGORIA';
-            const NOME_COLUNA_STATUS = 'STATUS DO PAGAMENTO'; 
-            
-            // Ordena as chaves do grupo (opcional, mas ajuda na organização)
-            // Ordem: Alfabética por nome da equipe
             Object.keys(inscritosPorEquipe).sort().forEach(key => {
                 const groupData = inscritosPorEquipe[key];
-                
                 const accordionItem = document.createElement('div');
                 accordionItem.className = 'accordion-item';
                 
-                const header = document.createElement('div');
-                header.className = 'accordion-header';
-                header.innerHTML = `
-                    <h2>${key}</h2>
-                    <p>Total de Inscritos: ${groupData.total}</p>
+                accordionItem.innerHTML = `
+                    <div class="accordion-header" onclick="toggleAcc(this)">
+                        <div class="team-info">
+                            <h2>${key}</h2>
+                            <p>${groupData.total} Atleta(s) Inscrito(s)</p>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Atleta</th>
+                                    <th>Faixa</th>
+                                    <th>Peso</th>
+                                    <th>Categoria</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${groupData.atletas.map(atleta => `
+                                    <tr>
+                                        <td data-label="Atleta">${atleta['NOME COMPLETO']}</td>
+                                        <td data-label="Faixa">${atleta['SUA FAIXA']}</td>
+                                        <td data-label="Peso">${atleta['SEU PESO']}</td>
+                                        <td data-label="Categoria">${atleta['SUA CATEGORIA']}</td>
+                                        <td data-label="Status" class="${normalizeStatus(atleta['STATUS DO PAGAMENTO'])}">
+                                            ${atleta['STATUS DO PAGAMENTO']}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                 `; 
-                
-                const content = document.createElement('div');
-                content.className = 'accordion-content';
-                
-                const table = document.createElement('table');
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>Nome do Atleta</th>
-                            <th>Faixa</th>
-                            <th>Peso</th>
-                            <th>Categoria</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                `;
-                const tbody = table.querySelector('tbody');
-
-                // Itera sobre os atletas da equipe e preenche a tabela
-                groupData.atletas.forEach(atleta => {
-                    const statusText = atleta[NOME_COLUNA_STATUS] || 'Pendente';
-                    const statusClass = normalizeStatus(statusText);
-                    
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td data-label="Nome do Atleta">${atleta[NOME_COLUNA_NOME]}</td>
-                        <td data-label="Faixa">${atleta[NOME_COLUNA_FAIXA]}</td>
-                        <td data-label="Peso">${atleta[NOME_COLUNA_PESO]}</td>
-                        <td data-label="Categoria">${atleta[NOME_COLUNA_CATEGORIA]}</td>
-                        <td data-label="Status" class="${statusClass}">${statusText}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-                
-                content.appendChild(table);
-                accordionItem.appendChild(header);
-                accordionItem.appendChild(content);
                 listaEquipesDiv.appendChild(accordionItem);
             });
-            
-            setupAccordion(); 
         }
         
-        // --- Lógica de Acordeão (Reutilizada) ---
-
-        function setupAccordion() {
-            const accordionHeaders = listaEquipesDiv.querySelectorAll('.accordion-header');
-            
-            accordionHeaders.forEach(header => {
-                header.removeEventListener('click', handleAccordionClick); 
-                header.addEventListener('click', handleAccordionClick);
-            });
-        }
-        
-        function handleAccordionClick(event) {
-             const header = event.currentTarget;
-             const content = header.nextElementSibling;
-                        
-            // Fecha outros acordeões abertos
-            listaEquipesDiv.querySelectorAll('.accordion-header').forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.classList.remove('open');
+        function toggleAcc(el) {
+            // Fecha outros acordeões
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                if (header !== el && header.classList.contains('active')) {
+                    header.classList.remove('active');
+                    header.nextElementSibling.classList.remove('open');
                 }
             });
 
-            // Abre/Fecha o atual
-            header.classList.toggle('active');
-            content.classList.toggle('open');
+            // Abre o selecionado
+            el.classList.toggle('active');
+            el.nextElementSibling.classList.toggle('open');
         }
 
-        // Inicializa o carregamento dos dados ao carregar a página
         document.addEventListener('DOMContentLoaded', fetchAndProcessData);
     </script>
 </body>
