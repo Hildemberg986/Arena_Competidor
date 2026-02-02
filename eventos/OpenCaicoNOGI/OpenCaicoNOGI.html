@@ -100,14 +100,16 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow-md);
-            aspect-ratio: 4/5; /* Formato retrato moderno */
+            /* Formato retrato padrão para Desktop */
+            aspect-ratio: 4/5; 
             position: relative;
         }
 
         .card-banner img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Garante que a imagem preencha tudo */
+            object-position: top center; /* Foca no topo da imagem se precisar cortar */
             transition: transform 0.5s ease;
         }
 
@@ -312,15 +314,19 @@
         }
 
         /* =========================================
-           RESPONSIVIDADE (MOBILE)
+           RESPONSIVIDADE (MOBILE) - CORRIGIDA
            ========================================= */
         @media (max-width: 900px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
+            
+            /* CORREÇÃO DO BANNER AQUI */
             .card-banner {
-                aspect-ratio: 16/9; /* Mais horizontal no mobile */
-                max-height: 300px;
+                /* Mantém o aspecto retrato para não cortar a imagem vertical */
+                aspect-ratio: 4/5; 
+                /* Remove o limite de altura antigo de 300px */
+                max-height: none; 
             }
         }
 
@@ -357,7 +363,7 @@
     </header>
 
     <div class="main-content">
-        <h1>Open Caicó de Jiu-Jitsu - NO-GI (SEM Kimono)</h1>
+        <h1>Open Caicó de Jiu-Jitsu - NOGI (SEM Kimono)</h1>
         
         <div class="dashboard-grid">
             <div class="card-banner">
