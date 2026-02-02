@@ -1,146 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena Competidor | Sua vitória começa aqui</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <title>Arena Competidor | Oficial</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* Estilo do Botão Flutuante (Formato Pílula com Texto Fixo) - Mantido */
-.whatsapp-fixed-text-button {
-    position: fixed;
-    bottom: 25px; 
-    right: 25px; 
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    border-radius: 50px;
-    background-color: #25D366;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.whatsapp-fixed-text-button:hover {
-    transform: scale(1.05);
-    background-color: #128C7E;
-}
-
-.whatsapp-icon-only {
-    width: 24px;
-    height: 24px;
-    color: white;
-    margin-right: 10px;
-    animation: pulse 1.5s infinite;
-}
-
-.whatsapp-text-visible {
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-    font-family: Arial, sans-serif;
-    white-space: nowrap;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-@media (max-width: 768px) {
-    .whatsapp-fixed-text-button {
-        width: 55px;
-        height: 55px;
-        padding: 0; 
-        border-radius: 50%;
-        bottom: 15px;
-        right: 15px;
-    }
-
-    .whatsapp-text-visible {
-        display: none;
-    }
-
-    .whatsapp-icon-only {
-        margin-right: 0;
-        width: 30px;
-        height: 30px;
-    }
-}
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
         :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
-            --cor-destaque: #28a745;
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
-            --cor-footer-bg: #212529;
-            --cor-footer-text: #adb5bd;
-            --cor-nav-bg: #343a40;
-            --cor-nav-link: #ffffff;
-            --cor-nav-link-hover: var(--cor-primaria);
-
-            /* Alturas do Header e Nav para cálculo. Ajuste se necessário! */
-            --header-padding-height: 40px; 
-            --nav-bar-height: 40px; /* Altura dos botões */
-
-            --header-height-fixed: 100px; 
+            --primary-red: #e11d48;
+            --bg-dark: #ffffff;
+            --bg-card: #1a1a1c;
+            --text-white: #000000;
+            --text-gray: #a1a1aa;
+            --border-gray: #27272a;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.6;
         }
-        
-        /* HEADER (Logo) - Fixado no topo: 0 */
+
+        /* --- CABEÇALHO --- */
         header {
             width: 100%;
-            /* REMOVIDO: text-align: center; (substituído por flexbox) */
-            padding: 20px 0;
+            height: 90px;
             background-color: #000;
             position: fixed;
             top: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            height: 20px; 
-            box-sizing: content-box;
-            
-            /* ADICIONADO: Flexbox para centralização */
+            z-index: 1100;
             display: flex;
-            justify-content: center; /* Centraliza horizontalmente */
-            align-items: center; /* Centraliza verticalmente */
+            justify-content: center;
+            align-items: center;
+            /* Linha vermelha removida */
         }
 
-        header img {
-            max-width: 200px; 
-            max-height: 60px;
+        header img { max-height: 23px; }
+
+        /* Botão Menu Mobile */
+        .menu-mobile-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
         }
 
-        /* BARRA DE NAVEGAÇÃO PRINCIPAL (Botões) - FIXA E COLADA */
+        /* --- NAVEGAÇÃO --- */
         .main-nav-bar {
             width: 100%;
-            background-color: var(--cor-nav-bg);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            background-color: rgba(26, 26, 28, 0.95);
+            backdrop-filter: blur(10px);
             position: fixed;
-            /* No desktop (100px de altura total do header), o nav deve começar em 100px */
-            top: 60px; /* AJUSTADO: 20px padding top + 60px img + 20px padding bottom = 100px */
-            left: 0;
-            z-index: 999;
-            box-sizing: border-box;
-            height: var(--nav-bar-height);
+            top: 90px;
+            z-index: 1000;
+            height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -148,549 +71,313 @@
 
         .main-nav-bar ul {
             list-style: none;
-            padding: 0;
-            margin: 0;
             display: flex;
-            justify-content: center;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-        }
-
-        .main-nav-bar li {
-            margin: 0 15px;
+            gap: 25px;
         }
 
         .main-nav-bar a {
-            display: block;
-            padding: 10px 15px;
+            color: #fff;
             text-decoration: none;
-            color: var(--cor-nav-link);
             font-weight: 700;
-            font-size: 1rem;
-            transition: color 0.2s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
         }
 
-        .main-nav-bar a:hover {
-            color: var(--cor-nav-link-hover);
-        }
-        
-        /* Adicionado: Estilos para o botão Hamburguer */
-        .menu-toggle {
-            display: none; 
-            background: transparent;
-            border: 0;
-            cursor: pointer;
-            padding: 10px;
-            position: absolute; 
-            top: 0;
-            right: 15px;
-            height: var(--nav-bar-height); 
-            z-index: 1001; 
-        }
+        .main-nav-bar a:hover { color: var(--primary-red); }
 
-        .menu-toggle .icon-bar {
-            display: block;
-            width: 25px;
-            height: 3px;
-            margin: 5px 0;
-            background-color: var(--cor-nav-link); 
-            transition: all 0.3s;
-        }
-
-        .menu-toggle.active .icon-bar:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active .icon-bar:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-        }
-
-        .menu-toggle.active .icon-bar:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-        }
-
-
-        /* MAIN CONTENT - Ajuste para o espaçamento total dos elementos fixos */
+        /* --- CONTEÚDO --- */
         .main-content {
-            /* CÁLCULO CRÍTICO: 100px (Header) + 40px (Nav Bar) = 140px */
-            margin-top: calc(100px + var(--nav-bar-height)); /* Total de 140px */
-            width: 90%;
+            margin-top: 180px;
+            padding: 40px 20px;
             max-width: 1200px;
-            text-align: center;
-            flex-grow: 1;
-            padding-bottom: 20px;
-        }
-        
-        /* Ajuste de responsividade para a navegação e cabeçalho (Mobile) */
-        @media (max-width: 768px) { 
-            
-            /* Mostrar o Botão Hamburguer */
-            .menu-toggle {
-                display: block; 
-            }
-            
-            /* Ajuste de Altura do Header no Mobile (Mantendo a centralização Flexbox) */
-            header {
-                padding: 10px 0; /* Diminui o padding */
-                height: 40px; /* Deixa a altura ser definida pelo conteúdo */
-            }
-            
-            header img {
-                max-height: 60px; /* MANTÉM ALTURA DO LOGO em 60px */
-                max-width: 200px;
-            }
-
-            /* Novo Top do Nav Bar no Mobile */
-            .main-nav-bar {
-                /* CÁLCULO CRÍTICO Mobile: 10px (top padding) + 60px (max-height da img) + 10px (bottom padding) = 80px */
-                top: 60px; /* AJUSTADO: Posição da nav abaixo do header de 60px */
-                height: 40px; 
-                align-items: flex-start;
-            }
-
-            /* ESCONDE A LISTA DE LINKS POR PADRÃO (Efeito de gaveta) */
-            .main-nav-bar ul {
-                width: 100%;
-                flex-direction: column; 
-                align-items: center;
-                position: absolute;
-                top: var(--nav-bar-height); 
-                left: 0;
-                transform: translateY(-100%); 
-                max-height: 0; 
-                opacity: 0;
-                overflow: hidden;
-                background-color: var(--cor-nav-bg);
-                width: 100vw; 
-            }
-            
-            /* MOSTRA A LISTA QUANDO A CLASSE 'active' É ADICIONADA */
-            .main-nav-bar ul.active {
-                transform: translateY(0); 
-                max-height: 500px; 
-                opacity: 1;
-                padding: 10px 0; 
-            }
-
-            .main-nav-bar li {
-                margin: 0; 
-                width: 100%; 
-                text-align: center;
-                border-top: 1px solid #444; 
-            }
-            
-            .main-nav-bar li:first-child {
-                border-top: none;
-            }
-
-            .main-nav-bar a {
-                padding: 15px 10px; 
-                font-size: 1rem;
-            }
-            
-            .main-content {
-                /* CÁLCULO CRÍTICO Mobile: 80px (Header) + 40px (Nav-Bar colapsada) = 120px */
-                margin-top: 120px; /* AJUSTADO: Compensação de espaço */
-            }
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* Estilos dos Eventos (Mantidos) */
         h1 {
-            color: var(--cor-secundaria);
-            font-weight: 700;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+            font-weight: 900;
             margin-bottom: 40px;
+            text-transform: uppercase;
+            border-left: 5px solid var(--primary-red);
+            padding-left: 15px;
         }
 
+        /* --- CARDS (BANNER COMPLETO) --- */
         .event-list {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
         }
 
         .event-container {
-            border-radius: 8px;
+            background: var(--bg-card);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            margin-bottom: 30px;
-            max-width: 250px; 
-            width: 100%;
+            border: 1px solid var(--border-gray);
+            transition: 0.4s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .event-container:hover {
+            border-color: var(--primary-red);
             transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .event-banner {
+            width: 100%;
+            display: block;
+            background: #000;
         }
 
         .event-banner img {
             width: 100%;
-            height: auto;
+            height: auto; /* Imagem Completa */
             display: block;
         }
 
-        .event-info {
-            padding: 20px;
-            background-color: #fff;
-            text-align: center;
+        .event-info { padding: 20px; flex-grow: 1; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 12px;
         }
+        .badge-open { background: var(--primary-red); color: white; }
+        .badge-soon { background: #3f3f46; color: #fff; }
 
         .event-info h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.0rem; 
-            color: var(--cor-secundaria);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #fff;
+            min-height: 50px;
         }
-        
+
         .event-detail {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .event-detail b { color: #fff; }
+
+        /* --- WHATSAPP --- */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25D366;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.88rem;
-            color: var(--cor-texto);
-            margin-bottom: 5px; 
+            gap: 10px;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        .event-detail .icon {
-            margin-right: 5px;
-            font-size: 1.1rem; 
-            color: var(--cor-primaria);
-        }
-
-        .event-info p {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--cor-destaque);
-            margin-top: 10px; 
-        }
-
-        /* Rodapé (Mantido) */
+        /* --- RODAPÉ RECUPERADO --- */
         .footer {
-            margin-top: auto;
-            width: 100%;
-            background-color: var(--cor-footer-bg);
-            color: var(--cor-footer-text);
-            padding: 40px 20px;
-            text-align: left;
+            background-color: #000;
+            color: #fff;
+            padding: 60px 20px 20px;
+            margin-top: 0px;
+            border-top: 1px solid var(--border-gray);
         }
 
         .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
         }
 
-        .footer-col {
-            padding: 0 15px;
-            min-width: 200px; 
+        .footer-col h3 {
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            font-size: 1rem;
+            text-transform: uppercase;
         }
-        
-        .footer-logo img {
-            max-width: 150px;
+
+        .footer-links ul { list-style: none; }
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
             display: block;
             margin-bottom: 10px;
-        }
-        
-        .footer-social {
-            text-align: center;
+            transition: 0.3s;
         }
 
-        .footer-social h3 {
-            color: #fff;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .social-link-container {
-            display: flex;
-            flex-direction: column; 
-            align-items: center;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .social-icon-svg {
-            width: 30px;
-            height: 30px;
-            fill: #fff;
-            margin-bottom: 8px; 
-            transition: fill 0.2s;
-        }
-
-        .social-link {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--cor-destaque);
-            transition: color 0.2s;
-        }
-
-        .social-link-container:hover .social-icon-svg {
-            fill: var(--cor-destaque);
-        }
-
-        .social-link-container:hover .social-link {
-            color: #fff;
-        }
-
-        .footer-links h3 {
-             color: #fff;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .footer-links ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-links a {
-            color: var(--cor-footer-text);
-            text-decoration: none;
-            display: block;
-            padding: 5px 0;
-            transition: color 0.2s;
-            font-size: 1rem;
-        }
-
-        .footer-links a:hover {
-            color: var(--cor-primaria);
-        }
+        .footer-links a:hover { color: #fff; }
 
         .footer-copyright {
-            width: 100%;
             text-align: center;
-            border-top: 1px solid #343a40;
-            padding-top: 20px;
-            margin-top: 30px;
-            font-size: 0.9rem;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid var(--border-gray);
+            font-size: 0.75rem;
+            color: #444;
         }
 
+        /* --- MOBILE --- */
         @media (max-width: 768px) {
-            .footer-content {
+            .menu-mobile-btn { display: block; }
+            
+            .main-nav-bar {
+                display: none;
+                height: auto;
+                top: 90px;
+            }
+
+            .main-nav-bar.active { display: flex; }
+
+            .main-nav-bar ul {
                 flex-direction: column;
-                align-items: center;
-            }
-
-            .footer-col {
                 width: 100%;
+                padding: 20px;
                 text-align: center;
-                margin-bottom: 30px;
-                padding: 0;
-            }
-            
-            .footer-logo img {
-                margin: 0 auto 10px auto;
-            }
-            
-            .social-link-container {
-                flex-direction: row;
-                justify-content: center;
-            }
-            
-            .social-icon-svg {
-                margin-right: 8px;
-                margin-bottom: 0;
             }
 
-            .footer-links ul {
-                display: block; 
-            }
-            
-            .footer-links a {
-                padding: 2px 0;
-            }
+            .main-content { margin-top: 140px; }
+            h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="img/arena2.png" alt="Arena Competidor Logo">
+        <button class="menu-mobile-btn" onclick="toggleMenu()">☰</button>
+        <img src="img/arena2.png" alt="Arena Competidor">
     </header>
 
-    <nav class="main-nav-bar">
-        <button class="menu-toggle" aria-expanded="false" aria-controls="main-menu">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <ul id="main-menu">
+    <nav class="main-nav-bar" id="navBar">
+        <ul>
             <li><a href="ranking.html">Rankings</a></li>
             <li><a href="cadastre_seu_evento.html">Cadastre seu Evento</a></li>
-            <li><a href="fotos.html">Fotos dos Eventos</a></li>
+            <li><a href="fotos.html">Fotos</a></li>
             <li><a href="contato.html">Contato</a></li>
             <li><a href="sobre.html">Sobre</a></li>
         </ul>
     </nav>
-    <div class="main-content">
-        <h1>Próximos Eventos</h1>
-        <div class="event-list"> 
 
+    <main class="main-content">
+        <h1>Próximos Eventos</h1>
+        
+        <div class="event-list">
             <div class="event-container">
                 <a href="eventos/desafiodigital/desafiovirtual.html" class="event-banner">
-                    <img src="eventos/desafiodigital/desafio01chave.png" alt="Banner do Desafio Virtual">
+                    <img src="eventos/desafiodigital/desafio01chave.png" alt="Evento">
                 </a>
                 <div class="event-info">
+                    <span class="badge badge-open">Inscrições Abertas</span>
                     <h2>Desafio Virtual - Virando a Chave</h2>
-                    <div class="event-detail">
-                        <span><b>Data: </b>01/03/2026</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Modalidade: </b>Corrida e Ciclismo</span>
-                    </div>
-                    <p class="mt-4 text-base font-bold text-amber-600">INSCRIÇÕES ABERTAS</p>
+                    <div class="event-detail"><span>Data</span> <b>01/03/2026</b></div>
+                    <div class="event-detail"><span>Modalidade</span> <b>Corrida/Bike</b></div>
                 </div>
             </div>
-            
+
             <div class="event-container">
                 <a href="eventos/senogicurraisnovos/senogi_currais.html" class="event-banner">
-                    <img src="img/SENOGICURRAISNOVOSAC.jpeg" alt="Banner do Senogi currais">
+                    <img src="img/SENOGICURRAISNOVOSAC.jpeg" alt="Evento">
                 </a>
                 <div class="event-info">
-                    <h2>SENOGI - 3ª Etapa</h2>
-                    <div class="event-detail">
-                        <span><b>Data: </b>22/03/2026</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Local: </b>Currais Novos/RN</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Modalidade: </b>Jiu-jitsu</span>
-                    </div>
-                    <p class="mt-4 text-base font-bold text-amber-600">INSCRIÇÕES ABERTAS</p>
+                    <span class="badge badge-open">Inscrições Abertas</span>
+                    <h2>SENOGI - Etapa Currais Novos</h2>
+                    <div class="event-detail"><span>Data</span> <b>22/03/2026</b></div>
+                    <div class="event-detail"><span>Local</span> <b>Currais Novos/RN</b></div>
+                    <div class="event-detail"><span>Modalidade</span> <b>Jiu-Jitsu NOGI</b></div>
                 </div>
             </div>
 
             <div class="event-container">
                 <a href="eventos/OpenCuite/OpenCuite.html" class="event-banner">
-                    <img src="img/CUITE.jpg" alt="Banner do Open Cuite">
+                    <img src="img/CUITE.jpg" alt="Evento">
                 </a>
                 <div class="event-info">
+                    <span class="badge badge-soon">Em Breve</span>
                     <h2>Open Cuité de Jiu-Jitsu</h2>
-                    <div class="event-detail">
-                        <span><b>Data: </b>Abril/2026</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Local: </b>Cuité/PB</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Modalidade: </b>Jiu-jitsu</span>
-                    </div>
-                    <p class="mt-4 text-base font-bold text-amber-600">Inscrições em breve</p>
+                    <div class="event-detail"><span>Data</span> <b>Abril/2026</b></div>
+                    <div class="event-detail"><span>Local</span> <b>Cuité/PB</b></div>
+                    <div class="event-detail"><span>Modalidade</span> <b>Jiu-Jitsu</b></div>
                 </div>
             </div>
-            
-            <div class="event-container">
+             <div class="event-container">
                 <a href="eventos/OpenCaicoGI/OpenCaicoGI.html" class="event-banner">
-                    <img src="img/OPENCAICOGI.jpeg" alt="Banner do Open caico">
+                    <img src="img/OPENCAICOGI.jpeg" alt="Evento">
                 </a>
                 <div class="event-info">
-                    <h2>10º Open Caicó de Jiu-jitsu</h2>
-                    <div class="event-detail">
-                        <span><b>Data: </b>16 e 17/05/2026</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Local: </b>Caicó/RN</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Modalidade: </b>Jiu-jitsu</span>
-                    </div>
-                    <p class="mt-4 text-base font-bold text-amber-600">Inscrições em breve</p>
+                    <span class="badge badge-soon">Em Breve</span>
+                    <h2>10ª Open Caicó de Jiu-Jitsu - GI</h2>
+                    <div class="event-detail"><span>Data</span> <b>16 e 17/05/2026</b></div>
+                    <div class="event-detail"><span>Local</span> <b>Caicó/RN</b></div>
+                    <div class="event-detail"><span>Modalidade</span> <b>Jiu-Jitsu</b></div>
                 </div>
             </div>
-            
-            <div class="event-container">
+             <div class="event-container">
                 <a href="eventos/OpenCaicoNOGI/OpenCaicoNOGI.html" class="event-banner">
-                    <img src="img/OPENCAICONOGI.jpeg" alt="Banner do Open caico">
+                    <img src="img/OPENCAICONOGI.jpeg" alt="Evento">
                 </a>
                 <div class="event-info">
-                    <h2>10º Open Caicó de Jiu-jitsu</h2>
-                    <div class="event-detail">
-                        <span><b>Data: </b>16 e 17/05/2026</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Local: </b>Caicó/RN</span>
-                    </div>
-                    <div class="event-detail">
-                        <span><b>Modalidade: </b>Jiu-jitsu NO-GI</span>
-                    </div>
-                    <p class="mt-4 text-base font-bold text-amber-600">Inscrições em breve</p>
+                    <span class="badge badge-soon">Em Breve</span>
+                    <h2>10ª Open Caicó de Jiu-Jitsu - NOGI</h2>
+                    <div class="event-detail"><span>Data</span> <b>16 e 17/05/2026</b></div>
+                    <div class="event-detail"><span>Local</span> <b>Caicó/RN</b></div>
+                    <div class="event-detail"><span>Modalidade</span> <b>Jiu-Jitsu NOGI</b></div>
                 </div>
             </div>
         </div>
-    </div>
-    
+    </main>
+
     <footer class="footer">
         <div class="footer-content">
-            
-            <div class="footer-col footer-logo">
-                <img src="img/arena2.png" alt="Arena Competidor Logo" title="Arena Competidor">
-                <small>Sua vitória começa aqui.</small>
+            <div class="footer-col">
+                <img src="img/arena2.png" alt="Logo" style="max-height: 20px; margin-bottom: 20px;">
+                <p style="font-size: 0.9rem; color: #eee;">Sua vitória começa aqui. A maior plataforma de eventos esportivos do RN e PB.</p>
             </div>
-            
-            <div class="footer-col footer-social">
-                <h3>Siga-nos</h3>
-                <a href="https://instagram.com/arenacompetidor" target="_blank" rel="noopener noreferrer" class="social-link-container">
-                    <svg class="social-icon-svg" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M12 0c-3.35 0-3.79.01-5.12.08-1.33.06-2.27.28-3.07.59s-1.44.75-1.99 1.3c-.55.55-1.02 1.25-1.3 1.99-.31.8-.53 1.74-.59 3.07-.07 1.33-.08 1.77-.08 5.12s.01 3.79.08 5.12c.06 1.33.28 2.27.59 3.07s.75 1.44 1.3 1.99c.55.55 1.25 1.02 1.99 1.3.8.31 1.74.53 3.07.59 1.33.07 1.77.08 5.12.08s3.79-.01 5.12-.08c1.33-.06 2.27-.28 3.07-.59s1.44-.75 1.99-1.3c.55-.55 1.02-1.25 1.3-1.99.31-.8.53-1.74.59-3.07.07-1.33.08-1.77.08-5.12s-.01-3.79-.08-5.12c-.06-1.33-.28-2.27-.59-3.07s-.75-1.44-1.3-1.99c-.55-.55-1.25-1.02-1.99-1.3-.8-.31-1.74-.53-3.07-.59-1.33-.07-1.77-.08-5.12-.08zm0 2.2c3.27 0 3.68.01 4.96.07 1.15.05 1.78.25 2.16.4s.69.41.95.66c.26.26.46.59.66.95.15.38.35 1.01.4 2.16.06 1.28.07 1.69.07 4.96s-.01 3.68-.07 4.96c-.05 1.15-.25 1.78-.4 2.16s-.41.69-.66.95c-.26.26-.59.46-.95.66-.38.15-1.01.35-2.16.4-1.28.06-1.69.07-4.96.07s-3.68-.01-4.96-.07c-1.15-.05-1.78-.25-2.16-.4s-.69-.41-.95-.66c-.26-.26-.46-.59-.66-.95-.15-.38-.35-1.01-.4-2.16-.06-1.28-.07-1.69-.07-4.96s.01-3.68.07-4.96c.05-1.15.25-1.78.4-2.16s.41-.69.66-.95c.26-.26.59-.46.95-.66.38-.15 1.01-.35 2.16-.4 1.28-.06 1.69-.07 4.96-.07zM12 6.8c-2.88 0-5.2 2.32-5.2 5.2s2.32 5.2 5.2 5.2 5.2-2.32 5.2-5.2-2.32-5.2-5.2-5.2zm0 8.2c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm5.75-8.5c-.7 0-1.25.55-1.25 1.25s.55 1.25 1.25 1.25 1.25-.55 1.25-1.25-.55-1.25-1.25-1.25z"/>
-                    </svg>
-                    <span class="social-link">@arenacompetidor</span>
-                </a>
-            </div>
-            
             <div class="footer-col footer-links">
-                <h3>Links Úteis</h3>
+                <h3>Navegação</h3>
                 <ul>
                     <li><a href="ranking.html">Rankings</a></li>
-                    <li><a href="cadastre_seu_evento.html">Cadastre seu Evento</a></li>
                     <li><a href="contato.html">Contato</a></li>
+                    <li><a href="sobre.html">Sobre nós</a></li>
                 </ul>
             </div>
-            
+            <div class="footer-col">
+                <h3>Redes Sociais</h3>
+                <div class="footer-links">
+                    <a href="https://www.instagram.com/arenacompetidor">Instagram</a>
+                    <a href="https://www.youtube.com/@GrapFightPlay">YouTube</a>
+                </div>
+            </div>
         </div>
         <div class="footer-copyright">
             &copy; 2026 Arena Competidor. Todos os direitos reservados.
         </div>
     </footer>
-    <a href="https://wa.me/5584987513740?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
-    <svg class="whatsapp-icon-only" viewBox="0 0 16 16">
-        <path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574zm-1.896-1.042c-.114-.075-.24-.131-.371-.176-.131-.045-.27-.067-.41-.067-.14 0-.279.022-.41.067s-.257.101-.371.176c-.228.147-.492.219-.79.219-.298 0-.562-.072-.79-.219-.228-.147-.393-.341-.497-.577-.104-.236-.156-.499-.156-.789 0-.29.052-.553.156-.789.104-.236.269-.43.497-.577.228-.147.492-.219.79-.219.298 0 .562.072.79.219.228.147.393.341.497.577.104.236.156.499.156.789 0 .29-.052.553-.156.789-.104.236-.269.43-.497.577z"/>
-    </svg>
-    <span class="whatsapp-text-visible">Fale com o Suporte</span>
-</a>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navMenu = document.getElementById('main-menu');
-        const navLinks = navMenu.querySelectorAll('a');
+    <a href="https://wa.me/5584987513740" class="whatsapp-btn" target="_blank">
+        <span>Suporte</span>
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+    </a>
 
-        // Função para alternar o estado do menu
+    <script>
         function toggleMenu() {
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            menuToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
+            const nav = document.getElementById('navBar');
+            nav.classList.toggle('active');
         }
-
-        // Ação de clique no botão hamburguer
-        menuToggle.addEventListener('click', toggleMenu);
-
-        // Fecha o menu ao clicar em um link (útil no mobile)
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                // Verifica se a largura da tela é menor ou igual a 768px (o ponto de quebra que definimos no CSS)
-                if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
-                    toggleMenu(); // Fecha o menu
-                }
-            });
-        });
-    });
-</script>
-
+    </script>
 </body>
 </html>
