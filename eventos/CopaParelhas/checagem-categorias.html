@@ -1,1 +1,328 @@
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem Categorias | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CONFIGURAÇÕES TEMA PRINCIPAL (MANTIDAS)
+           ========================================= */
+        :root {
+            --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        header {
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
+        }
+        header img { max-width: 250px; width: 80%; height: auto; }
+
+        .main-content {
+            margin-top: 140px;
+            width: 90%;
+            max-width: 1000px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #111827;
+            font-weight: 700; font-size: 2rem;
+            text-align: center; margin-bottom: 30px;
+        }
+
+        /* FILTROS */
+        .filtros-container {
+            background: var(--card-bg);
+            padding: 24px; border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 30px;
+        }
+
+        .filtro-grupo { display: flex; flex-direction: column; gap: 8px; }
+        .filtro-grupo label {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            color: var(--text-secondary); letter-spacing: 0.5px;
+        }
+        .filtro-grupo select {
+            padding: 12px; border-radius: 10px; border: 1px solid #e5e7eb;
+            background-color: #f9fafb; font-family: 'Inter', sans-serif;
+            color: var(--text-main); outline: none; cursor: pointer;
+        }
+
+        /* DIVISOR DE FAIXA */
+        .faixa-group-header {
+            background-color: #111827;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 30px 0 15px 0;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .faixa-group-header::before {
+            content: ''; width: 4px; height: 18px; background: var(--primary-color); border-radius: 2px;
+        }
+
+        /* ACORDEÃO */
+        .accordion-item {
+            background: var(--card-bg);
+            border-radius: 12px; margin-bottom: 8px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.03);
+            overflow: hidden; border: 1px solid #e5e7eb;
+        }
+
+        .accordion-header {
+            padding: 15px 20px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 0.95rem; font-family: 'Inter', sans-serif;
+            background: #fff; transition: 0.2s;
+        }
+        .accordion-header:hover { background: #f8fafc; }
+        .accordion-header::after { content: '+'; color: var(--primary-color); font-size: 1.2rem; }
+        .accordion-header.active::after { content: '-'; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
+            background: #fff;
+        }
+        .accordion-content.open { max-height: 2000px; padding: 0 20px 20px; border-top: 1px solid #f3f4f6; }
+
+        /* TABELA */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; border-bottom: 1px solid #f3f4f6; }
+        td { padding: 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.85rem; }
+
+        .status-pago { color: var(--accent-green); font-weight: 700; }
+        .status-pendente { color: var(--accent-red); font-weight: 700; }
+        .status-analise { color: #f59e0b; font-weight: 700; }
+
+        #loading { text-align: center; padding: 40px; font-weight: 600; color: var(--primary-color); }
+
+        @media (max-width: 768px) {
+            thead { display: none; }
+            tr { display: block; border-bottom: 1px solid #f3f4f6; padding: 10px 0; }
+            td { display: flex; justify-content: space-between; border: none; padding: 4px 0; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor"></a>
+    </header>
+
+    <div class="main-content">
+        <h1>Checagem de Inscritos por Categorias</h1>
+
+        <div class="filtros-container">
+            <div class="filtro-grupo">
+                <label>Gênero</label>
+                <select id="filtroGenero"><option value="todos">Todos</option></select>
+            </div>
+            <div class="filtro-grupo">
+                <label>Faixa</label>
+                <select id="filtroFaixa"><option value="todos">Todos</option></select>
+            </div>
+            <div class="filtro-grupo">
+                <label>Categoria</label>
+                <select id="filtroCategoria"><option value="todos">Todos</option></select>
+            </div>
+            <div class="filtro-grupo">
+                <label>Peso</label>
+                <select id="filtroPeso"><option value="todos">Todos</option></select>
+            </div>
+        </div>
+
+        <div id="loading">Sincronizando com banco de dados...</div>
+        <div id="listaInscritos"></div>
+    </div>
+
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR-vA56MYMX26cXwTVniRzNQewNHRgqCNPkHAsJKq2GErGCCzN-AaLHBs63b4DkE5nJtbWcIHKH7z5M/pub?output=csv';
+        
+        const ORDEM_FAIXAS = { 'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5, 'VERDE': 6, 'LARANJA': 7, 'AMARELA': 8, 'CINZA': 9 };
+        let dadosAtletas = [];
+
+        async function carregarDados() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const linhas = csvText.split('\n').filter(l => l.trim() !== '');
+                const cabecalho = linhas[0].split(',').map(c => c.trim().replace(/"/g, ''));
+
+                dadosAtletas = linhas.slice(1).map(linha => {
+                    const colunas = linha.split(',');
+                    let atleta = {};
+                    cabecalho.forEach((c, i) => atleta[c] = colunas[i]?.replace(/"/g, '').trim() || '');
+                    return atleta;
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                atualizarFiltros(); 
+                renderizar();
+            } catch (e) {
+                document.getElementById('loading').innerHTML = "Erro ao conectar.";
+            }
+        }
+
+        function atualizarFiltros() {
+            const fG = document.getElementById('filtroGenero').value;
+            const fF = document.getElementById('filtroFaixa').value;
+            const fC = document.getElementById('filtroCategoria').value;
+            const fP = document.getElementById('filtroPeso').value;
+
+            const filtrados = dadosAtletas.filter(a => {
+                return (fG === 'todos' || a['SEXO'] === fG) &&
+                       (fF === 'todos' || a['SUA FAIXA'] === fF) &&
+                       (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
+                       (fP === 'todos' || a['SEU PESO'] === fP);
+            });
+
+            const opcoes = { 'SEXO': new Set(), 'SUA FAIXA': new Set(), 'SUA CATEGORIA': new Set(), 'SEU PESO': new Set() };
+            const base = (fG === 'todos' && fF === 'todos' && fC === 'todos' && fP === 'todos') ? dadosAtletas : filtrados;
+
+            base.forEach(a => {
+                opcoes['SEXO'].add(a['SEXO']);
+                opcoes['SUA FAIXA'].add(a['SUA FAIXA']);
+                opcoes['SUA CATEGORIA'].add(a['SUA CATEGORIA']);
+                opcoes['SEU PESO'].add(a['SEU PESO']);
+            });
+
+            atualizarSelect('filtroGenero', opcoes['SEXO'], fG);
+            atualizarSelect('filtroFaixa', opcoes['SUA FAIXA'], fF, true);
+            atualizarSelect('filtroCategoria', opcoes['SUA CATEGORIA'], fC);
+            atualizarSelect('filtroPeso', opcoes['SEU PESO'], fP);
+        }
+
+        function atualizarSelect(id, set, valorAtual, ordenarFaixa = false) {
+            const select = document.getElementById(id);
+            const array = Array.from(set).sort();
+            if(ordenarFaixa) array.sort((a, b) => (ORDEM_FAIXAS[a.toUpperCase()] || 99) - (ORDEM_FAIXAS[b.toUpperCase()] || 99));
+            
+            select.innerHTML = '<option value="todos">Todos</option>';
+            array.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v; opt.textContent = v;
+                if(v === valorAtual) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderizar() {
+            const container = document.getElementById('listaInscritos');
+            container.innerHTML = '';
+
+            const fG = document.getElementById('filtroGenero').value;
+            const fF = document.getElementById('filtroFaixa').value;
+            const fC = document.getElementById('filtroCategoria').value;
+            const fP = document.getElementById('filtroPeso').value;
+
+            const filtrados = dadosAtletas.filter(a => {
+                return (fG === 'todos' || a['SEXO'] === fG) &&
+                       (fF === 'todos' || a['SUA FAIXA'] === fF) &&
+                       (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
+                       (fP === 'todos' || a['SEU PESO'] === fP);
+            });
+
+            // Agrupando primeiro por FAIXA, depois por CHAVE
+            const estrutura = {};
+            filtrados.forEach(a => {
+                const faixa = a['SUA FAIXA'];
+                const chave = `${a['SUA CATEGORIA']} - ${a['SEU PESO']} (${a['SEXO']})`;
+                
+                if (!estrutura[faixa]) estrutura[faixa] = {};
+                if (!estrutura[faixa][chave]) estrutura[faixa][chave] = [];
+                estrutura[faixa][chave].push(a);
+            });
+
+            // Ordenar as faixas pela importância
+            const faixasOrdenadas = Object.keys(estrutura).sort((a, b) => 
+                (ORDEM_FAIXAS[a.toUpperCase()] || 99) - (ORDEM_FAIXAS[b.toUpperCase()] || 99)
+            );
+
+            faixasOrdenadas.forEach(faixa => {
+                // Título do Grupo de Faixa
+                const faixaHeader = document.createElement('div');
+                faixaHeader.className = 'faixa-group-header';
+                faixaHeader.textContent = `Faixa ${faixa}`;
+                container.appendChild(faixaHeader);
+
+                // Chaves dentro dessa faixa
+                const chaves = estrutura[faixa];
+                Object.keys(chaves).sort().forEach(chaveNome => {
+                    const atletas = chaves[chaveNome];
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    item.innerHTML = `
+                        <div class="accordion-header" onclick="toggleAcc(this)">${chaveNome}</div>
+                        <div class="accordion-content">
+                            <table>
+                                <thead><tr><th>ORD</th><th>Nome</th><th>Equipe</th><th>Professor</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    ${atletas.map(atleta => `
+                                        <tr>
+                                            <td data-label="ORD">${atleta['ORD']}</td>
+                                            <td data-label="Nome">${atleta['NOME COMPLETO']}</td>
+                                            <td data-label="Equipe">${atleta['SUA EQUIPE']}</td>
+                                            <td data-label="Professor">${atleta['PROFESSOR'] || '---'}</td>
+                                            <td data-label="Status" class="${getStatusClass(atleta['STATUS DO PAGAMENTO'])}">${atleta['STATUS DO PAGAMENTO']}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            });
+        }
+
+        function getStatusClass(s) {
+            const status = s.toLowerCase();
+            if (status.includes('pago') || status.includes('confirmado')) return 'status-pago';
+            if (status.includes('analise')) return 'status-analise';
+            return 'status-pendente';
+        }
+
+        function toggleAcc(el) {
+            el.classList.toggle('active');
+            el.nextElementSibling.classList.toggle('open');
+        }
+
+        document.querySelectorAll('select').forEach(s => {
+            s.addEventListener('change', () => { atualizarFiltros(); renderizar(); });
+        });
+
+        carregarDados();
+    </script>
+</body>
+</html>
