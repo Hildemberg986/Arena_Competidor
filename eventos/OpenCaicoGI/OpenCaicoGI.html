@@ -8,7 +8,7 @@
     
     <style>
         /* =========================================
-           CONFIGURAÇÕES DO CABEÇALHO (MANTIDAS)
+           CONFIGURAÇÕES DO CABEÇALHO
            ========================================= */
         header {
             width: 100%;
@@ -23,18 +23,17 @@
         }
 
         header img {
-            max-width: 200px;
+            max-width: 250px;
             width: 80%;
             height: auto;
         }
 
-        /* Ajuste Mobile do Header */
         @media (max-width: 768px) {
-            header img { max-width: 250px; }
+            header img { max-width: 220px; }
         }
 
         /* =========================================
-           ESTILOS GERAIS E MODERNOS
+           ESTILOS GERAIS
            ========================================= */
         :root {
             --primary-color: #2563eb; 
@@ -62,9 +61,8 @@
             min-height: 100vh;
         }
 
-        /* Container Principal */
         .main-content {
-            margin-top: 140px; /* Espaço para o header */
+            margin-top: 140px; 
             width: 90%;
             max-width: 1000px;
             padding-bottom: 60px;
@@ -73,7 +71,6 @@
             gap: 24px;
         }
 
-        /* Título Principal */
         h1 {
             font-family: 'Poppins', sans-serif;
             color: #111827;
@@ -85,7 +82,7 @@
         }
 
         /* =========================================
-           LAYOUT DE GRID (BANNER + BOTÕES)
+           LAYOUT GRID
            ========================================= */
         .dashboard-grid {
             display: grid;
@@ -94,13 +91,11 @@
             align-items: start;
         }
 
-        /* Card do Banner */
         .card-banner {
             background: var(--card-bg);
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow-md);
-            /* Formato retrato padrão para Desktop */
             aspect-ratio: 4/5; 
             position: relative;
         }
@@ -108,8 +103,8 @@
         .card-banner img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Garante que a imagem preencha tudo */
-            object-position: top center; /* Foca no topo da imagem se precisar cortar */
+            object-fit: cover; 
+            object-position: top center; 
             transition: transform 0.5s ease;
         }
 
@@ -117,7 +112,6 @@
             transform: scale(1.03);
         }
 
-        /* Grid de Botões */
         .actions-container {
             display: flex;
             flex-direction: column;
@@ -126,11 +120,63 @@
 
         .actions-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 colunas */
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
-        /* Estilo dos Botões */
+        /* ========================================================
+           NOVO ESTILO: CARD DE PATROCÍNIO LATERAL (OTIMIZADO)
+           ======================================================== */
+        .side-sponsor-container {
+            width: 100%;
+            background: white;
+            border-radius: 12px; /* Borda um pouco mais sutil que o banner principal */
+            padding: 12px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+            
+            /* Centraliza o conteúdo verticalmente */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .side-sponsor-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        .side-sponsor-image-wrapper {
+            /* Define uma altura fixa máxima para o container da imagem */
+            width: 100%;
+            height: 200px; /* Altura controlada no Desktop */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #fafafa; /* Fundo leve caso a imagem não preencha tudo */
+        }
+
+        .side-sponsor-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            /* 'contain' garante que a imagem inteira apareça sem cortar nada */
+            /* Se preferir que preencha tudo (podendo cortar bordas), mude para 'cover' */
+            object-fit: contain; 
+            display: block;
+        }
+
+        /* ======================================================== */
+
         .btn-modern {
             display: flex;
             align-items: center;
@@ -147,19 +193,14 @@
             border: 1px solid transparent;
         }
 
-        .btn-modern:active {
-            transform: scale(0.98);
-        }
+        .btn-modern:active { transform: scale(0.98); }
 
-        /* Botão Principal (Inscrição) - VERDE DESTAQUE */
         .btn-primary-action {
             grid-column: span 2;
-            /* Gradiente Verde Moderno */
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             color: white;
             font-size: 1.1rem;
             padding: 18px;
-            /* Sombra Verde */
             box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
             border: none;
         }
@@ -170,7 +211,6 @@
             transform: translateY(-2px);
         }
 
-        /* Botões Secundários */
         .btn-secondary {
             background-color: white;
             color: var(--text-main);
@@ -195,9 +235,7 @@
             border-color: var(--accent-red);
         }
 
-        /* =========================================
-           CARD DE INFORMAÇÕES (GRID)
-           ========================================= */
+        /* CARD INFORMAÇÕES */
         .info-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -215,7 +253,6 @@
             padding-bottom: 15px;
         }
 
-        /* Grid de Detalhes */
         .info-details-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -263,9 +300,6 @@
             border-radius: 8px;
         }
 
-        /* =========================================
-           RODAPÉ E WHATSAPP
-           ========================================= */
         .footer {
             padding: 30px 0;
             width: 100%;
@@ -275,7 +309,59 @@
             background: transparent;
         }
 
-        /* Botão WhatsApp */
+        /* =========================================
+           POP-UP (MODAL)
+           ========================================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            position: relative;
+            background: transparent;
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+        }
+        
+        .modal-overlay.active { opacity: 1; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        /* WHATSAPP */
         .whatsapp-fixed-text-button {
             position: fixed;
             bottom: 25px; 
@@ -298,59 +384,32 @@
             box-shadow: 0 12px 25px rgba(37, 211, 102, 0.4);
         }
 
-        .whatsapp-icon-only {
-            width: 24px;
-            height: 24px;
-            color: white;
-            margin-right: 10px;
-        }
-
-        .whatsapp-text-visible {
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            font-family: 'Poppins', sans-serif;
-            white-space: nowrap;
-        }
+        .whatsapp-icon-only { width: 24px; height: 24px; color: white; margin-right: 10px; }
+        .whatsapp-text-visible { color: white; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; white-space: nowrap; }
 
         /* =========================================
-           RESPONSIVIDADE (MOBILE) - CORRIGIDA
+           RESPONSIVIDADE E AJUSTES MOBILE
            ========================================= */
         @media (max-width: 900px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            /* CORREÇÃO DO BANNER AQUI */
-            .card-banner {
-                /* Mantém o aspecto retrato para não cortar a imagem vertical */
-                aspect-ratio: 4/5; 
-                /* Remove o limite de altura antigo de 300px */
-                max-height: none; 
-            }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .card-banner { aspect-ratio: 4/5; max-height: none; }
         }
 
         @media (max-width: 600px) {
             .main-content { margin-top: 110px; }
-            
             h1 { font-size: 1.5rem; }
-
-            .actions-grid {
-                grid-template-columns: 1fr; /* 1 coluna no celular */
-            }
-
+            .actions-grid { grid-template-columns: 1fr; }
             .btn-primary-action { grid-column: auto; }
-
-            .whatsapp-fixed-text-button {
-                width: 55px;
-                height: 55px;
-                padding: 0; 
-                border-radius: 50%;
-                bottom: 20px;
-                right: 20px;
-            }
+            
+            .whatsapp-fixed-text-button { width: 55px; height: 55px; padding: 0; border-radius: 50%; bottom: 20px; right: 20px; }
             .whatsapp-text-visible { display: none; }
             .whatsapp-icon-only { margin-right: 0; width: 28px; height: 28px; }
+            .close-modal-btn { right: 10px; top: -35px; }
+
+            /* AJUSTE DO PATROCÍNIO NO CELULAR */
+            .side-sponsor-image-wrapper {
+                height: 150px; /* Mais baixo no celular para não ocupar muito espaço */
+            }
         }
     </style>
 </head>
@@ -395,12 +454,18 @@
                         Fotos do Evento
                     </a>
                 </div>
+
+                <div class="side-sponsor-container">
+                    <div class="side-sponsor-title">PATROCINADOR OFICIAL</div>
+                    <div class="side-sponsor-image-wrapper">
+                        <img src="../../img/lateralpatrocinio.png" alt="Patrocinador Oficial">
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="info-card">
             <h2>Detalhes do Evento</h2>
-            
             <div class="info-details-grid">
                 <div class="info-item">
                     <span class="info-label">Data do Evento</span>
@@ -427,7 +492,6 @@
                     <span class="info-value">15 Maio 2026</span>
                 </div>
             </div>
-            
             <div class="info-note">
                  As datas e horários estão sujeitos a alteração pela organização do evento. Fique atento às atualizações.
             </div>
@@ -444,6 +508,35 @@
         </svg>
         <span class="whatsapp-text-visible">Suporte</span>
     </a>
+
+    <div id="sponsorModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal-btn" onclick="closeModal()">&times;</button>
+            <img src="../../img/patrociniopopup.png" alt="Destaque Patrocínio">
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            const modal = document.getElementById('sponsorModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('sponsorModal');
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(openModal, 1000);
+        });
+
+        document.getElementById('sponsorModal').addEventListener('click', function(e) {
+            if (e.target === this) { closeModal(); }
+        });
+    </script>
 
 </body>
 </html>
