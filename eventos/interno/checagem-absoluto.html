@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem Absoluto | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CONFIGURAÇÕES TEMA SENOGI
+           ========================================= */
+        :root {
+            --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
+        }
+        header img { max-width: 250px; width: 80%; height: auto; }
+
+        .main-content {
+            margin-top: 140px;
+            width: 90%;
+            max-width: 1000px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #111827;
+            font-weight: 700; font-size: 2rem;
+            text-align: center; margin-bottom: 30px;
+        }
+
+        /* DIVISOR DE FAIXA */
+        .faixa-group-header {
+            background-color: #111827;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 35px 0 15px 0;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .faixa-group-header::before {
+            content: ''; width: 4px; height: 18px; background: var(--primary-color); border-radius: 2px;
+        }
+
+        /* ACORDEÃO */
+        .accordion-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .accordion-header {
+            padding: 18px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .accordion-header:hover { background: #f8fafc; }
+
+        .accordion-header::after {
+            content: '+';
+            font-size: 1.4rem;
+            color: var(--primary-color);
+        }
+
+        .accordion-header.active::after { content: '-'; }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: #fff;
+        }
+
+        .accordion-content.open {
+            max-height: 2000px;
+            padding: 0 25px 25px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        /* TABELA */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { 
+            text-align: left; padding: 12px; 
+            font-size: 0.75rem; color: var(--text-secondary); 
+            text-transform: uppercase; border-bottom: 2px solid #f3f4f6; 
+        }
+        td { padding: 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
+
+        .link-voltar {
+            display: block; width: fit-content; margin: 40px auto;
+            padding: 14px 30px; background-color: #111827; color: #fff;
+            text-decoration: none; border-radius: 12px;
+            font-family: 'Poppins', sans-serif; font-weight: 600; transition: 0.3s;
+        }
+        .link-voltar:hover { background-color: var(--primary-color); transform: translateY(-2px); }
+
+        #loading-message { text-align: center; padding: 50px; font-weight: 600; color: var(--primary-color); }
+
+        @media (max-width: 768px) {
+            .main-content { margin-top: 110px; }
+            h1 { font-size: 1.6rem; }
+            thead { display: none; }
+            tr { display: block; border-bottom: 2px solid #f3f4f6; padding: 10px 0; }
+            td { display: flex; justify-content: space-between; border: none; padding: 6px 0; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor Logo"></a>
+    </header>
+
+    <div class="main-content">
+        <h1>Checagem de Absoluto</h1>
+        <div id="loading-message">Carregando categorias...</div>
+        <div id="listaInscritosAbsoluto"></div>
+        <a href="checagem.html" class="link-voltar">Voltar para Opções</a>
+    </div>
+
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv';
+        const ORDEM_FAIXAS = { 'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5 };
+        
+        async function fetchAndProcessData() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    const atleta = {};
+                    headers.forEach((header, i) => { atleta[header] = values[i]?.replace(/"/g, '').trim() || ''; });
+                    return atleta;
+                }).filter(atleta => atleta['ABSOLUTO'] === 'Sim');
+
+                renderizar(data);
+            } catch (error) {
+                document.getElementById('loading-message').textContent = '❌ Erro ao carregar.';
+            }
+        }
+
+        function renderizar(data) {
+            const container = document.getElementById('listaInscritosAbsoluto');
+            container.innerHTML = '';
+            document.getElementById('loading-message').style.display = 'none';
+
+            const estrutura = {};
+            data.forEach(atleta => {
+                const faixa = atleta['SUA FAIXA'];
+                let cat = atleta['SUA CATEGORIA'];
+                if (cat.toUpperCase().includes('MASTER')) cat = 'MASTER (TODAS AS IDADES)';
+                
+                const chave = `ABSOLUTO ${cat.toUpperCase()} (${atleta['SEXO'].toUpperCase()})`;
+                
+                if (!estrutura[faixa]) estrutura[faixa] = {};
+                if (!estrutura[faixa][chave]) estrutura[faixa][chave] = [];
+                estrutura[faixa][chave].push(atleta);
+            });
+
+            Object.keys(estrutura).sort((a, b) => (ORDEM_FAIXAS[a.toUpperCase()] || 99) - (ORDEM_FAIXAS[b.toUpperCase()] || 99))
+            .forEach(faixa => {
+                const header = document.createElement('div');
+                header.className = 'faixa-group-header';
+                header.textContent = `Faixa ${faixa}`;
+                container.appendChild(header);
+
+                const chaves = estrutura[faixa];
+                Object.keys(chaves).sort().forEach(chaveNome => {
+                    const atletas = chaves[chaveNome];
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    item.innerHTML = `
+                        <div class="accordion-header" onclick="toggleAcc(this)">${chaveNome}</div>
+                        <div class="accordion-content">
+                            <table>
+                                <thead><tr><th>Atleta</th><th>Equipe</th></tr></thead>
+                                <tbody>
+                                    ${atletas.map(a => `
+                                        <tr>
+                                            <td data-label="Atleta">${a['NOME COMPLETO']}</td>
+                                            <td data-label="Equipe">${a['SUA EQUIPE']}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            });
+        }
+
+        function toggleAcc(el) {
+            el.classList.toggle('active');
+            el.nextElementSibling.classList.toggle('open');
+        }
+
+        fetchAndProcessData();
+    </script>
+</body>
+</html>
