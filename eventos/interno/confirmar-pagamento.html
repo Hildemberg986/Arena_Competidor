@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Competidor | Pagamento e Confirmação</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        :root { 
+            --cor-primaria: #007bff; 
+            --cor-secundaria: #343a40; 
+            --cor-destaque: #28a745; 
+            --cor-fundo: #f8f9fa; 
+            --cor-texto: #495057; 
+            --cor-borda: #dee2e6; 
+            --cor-whatsapp: #25D366; 
+            --cor-nubank: #820ad1;
+            --cor-copia: #6c757d; 
+        } 
+        body { font-family: 'Roboto', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; text-align: center; padding: 20px 0; background-color: #000; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        header img { max-width: 200px; }
+        .main-content { margin-top: 100px; width: 90%; max-width: 800px; flex-grow: 1; padding-bottom: 40px; }
+        h1 { color: var(--cor-secundaria); font-weight: 700; font-size: 2.2rem; text-align: center; margin-bottom: 40px; }
+        
+        .confirmation-container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; align-items: center; text-align: center; }
+        
+        .info-box { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 20px; border-radius: 5px; margin-bottom: 30px; width: 100%; box-sizing: border-box; text-align: left; }
+        .info-box h2 { color: #856404; margin-top: 0; font-size: 1.5rem; }
+
+        .input-fields { width: 100%; margin-bottom: 30px; text-align: left; }
+        .input-fields label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--cor-secundaria); }
+        .input-fields input, .input-fields select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border: 1px solid var(--cor-borda); 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+
+        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .summary-table td { border: 1px solid var(--cor-borda); padding: 12px 15px; text-align: left; }
+        .summary-table .total-row td { background-color: var(--cor-destaque); color: #fff; font-size: 1.2rem; font-weight: bold; text-align: center; }
+        
+        .btn-action-main {
+            display: block; width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold; color: #fff; 
+            background-color: var(--cor-primaria); border: none; border-radius: 8px; cursor: pointer; 
+            transition: 0.3s; text-align: center; box-sizing: border-box; 
+        }
+
+        #pix-direto-details { 
+            display: none; margin-top: 20px; width: 100%; box-sizing: border-box;
+            background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
+        }
+        
+        .nubank-box { background-color: #f7ebff; border: 2px solid var(--cor-nubank); padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .btn-copy-nubank { background-color: var(--cor-nubank); color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .copy-button { background-color: var(--cor-copia); color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
+        
+        .whatsapp-btn { 
+            display: block; width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold; color: #fff; 
+            background-color: var(--cor-whatsapp); border: none; border-radius: 8px; text-decoration: none; 
+            text-align: center; box-sizing: border-box; margin-top: 25px; transition: 0.3s;
+            pointer-events: none; opacity: 0.4;
+        }
+        .whatsapp-btn.enabled { pointer-events: auto; opacity: 1; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+
+        .divider { margin: 25px 0; border-bottom: 1px solid #ccc; position: relative; }
+        .divider span { position: absolute; top: -10px; background: #f8f9fa; padding: 0 10px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: #777; }
+        .footer { margin-top: 30px; font-size: 0.9rem; color: #777; padding-bottom: 20px; text-align: center; }
+
+        @media (max-width: 768px) { .main-content { margin-top: 30px; } h1 { font-size: 1.8rem; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor Logo"></a>
+    </header>
+
+    <div class="main-content">
+       <h1>Pagamento e Confirmação</h1>
+       <div class="confirmation-container">
+           
+           <div class="info-box">
+               <h2>👋 Próximos Passos</h2>
+               <p>1. Preencha seu nome e CPF (ou número de ordem).</p>
+               <p>2. Clique em <b>VER DADOS PARA PAGAMENTO</b>.</p>
+               <p>3. Pague o valor de <b>R$ 60,00</b> e envie o comprovante.</p>
+           </div>
+           
+           <div class="input-fields">
+                <label>Evento:</label>
+                <select id="selecao-evento">
+                    <option value="1º Interno WGT">1º Interno WGT</option>
+                </select>
+
+                <label>Nome do Atleta:</label>
+                <input type="text" id="nome-atleta" placeholder="Ex: João Silva" required>
+
+                <label>CPF ou ORD (Nº de 3 dígitos):</label>
+                <input type="text" id="numero-ordem" placeholder="Ex: 001 ou 000.000.000-00" required>
+
+                <label>Método utilizado (após pagar):</label>
+                <select id="metodo-pagamento">
+                    <option value="" disabled selected>Selecione como você pagou...</option>
+                    <option value="Chave Aleatória Nubank">Chave Aleatória (Nubank)</option>
+                    <option value="PIX CNPJ">PIX Direto (CNPJ)</option>
+                    <option value="PIX QR Code">PIX QR Code / Copia e Cola</option>
+                </select>
+           </div>
+           
+           <table class="summary-table">
+               <tbody>
+                   <tr class="total-row"><td>Total a Pagar: <strong>R$ 60,00</strong></td></tr>
+               </tbody>
+           </table>
+           
+           <button id="btn-toggle-pix-direto" class="btn-action-main">
+               VER DADOS PARA PAGAMENTO
+           </button>
+           
+           <div id="pix-direto-details">
+                <div class="nubank-box">
+                    <p><strong style="color: var(--cor-nubank);">TITULAR:</strong> 62.810.446 VALTER SILVA BRASIL</p>
+                    <strong style="color: var(--cor-nubank);">Chave Aleatória (Nubank)</strong>
+                    <code id="chave-aleatoria" style="background: #eee; padding: 5px; display: block; margin: 10px 0; word-break: break-all; font-size: 0.8rem;">7114989a-9d09-421b-be69-f2215cdb856d</code>
+                    <button class="btn-copy-nubank" onclick="copiarTexto('7114989a-9d09-421b-be69-f2215cdb856d', this)">Copiar Chave Pix 📋</button>
+                </div>
+
+                <div class="divider"><span>OU CNPJ / QR CODE</span></div>
+
+                <p><strong>CNPJ:</strong> 62.810.446/0001-39</p>
+                <p><strong>TITULAR:</strong> 62.810.446 VALTER SILVA BRASIL</p>
+                <button class="copy-button" onclick="copiarTexto('62.810.446/0001-39', this)">Copiar CNPJ 📋</button>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="../../img/IMG_5467.jpg" alt="QR Code" style="max-width: 150px; border: 1px solid #ccc;">
+                    <button class="copy-button" onclick="copiarTexto('00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA', this)">Copiar Pix Copia e Cola 📋</button>
+                </div>
+           </div>
+
+           <a id="whatsapp-link" href="#" target="_blank" class="whatsapp-btn">
+               Preencha os campos para liberar o envio
+           </a>
+           
+       </div>
+    </div>
+
+    <div class="footer">&copy; 2026 Arena Competidor.</div>
+
+    <script>
+        const idsDosCampos = ['nome-atleta', 'numero-ordem', 'metodo-pagamento', 'selecao-evento'];
+        
+        function copiarTexto(texto, btn) {
+            navigator.clipboard.writeText(texto).then(() => {
+                const original = btn.innerText;
+                btn.innerText = 'Copiado! ✅';
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
+
+        function atualizar() {
+            const evento = document.getElementById('selecao-evento').value;
+            const nome = document.getElementById('nome-atleta').value;
+            const ordem = document.getElementById('numero-ordem').value;
+            const metodo = document.getElementById('metodo-pagamento').value;
+            
+            const link = document.getElementById('whatsapp-link');
+            
+            // Verifica se Nome, CPF/ORD e Método foram preenchidos
+            if(nome.trim().length >= 3 && ordem.trim().length >= 3 && metodo !== "") {
+                link.classList.add('enabled');
+                link.innerText = 'Enviar Comprovante pelo WhatsApp';
+                const msg = encodeURIComponent(`✅ COMPROVANTE\n\nEvento: ${evento}\nAtleta: ${nome}\nCPF/ORD: ${ordem}\nValor: R$ 60,00\nMétodo: ${metodo}`);
+                link.href = `https://api.whatsapp.com/send?phone=5584987513740&text=${msg}`;
+            } else {
+                link.classList.remove('enabled');
+                link.innerText = 'Preencha os campos para liberar o envio';
+                link.href = "#";
+            }
+        }
+
+        document.getElementById('btn-toggle-pix-direto').addEventListener('click', function() {
+            const box = document.getElementById('pix-direto-details');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            if(box.style.display === 'block') box.scrollIntoView({behavior: 'smooth'});
+        });
+
+        idsDosCampos.forEach(id => {
+            document.getElementById(id).addEventListener('input', atualizar);
+            document.getElementById(id).addEventListener('change', atualizar);
+        });
+
+        document.addEventListener('DOMContentLoaded', atualizar);
+    </script>
+</body>
+</html>
