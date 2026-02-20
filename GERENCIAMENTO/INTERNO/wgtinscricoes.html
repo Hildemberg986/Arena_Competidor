@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Inscrições | Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4361ee; --success: #2a9d8f; --bg: #f8f9fc; --text: #2b2d42; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+        
+        header { 
+            background: white; 
+            padding: 1rem 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        
+        /* Dashboard Cards */
+        .resumo { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-bottom: 4px solid var(--primary); }
+        .card h3 { margin: 0; font-size: 0.7rem; color: #8d99ae; text-transform: uppercase; }
+        .card p { margin: 10px 0 0; font-size: 1.8rem; font-weight: 800; }
+
+        /* BARRA DE BUSCA */
+        .search-container { margin-bottom: 20px; position: relative; }
+        #inputBusca { 
+            width: 100%; 
+            padding: 15px 20px; 
+            border-radius: 12px; 
+            border: 2px solid #e2e8f0; 
+            font-size: 1rem; 
+            outline: none; 
+            box-sizing: border-box;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            font-family: inherit;
+        }
+        #inputBusca:focus { border-color: var(--primary); background: white; }
+
+        /* Tabela Responsiva */
+        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; padding: 15px; text-align: left; font-size: 0.8rem; color: #64748b; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+        .confirmado { background: #ecfdf5; color: #059669; }
+        .pendente { background: #fffbeb; color: #d97706; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 100; overflow-y: auto; }
+        .modal-content { background: white; width: 90%; max-width: 400px; margin: 50px auto; padding: 25px; border-radius: 16px; }
+        
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        
+        .btn-acao { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; }
+        .btn-confirmar-modal { background: var(--success); width: 100%; padding: 15px; font-size: 1rem; }
+
+        /* MÉDIA QUERY PARA CELULARES */
+        @media screen and (max-width: 768px) {
+            header h2 { font-size: 1.1rem; }
+            thead { display: none; }
+            tr { display: block; border-bottom: 10px solid #f1f5f9; padding: 10px; position: relative; }
+            td { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 10px 5px; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 700; color: #64748b; font-size: 0.8rem; text-align: left; }
+            td:last-child { border-bottom: none; display: block; padding-top: 15px; }
+            .btn-acao { padding: 15px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 id="eventoNome">Gestão de Inscritos</h2>
+    <a href="dashboard-event.html" style="text-decoration:none; color:var(--primary); font-weight:600;">← Voltar</a>
+</header>
+
+<div class="container">
+    <div class="resumo">
+        <div class="card"><h3>Total</h3><p id="countTotal">0</p></div>
+        <div class="card" style="border-color:var(--success)"><h3>Confirmados</h3><p id="countConf">0</p></div>
+        <div class="card" style="border-color:#100e0c"><h3>Pendentes</h3><p id="countPend">0</p></div>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="inputBusca" placeholder="🔍 Buscar por nome ou CPF..." onkeyup="filtrar()">
+    </div>
+
+    <div class="table-container">
+        <table id="tabela">
+            <thead>
+                <tr>
+                    <th>Atleta</th>
+                    <th>CPF</th>
+                    <th>Categoria/Peso</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3>Confirmar Pagamento</h3>
+        <p id="nomeAtletaModal" style="font-weight:700; color:var(--primary); margin-bottom:15px;"></p>
+        <form id="formConfirm">
+            <input type="hidden" id="cpfModal">
+            <label style="font-size: 0.85rem; font-weight: 600;">Valor Real Recebido (R$)</label>
+            <input type="number" id="valorPago" step="0.01" required>
+            <label style="font-size: 0.85rem; font-weight: 600;">Forma de Pagamento (Ex: PIX, Dinheiro)</label>
+            <textarea id="metodo" rows="2" required placeholder="Ex: PIX em 20/10"></textarea>
+            <button type="submit" class="btn-acao btn-confirmar-modal">Confirmar Agora</button>
+            <button type="button" onclick="fecharModal()" style="background:none; border:none; color:gray; width:100%; margin-top:15px; cursor:pointer; font-weight:600;">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv";
+    const API_URL = "https://script.google.com/macros/s/AKfycbybmB5ABOjbqc1-dF-mmcbJkG6rXwPlsU-n3at5r54tSJmzo-QDkeo-27T3yEPsL_TlLw/exec";
+
+    let dadosAtletas = [];
+
+    function parseCSV(csv) {
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+        const lines = csv.split(/\r?\n/).filter(l => l.trim() !== '');
+        if (lines.length === 0) return [];
+        const headers = lines[0].split(regex).map(h => h.trim().replace(/^"|"$/g, ''));
+        return lines.slice(1).map(line => {
+            const values = line.split(regex);
+            return headers.reduce((obj, header, i) => {
+                obj[header] = values[i] ? values[i].trim().replace(/^"|"$/g, '') : '';
+                return obj;
+            }, {});
+        });
+    }
+
+    async function carregar() {
+        try {
+            const res = await fetch(CSV_URL);
+            const text = await res.text();
+            dadosAtletas = parseCSV(text);
+            render(dadosAtletas);
+        } catch (e) {
+            console.error("Erro ao carregar CSV", e);
+        }
+    }
+
+    // Função de filtrar (Busca em tempo real)
+    function filtrar() {
+        const termo = document.getElementById('inputBusca').value.toLowerCase();
+        const filtrados = dadosAtletas.filter(atleta => {
+            return atleta['NOME COMPLETO'].toLowerCase().includes(termo) || 
+                   atleta['CPF'].includes(termo);
+        });
+        render(filtrados, false); // Passa 'false' para não atualizar os cards de resumo durante a busca
+    }
+
+    function render(lista, atualizarResumo = true) {
+        const tbody = document.querySelector('#tabela tbody');
+        tbody.innerHTML = '';
+        let conf = 0;
+
+        lista.forEach((atleta) => {
+            // Encontrar o índice original no array 'dadosAtletas' para o modal
+            const originalIndex = dadosAtletas.findIndex(a => a['CPF'] === atleta['CPF']);
+            const isPago = atleta['STATUS DO PAGAMENTO'] === 'Confirmado';
+            if(isPago) conf++;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td data-label="Atleta"><strong>${atleta['NOME COMPLETO']}</strong></td>
+                    <td data-label="CPF">${atleta['CPF']}</td>
+                    <td data-label="Categoria">${atleta['SUA CATEGORIA']}<br><small>${atleta['SEU PESO']}</small></td>
+                    <td data-label="Total">R$ ${atleta['VALOR TOTAL']}</td>
+                    <td data-label="Status"><span class="badge ${isPago ? 'confirmado' : 'pendente'}">${atleta['STATUS DO PAGAMENTO'] || 'Pendente'}</span></td>
+                    <td>
+                        <button class="btn-acao" onclick="abrirModal(${originalIndex})" ${isPago ? 'disabled style="opacity:0.5; background:#ccc;"' : ''}>
+                            ${isPago ? 'Inscrição Confirmada' : 'Confirmar Inscrição'}
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Só atualizamos os cards de contagem quando a página carrega ou após uma ação (não durante a digitação)
+        if(atualizarResumo) {
+            document.getElementById('countTotal').innerText = dadosAtletas.length;
+            document.getElementById('countConf').innerText = conf;
+            document.getElementById('countPend').innerText = dadosAtletas.length - conf;
+        }
+    }
+
+    function abrirModal(idx) {
+        const a = dadosAtletas[idx];
+        document.getElementById('nomeAtletaModal').innerText = a['NOME COMPLETO'];
+        document.getElementById('cpfModal').value = a['CPF'];
+        document.getElementById('valorPago').value = a['VALOR TOTAL'].replace(',', '.');
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    function fecharModal() { document.getElementById('modal').style.display = 'none'; }
+
+    document.getElementById('formConfirm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = "Processando...";
+        btn.disabled = true;
+
+        const payload = {
+            function: 'updateStatus',
+            cpfAtleta: document.getElementById('cpfModal').value,
+            statusNovo: 'Confirmado',
+            valorPago: document.getElementById('valorPago').value,
+            descricao: document.getElementById('metodo').value
+        };
+
+        try {
+            const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const result = await res.json();
+            if(result.resultado === 'sucesso') {
+                alert("✅ Pagamento confirmado!");
+                location.reload();
+            } else {
+                alert("❌ Erro: " + result.mensagem);
+            }
+        } catch(err) { alert("⚠️ Erro de conexão."); }
+        btn.disabled = false;
+    };
+
+    window.onclick = function(event) { if (event.target == document.getElementById('modal')) fecharModal(); }
+    window.onload = carregar;
+</script>
+</body>
+</html>
