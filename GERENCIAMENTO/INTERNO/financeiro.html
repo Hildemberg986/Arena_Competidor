@@ -21,10 +21,7 @@
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
-        * {
-            box-sizing: border-box;
-            transition: all 0.2s ease-in-out;
-        }
+        * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
 
         body { 
             font-family: 'Inter', sans-serif; 
@@ -107,7 +104,7 @@
 
         .card-valor .sub-info { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 
-        .total-nominal { border-top-color: var(--text-main); }
+        .total-nominal { border-top-color: #334155; }
         .total-confirmado { border-top-color: var(--success); }
         .total-confirmado .valor { color: var(--success); }
         .total-pendente { border-top-color: var(--warning); }
@@ -152,19 +149,6 @@
         .card-detalhes .resultado {
             font-weight: 600;
             text-align: right;
-            white-space: nowrap;
-        }
-
-        .card-detalhes tr:last-child {
-            background-color: #f8fafc;
-        }
-
-        .card-detalhes tr:last-child th, .card-detalhes tr:last-child td {
-            border-bottom: none;
-            padding: 15px 10px;
-            font-size: 1rem;
-            color: var(--primary);
-            font-weight: 700;
         }
 
         .card-pagamentos ul { list-style: none; padding: 0; margin: 0; }
@@ -185,19 +169,13 @@
             font-size: 0.85rem;
         }
 
-        /* RESPONSIVIDADE */
         @media (max-width: 992px) {
             .financeiro-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 600px) {
-            .btn-voltar-dashboard { width: 100%; text-align: center; }
-            #titulo-principal { font-size: 1.2rem; }
-            .card-valor .valor { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
+
     <header>
         <a href="dashboard-event.html" class="btn-voltar-dashboard">← Dashboard</a>
         <h1 id="titulo-principal">Painel Financeiro</h1>
@@ -206,7 +184,7 @@
     <div class="container">
         <div class="quadro-resumo-financeiro">
             <div class="card-valor total-nominal">
-                <h3>Total Nominal</h3>
+                <h3>Total Nominal (Geral)</h3>
                 <p class="valor" id="valorTotalEvento">R$ 0,00</p>
                 <p class="sub-info" id="totalInscritos">0 Inscritos Ativos</p>
             </div>
@@ -230,22 +208,22 @@
                 <table>
                     <tbody>
                         <tr>
-                            <th>Bruto Recebido</th>
+                            <th>Bruto Recebido (Confirmados)</th>
                             <td class="resultado" id="valorRecebidoBruto">R$ 0,00</td>
                         </tr>
                         <tr>
-                            <th>Comissão Site</th>
+                            <th>Comissão Site (R$ 5,00/pago)</th>
                             <td class="resultado" id="comissaoSite">R$ 0,00</td>
                         </tr>
                         <tr>
-                            <th>Taxas Cartão (5%)</th>
+                            <th>Taxas Cartão (Est. 5%)</th>
                             <td class="resultado" id="taxasCartao">R$ 0,00</td>
                         </tr>
                         <tr>
                             <th>Saques Efetuados</th>
                             <td class="resultado" id="valorSaque" data-valor-saque="0.00">R$ 0,00</td>
                         </tr>
-                        <tr>
+                        <tr style="color: var(--primary); font-weight: 800; font-size: 1.1rem;">
                             <th>Saldo Líquido Disponível</th>
                             <td class="resultado" id="saldoTotal">R$ 0,00</td>
                         </tr>
@@ -268,121 +246,102 @@
 
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv";
-        const TAXA_COMISSAO_SITE = 5.00;
-        const TAXA_CARTAO_PERCENTUAL = 0.05;
 
-        const formatCurrency = (value) => {
-            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        };
+        function limparNumero(texto) {
+            if (!texto) return 0;
+            let n = texto.toString().replace(/[^\d,]/g, '').replace(',', '.');
+            return parseFloat(n) || 0;
+        }
 
-        async function carregarDadosFinanceiros() {
+        function formatBRL(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        async function carregarDados() {
             try {
                 const response = await fetch(CSV_URL);
                 const csvText = await response.text();
-                const dados = parseCSV(csvText);
-                const elementoSaque = document.getElementById('valorSaque');
-                const valorSaqueDefinido = parseFloat(elementoSaque.getAttribute('data-valor-saque')) || 0;
-                calcularEExibir(dados, valorSaqueDefinido);
-            } catch (error) {
-                console.error("Erro ao carregar dados:", error);
-            }
-        }
+                const linhas = csvText.split(/\r?\n/);
+                
+                // Mapeamento das colunas por índice fixo e nome
+                const cabecalho = linhas[0].split(',');
+                const idxP = 15; // Coluna P (Valor Total)
+                const idxStatus = cabecalho.findIndex(h => h.includes("STATUS"));
+                const idxRecebido = cabecalho.findIndex(h => h.includes("RECEBIDO"));
+                const idxTipo = cabecalho.findIndex(h => h.includes("TIPO"));
 
-        function parseCSV(csv) {
-            const lines = csv.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) return [];
+                let dados = { nominal: 0, confirmado: 0, pendente: 0, brutoReal: 0, pagos: 0, totalAtivos: 0 };
+                let tipos = { pix: 0, dinheiro: 0, cartao: 0, admin: 0, outros: 0, vCartao: 0 };
 
-            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-            const data = [];
-            
-            const idx = {
-                total: headers.indexOf('VALOR TOTAL'),
-                status: headers.indexOf('STATUS DO PAGAMENTO'),
-                recebido: headers.indexOf('VALOR RECEBIDO'),
-                tipo: headers.indexOf('TIPO DE PAGAMENTO')
-            };
+                for (let i = 1; i < linhas.length; i++) {
+                    if (!linhas[i].trim()) continue;
 
-            const parseValue = (val) => {
-                if (!val) return 0;
-                // Remove R$, pontos de milhar e troca vírgula por ponto
-                return parseFloat(String(val).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
-            };
-
-            for (let i = 1; i < lines.length; i++) {
-                const v = lines[i].split(',').map(item => item.trim().replace(/"/g, ''));
-                if (v.length < headers.length) continue; // Pula linhas incompletas
-
-                let statusRaw = (v[idx.status] || '').toLowerCase();
-                let normalizedStatus = 'Pendente';
-                if (statusRaw.includes('confirmado') || statusRaw.includes('pago')) normalizedStatus = 'Confirmado';
-                if (statusRaw.includes('cancelado')) normalizedStatus = 'Cancelado';
-
-                data.push({
-                    valorNominal: parseValue(v[idx.total]),
-                    status: normalizedStatus,
-                    valorRecebido: parseValue(v[idx.recebido]),
-                    tipoPagamento: (v[idx.tipo] || '').toUpperCase()
-                });
-            }
-            return data;
-        }
-
-        function calcularEExibir(data, despesaSaque) {
-            let resumo = { nominal: 0, confirmado: 0, pendente: 0, brutos: 0, pagos: 0, aguardando: 0, inscritosValidos: 0 };
-            let pagamentos = { pix: 0, dinheiro: 0, cartao: 0, admin: 0, outros: 0, vCartao: 0 };
-
-            data.forEach(item => {
-                // CORREÇÃO: Ignora cancelados para o Total Nominal não ficar errado
-                if (item.status === 'Cancelado') return;
-
-                resumo.nominal += item.valorNominal;
-                resumo.inscritosValidos++;
-
-                if (item.status === 'Confirmado') {
-                    resumo.confirmado += item.valorNominal;
-                    resumo.pagos++;
-                    resumo.brutos += item.valorRecebido;
+                    // Split inteligente que respeita vírgulas dentro de aspas
+                    const colunas = linhas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     
-                    const t = item.tipoPagamento;
-                    if (t.includes('PIX')) pagamentos.pix++;
-                    else if (t.includes('DINHEIRO') || t.includes('ESP')) pagamentos.dinheiro++;
-                    else if (t.includes('CART') || t.includes('CRED') || t.includes('DEB')) {
-                        pagamentos.cartao++;
-                        pagamentos.vCartao += item.valorRecebido;
+                    const valorNominal = limparNumero(colunas[idxP]);
+                    const status = (colunas[idxStatus] || "").toLowerCase();
+                    const valorRecebido = limparNumero(colunas[idxRecebido]);
+                    const tipoPagamento = (colunas[idxTipo] || "").toUpperCase();
+
+                    if (!status.includes("cancelado")) {
+                        dados.nominal += valorNominal;
+                        dados.totalAtivos++;
+
+                        if (status.includes("confirmado") || status.includes("pago") || status.includes("aprovado")) {
+                            dados.confirmado += valorNominal;
+                            dados.brutoReal += valorRecebido;
+                            dados.pagos++;
+
+                            // Contagem por tipo
+                            if (tipoPagamento.includes('PIX')) tipos.pix++;
+                            else if (tipoPagamento.includes('DINHEIRO') || tipoPagamento.includes('ESP')) tipos.dinheiro++;
+                            else if (tipoPagamento.includes('CART') || tipoPagamento.includes('CRED') || tipoPagamento.includes('DEB')) {
+                                tipos.cartao++;
+                                tipos.vCartao += valorRecebido;
+                            }
+                            else if (tipoPagamento.includes('ADMIN')) tipos.admin++;
+                            else tipos.outros++;
+                        } else {
+                            dados.pendente += valorNominal;
+                        }
                     }
-                    else if (t.includes('ADMIN')) pagamentos.admin++;
-                    else pagamentos.outros++;
-                } 
-                else if (item.status === 'Pendente') {
-                    resumo.pendente += item.valorNominal;
-                    resumo.aguardando++;
                 }
-            });
 
-            const comissao = resumo.pagos * TAXA_COMISSAO_SITE;
-            const taxasC = pagamentos.vCartao * TAXA_CARTAO_PERCENTUAL;
-            const saldo = resumo.brutos - comissao - taxasC - despesaSaque;
+                // Cálculos de taxas
+                const saque = limparNumero(document.getElementById('valorSaque').getAttribute('data-valor-saque'));
+                const comissaoSite = dados.pagos * 5;
+                const taxaCartao = tipos.vCartao * 0.05;
+                const saldoLiquido = dados.brutoReal - comissaoSite - taxaCartao - saque;
 
-            // DOM Update
-            document.getElementById('valorTotalEvento').textContent = formatCurrency(resumo.nominal);
-            document.getElementById('totalInscritos').textContent = `${resumo.inscritosValidos} Inscritos Ativos`;
-            document.getElementById('valorConfirmado').textContent = formatCurrency(resumo.confirmado);
-            document.getElementById('atletasPagos').textContent = resumo.pagos;
-            document.getElementById('valorPendente').textContent = formatCurrency(resumo.pendente);
-            document.getElementById('atletasPendentes').textContent = resumo.aguardando;
-            document.getElementById('valorRecebidoBruto').textContent = formatCurrency(resumo.brutos);
-            document.getElementById('comissaoSite').textContent = formatCurrency(comissao);
-            document.getElementById('taxasCartao').textContent = formatCurrency(taxasC);
-            document.getElementById('valorSaque').textContent = formatCurrency(despesaSaque);
-            document.getElementById('saldoTotal').textContent = formatCurrency(saldo);
-            document.getElementById('countPix').textContent = pagamentos.pix;
-            document.getElementById('countDinheiro').textContent = pagamentos.dinheiro;
-            document.getElementById('countCartao').textContent = pagamentos.cartao;
-            document.getElementById('countAdmin').textContent = pagamentos.admin;
-            document.getElementById('countOutros').textContent = pagamentos.outros;
+                // Atualizar Dashboard
+                document.getElementById('valorTotalEvento').textContent = formatBRL(dados.nominal);
+                document.getElementById('totalInscritos').textContent = dados.totalAtivos + " Inscritos Ativos";
+                document.getElementById('valorConfirmado').textContent = formatBRL(dados.confirmado);
+                document.getElementById('atletasPagos').textContent = dados.pagos;
+                document.getElementById('valorPendente').textContent = formatBRL(dados.pendente);
+                document.getElementById('atletasPendentes').textContent = dados.totalAtivos - dados.pagos;
+
+                // Tabela Detalhes
+                document.getElementById('valorRecebidoBruto').textContent = formatBRL(dados.brutoReal);
+                document.getElementById('comissaoSite').textContent = formatBRL(comissaoSite);
+                document.getElementById('taxasCartao').textContent = formatBRL(taxaCartao);
+                document.getElementById('valorSaque').textContent = formatBRL(saque);
+                document.getElementById('saldoTotal').textContent = formatBRL(saldoLiquido);
+
+                // Tipos de Pagamento
+                document.getElementById('countPix').textContent = tipos.pix;
+                document.getElementById('countDinheiro').textContent = tipos.dinheiro;
+                document.getElementById('countCartao').textContent = tipos.cartao;
+                document.getElementById('countAdmin').textContent = tipos.admin;
+                document.getElementById('countOutros').textContent = tipos.outros;
+
+            } catch (error) {
+                console.error("Erro ao carregar dados financeiros:", error);
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', carregarDadosFinanceiros);
+        document.addEventListener('DOMContentLoaded', carregarDados);
     </script>
 </body>
 </html>
