@@ -249,7 +249,7 @@
             
             // Pega os dados da URL (Inscricao.html -> Pagamentos.html)
             const atleta = params.get('atleta');
-            const categoria = params.get('categoria') || "Não informada";
+            const categoria = params.get('categoria');
             const valorRaw = params.get('valor');
             const valor = parseFloat(valorRaw);
             
