@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+        }
+
+        /* --- SIDEBAR (SÓ APARECE NO PC) --- */
+        nav.sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .logo-area img { width: 100%; max-width: 160px; margin-bottom: 40px; }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 12px 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-links a.active { background: #eff6ff; color: var(--primary); }
+        .nav-links a:hover { background: #f1f5f9; color: var(--text-main); }
+
+        .btn-sair-sidebar { color: #ef4444; text-decoration: none; font-weight: 700; font-size: 0.9rem; padding: 10px; }
+
+        /* --- CONTEÚDO PRINCIPAL (ADAPTÁVEL) --- */
+        main {
+            flex-grow: 1;
+            margin-left: 260px; /* Margem da sidebar no PC */
+            padding: 40px;
+            width: 100%;
+        }
+
+        .header-main { margin-bottom: 30px; }
+        .header-main h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+        .header-main p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* --- GRID DE EVENTOS --- */
+        .eventos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .evento-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            text-decoration: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .evento-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        .banner-container {
+            width: 100%;
+            height: 180px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .banner-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .card-body { padding: 20px; }
+        .card-body h3 { color: var(--text-main); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+        
+        .card-meta { display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        
+        .btn-gerenciar {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .evento-card:hover .btn-gerenciar { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* --- HEADER MOBILE (SÓ APARECE NO CELULAR) --- */
+        .header-mobile {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 70px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 20px;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+        }
+
+        /* --- RESPONSIVIDADE CRÍTICA (MOBILE) --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            
+            nav.sidebar { display: none; } /* Mata a sidebar no mobile */
+
+            .header-mobile { display: flex; } /* Mostra o header mobile */
+
+            main {
+                margin-left: 0; /* Remove a margem da sidebar */
+                margin-top: 70px; /* Dá espaço para o header mobile */
+                padding: 20px; /* Margem menor no celular para não "espremer" */
+            }
+
+            .header-main { text-align: center; }
+            .header-main h1 { font-size: 1.5rem; }
+
+            .eventos-grid {
+                grid-template-columns: 1fr; /* Força 1 coluna no celular */
+                gap: 20px;
+            }
+
+            .banner-container { height: 160px; }
+            
+            .logo-mobile { height: 15px; }
+        }
+
+        /* Ajuste para telas muito grandes (Ultra Wide) */
+        @media (min-width: 1800px) {
+            .eventos-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-area">
+            <img src="../img/arena competidor chaveamento.png" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active">🏠 Dashboard</a></li>
+            <li><a href="#">📊 Resultados</a></li>
+            <li><a href="#">⚙️ Ajustes</a></li>
+        </ul>
+        <a href="login.html" class="btn-sair-sidebar">🚪 Sair da Conta</a>
+    </nav>
+
+    <header class="header-mobile">
+        <img src="../img/arena competidor chaveamento.png" alt="Logo" class="logo-mobile">
+        <a href="../login.html" style="text-decoration:none; color:#ef4444; font-weight:800; font-size:0.8rem;">SAIR</a>
+    </header>
+
+    <main>
+        <div class="header-main">
+            <h1>Gestão de Eventos</h1>
+            <p>Selecione um evento para iniciar a operação.</p>
+        </div>
+
+        <div class="eventos-grid">
+            <a href="dashboard-event.html" class="evento-card">
+                <div class="banner-container">
+                    <img src="../img/INTERNOWGT.png" alt="1º Interno WGT">
+                </div>
+                <div class="card-body">
+                    <h3>1º Interno WGT</h3>
+                    <div class="card-meta">
+                        <span>📅 12 Abr 2026</span>
+                        <span>📍 Currais Novos/RN</span>
+                    </div>
+                    <div class="btn-gerenciar">Gerenciar Evento</div>
+                </div>
+            </a>
+            
+            </div>
+    </main>
+
+</body>
+</html>
