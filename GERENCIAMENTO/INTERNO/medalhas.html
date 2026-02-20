@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisito de Medalhas | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-body: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --medal-ouro: #fbbf24;
+            --medal-prata: #94a3b8;
+            --medal-bronze: #d97706;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+
+        body {
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* HEADER RESPONSIVO */
+        header { 
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-logo img { width: 180px; height: auto; }
+        
+        h1 {
+            font-size: 1.25rem;
+            margin: 10px 0 0;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            left: 15px;
+            top: 25px;
+            background: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        /* SEÇÕES */
+        #medalhas-container h2 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* GRID DE CARDS */
+        .resumo-medalhas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-valor {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 6px solid var(--primary);
+        }
+
+        .card-valor h3 {
+            margin: 0 0 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ESTILO DAS MEDALHAS */
+        .medal-count {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .medal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .medal-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: #f8fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05);
+        }
+
+        .medal span:last-child {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        /* CARD TOTAL GERAL - DESTAQUE */
+        .total-geral-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-top: 10px;
+        }
+
+        .total-geral-card h3 { color: #94a3b8; margin-bottom: 20px; }
+
+        .total-geral-card .medal-icon { background: rgba(255,255,255,0.1); }
+        
+        .medal.total .valor {
+            font-size: 2rem;
+            color: var(--success);
+        }
+
+        /* STATUS COLORS */
+        .total-nominal { border-left-color: var(--primary); }
+        .total-confirmado { border-left-color: var(--success); }
+        .total-pendente { border-left-color: var(--warning); }
+
+        #loading-message {
+            text-align: center;
+            padding: 50px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* RESPONSIVIDADE MOBILE */
+        @media (max-width: 600px) {
+            header { padding-top: 70px; } /* Espaço para o botão voltar fixo no topo */
+            .btn-voltar { width: calc(100% - 30px); text-align: center; top: 15px; }
+            h1 { font-size: 1.1rem; }
+            
+            .resumo-medalhas { grid-template-columns: 1fr; }
+            
+            .medal-icon { width: 35px; height: 35px; font-size: 1.2rem; }
+            .medal span:last-child { font-size: 1rem; }
+            .medal.total .valor { font-size: 1.5rem; }
+            
+            .total-geral-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="dashboard-event.html" class="btn-voltar">← Voltar</a>
+        <h1>Análise de Requisito de Medalhas</h1>
+    </header>
+
+    <div class="container">
+        <div id="loading-message">Processando dados da planilha...</div>
+
+        <div id="medalhas-container" style="display: none;">
+            
+            <section id="secao-todos">
+                <h2>👤 Inscritos Nominais</h2>
+                <div class="resumo-medalhas" id="resumo-todos"></div>
+            </section>
+
+            <section id="secao-confirmados">
+                <h2>✅ Atletas Confirmados</h2>
+                <div class="resumo-medalhas" id="resumo-confirmados"></div>
+            </section>
+            
+        </div>
+    </div>
+
+    <script>
+        // URL DO CSV (Mesma da sua planilha)
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv';
+
+        function normalizeText(text) {
+            return text ? String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : '';
+        }
+
+        function getMedalhas(qtd) {
+            if (qtd <= 0) return { ouro: 0, prata: 0, bronze: 0, total: 0 };
+            if (qtd === 1) return { ouro: 1, prata: 0, bronze: 0, total: 1 };
+            if (qtd === 2) return { ouro: 1, prata: 1, bronze: 0, total: 2 };
+            return { ouro: 1, prata: 1, bronze: 2, total: 4 };
+        }
+
+        async function fetchAndProcess() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const lines = csvText.split('\n').map(l => l.split(','));
+                const headers = lines[0].map(h => h.trim().replace(/"/g, ''));
+                
+                const atletas = lines.slice(1).map(line => {
+                    let obj = {};
+                    headers.forEach((h, i) => obj[h] = line[i] ? line[i].replace(/"/g, '').trim() : '');
+                    return obj;
+                }).filter(a => a['NOME COMPLETO']);
+
+                const calc = (listaAtletas) => {
+                    let categorias = {};
+                    let absolutos = {};
+
+                    listaAtletas.forEach(a => {
+                        const chaveCat = `${a['SUA CATEGORIA']}-${a['SUA FAIXA']}-${a['SEU PESO']}-${a['SEXO']}`;
+                        categorias[chaveCat] = (categorias[chaveCat] || 0) + 1;
+
+                        if (normalizeText(a['ABSOLUTO']) === 'sim') {
+                            const chaveAbs = `ABS-${a['SUA FAIXA']}-${a['SEXO']}`;
+                            absolutos[chaveAbs] = (absolutos[chaveAbs] || 0) + 1;
+                        }
+                    });
+
+                    let total = { ouro: 0, prata: 0, bronze: 0, total: 0, cat: {o:0, p:0, b:0, t:0}, abs: {o:0, p:0, b:0, t:0} };
+
+                    Object.values(categorias).forEach(q => {
+                        const m = getMedalhas(q);
+                        total.cat.o += m.ouro; total.cat.p += m.prata; total.cat.b += m.bronze; total.cat.t += m.total;
+                    });
+
+                    Object.values(absolutos).forEach(q => {
+                        const m = getMedalhas(q);
+                        total.abs.o += m.ouro; total.abs.p += m.prata; total.abs.b += m.bronze; total.abs.t += m.total;
+                    });
+
+                    total.ouro = total.cat.o + total.abs.o;
+                    total.prata = total.cat.p + total.abs.p;
+                    total.bronze = total.cat.b + total.abs.b;
+                    total.total = total.ouro + total.prata + total.bronze;
+                    return total;
+                };
+
+                const dadosTodos = calc(atletas);
+                const dadosConf = calc(atletas.filter(a => normalizeText(a['STATUS DO PAGAMENTO']).includes('pago') || normalizeText(a['STATUS DO PAGAMENTO']).includes('confirmado')));
+
+                render('resumo-todos', dadosTodos);
+                render('resumo-confirmados', dadosConf);
+
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('medalhas-container').style.display = 'block';
+
+            } catch (e) {
+                document.getElementById('loading-message').innerHTML = "❌ Erro ao carregar dados.";
+            }
+        }
+
+        function render(containerId, d) {
+            document.getElementById(containerId).innerHTML = `
+                <div class="card-valor total-nominal">
+                    <h3>Por Categoria/Peso</h3>
+                    <div class="medal-count">
+                        <div class="medal"><span>🥇</span><span>${d.cat.o}</span></div>
+                        <div class="medal"><span>🥈</span><span>${d.cat.p}</span></div>
+                        <div class="medal"><span>🥉</span><span>${d.cat.b}</span></div>
+                        <div class="medal"><span>Total</span><span>${d.cat.t}</span></div>
+                    </div>
+                </div>
+                <div class="card-valor total-pendente">
+                    <h3>Por Absoluto</h3>
+                    <div class="medal-count">
+                        <div class="medal"><span>🥇</span><span>${d.abs.o}</span></div>
+                        <div class="medal"><span>🥈</span><span>${d.abs.p}</span></div>
+                        <div class="medal"><span>🥉</span><span>${d.abs.b}</span></div>
+                        <div class="medal"><span>Total</span><span>${d.abs.t}</span></div>
+                    </div>
+                </div>
+                <div class="total-geral-card">
+                    <h3>Total de Medalhas Necessárias</h3>
+                    <div class="medal-count">
+                        <div class="medal"><span>🥇</span><span>${d.ouro}</span></div>
+                        <div class="medal"><span>🥈</span><span>${d.prata}</span></div>
+                        <div class="medal"><span>🥉</span><span>${d.bronze}</span></div>
+                        <div class="medal total"><span>TOTAL</span><span class="valor">${d.total}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = fetchAndProcess;
+    </script>
+</body>
+</html>
