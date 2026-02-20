@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financeiro do Evento | Arena Competidor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2563eb;
@@ -34,7 +34,6 @@
             line-height: 1.5;
         }
 
-        /* HEADER RESPONSIVO */
         header { 
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -69,7 +68,7 @@
             font-size: 0.85rem;
             box-shadow: var(--shadow);
             border: 1px solid #e2e8f0;
-            align-self: flex-start; /* No mobile fica no topo */
+            align-self: flex-start;
         }
 
         .container {
@@ -78,7 +77,6 @@
             padding: 0 15px 40px;
         }
 
-        /* GRID DE RESUMO RESPONSIVO */
         .quadro-resumo-financeiro { 
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -107,13 +105,14 @@
             font-weight: 800; 
         }
 
+        .card-valor .sub-info { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+
         .total-nominal { border-top-color: var(--text-main); }
         .total-confirmado { border-top-color: var(--success); }
         .total-confirmado .valor { color: var(--success); }
         .total-pendente { border-top-color: var(--warning); }
         .total-pendente .valor { color: var(--warning); }
 
-        /* GRID FINANCEIRA RESPONSIVA */
         .financeiro-grid {
             display: grid;
             grid-template-columns: 1.6fr 1fr; 
@@ -122,7 +121,7 @@
 
         .card-detalhes, .card-pagamentos {
             background: var(--bg-card);
-            padding: 20px;
+            padding: 25px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
@@ -130,6 +129,7 @@
         .card-detalhes h2, .card-pagamentos h3 {
             font-size: 1.2rem;
             margin-top: 0;
+            margin-bottom: 20px;
         }
 
         .card-detalhes table {
@@ -147,7 +147,6 @@
             font-weight: 500;
             color: var(--text-muted);
             text-align: left;
-            padding-right: 10px;
         }
 
         .card-detalhes .resultado {
@@ -165,13 +164,15 @@
             padding: 15px 10px;
             font-size: 1rem;
             color: var(--primary);
+            font-weight: 700;
         }
 
         .card-pagamentos ul { list-style: none; padding: 0; margin: 0; }
         .card-pagamentos li {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            align-items: center;
+            padding: 12px 0;
             border-bottom: 1px solid #f1f5f9;
             font-size: 0.95rem;
         }
@@ -179,40 +180,20 @@
         .card-pagamentos li strong {
             color: var(--primary);
             background: #eff6ff;
-            padding: 2px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
+            font-size: 0.85rem;
         }
 
-        /* --- MEDIA QUERIES (O SEGREDO DA RESPONSIVIDADE) --- */
-
+        /* RESPONSIVIDADE */
         @media (max-width: 992px) {
-            .financeiro-grid { 
-                grid-template-columns: 1fr; 
-            }
+            .financeiro-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 600px) {
-            header {
-                padding: 15px;
-            }
-            .btn-voltar-dashboard {
-                position: static;
-                margin-bottom: 10px;
-                width: 100%;
-                text-align: center;
-            }
-            #titulo-principal {
-                font-size: 1.3rem;
-            }
-            .card-valor .valor {
-                font-size: 1.6rem;
-            }
-            .quadro-resumo-financeiro {
-                grid-template-columns: 1fr; /* Um card por linha no celular */
-            }
-            .card-detalhes tr:last-child th, .card-detalhes tr:last-child td {
-                font-size: 0.95rem;
-            }
+            .btn-voltar-dashboard { width: 100%; text-align: center; }
+            #titulo-principal { font-size: 1.2rem; }
+            .card-valor .valor { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -227,7 +208,7 @@
             <div class="card-valor total-nominal">
                 <h3>Total Nominal</h3>
                 <p class="valor" id="valorTotalEvento">R$ 0,00</p>
-                <p class="sub-info" id="totalInscritos">0 Inscritos</p>
+                <p class="sub-info" id="totalInscritos">0 Inscritos Ativos</p>
             </div>
             
             <div class="card-valor total-confirmado">
@@ -261,11 +242,11 @@
                             <td class="resultado" id="taxasCartao">R$ 0,00</td>
                         </tr>
                         <tr>
-                            <th>Saques</th>
+                            <th>Saques Efetuados</th>
                             <td class="resultado" id="valorSaque" data-valor-saque="0.00">R$ 0,00</td>
                         </tr>
                         <tr>
-                            <th>Saldo Líquido</th>
+                            <th>Saldo Líquido Disponível</th>
                             <td class="resultado" id="saldoTotal">R$ 0,00</td>
                         </tr>
                     </tbody>
@@ -273,12 +254,12 @@
             </div>
 
             <div class="card-pagamentos">
-                <h3>Métodos</h3>
+                <h3>Métodos de Pagamento</h3>
                 <ul>
                     <li>PIX <strong id="countPix">0</strong></li>
                     <li>Dinheiro <strong id="countDinheiro">0</strong></li>
                     <li>Cartão <strong id="countCartao">0</strong></li>
-                    <li>Admin <strong id="countAdmin">0</strong></li>
+                    <li>Administrativo <strong id="countAdmin">0</strong></li>
                     <li>Outros <strong id="countOutros">0</strong></li>
                 </ul>
             </div>
@@ -286,7 +267,6 @@
     </div>
 
     <script>
-        // O Script permanece o mesmo, pois a lógica de cálculo está correta.
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv";
         const TAXA_COMISSAO_SITE = 5.00;
         const TAXA_CARTAO_PERCENTUAL = 0.05;
@@ -304,31 +284,39 @@
                 const valorSaqueDefinido = parseFloat(elementoSaque.getAttribute('data-valor-saque')) || 0;
                 calcularEExibir(dados, valorSaqueDefinido);
             } catch (error) {
-                console.error("Erro:", error);
+                console.error("Erro ao carregar dados:", error);
             }
         }
 
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(line => line.trim() !== '');
             if (lines.length < 2) return [];
+
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
             const data = [];
+            
             const idx = {
                 total: headers.indexOf('VALOR TOTAL'),
                 status: headers.indexOf('STATUS DO PAGAMENTO'),
                 recebido: headers.indexOf('VALOR RECEBIDO'),
                 tipo: headers.indexOf('TIPO DE PAGAMENTO')
             };
+
             const parseValue = (val) => {
                 if (!val) return 0;
+                // Remove R$, pontos de milhar e troca vírgula por ponto
                 return parseFloat(String(val).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
             };
+
             for (let i = 1; i < lines.length; i++) {
                 const v = lines[i].split(',').map(item => item.trim().replace(/"/g, ''));
-                let status = (v[idx.status] || '').toLowerCase();
+                if (v.length < headers.length) continue; // Pula linhas incompletas
+
+                let statusRaw = (v[idx.status] || '').toLowerCase();
                 let normalizedStatus = 'Pendente';
-                if (status.includes('confirmado')) normalizedStatus = 'Confirmado';
-                if (status.includes('cancelado')) normalizedStatus = 'Cancelado';
+                if (statusRaw.includes('confirmado') || statusRaw.includes('pago')) normalizedStatus = 'Confirmado';
+                if (statusRaw.includes('cancelado')) normalizedStatus = 'Cancelado';
+
                 data.push({
                     valorNominal: parseValue(v[idx.total]),
                     status: normalizedStatus,
@@ -340,15 +328,21 @@
         }
 
         function calcularEExibir(data, despesaSaque) {
-            let resumo = { nominal: 0, confirmado: 0, pendente: 0, brutos: 0, pagos: 0, aguardando: 0 };
+            let resumo = { nominal: 0, confirmado: 0, pendente: 0, brutos: 0, pagos: 0, aguardando: 0, inscritosValidos: 0 };
             let pagamentos = { pix: 0, dinheiro: 0, cartao: 0, admin: 0, outros: 0, vCartao: 0 };
 
             data.forEach(item => {
+                // CORREÇÃO: Ignora cancelados para o Total Nominal não ficar errado
+                if (item.status === 'Cancelado') return;
+
                 resumo.nominal += item.valorNominal;
+                resumo.inscritosValidos++;
+
                 if (item.status === 'Confirmado') {
                     resumo.confirmado += item.valorNominal;
                     resumo.pagos++;
                     resumo.brutos += item.valorRecebido;
+                    
                     const t = item.tipoPagamento;
                     if (t.includes('PIX')) pagamentos.pix++;
                     else if (t.includes('DINHEIRO') || t.includes('ESP')) pagamentos.dinheiro++;
@@ -358,7 +352,8 @@
                     }
                     else if (t.includes('ADMIN')) pagamentos.admin++;
                     else pagamentos.outros++;
-                } else if (item.status === 'Pendente') {
+                } 
+                else if (item.status === 'Pendente') {
                     resumo.pendente += item.valorNominal;
                     resumo.aguardando++;
                 }
@@ -368,8 +363,9 @@
             const taxasC = pagamentos.vCartao * TAXA_CARTAO_PERCENTUAL;
             const saldo = resumo.brutos - comissao - taxasC - despesaSaque;
 
+            // DOM Update
             document.getElementById('valorTotalEvento').textContent = formatCurrency(resumo.nominal);
-            document.getElementById('totalInscritos').textContent = `${data.length} Inscritos`;
+            document.getElementById('totalInscritos').textContent = `${resumo.inscritosValidos} Inscritos Ativos`;
             document.getElementById('valorConfirmado').textContent = formatCurrency(resumo.confirmado);
             document.getElementById('atletasPagos').textContent = resumo.pagos;
             document.getElementById('valorPendente').textContent = formatCurrency(resumo.pendente);
