@@ -28,12 +28,57 @@
             height: auto;
         }
 
-        @media (max-width: 768px) {
-            header img { max-width: 220px; }
+        /* =========================================
+           ESTILOS DO CONTADOR (NOVO)
+           ========================================= */
+        .countdown-wrapper {
+            width: 100%;
+            background: #ffffff;
+            color: white;
+            padding: 15px 0;
+            margin-top: 80px; /* Compensa o header fixo */
+            display: flex;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .countdown-content {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .countdown-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #000000;
+        }
+        .timer-grid {
+            display: flex;
+            gap: 15px;
+        }
+        .timer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 55px;
+        }
+        .timer-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff0000;
+            line-height: 1;
+        }
+        .timer-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #000000;
+            margin-top: 4px;
         }
 
         /* =========================================
-           ESTILOS GERAIS
+           ESTILOS GERAIS ORIGINAIS
            ========================================= */
         :root {
             --primary-color: #2563eb; 
@@ -62,7 +107,7 @@
         }
 
         .main-content {
-            margin-top: 140px; 
+            margin-top: 40px; /* Reduzido pois o contador já tem margem */
             width: 90%;
             max-width: 1000px;
             padding-bottom: 60px;
@@ -81,9 +126,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* =========================================
-           LAYOUT GRID
-           ========================================= */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -124,20 +166,15 @@
             gap: 12px;
         }
 
-        /* ========================================================
-           NOVO ESTILO: CARD DE PATROCÍNIO LATERAL (OTIMIZADO)
-           ======================================================== */
         .side-sponsor-container {
             width: 100%;
             background: white;
-            border-radius: 12px; /* Borda um pouco mais sutil que o banner principal */
+            border-radius: 12px;
             padding: 12px;
             box-shadow: var(--shadow-sm);
             text-align: center;
             border: 1px solid #e5e7eb;
             box-sizing: border-box;
-            
-            /* Centraliza o conteúdo verticalmente */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -155,27 +192,22 @@
         }
 
         .side-sponsor-image-wrapper {
-            /* Define uma altura fixa máxima para o container da imagem */
             width: 100%;
-            height: 200px; /* Altura controlada no Desktop */
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             border-radius: 8px;
-            background-color: #fafafa; /* Fundo leve caso a imagem não preencha tudo */
+            background-color: #fafafa;
         }
 
         .side-sponsor-image-wrapper img {
             width: 100%;
             height: 100%;
-            /* 'contain' garante que a imagem inteira apareça sem cortar nada */
-            /* Se preferir que preencha tudo (podendo cortar bordas), mude para 'cover' */
             object-fit: contain; 
             display: block;
         }
-
-        /* ======================================================== */
 
         .btn-modern {
             display: flex;
@@ -235,7 +267,6 @@
             border-color: var(--accent-red);
         }
 
-        /* CARD INFORMAÇÕES */
         .info-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -309,9 +340,7 @@
             background: transparent;
         }
 
-        /* =========================================
-           POP-UP (MODAL)
-           ========================================= */
+        /* POP-UP (MODAL) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -378,25 +407,22 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .whatsapp-fixed-text-button:hover {
-            transform: translateY(-5px) scale(1.02);
-            background-color: #20bd5a;
-            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.4);
-        }
-
-        .whatsapp-icon-only { width: 24px; height: 24px; color: white; margin-right: 10px; }
-        .whatsapp-text-visible { color: white; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; white-space: nowrap; }
-
-        /* =========================================
-           RESPONSIVIDADE E AJUSTES MOBILE
-           ========================================= */
+        /* RESPONSIVIDADE */
         @media (max-width: 900px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .card-banner { aspect-ratio: 4/5; max-height: none; }
         }
 
+        @media (max-width: 768px) {
+            header img { max-width: 220px; }
+        }
+
         @media (max-width: 600px) {
-            .main-content { margin-top: 110px; }
+            .countdown-wrapper { margin-top: 70px; padding: 10px 0; }
+            .countdown-content { flex-direction: column; gap: 8px; }
+            .timer-number { font-size: 1.2rem; }
+            
+            .main-content { margin-top: 20px; }
             h1 { font-size: 1.5rem; }
             .actions-grid { grid-template-columns: 1fr; }
             .btn-primary-action { grid-column: auto; }
@@ -405,11 +431,7 @@
             .whatsapp-text-visible { display: none; }
             .whatsapp-icon-only { margin-right: 0; width: 28px; height: 28px; }
             .close-modal-btn { right: 10px; top: -35px; }
-
-            /* AJUSTE DO PATROCÍNIO NO CELULAR */
-            .side-sponsor-image-wrapper {
-                height: 150px; /* Mais baixo no celular para não ocupar muito espaço */
-            }
+            .side-sponsor-image-wrapper { height: 150px; }
         }
     </style>
 </head>
@@ -420,6 +442,30 @@
             <img src="../../img/arena2.png" alt="Arena Competidor Logo">
         </a>
     </header>
+
+    <div class="countdown-wrapper">
+        <div class="countdown-content">
+            <span class="countdown-title">O evento começa em:</span>
+            <div class="timer-grid">
+                <div class="timer-item">
+                    <span id="days" class="timer-number">00</span>
+                    <span class="timer-label">Dias</span>
+                </div>
+                <div class="timer-item">
+                    <span id="hours" class="timer-number">00</span>
+                    <span class="timer-label">Horas</span>
+                </div>
+                <div class="timer-item">
+                    <span id="minutes" class="timer-number">00</span>
+                    <span class="timer-label">Min</span>
+                </div>
+                <div class="timer-item">
+                    <span id="seconds" class="timer-number">00</span>
+                    <span class="timer-label">Seg</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="main-content">
         <h1>Open Caicó de Jiu-Jitsu - NOGI (SEM Kimono)</h1>
@@ -434,7 +480,6 @@
                     <a href="../../meu-evento-agd.html" class="btn-modern btn-primary-action">
                         Realizar Inscrição Agora
                     </a>
-
                     <a href="../../meu-evento-agd.html" class="btn-modern btn-secondary">
                         Pagar Inscrição
                     </a>
@@ -503,10 +548,10 @@
     </div>
 
     <a href="https://wa.me/5584987513740?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
-        <svg class="whatsapp-icon-only" viewBox="0 0 16 16">
+        <svg class="whatsapp-icon-only" style="width: 24px; height: 24px; color: white; margin-right: 10px;" viewBox="0 0 16 16">
             <path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574z"/>
         </svg>
-        <span class="whatsapp-text-visible">Suporte</span>
+        <span class="whatsapp-text-visible" style="color: white; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif;">Suporte</span>
     </a>
 
     <div id="sponsorModal" class="modal-overlay">
@@ -517,6 +562,32 @@
     </div>
 
     <script>
+        /* SCRIPT DO CONTADOR */
+        function updateCountdown() {
+            const eventDate = new Date('May 16, 2026 08:00:00').getTime();
+            const now = new Date().getTime();
+            const diff = eventDate - now;
+
+            if (diff <= 0) {
+                document.querySelector('.countdown-wrapper').innerHTML = "<strong style='color:#22c55e'>O EVENTO JÁ COMEÇOU!</strong>";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        /* FUNÇÕES DO MODAL */
         function openModal() {
             const modal = document.getElementById('sponsorModal');
             modal.style.display = 'flex';
