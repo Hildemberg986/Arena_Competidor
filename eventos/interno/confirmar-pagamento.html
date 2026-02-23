@@ -88,7 +88,7 @@
                <h2>👋 Próximos Passos</h2>
                <p>1. Preencha seu nome e CPF (ou número de ordem).</p>
                <p>2. Clique em <b>VER DADOS PARA PAGAMENTO</b>.</p>
-               <p>3. Pague o valor de <b>R$ 60,00</b> e envie o comprovante.</p>
+               <p>3. Pague o valor de <b>R$ 65,00</b> e envie o comprovante.</p>
            </div>
            
            <div class="input-fields">
@@ -114,7 +114,7 @@
            
            <table class="summary-table">
                <tbody>
-                   <tr class="total-row"><td>Total a Pagar: <strong>R$ 60,00</strong></td></tr>
+                   <tr class="total-row"><td>Total a Pagar: <strong>R$ 65,00</strong></td></tr>
                </tbody>
            </table>
            
@@ -174,7 +174,7 @@
             if(nome.trim().length >= 3 && ordem.trim().length >= 3 && metodo !== "") {
                 link.classList.add('enabled');
                 link.innerText = 'Enviar Comprovante pelo WhatsApp';
-                const msg = encodeURIComponent(`✅ COMPROVANTE\n\nEvento: ${evento}\nAtleta: ${nome}\nCPF/ORD: ${ordem}\nValor: R$ 60,00\nMétodo: ${metodo}`);
+                const msg = encodeURIComponent(`✅ COMPROVANTE\n\nEvento: ${evento}\nAtleta: ${nome}\nCPF/ORD: ${ordem}\nValor: R$ 65,00\nMétodo: ${metodo}`);
                 link.href = `https://api.whatsapp.com/send?phone=5584987513740&text=${msg}`;
             } else {
                 link.classList.remove('enabled');
