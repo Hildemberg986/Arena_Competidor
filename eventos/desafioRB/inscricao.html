@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição - Desafio Virtual Sports</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-primaria: #d32f2f; 
+            --cor-secundaria: #1a1a1a;
+            --cor-destaque: #2e7d32;
+            --cor-fundo: #f4f7f6;
+            --cor-texto: #333;
+            --cor-borda: #ccc;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        header {
+            background-color: #000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header img {
+            max-width: 180px;
+            width: 60%;
+            height: auto;
+        }
+
+        .intro-content {
+            padding: 25px;
+            background: #fff;
+            border-bottom: 2px solid #eee;
+            font-size: 0.95rem;
+        }
+
+        .intro-content ul {
+            padding-left: 20px;
+            margin-top: 15px;
+        }
+
+        .intro-content li {
+            margin-bottom: 10px;
+        }
+
+        form { padding: 30px; display: grid; gap: 20px; }
+        
+        .form-section-title {
+            grid-column: 1 / -1;
+            border-bottom: 2px solid var(--cor-primaria);
+            padding-bottom: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: var(--cor-primaria);
+        }
+
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 0.85rem; }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus { border-color: var(--cor-primaria); }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        #photo-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ccc;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            font-size: 0.7rem;
+            color: #999;
+            background-color: #fafafa;
+        }
+
+        .extrato {
+            background: #f1f3f5;
+            margin: 0 30px 20px 30px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .extrato h3 { 
+            margin-top: 0; 
+            color: var(--cor-secundaria); 
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .extrato p { 
+            margin: 5px 0; 
+            font-size: 0.9rem; 
+            display: flex; 
+            justify-content: space-between;
+            flex-wrap: wrap;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .extrato p span:first-child { font-weight: bold; color: #555; }
+
+        .total-box {
+            font-size: 1.5rem;
+            color: var(--cor-destaque);
+            font-weight: bold;
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        .btn-submit {
+            background: var(--cor-primaria);
+            color: white;
+            padding: 18px;
+            border: none;
+            width: calc(100% - 60px);
+            margin: 0 30px 40px 30px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover { background: #b71c1c; }
+        .btn-submit:disabled { background: #666; cursor: not-allowed; }
+
+        /* --- RESPONSIVIDADE PARA CELULAR --- */
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            .container { border-radius: 0; }
+            form { padding: 20px; gap: 15px; }
+            .address-grid { grid-template-columns: 1fr; gap: 10px; }
+            .intro-content { padding: 20px; font-size: 0.9rem; }
+            .extrato { margin: 0 20px 20px 20px; padding: 15px; }
+            .btn-submit { width: calc(100% - 40px); margin: 0 20px 30px 20px; font-size: 1rem; }
+            header img { max-width: 140px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <img src="desafiologo.png" alt="Logo Virtual Sports">
+        </header>
+
+        <div class="intro-content"> 
+            <p>Seja bem-vindo ao <strong>Desafio virtual Sports!</strong></p> 
+            <p>Prepare-se para mais uma jornada de superação, onde você define sua meta e se desafia a cada quilômetro percorrido. </p> 
+            <ul> 
+                <li><strong>Como funciona?:</strong> Escolha a distância que deseja completar ao longo do mês e registre suas corridas. 
+                O desafio é 100% virtual — ou seja, você pode correr onde e quando quiser!</li> 
+                <li><strong>Inscrição:</strong> R$ 39,99 — preencha os dados abaixo para garantir sua participação.</li> 
+                <li><strong>Confirmação:</strong> Sua inscrição só será validada após a verificação manual do pagamento pela equipe organizadora.</li> 
+                <li><strong>Dúvidas ou problemas?</strong> Entre em contato com os organizadores.</li> 
+            </ul> 
+        </div>
+
+        <form id="inscricaoForm">
+            <div class="form-section-title">Dados do Atleta</div>
+            
+            <div class="form-group">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+
+            <div class="address-grid">
+                <div class="form-group">
+                    <label for="telefone">WhatsApp:</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
+                </div>
+                <div class="form-group">
+                    <label for="distancia">Meta de Distância:</label>
+                    <select id="distancia" name="distancia" required>
+                        <option value="">Selecione...</option>
+                        <option value="30km">30 KM</option>
+                        <option value="50km">50 KM</option>
+                        <option value="100km">100 KM</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="address-grid">
+                <div class="form-group">
+                    <label for="equipe">Equipe (Se tiver):</label>
+                    <input type="text" id="equipe" name="equipe">
+                </div>
+                <div class="form-group">
+                    <label for="instagram">@ do Instagram:</label>
+                    <input type="text" id="instagram" name="instagram" placeholder="@seuusuario">
+                </div>
+            </div>
+
+            <div class="form-section-title">Endereço</div>
+
+            <div class="address-grid">
+                <div class="form-group">
+                    <label for="cep">CEP:</label>
+                    <input type="text" id="cep" name="cep" maxlength="9" placeholder="00000-000" required>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado (UF):</label>
+                    <select id="estado" name="estado" required>
+                        <option value="">Carregando...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cidade">Cidade:</label>
+                <select id="cidade" name="cidade" required disabled>
+                    <option value="">Selecione o estado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="rua">Rua/Logradouro:</label>
+                <input type="text" id="rua" name="rua" required>
+            </div>
+
+            <div class="address-grid">
+                <div class="form-group">
+                    <label for="numero">Nº:</label>
+                    <input type="text" id="numero" name="numero" required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro:</label>
+                    <input type="text" id="bairro" name="bairro" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="complemento">Complemento:</label>
+                <input type="text" id="complemento" name="complemento">
+            </div>
+
+            <div class="form-section-title">Mídia do Atleta</div>
+            <div class="form-group">
+                <label for="foto">Foto para o Banner:</label>
+                <input type="file" id="foto" name="foto" accept="image/*" required>
+                <div id="photo-preview"><span>Sem foto</span></div>
+            </div>
+
+            <div class="form-group" style="flex-direction: row; align-items: flex-start; gap: 10px;">
+                <input type="checkbox" id="termo" required style="width: auto; margin-top: 5px;">
+                <label for="termo" style="font-weight: normal; font-size: 0.8rem;">Declaro que li e conferi meus dados e estou ciente de que a inscrição só será confirmada após o pagamento.</label>
+            </div>
+        </form>
+
+        <div class="extrato" id="extratoCompleto">
+            <h3>Resumo da Ficha</h3>
+            <p><span>Nome:</span> <span id="res_nome">-</span></p>
+            <p><span>WhatsApp:</span> <span id="res_tel">-</span></p>
+            <p><span>Meta:</span> <span id="res_meta">-</span></p>
+            <p><span>Equipe:</span> <span id="res_equipe">-</span></p>
+            <p><span>Instagram:</span> <span id="res_insta">-</span></p>
+            <p><span>Cidade/UF:</span> <span id="res_local">-</span></p>
+            <p><span>Endereço:</span> <span id="res_end">-</span></p>
+            <div class="total-box">Total: R$ 39,99</div>
+        </div>
+
+        <button type="submit" form="inscricaoForm" id="btnSubmit" class="btn-submit">FINALIZAR E IR PARA PAGAMENTO</button>
+    </div>
+
+    <script>
+        // MANTIDA TODA A SUA LÓGICA ORIGINAL
+        const estadoSelect = document.getElementById('estado');
+        const cidadeSelect = document.getElementById('cidade');
+        const form = document.getElementById('inscricaoForm');
+
+        async function carregarEstados() {
+            try {
+                const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+                const estados = await response.json();
+                estadoSelect.innerHTML = '<option value="">Selecione...</option>';
+                estados.forEach(uf => {
+                    const opt = document.createElement('option');
+                    opt.value = uf.sigla;
+                    opt.textContent = uf.nome;
+                    estadoSelect.appendChild(opt);
+                });
+            } catch (e) { console.error("Erro estados"); }
+        }
+
+        estadoSelect.addEventListener('change', async function() {
+            const uf = this.value;
+            if (!uf) { cidadeSelect.disabled = true; return; }
+            cidadeSelect.disabled = false;
+            cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+            try {
+                const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+                const cidades = await response.json();
+                cidadeSelect.innerHTML = '<option value="">Selecione a cidade...</option>';
+                cidades.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.nome; opt.textContent = c.nome;
+                    cidadeSelect.appendChild(opt);
+                });
+            } catch (e) { console.error("Erro cidades"); }
+        });
+
+        document.getElementById('telefone').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, ""); 
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+            else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+            else if (v.length > 0) v = v.replace(/^(\d*)/, "($1");
+            e.target.value = v;
+        });
+
+        document.getElementById('cep').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/^(\d{5})(\d)/, "$1-$2");
+            e.target.value = v;
+        });
+
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const preview = document.getElementById('photo-preview');
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.style.backgroundImage = `url(${e.target.result})`;
+                    preview.innerHTML = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener('input', () => {
+            document.getElementById('res_nome').innerText = document.getElementById('nome').value || '-';
+            document.getElementById('res_tel').innerText = document.getElementById('telefone').value || '-';
+            document.getElementById('res_meta').innerText = document.getElementById('distancia').value || '-';
+            document.getElementById('res_equipe').innerText = document.getElementById('equipe').value || '-';
+            document.getElementById('res_insta').innerText = document.getElementById('instagram').value || '-';
+            const cidade = document.getElementById('cidade').value;
+            const uf = document.getElementById('estado').value;
+            document.getElementById('res_local').innerText = cidade ? `${cidade}/${uf}` : '-';
+            const rua = document.getElementById('rua').value;
+            const num = document.getElementById('numero').value;
+            const bairro = document.getElementById('bairro').value;
+            document.getElementById('res_end').innerText = rua ? `${rua}, nº ${num} - ${bairro}` : '-';
+        });
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = "PROCESSANDO INSCRIÇÃO...";
+
+            try {
+                const fotoFile = document.getElementById('foto').files[0];
+                let fotoBase64 = "";
+                if (fotoFile) fotoBase64 = await toBase64(fotoFile);
+
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    telefone: document.getElementById('telefone').value,
+                    distancia: document.getElementById('distancia').value,
+                    equipe: document.getElementById('equipe').value,
+                    instagram: document.getElementById('instagram').value,
+                    cep: document.getElementById('cep').value,
+                    estado: document.getElementById('estado').value,
+                    cidade: document.getElementById('cidade').value,
+                    rua: document.getElementById('rua').value,
+                    numero: document.getElementById('numero').value,
+                    bairro: document.getElementById('bairro').value,
+                    complemento: document.getElementById('complemento').value,
+                    foto: fotoBase64,
+                    valor: "39.99"
+                };
+
+                const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz36jM0YiX1H1qVjYKtfIi4Vz8lcEoTDVgWdL8wQl8n8e2QD_Lh2tWLH9R97SmstdSVlg/exec";
+
+                fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    header: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                })
+                .then(() => {
+                    const nomeParam = encodeURIComponent(dados.nome);
+                    window.location.href = `pagamento.html?atleta=${nomeParam}&valor=39.99`;
+                })
+                .catch(err => {
+                    console.error("Erro no fetch:", err);
+                    alert("Erro de conexão.");
+                    btn.disabled = false;
+                    btn.innerText = "FINALIZAR E IR PARA PAGAMENTO";
+                });
+
+            } catch (error) {
+                alert("Erro ao processar dados.");
+                btn.disabled = false;
+                btn.innerText = "FINALIZAR E IR PARA PAGAMENTO";
+            }
+        });
+
+        carregarEstados();
+    </script>
+</body>
+</html>
