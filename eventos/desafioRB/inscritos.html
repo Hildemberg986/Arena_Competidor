@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atletas Inscritos | Arena Competidor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --cor-primaria: #007bff;
+            --cor-secundaria: #343a40;
+            --cor-destaque: #28a745;
+            --cor-fundo: #f8f9fa;
+            --cor-texto: #495057;
+            --cor-borda: #e9ecef;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        header img { 
+            max-width: 350px; /* Reduzido para melhor encaixe geral */
+            width: 80%;
+            height: auto;
+        }
+
+        .main-content {
+            margin-top: 120px; /* Ajustado para o novo header */
+            width: 95%; /* Aumentado para aproveitar espaço no mobile */
+            max-width: 1100px;
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .filtros-area {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .filtros-area input, .filtros-area select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1; /* Faz os filtros crescerem igualmente */
+            min-width: 200px; /* Impede que fiquem pequenos demais */
+            box-sizing: border-box;
+        }
+
+        .distancia-container {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .titulo-distancia {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            background: var(--cor-secundaria);
+            padding: 6px 18px;
+            border-radius: 50px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .album-grid {
+            display: grid;
+            /* Ajuste dinâmico: 2 colunas no mínimo em telas bem pequenas */
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .card-atleta {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--cor-borda);
+            transition: transform 0.2s;
+        }
+
+        .foto-perfil {
+            width: 80px; /* Ligeiramente menor para caber melhor em grids apertados */
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid var(--cor-primaria);
+            background-color: #f0f0f0;
+        }
+
+        .nome-atleta {
+            display: block;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #222;
+            text-transform: uppercase;
+            line-height: 1.2;
+            height: 2.4em;
+            overflow: hidden;
+        }
+
+        .local-atleta {
+            display: block;
+            font-size: 0.7rem;
+            color: #777;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Botão WhatsApp Responsivo */
+        .whatsapp-fixed-text-button {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            padding: 12px 20px;
+            border-radius: 50px; background-color: #25D366;
+            text-decoration: none; color: white; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+
+        #loading { padding: 50px; font-weight: bold; }
+
+        /* Ajustes específicos para Celulares */
+        @media (max-width: 600px) {
+            header { padding: 10px 0; }
+            header img { max-width: 200px; }
+            .main-content { margin-top: 85px; width: 92%; }
+            h1 { font-size: 1.5rem; }
+            
+            .filtros-area input, .filtros-area select {
+                min-width: 100%; /* Filtros empilhados no mobile */
+            }
+
+            .album-grid { 
+                /* Garante 2 colunas mesmo em celulares pequenos */
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 10px;
+            }
+
+            .titulo-distancia { font-size: 1rem; width: 100%; text-align: center; box-sizing: border-box; }
+            
+            .whatsapp-text-visible { display: none; }
+            .whatsapp-fixed-text-button { 
+                width: 55px; height: 55px; padding: 0; 
+                border-radius: 50%; 
+            }
+            /* Ícone para o botão de zap quando vira bolinha */
+            .whatsapp-fixed-text-button::before {
+                content: 'WA';
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html">
+            <img src="desafioarena02.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+
+    <div class="main-content">
+        <h1>ATLETAS INSCRITOS</h1>
+        
+        <div class="filtros-area">
+            <input type="text" id="buscaNome" placeholder="Nome do atleta..." onkeyup="aplicarFiltros()">
+            <input type="text" id="buscaLocal" placeholder="Cidade ou Estado..." onkeyup="aplicarFiltros()">
+            <select id="buscaMeta" onchange="aplicarFiltros()">
+                <option value="">Todas as Distâncias</option>
+            </select>
+        </div>
+
+        <div id="loading">Buscando lista de atletas...</div>
+        <div id="container-geral"></div>
+    </div>
+
+    <a href="https://wa.me/5584996189717" class="whatsapp-fixed-text-button" target="_blank">
+        <span class="whatsapp-text-visible">Suporte</span>
+    </a>
+
+    <script>
+        // Lógica original mantida exatamente como fornecida
+        const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQClo6MqORTK1XyeJmLYFz_9HFh1LnA21D0r61O6KI8xTGP_FhdwdQuR87mivcQvt5I1tSfA-mOr0zh/pub?output=csv';
+        let todosAtletas = [];
+
+        function formatarLinkDrive(url) {
+            if (!url || url.trim() === "") return '';
+            const match = url.match(/[-\w]{25,}/);
+            if (match && url.includes('drive.google.com')) {
+                const id = match[0];
+                return `https://lh3.googleusercontent.com/d/${id}`;
+            }
+            return url;
+        }
+
+        function carregarDados() {
+            Papa.parse(URL_CSV, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    todosAtletas = results.data.filter(item => item['NOME COMPLETO']);
+                    popularFiltroMeta(todosAtletas);
+                    renderizar(todosAtletas);
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        function popularFiltroMeta(atletas) {
+            const metas = [...new Set(atletas.map(a => a.META))].filter(Boolean).sort();
+            const select = document.getElementById('buscaMeta');
+            metas.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderizar(lista) {
+            const container = document.getElementById('container-geral');
+            container.innerHTML = '';
+
+            const porDistancia = lista.reduce((acc, atleta) => {
+                const d = atleta.META || 'Geral';
+                if (!acc[d]) acc[d] = [];
+                acc[d].push(atleta);
+                return acc;
+            }, {});
+
+            for (const distancia in porDistancia) {
+                const htmlDist = `
+                    <div class="distancia-container">
+                        <div class="titulo-distancia">${distancia}</div>
+                        <div class="album-grid">
+                            ${porDistancia[distancia].map(atleta => {
+                                const nome = atleta['NOME COMPLETO'];
+                                const imgLink = formatarLinkDrive(atleta['FOTO MIDIA']);
+                                const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=007bff&color=fff`;
+                                
+                                return `
+                                    <div class="card-atleta">
+                                        <img src="${imgLink}" 
+                                             class="foto-perfil" 
+                                             alt="${nome}"
+                                             onerror="this.onerror=null;this.src='${avatarFallback}';">
+                                        <span class="nome-atleta">${nome}</span>
+                                        <span class="local-atleta">${atleta.CIDADE || ''} / ${atleta.ESTADO || ''}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += htmlDist;
+            }
+        }
+
+        function aplicarFiltros() {
+            const nome = document.getElementById('buscaNome').value.toLowerCase();
+            const local = document.getElementById('buscaLocal').value.toLowerCase();
+            const meta = document.getElementById('buscaMeta').value;
+
+            const filtrados = todosAtletas.filter(a => {
+                const matchNome = (a['NOME COMPLETO'] || "").toLowerCase().includes(nome);
+                const matchLocal = ( (a.CIDADE || "") + (a.ESTADO || "") ).toLowerCase().includes(local);
+                const matchMeta = meta === "" || a.META === meta;
+                return matchNome && matchLocal && matchMeta;
+            });
+
+            renderizar(filtrados);
+        }
+
+        window.onload = carregarDados;
+    </script>
+</body>
+</html>
