@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem Absoluto | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb; 
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
+        }
+        header img { max-width: 250px; width: 80%; height: auto; }
+
+        .main-content {
+            margin-top: 140px;
+            width: 95%;
+            max-width: 1000px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #111827;
+            font-weight: 700; font-size: 2rem;
+            text-align: center; margin-bottom: 30px;
+        }
+
+        .faixa-group-header {
+            background-color: #111827;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 35px 0 15px 0;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .faixa-group-header::before {
+            content: ''; width: 4px; height: 18px; background: var(--primary-color); border-radius: 2px;
+        }
+
+        .accordion-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .accordion-header {
+            padding: 18px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        .accordion-header::after { content: '+'; color: var(--primary-color); font-size: 1.2rem; }
+        .accordion-header.active::after { content: '-'; }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .accordion-content.open {
+            max-height: 3000px;
+            padding: 0 25px 25px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { 
+            text-align: left; padding: 12px; 
+            font-size: 0.7rem; color: var(--text-secondary); 
+            text-transform: uppercase; border-bottom: 2px solid #f3f4f6; 
+        }
+        td { padding: 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.85rem; }
+
+        .ord-badge {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #374151;
+        }
+
+        .link-voltar {
+            display: block; width: fit-content; margin: 40px auto;
+            padding: 14px 30px; background-color: #111827; color: #fff;
+            text-decoration: none; border-radius: 12px;
+            font-family: 'Poppins', sans-serif; font-weight: 600;
+        }
+
+        #loading-message { text-align: center; padding: 50px; font-weight: 600; color: var(--primary-color); }
+
+        @media (max-width: 768px) {
+            thead { display: none; }
+            tr { display: block; padding: 10px 0; border-bottom: 1px solid #eee; }
+            td { display: flex; justify-content: space-between; padding: 5px 0; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); float: left; margin-right: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor Logo"></a>
+    </header>
+
+    <div class="main-content">
+        <h1>Checagem de Absoluto</h1>
+        <div id="loading-message">Carregando inscritos...</div>
+        <div id="listaInscritosAbsoluto"></div>
+        <a href="checagem.html" class="link-voltar">Voltar para Opções</a>
+    </div>
+
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSKzKTOfcgpZ8LucnbSEsagJLSGTE8IXmlOnpwn_ZVX6Nq5KO3-I9UxgHsFcWWjTuKJ1Dl1oDxRXyH-/pub?output=csv';
+        const ORDEM_FAIXAS = { 'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5 };
+
+        function parseCSV(text) {
+            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+            const lines = text.split(/\r?\n/);
+            return lines.map(line => line.split(regex).map(field => field.replace(/^"|"$/g, '').trim()));
+        }
+
+        async function fetchAndProcessData() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const rows = parseCSV(csvText);
+                
+                if (rows.length < 2) return;
+
+                const headers = rows[0].map(h => h.toUpperCase().trim());
+                
+                // Mapeamento dinâmico de índices
+                const idxOrd = headers.indexOf('ORD');
+                const idxNome = headers.indexOf('NOME COMPLETO');
+                const idxEquipe = headers.indexOf('SUA EQUIPE');
+                const idxProfessor = headers.indexOf('PROFESSOR');
+                const idxFaixa = headers.indexOf('SUA FAIXA');
+                const idxCat = headers.indexOf('SUA CATEGORIA');
+                const idxSexo = headers.indexOf('SEXO');
+                const idxAbs = headers.indexOf('ABSOLUTO');
+
+                const data = rows.slice(1).map(row => ({
+                    ord: row[idxOrd] || '-',
+                    nome: row[idxNome] || '',
+                    equipe: row[idxEquipe] || '',
+                    professor: row[idxProfessor] || 'Não informado',
+                    faixa: (row[idxFaixa] || 'BRANCA').toUpperCase(),
+                    categoria: row[idxCat] || '',
+                    sexo: (row[idxSexo] || '').toUpperCase(),
+                    absoluto: (row[idxAbs] || '').toUpperCase()
+                })).filter(atleta => atleta.absoluto === 'SIM');
+
+                renderizar(data);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading-message').textContent = '❌ Erro ao carregar dados.';
+            }
+        }
+
+        function renderizar(data) {
+            const container = document.getElementById('listaInscritosAbsoluto');
+            container.innerHTML = '';
+            document.getElementById('loading-message').style.display = 'none';
+
+            if (data.length === 0) {
+                container.innerHTML = '<p style="text-align:center;">Nenhum atleta no Absoluto encontrado.</p>';
+                return;
+            }
+
+            const estrutura = {};
+            data.forEach(atleta => {
+                let catName = atleta.categoria;
+                if (catName.toUpperCase().includes('MASTER')) catName = 'MASTER (TODAS AS IDADES)';
+                
+                const chave = `ABSOLUTO ${catName.toUpperCase()} (${atleta.sexo})`;
+                
+                if (!estrutura[atleta.faixa]) estrutura[atleta.faixa] = {};
+                if (!estrutura[atleta.faixa][chave]) estrutura[atleta.faixa][chave] = [];
+                estrutura[atleta.faixa][chave].push(atleta);
+            });
+
+            Object.keys(estrutura).sort((a, b) => (ORDEM_FAIXAS[a] || 99) - (ORDEM_FAIXAS[b] || 99))
+            .forEach(faixa => {
+                const headerFaixa = document.createElement('div');
+                headerFaixa.className = 'faixa-group-header';
+                headerFaixa.textContent = `Faixa ${faixa}`;
+                container.appendChild(headerFaixa);
+
+                const chaves = estrutura[faixa];
+                Object.keys(chaves).sort().forEach(chaveNome => {
+                    const atletas = chaves[chaveNome];
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    item.innerHTML = `
+                        <div class="accordion-header" onclick="toggleAcc(this)">
+                            ${chaveNome} (${atletas.length})
+                        </div>
+                        <div class="accordion-content">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ORD</th>
+                                        <th>Atleta</th>
+                                        <th>Equipe</th>
+                                        <th>Professor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${atletas.map(a => `
+                                        <tr>
+                                            <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
+                                            <td data-label="Atleta">${a.nome}</td>
+                                            <td data-label="Equipe">${a.equipe}</td>
+                                            <td data-label="Professor">${a.professor}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            });
+        }
+
+        function toggleAcc(el) {
+            el.classList.toggle('active');
+            el.nextElementSibling.classList.toggle('open');
+        }
+
+        fetchAndProcessData();
+    </script>
+</body>
+</html>
