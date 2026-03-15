@@ -29,7 +29,57 @@
         }
 
         /* =========================================
-           ESTILOS GERAIS (AJUSTADOS PARA IOS)
+           ESTILOS DO CONTADOR (AJUSTADO PARA ADAPTATIVIDADE)
+           ========================================= */
+        .countdown-wrapper {
+            width: 100%;
+            background: #ffffff;
+            color: white;
+            padding: 15px 0;
+            margin-top: 80px; /* Compensa o header fixo */
+            display: flex;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .countdown-content {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 0 15px; /* Evita colar na borda no mobile */
+        }
+        .countdown-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #000000;
+        }
+        .timer-grid {
+            display: flex;
+            gap: 15px;
+        }
+        .timer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 45px; /* Reduzido levemente para caber em telas menores */
+        }
+        .timer-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff0000;
+            line-height: 1;
+        }
+        .timer-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #000000;
+            margin-top: 4px;
+        }
+
+        /* =========================================
+           ESTILOS GERAIS
            ========================================= */
         :root {
             --primary-color: #2563eb; 
@@ -51,37 +101,40 @@
             color: var(--text-main);
             margin: 0;
             padding: 0;
-            /* Melhorias de Scroll para Safari */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            /* Melhora o scroll no iOS */
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
         }
 
         .main-content {
-            margin: 140px auto 60px auto; 
+            margin-top: 20px; 
             width: 90%;
             max-width: 1000px;
-            display: block; /* Mudado de flex para block para evitar colapso no iOS */
+            padding-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
         h1 {
             font-family: 'Poppins', sans-serif;
             color: #111827;
             font-weight: 700;
-            font-size: 2rem;
+            font-size: 1.8rem; /* Reduzido para não quebrar linha agressivamente */
             text-align: center;
-            margin: 0 0 24px 0;
+            margin: 0 0 10px 0;
             letter-spacing: -0.5px;
         }
 
-        /* =========================================
-           LAYOUT GRID
-           ========================================= */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
             gap: 24px;
             align-items: start;
-            margin-bottom: 24px;
         }
 
         .card-banner {
@@ -89,16 +142,20 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow-md);
-            aspect-ratio: 4/5; 
-            position: relative;
+            /* Aspect ratio fixo pode cortar no mobile, usamos altura inteligente */
             width: 100%;
+            position: relative;
         }
 
         .card-banner img {
             width: 100%;
-            height: 100%;
-            object-fit: cover; 
-            object-position: top center; 
+            height: auto; /* Mantém a proporção real da imagem */
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .card-banner:hover img {
+            transform: scale(1.03);
         }
 
         .actions-container {
@@ -113,9 +170,7 @@
             gap: 12px;
         }
 
-        /* =========================================
-           CARD DE PATROCÍNIO
-           ========================================= */
+        /* CARD DE PATROCÍNIO */
         .side-sponsor-container {
             width: 100%;
             background: white;
@@ -124,7 +179,6 @@
             box-shadow: var(--shadow-sm);
             text-align: center;
             border: 1px solid #e5e7eb;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -135,13 +189,13 @@
             text-transform: uppercase;
             color: var(--text-secondary);
             margin-bottom: 8px;
-            letter-spacing: 1px;
             font-weight: 700;
         }
 
         .side-sponsor-image-wrapper {
             width: 100%;
-            height: 200px;
+            height: auto;
+            max-height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -152,13 +206,10 @@
 
         .side-sponsor-image-wrapper img {
             max-width: 100%;
-            max-height: 100%;
+            height: auto;
             object-fit: contain;
         }
 
-        /* =========================================
-           BOTÕES
-           ========================================= */
         .btn-modern {
             display: flex;
             align-items: center;
@@ -170,7 +221,6 @@
             text-decoration: none;
             border-radius: 12px;
             transition: all 0.2s ease;
-            text-align: center;
             box-shadow: var(--shadow-sm);
         }
 
@@ -178,36 +228,18 @@
             grid-column: span 2;
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             color: white;
+            font-size: 1.1rem;
             border: none;
         }
 
-        .btn-secondary {
-            background-color: white;
-            color: var(--text-main);
-            border: 1px solid #e5e7eb;
-        }
+        .btn-secondary { background-color: white; color: var(--text-main); border: 1px solid #e5e7eb; }
+        .btn-danger { background-color: white; color: var(--accent-red); border: 1px solid #fee2e2; }
 
-        .btn-danger {
-            background-color: white;
-            color: var(--accent-red);
-            border: 1px solid #fee2e2;
-        }
-
-        /* CARD INFORMAÇÕES */
         .info-card {
             background: var(--card-bg);
             border-radius: var(--radius);
             padding: 30px;
             box-shadow: var(--shadow-lg);
-            margin-top: 24px;
-        }
-
-        .info-card h2 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.4rem;
-            margin: 0 0 20px 0;
-            border-bottom: 2px solid #f3f4f6;
-            padding-bottom: 15px;
         }
 
         .info-details-grid {
@@ -216,112 +248,70 @@
             gap: 20px;
         }
 
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .info-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; }
+        .info-item { display: flex; flex-direction: column; gap: 5px; }
+        .info-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
         .info-value { font-size: 1rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-        
-        .icon-box { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
-        .footer {
-            padding: 40px 0;
-            width: 100%;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
+        .footer { padding: 30px 0; width: 100%; text-align: center; font-size: 0.85rem; color: var(--text-secondary); }
 
-        /* =========================================
-           POP-UP MODAL (AJUSTADO)
-           ========================================= */
+        /* MODAL */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
             z-index: 99999;
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            pointer-events: none; /* Evita bloquear a tela quando invisível */
+            pointer-events: none;
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            position: relative;
-            max-width: 90%;
-            max-height: 85%;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { max-width: 90%; transform: scale(0.9); transition: transform 0.3s ease; }
         .modal-overlay.active .modal-content { transform: scale(1); }
-
-        .modal-content img {
-            max-width: 100%;
-            max-height: 70vh;
-            border-radius: 12px;
-            display: block;
-        }
-
-        .close-modal-btn {
-            position: absolute;
-            top: -45px;
-            right: 0;
-            color: white;
-            font-size: 35px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
+        .modal-content img { width: 100%; border-radius: 12px; }
+        .close-modal-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 35px; cursor: pointer; background: none; border: none; }
 
         /* WHATSAPP */
         .whatsapp-fixed-text-button {
             position: fixed;
-            bottom: 25px; 
-            right: 25px; 
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            padding: 12px 24px;
-            border-radius: 50px;
-            background-color: #25D366;
-            text-decoration: none;
-            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+            bottom: 25px; right: 25px; z-index: 9999;
+            display: flex; align-items: center; padding: 12px 24px;
+            border-radius: 50px; background-color: #25D366;
+            text-decoration: none; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
         }
 
         /* =========================================
-           RESPONSIVIDADE (REFORÇADA)
+           RESPONSIVIDADE (O SEGREDO DO AJUSTE)
            ========================================= */
         @media (max-width: 900px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 600px) {
-            .main-content { margin-top: 110px; }
-            h1 { font-size: 1.4rem; }
-            .card-banner { 
-                aspect-ratio: auto; 
-                height: 380px; /* Altura fixa no mobile para garantir que botões apareçam */
-            }
-            .actions-grid { grid-template-columns: 1fr; }
-            .btn-primary-action { grid-column: auto; }
-            .whatsapp-fixed-text-button { width: 55px; height: 55px; padding: 0; border-radius: 50%; justify-content: center; }
+            .countdown-wrapper { margin-top: 70px; padding: 12px 0; }
+            .countdown-content { flex-direction: column; gap: 10px; text-align: center; }
+            .countdown-title { font-size: 0.8rem; }
+            .timer-number { font-size: 1.3rem; }
+            .timer-item { min-width: 40px; }
+            
+            .main-content { width: 92%; margin-top: 15px; gap: 20px; }
+            h1 { font-size: 1.3rem; padding: 0 5px; }
+
+            .card-banner { border-radius: 12px; }
+            .card-banner img { height: auto; } /* Garante que o banner não fique achatado */
+
+            .actions-grid { grid-template-columns: 1fr; gap: 10px; }
+            .btn-primary-action { grid-column: auto; font-size: 1rem; padding: 15px; }
+            .btn-modern { padding: 14px; font-size: 0.9rem; }
+            
+            .info-card { padding: 20px; }
+            .info-details-grid { grid-template-columns: 1fr; gap: 15px; }
+
+            .whatsapp-fixed-text-button { width: 55px; height: 55px; padding: 0; border-radius: 50%; bottom: 20px; right: 20px; justify-content: center; }
             .whatsapp-text-visible { display: none; }
-            .whatsapp-icon-only { margin-right: 0; }
-            .side-sponsor-image-wrapper { height: 150px; }
+            .whatsapp-icon-only { margin-right: 0 !important; width: 30px; height: 30px; }
         }
     </style>
 </head>
@@ -333,8 +323,32 @@
         </a>
     </header>
 
+    <div class="countdown-wrapper">
+        <div class="countdown-content">
+            <span class="countdown-title">O evento começa em:</span>
+            <div class="timer-grid">
+                <div class="timer-item">
+                    <span id="days" class="timer-number">00</span>
+                    <span class="timer-label">Dias</span>
+                </div>
+                <div class="timer-item">
+                    <span id="hours" class="timer-number">00</span>
+                    <span class="timer-label">Horas</span>
+                </div>
+                <div class="timer-item">
+                    <span id="minutes" class="timer-number">00</span>
+                    <span class="timer-label">Min</span>
+                </div>
+                <div class="timer-item">
+                    <span id="seconds" class="timer-number">00</span>
+                    <span class="timer-label">Seg</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="main-content">
-        <h1>Open Caicó de Jiu-Jitsu - GI (COM Kimono)</h1>
+        <h1>Open Caicó de Jiu-Jitsu - GI (SEM Kimono)</h1>
         
         <div class="dashboard-grid">
             <div class="card-banner">
@@ -346,7 +360,6 @@
                     <a href="inscricao.html" class="btn-modern btn-primary-action">
                         Realizar Inscrição Agora
                     </a>
-
                     <a href="confirmar-pagamento.html" class="btn-modern btn-secondary">
                         Pagar Inscrição
                     </a>
@@ -359,7 +372,7 @@
                     <a href="chaves.html" class="btn-modern btn-secondary">
                         Visualizar Chaves
                     </a>
-                    <a href="https://drive.google.com/file/d/1M2G1IiMT8G_a6QbNRvuHH5hBy7wyehLR/view?usp=drive_link.html" class="btn-modern btn-danger" target="_blank">
+                    <a href="https://drive.google.com/file/d/1M2G1IiMT8G_a6QbNRvuHH5hBy7wyehLR/view?usp=sharing" class="btn-modern btn-danger" target="_blank">
                         Baixar Edital (PDF)
                     </a>
                     <a href="../../fotos.html" class="btn-modern btn-secondary" style="color: var(--primary-color); border-color: var(--primary-color);">
@@ -415,10 +428,10 @@
     </div>
 
     <a href="https://wa.me/5584987513740?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
-        <svg class="whatsapp-icon-only" width="24" height="24" viewBox="0 0 16 16">
-            <path fill="white" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574z"/>
+        <svg class="whatsapp-icon-only" style="width: 24px; height: 24px; color: white; margin-right: 10px;" viewBox="0 0 16 16">
+            <path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574z"/>
         </svg>
-        <span class="whatsapp-text-visible" style="color: white; margin-left: 10px; font-weight: 700;">Suporte</span>
+        <span class="whatsapp-text-visible" style="color: white; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif;">Suporte</span>
     </a>
 
     <div id="sponsorModal" class="modal-overlay">
@@ -429,10 +442,34 @@
     </div>
 
     <script>
+        function updateCountdown() {
+            const eventDate = new Date('May 16, 2026 08:00:00').getTime();
+            const now = new Date().getTime();
+            const diff = eventDate - now;
+
+            if (diff <= 0) {
+                document.querySelector('.countdown-wrapper').innerHTML = "<strong style='color:#22c55e; padding: 10px;'>O EVENTO JÁ COMEÇOU!</strong>";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
         function openModal() {
             const modal = document.getElementById('sponsorModal');
             modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.add('active'); }, 50);
+            setTimeout(() => { modal.classList.add('active'); }, 10);
         }
 
         function closeModal() {
@@ -442,7 +479,7 @@
         }
 
         window.addEventListener('load', function() {
-            setTimeout(openModal, 1000);
+            setTimeout(openModal, 1500);
         });
 
         document.getElementById('sponsorModal').addEventListener('click', function(e) {
