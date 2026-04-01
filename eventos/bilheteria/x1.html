@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout Pro - Noite de Gala</title>
+    <title>Checkout Pro - Arena Competidor</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Oswald:wght@600;700&display=swap');
 
         :root {
             --primary: #e62117;
@@ -14,7 +14,10 @@
             --text: #ffffff;
             --text-dim: #a1a1aa;
             --border: #27272a;
+            --success: #25d366;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -31,21 +34,23 @@
             grid-template-columns: 1fr 450px;
             gap: 30px;
             padding: 20px;
+            align-items: start;
         }
 
+        /* Banner Showcase */
         .event-showcase {
             background: var(--card-bg);
             border-radius: 20px;
             overflow: hidden;
             border: 1px solid var(--border);
-            height: fit-content;
             position: sticky;
             top: 20px;
+            z-index: 10;
         }
 
         .event-showcase img {
             width: 100%;
-            height: 400px;
+            height: 450px;
             object-fit: cover;
             display: block;
         }
@@ -56,6 +61,7 @@
             font-size: 2.5rem; 
             margin: 0 0 10px 0; 
             text-transform: uppercase;
+            line-height: 1.1;
         }
 
         .badge-live {
@@ -68,16 +74,18 @@
             margin-bottom: 15px;
         }
 
+        /* Forms and Cards */
         .card {
             background: var(--card-bg);
             border-radius: 20px;
             padding: 30px;
             border: 1px solid var(--border);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
         }
 
         .step-title {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -85,6 +93,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 700;
         }
 
         .step-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
@@ -96,7 +105,7 @@
             background: #27272a;
             padding: 15px 25px;
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .qty-controls { display: flex; align-items: center; gap: 20px; }
@@ -108,7 +117,12 @@
             border-radius: 50%;
             cursor: pointer;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
         }
+        .qty-btn:hover { background: var(--primary); color: white; }
 
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; color: var(--text-dim); }
@@ -121,23 +135,23 @@
             border-radius: 10px;
             color: white;
             font-size: 1rem;
-            box-sizing: border-box;
             outline: none;
+            transition: 0.3s;
         }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(230, 33, 23, 0.2); }
 
         .summary {
             background: #27272a;
             border-radius: 15px;
             padding: 25px;
-            margin-top: 20px;
         }
 
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
         .total-row { 
             display: flex; justify-content: space-between; 
             margin-top: 15px; padding-top: 15px; 
             border-top: 1px dashed #52525b;
-            font-size: 1.5rem; font-weight: bold; color: var(--primary);
+            font-size: 1.6rem; font-weight: 800; color: var(--primary);
         }
 
         .btn-submit {
@@ -148,14 +162,43 @@
             padding: 20px;
             border-radius: 12px;
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 800;
             text-transform: uppercase;
             cursor: pointer;
             transition: 0.3s;
+            margin-top: 20px;
+            letter-spacing: 1px;
         }
+        .btn-submit:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-submit:disabled { background: #3f3f46; cursor: not-allowed; transform: none; }
 
+        /* RESPONSIVIDADE PARA CELULAR */
         @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
+            .container { 
+                grid-template-columns: 1fr; 
+                margin: 0;
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .event-showcase {
+                position: relative; /* Torna o banner móvel no celular */
+                top: 0;
+                border-radius: 15px;
+            }
+
+            .event-showcase img {
+                height: 280px; /* Reduz altura para caber melhor na tela */
+            }
+
+            .event-details { padding: 20px; }
+            .event-details h1 { font-size: 1.8rem; }
+
+            .card { padding: 20px; }
+
+            .form-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+
+            .total-row { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -163,11 +206,12 @@
 
 <div class="container">
     <div class="event-showcase">
-        <img src="x12.JPEG" alt="Evento">
+        <img src="../img/x12.JPEG" alt="X1 Jiu-Jitsu">
         <div class="event-details">
             <span class="badge-live">EVENTO AO VIVO</span>
             <h1>X1 de JIU-JITSU</h1>
-            <p style="color: var(--text-dim);">🗓️ 17 de ABRIL, 18:00h</p>
+            <p style="color: var(--text-dim); margin: 5px 0;">🗓️ 17 de ABRIL, 18:00h</p>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">AO VIVO</p>
         </div>
     </div>
 
@@ -175,21 +219,27 @@
         <div class="card">
             <div class="step-title">01. Quantidade</div>
             <div class="qty-selector">
-                <span>Ingresso Individual</span>
+                <span style="font-weight: bold;">Ingresso Individual</span>
                 <div class="qty-controls">
-                    <button class="qty-btn" onclick="updateQty(-1)">-</button>
-                    <b id="display-qty">1</b>
-                    <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    <button type="button" class="qty-btn" onclick="updateQty(-1)">-</button>
+                    <b id="display-qty" style="font-size: 1.2rem;">1</b>
+                    <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
                 </div>
             </div>
+            <p style="font-size: 0.7rem; color: var(--text-dim); text-align: center; margin: 0;">
+                Valor unitário: R$ 30,00 + Taxa de serviço
+            </p>
+        </div>
 
+        <div class="card">
             <div class="step-title">02. Seus Dados</div>
             <form id="mainForm">
                 <div class="input-group">
                     <label>NOME COMPLETO</label>
                     <input type="text" id="nome" required placeholder="Ex: João Silva">
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="input-group">
                         <label>CPF</label>
                         <input type="text" id="cpf" required placeholder="000.000.000-00">
@@ -199,20 +249,31 @@
                         <input type="text" id="tel" required placeholder="(84) 98888-7777">
                     </div>
                 </div>
-                <div class="input-group">
-                    <label>E-MAIL PARA ENVIO</label>
+
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>E-MAIL PARA RECEBER O INGRESSO</label>
                     <input type="email" id="email" required placeholder="contato@exemplo.com">
                 </div>
             </form>
         </div>
 
         <div class="card">
-            <div class="step-title">03. Resumo</div>
+            <div class="step-title">03. Resumo da Reserva</div>
             <div class="summary">
-                <div class="summary-row"><span>Subtotal (<span id="sum-qty">1</span>x)</span><span id="sum-sub">R$ 30,00</span></div>
-                <div class="total-row"><span>TOTAL</span><span id="sum-total">R$ 33,00</span></div>
+                <div class="summary-row">
+                    <span>Subtotal (<span id="sum-qty">1</span>x)</span>
+                    <span id="sum-sub">R$ 30,00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Taxa de Sistema (10%)</span>
+                    <span id="sum-tax">R$ 3,00</span>
+                </div>
+                <div class="total-row">
+                    <span>TOTAL</span>
+                    <span id="sum-total">R$ 33,00</span>
+                </div>
             </div>
-            <button type="submit" form="mainForm" class="btn-submit" id="btnGo">PAGAMENTO</button>
+            <button type="submit" form="mainForm" class="btn-submit" id="btnGo">PROSSEGUIR PARA O PIX</button>
         </div>
     </div>
 </div>
@@ -223,36 +284,50 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXUBHP6JutPI5plU40nEeYKIoV0LYsTaWxxykgQj5CQPjAWhpiIIAsQs9TEM9R95E/exec";
 
     function updateQty(n) {
-        qtd += n; if (qtd < 1) qtd = 1;
+        qtd += n; 
+        if (qtd < 1) qtd = 1;
         document.getElementById('display-qty').innerText = qtd;
         renderSummary();
     }
 
     function renderSummary() {
         const sub = qtd * precoBase;
-        const total = sub * 1.1;
+        const taxa = sub * 0.10;
+        const total = sub + taxa;
+        
         document.getElementById('sum-qty').innerText = qtd;
         document.getElementById('sum-sub').innerText = "R$ " + sub.toFixed(2).replace('.',',');
+        document.getElementById('sum-tax').innerText = "R$ " + taxa.toFixed(2).replace('.',',');
         document.getElementById('sum-total').innerText = "R$ " + total.toFixed(2).replace('.',',');
     }
 
-    // Máscara de Telefone em Tempo Real
+    // Máscaras de Input
     document.getElementById('tel').addEventListener('input', (e) => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
     });
 
+    document.getElementById('cpf').addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        if (v.length <= 11) {
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        }
+        e.target.value = v;
+    });
+
+    // Envio do Formulário
     document.getElementById('mainForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btnGo');
         btn.disabled = true;
-        btn.innerText = "💾 SALVANDO NO SISTEMA...";
+        btn.innerText = "SINCRONIZANDO PEDIDO...";
 
-        const ordId = "ING_" + Date.now();
+        const ordId = "X1_" + Math.floor(Math.random() * 1000) + Date.now().toString().slice(-4);
         const totalStr = document.getElementById('sum-total').innerText;
         const nomeComp = document.getElementById('nome').value;
 
-        // LIMPEZA E SEPARAÇÃO DO WHATSAPP
         const rawTel = document.getElementById('tel').value.replace(/\D/g, ''); 
         const ddd = rawTel.substring(0, 2);
         const celular = rawTel.substring(2);
@@ -265,21 +340,25 @@
             celular: celular,
             email: document.getElementById('email').value,
             valor: totalStr,
-            descricao: qtd + "x Ingressos Noite de Gala"
+            descricao: qtd + "x Ingresso(s) X1 Jiu-Jitsu"
         };
 
-        // Envio para o Google
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify(payload)
-        });
+        // Envio para o Google Sheets (Back-end)
+        try {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify(payload)
+            });
+        } catch (err) {
+            console.log("Erro ao salvar dados, mas prosseguindo...");
+        }
 
-        // Delay para garantir gravação antes de mudar de página
+        // Redirecionamento após salvar
         setTimeout(() => {
             window.location.href = `pagamento.html?ord=${ordId}&valor=${encodeURIComponent(totalStr)}&nome=${encodeURIComponent(nomeComp)}&qtd=${qtd}`;
-        }, 2000);
+        }, 1500);
     };
 </script>
 </body>
