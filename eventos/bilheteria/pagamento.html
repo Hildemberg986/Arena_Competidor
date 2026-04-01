@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Seguro - Arena Competidor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Oswald:wght@600&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f10;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .pay-card {
+            background: #1a1b1e;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 24px;
+            border: 1px solid #27272a;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .pay-header {
+            background: #27272a;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #3f3f46;
+        }
+
+        .pay-header h2 { margin: 0; font-family: 'Oswald'; text-transform: uppercase; color: #e62117; font-size: 1.3rem; }
+        .order-id { font-size: 0.7rem; color: #a1a1aa; margin-top: 3px; font-weight: bold; }
+
+        .pay-body { padding: 15px 20px 20px; text-align: center; }
+
+        .amount-box { margin-bottom: 15px; }
+        .amount-box span { color: #a1a1aa; font-size: 0.8rem; }
+        .amount-box h3 { font-size: 2rem; margin: 2px 0; font-weight: 800; color: #fff; }
+
+        .pix-area {
+            background: #27272a;
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px dashed #32bcad;
+        }
+
+        .pix-info { font-size: 0.75rem; color: #a1a1aa; margin-bottom: 12px; line-height: 1.4; }
+        .pix-info b { color: #32bcad; display: block; font-size: 0.8rem; }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            margin: 0 auto 12px;
+            padding: 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qr-code img { width: 100%; height: auto; display: block; }
+
+        .copy-box {
+            background: #0f0f10;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.55rem;
+            color: #32bcad;
+            word-break: break-all;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid #134e48;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            border: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .btn-copy { background: #32bcad; color: white; margin-bottom: 8px; }
+        
+        .warning-box {
+            background: rgba(230, 33, 23, 0.08);
+            border: 1px solid rgba(230, 33, 23, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 12px 0;
+            text-align: left;
+        }
+        .warning-box h4 { color: #e62117; margin: 0 0 3px 0; font-size: 0.75rem; }
+        .warning-box p { margin: 0; font-size: 0.68rem; color: #d4d4d8; line-height: 1.3; }
+
+        .btn-whats { background: #25d366; color: white; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2); }
+
+        .secure-footer {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #52525b;
+            background: #141416;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-height: 660px) {
+            .amount-box h3 { font-size: 1.7rem; }
+            .qr-code { width: 120px; height: 120px; }
+            .pay-body { padding: 10px 15px; }
+            .btn { padding: 12px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="pay-card">
+    <div class="pay-header">
+        <h2>Pagamento Seguro</h2>
+        <div class="order-id">PEDIDO: <span id="ord-id">---</span></div>
+    </div>
+
+    <div class="pay-body">
+        <div class="amount-box">
+            <span id="label-qtd">Total para 1 ingresso</span>
+            <h3 id="valor-final">R$ 0,00</h3>
+        </div>
+
+        <div class="pix-area">
+            <div class="pix-info">
+                CHAVE PIX CNPJ: <b>62.810.446/0001-39</b>
+                NOME: <b>62.810.446 VALTER SILVA BRASIL</b>
+            </div>
+            
+            <div class="qr-code">
+                <img src="qrcode.jpg" alt="QR Code Pix">
+            </div>
+            
+            <div class="copy-box" onclick="copyPix()">
+                00020126580014BR.GOV.BCB.PIX01367114989a-9d09-421b-be69-f2215cdb856d5204000053039865802BR592562.810.446 VALTER SILVA B6009SAO PAULO621405108Kq1yWUtvF6304D653
+            </div>
+            
+            <button class="btn btn-copy" onclick="copyPix()">
+                COPIAR CÓDIGO PIX
+            </button>
+            
+            <div class="warning-box">
+                <h4>⚠️ ATENÇÃO:</h4>
+                <p>O ingresso será enviado mediante envio do comprovante pelo WhatsApp em até <b>uma hora após o pagamento</b> no contato cadastrado.</p>
+            </div>
+
+            <a href="#" id="whatsLink" class="btn btn-whats" target="_blank" rel="noopener noreferrer">
+                ENVIAR COMPROVANTE AGORA
+            </a>
+        </div>
+    </div>
+
+    <div class="secure-footer">
+        🔒 AMBIENTE CRIPTOGRAFADO & MONITORADO • ARENA COMPETIDOR
+    </div>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const ord = params.get('ord') || "---";
+    const valor = params.get('valor') || "R$ 0,00";
+    const nome = params.get('nome') || "Comprador";
+    const qtd = params.get('qtd') || "1";
+
+    document.getElementById('ord-id').innerText = ord;
+    document.getElementById('valor-final').innerText = valor;
+    document.getElementById('label-qtd').innerText = `Total para ${qtd} ingresso(s)`;
+
+    const whatsapp = "5584987513740"; 
+    const mensagem = `Olá Arena Competidor! Realizei o pagamento do pedido ${ord} no valor de ${valor}. Segue o comprovante para liberação dos meus ${qtd} ingressos em nome de ${nome}.`;
+    document.getElementById('whatsLink').href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensagem)}`;
+
+    function copyPix() {
+        const chave = "00020126580014BR.GOV.BCB.PIX01367114989a-9d09-421b-be69-f2215cdb856d5204000053039865802BR592562.810.446 VALTER SILVA B6009SAO PAULO621405108Kq1yWUtvF6304D653";
+        navigator.clipboard.writeText(chave).then(() => {
+            alert("Código Pix Copiado!");
+        });
+    }
+</script>
+
+</body>
+</html>
