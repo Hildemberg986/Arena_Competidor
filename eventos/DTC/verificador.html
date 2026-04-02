@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner Arena Competidor</title>
+    <title>Check-in Arena - Controle de Acesso</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     
     <style>
@@ -20,7 +20,8 @@
             padding: 20px;
         }
 
-        h2 { color: #e62117; text-transform: uppercase; margin-bottom: 10px; }
+        h2 { color: #e62117; text-transform: uppercase; margin-bottom: 5px; }
+        #status-planilha { font-size: 11px; color: #94a3b8; margin-bottom: 15px; }
 
         #reader {
             width: 100%;
@@ -38,49 +39,61 @@
             padding: 20px;
             border-radius: 15px;
             text-align: center;
-            display: none; /* Escondido até ler algo */
+            display: none;
         }
 
-        .success { background-color: #15803d; border: 2px solid #22c55e; }
-        .error { background-color: #991b1b; border: 2px solid #ef4444; }
+        /* Cores de Status */
+        .success { background-color: #15803d; border: 2px solid #22c55e; } /* Liberado */
+        .warning { background-color: #a16207; border: 2px solid #eab308; } /* Já Entrou */
+        .error { background-color: #991b1b; border: 2px solid #ef4444; }   /* Não existe */
 
         .btn-reset {
             margin-top: 15px;
-            padding: 10px 20px;
+            padding: 12px 25px;
             background: white;
             color: black;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
+            font-weight: 800;
             cursor: pointer;
+            text-transform: uppercase;
         }
 
-        #status-planilha {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 10px;
+        .stats {
+            margin-top: 15px;
+            font-size: 13px;
+            background: #16161a;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #27272a;
         }
     </style>
 </head>
 <body>
 
     <h2>CHECK-IN ARENA</h2>
-    <div id="status-planilha">Carregando base de dados...</div>
+    <div id="status-planilha">Sincronizando dados...</div>
 
     <div id="reader"></div>
 
     <div id="result" class="result-card">
         <h3 id="res-title">---</h3>
         <p id="res-info">---</p>
-        <button class="btn-reset" onclick="resetScanner()">NOVA LEITURA</button>
+        <button class="btn-reset" onclick="resetScanner()">PRÓXIMO DA FILA</button>
     </div>
+
+    <div class="stats">
+        Check-ins realizados: <span id="count-checkin" style="color:#22c55e; font-weight:bold;">0</span>
+    </div>
+
+    <button onclick="limparHistorico()" style="margin-top:30px; background:none; border:none; color:#444; font-size:10px; text-decoration:underline; cursor:pointer;">Limpar histórico de entrada deste aparelho</button>
 
 <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
     let baseDados = [];
     let html5QrCode;
 
-    // 1. Carrega os dados da planilha antes de tudo
+    // Inicialização
     async function carregarPlanilha() {
         try {
             const response = await fetch(CSV_URL);
@@ -96,50 +109,63 @@
                 };
             }).filter(item => item.ord);
 
-            document.getElementById('status-planilha').innerText = `Base de dados pronta: ${baseDados.length} inscritos.`;
+            document.getElementById('status-planilha').innerText = `LISTA ATUALIZADA: ${baseDados.length} INSCRITOS`;
+            atualizarContador();
             iniciarScanner();
         } catch (error) {
-            document.getElementById('status-planilha').innerText = "Erro ao carregar planilha.";
-            console.error(error);
+            document.getElementById('status-planilha').innerText = "ERRO DE CONEXÃO";
         }
     }
 
-    // 2. Inicia a Câmera
     function iniciarScanner() {
         html5QrCode = new Html5Qrcode("reader");
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
         html5QrCode.start(
-            { facingMode: "environment" }, // Usa a câmera traseira
-            config,
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
             onScanSuccess
         );
     }
 
-    // 3. O que acontece quando lê o QR Code
     function onScanSuccess(decodedText) {
-        // Para o scanner para processar
         html5QrCode.pause(true);
-        
-        // Busca na coluna ORD (ID do pedido)
-        const busca = baseDados.find(item => item.ord === decodedText);
-        
+        vibrar(100);
+
         const resultCard = document.getElementById('result');
         const title = document.getElementById('res-title');
         const info = document.getElementById('res-info');
-
+        
         resultCard.style.display = "block";
 
-        if (busca) {
+        // 1. Verifica se o código existe na planilha
+        const participante = baseDados.find(item => item.ord === decodedText);
+
+        if (!participante) {
+            resultCard.className = "result-card error";
+            title.innerText = "TICKET INVÁLIDO";
+            info.innerText = `O código #${decodedText} não existe no sistema.`;
+            vibrar([100, 50, 100]);
+            return;
+        }
+
+        // 2. Verifica se o código JÁ FOI USADO (LocalStorage)
+        const jaEntrou = localStorage.getItem(`checkin_${decodedText}`);
+
+        if (jaEntrou) {
+            resultCard.className = "result-card warning";
+            title.innerText = "ALERTA: JÁ ENTROU!";
+            info.innerHTML = `Este ticket pertence a <b>${participante.nome}</b> e já foi validado às ${jaEntrou}. <br><br><b>ENTRADA NEGADA.</b>`;
+            vibrar([500]);
+        } else {
+            // 3. Primeira entrada: Registrar
+            const horaAtual = new Date().toLocaleTimeString();
+            localStorage.setItem(`checkin_${decodedText}`, horaAtual);
+            
             resultCard.className = "result-card success";
             title.innerText = "ACESSO LIBERADO";
-            info.innerHTML = `<b>Participante:</b> ${busca.nome}<br><b>CPF:</b> ${busca.cpf}<br><b>Pedido:</b> #${busca.ord}`;
-            vibrar(200);
-        } else {
-            resultCard.className = "result-card error";
-            title.innerText = "NÃO ENCONTRADO";
-            info.innerText = `O código #${decodedText} não consta na lista.`;
-            vibrar([100, 50, 100]);
+            info.innerHTML = `<b>${participante.nome}</b><br>CPF: ${participante.cpf}<br>Pedido: #${participante.ord}`;
+            
+            atualizarContador();
+            vibrar([100, 100]);
         }
     }
 
@@ -148,13 +174,26 @@
         html5QrCode.resume();
     }
 
+    function atualizarContador() {
+        const total = Object.keys(localStorage).filter(k => k.startsWith('checkin_')).length;
+        document.getElementById('count-checkin').innerText = total;
+    }
+
+    function limparHistorico() {
+        if(confirm("Isso apagará todos os registros de entrada salvos NESTE CELULAR. Deseja continuar?")) {
+            Object.keys(localStorage).forEach(k => {
+                if(k.startsWith('checkin_')) localStorage.removeItem(k);
+            });
+            atualizarContador();
+            alert("Histórico zerado.");
+        }
+    }
+
     function vibrar(ms) {
         if (navigator.vibrate) navigator.vibrate(ms);
     }
 
-    // Inicia o processo
     carregarPlanilha();
 </script>
-
 </body>
 </html>
