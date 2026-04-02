@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Arena Competidor</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0b;
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h2 { color: #e62117; text-transform: uppercase; margin-bottom: 10px; }
+
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #27272a;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #16161a;
+        }
+
+        .result-card {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            display: none; /* Escondido até ler algo */
+        }
+
+        .success { background-color: #15803d; border: 2px solid #22c55e; }
+        .error { background-color: #991b1b; border: 2px solid #ef4444; }
+
+        .btn-reset {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #status-planilha {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>CHECK-IN ARENA</h2>
+    <div id="status-planilha">Carregando base de dados...</div>
+
+    <div id="reader"></div>
+
+    <div id="result" class="result-card">
+        <h3 id="res-title">---</h3>
+        <p id="res-info">---</p>
+        <button class="btn-reset" onclick="resetScanner()">NOVA LEITURA</button>
+    </div>
+
+<script>
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
+    let baseDados = [];
+    let html5QrCode;
+
+    // 1. Carrega os dados da planilha antes de tudo
+    async function carregarPlanilha() {
+        try {
+            const response = await fetch(CSV_URL);
+            const data = await response.text();
+            const linhas = data.split('\n').slice(1);
+            
+            baseDados = linhas.map(linha => {
+                const colunas = linha.split(',');
+                return {
+                    ord: colunas[1]?.trim(),
+                    nome: colunas[2]?.trim(),
+                    cpf: colunas[3]?.trim()
+                };
+            }).filter(item => item.ord);
+
+            document.getElementById('status-planilha').innerText = `Base de dados pronta: ${baseDados.length} inscritos.`;
+            iniciarScanner();
+        } catch (error) {
+            document.getElementById('status-planilha').innerText = "Erro ao carregar planilha.";
+            console.error(error);
+        }
+    }
+
+    // 2. Inicia a Câmera
+    function iniciarScanner() {
+        html5QrCode = new Html5Qrcode("reader");
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        html5QrCode.start(
+            { facingMode: "environment" }, // Usa a câmera traseira
+            config,
+            onScanSuccess
+        );
+    }
+
+    // 3. O que acontece quando lê o QR Code
+    function onScanSuccess(decodedText) {
+        // Para o scanner para processar
+        html5QrCode.pause(true);
+        
+        // Busca na coluna ORD (ID do pedido)
+        const busca = baseDados.find(item => item.ord === decodedText);
+        
+        const resultCard = document.getElementById('result');
+        const title = document.getElementById('res-title');
+        const info = document.getElementById('res-info');
+
+        resultCard.style.display = "block";
+
+        if (busca) {
+            resultCard.className = "result-card success";
+            title.innerText = "ACESSO LIBERADO";
+            info.innerHTML = `<b>Participante:</b> ${busca.nome}<br><b>CPF:</b> ${busca.cpf}<br><b>Pedido:</b> #${busca.ord}`;
+            vibrar(200);
+        } else {
+            resultCard.className = "result-card error";
+            title.innerText = "NÃO ENCONTRADO";
+            info.innerText = `O código #${decodedText} não consta na lista.`;
+            vibrar([100, 50, 100]);
+        }
+    }
+
+    function resetScanner() {
+        document.getElementById('result').style.display = "none";
+        html5QrCode.resume();
+    }
+
+    function vibrar(ms) {
+        if (navigator.vibrate) navigator.vibrate(ms);
+    }
+
+    // Inicia o processo
+    carregarPlanilha();
+</script>
+
+</body>
+</html>
