@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets - Arena Competidor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        :root { --primary: #e62117; --bg: #0a0a0b; --card: #16161a; --text: #ffffff; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #000; color: #fff; }
+        
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #27272a; }
+        th { background: #1f1f23; color: #94a3b8; font-size: 12px; }
+        .btn-gen { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; flex-direction: column; }
+        
+        /* Ticket Simples e Limpo */
+        .ticket-box { 
+            width: 320px; background: white; color: black; border-radius: 15px; 
+            padding: 20px; text-align: center; border: 2px solid #ddd;
+        }
+        .ticket-header { font-weight: 900; font-size: 20px; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px; color: #e62117; }
+        .ticket-info { margin-bottom: 10px; }
+        .ticket-info label { display: block; font-size: 10px; color: #666; text-transform: uppercase; }
+        .ticket-info b { font-size: 16px; }
+        
+        .qr-area { margin: 15px 0; min-height: 150px; }
+        .qr-area img { width: 150px; height: 150px; display: block; margin: 0 auto; }
+
+        .controls { margin-top: 20px; display: flex; gap: 10px; }
+        .btn-dl { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="color:var(--primary)">GERADOR DE TICKETS</h2>
+    <div class="search-box">
+        <input type="text" id="fNome" placeholder="Nome..." onkeyup="filter()">
+        <input type="text" id="fCPF" placeholder="CPF..." onkeyup="filter()">
+    </div>
+
+    <table id="tabela">
+        <thead>
+            <tr><th>PEDIDO</th><th>NOME</th><th>CPF</th><th>AÇÃO</th></tr>
+        </thead>
+        <tbody id="lista"></tbody>
+    </table>
+</div>
+
+<div id="modal" class="modal">
+    <div id="capture-area">
+        <div class="ticket-box">
+            <div class="ticket-header">ARENA COMPETIDOR</div>
+            <div class="ticket-info">
+                <label>Comprador</label>
+                <b id="t-nome">---</b>
+            </div>
+            <div class="ticket-info">
+                <label>Documento</label>
+                <b id="t-cpf">---</b>
+            </div>
+            
+            <div class="qr-area" id="qr-result">
+                </div>
+
+            <div class="ticket-info">
+                <label>ID Pedido</label>
+                <b id="t-ord">#---</b>
+            </div>
+            <div style="font-size: 9px; color: #999; margin-top: 10px;">X1 JIU-JITSU • 17 ABRIL</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-dl" style="background:#25d366; color:white" onclick="exportar('png')">BAIXAR IMAGEM</button>
+        <button class="btn-dl" style="background:#e62117; color:white" onclick="exportar('pdf')">BAIXAR PDF</button>
+        <button class="btn-dl" style="background:#444; color:white" onclick="fechar()">VOLTAR</button>
+    </div>
+</div>
+
+<div id="qr-buffer" style="display:none"></div>
+
+<script>
+    const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
+    let dados = [];
+
+    async function carregar() {
+        const res = await fetch(URL);
+        const txt = await res.text();
+        const linhas = txt.split('\n').slice(1);
+        dados = linhas.map(l => {
+            const c = l.split(',');
+            return { ord: c[1]?.trim(), nome: c[2]?.trim(), cpf: c[3]?.trim() };
+        }).filter(x => x.ord);
+        render(dados);
+    }
+
+    function render(d) {
+        document.getElementById('lista').innerHTML = d.map(i => `
+            <tr>
+                <td>#${i.ord}</td>
+                <td>${i.nome}</td>
+                <td>${i.cpf}</td>
+                <td><button class="btn-gen" onclick="gerar('${i.ord}','${i.nome}','${i.cpf}')">GERAR</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function filter() {
+        const n = document.getElementById('fNome').value.toLowerCase();
+        const c = document.getElementById('fCPF').value.toLowerCase();
+        render(dados.filter(i => i.nome.toLowerCase().includes(n) && i.cpf.includes(c)));
+    }
+
+    function gerar(ord, nome, cpf) {
+        document.getElementById('t-nome').innerText = nome;
+        document.getElementById('t-cpf').innerText = cpf;
+        document.getElementById('t-ord').innerText = "#" + ord;
+        
+        const buffer = document.getElementById('qr-buffer');
+        const result = document.getElementById('qr-result');
+        buffer.innerHTML = "";
+        result.innerHTML = "Processando...";
+
+        // Cria o QR Code no buffer
+        new QRCode(buffer, { text: ord, width: 256, height: 256 });
+
+        // Converte o Canvas gerado em Imagem REAL (Base64)
+        setTimeout(() => {
+            const canvas = buffer.querySelector('canvas');
+            if(canvas) {
+                const imgTag = document.createElement("img");
+                imgTag.src = canvas.toDataURL("image/png");
+                result.innerHTML = "";
+                result.appendChild(imgTag);
+            }
+        }, 150);
+
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function fechar() { document.getElementById('modal').style.display = 'none'; }
+
+    async function exportar(tipo) {
+        const area = document.getElementById('capture-area');
+        const canvas = await html2canvas(area, { scale: 3, backgroundColor: null });
+        const img = canvas.toDataURL("image/png");
+        const nome = document.getElementById('t-nome').innerText;
+
+        if(tipo === 'png') {
+            const link = document.createElement('a');
+            link.download = `Ticket-${nome}.png`;
+            link.href = img;
+            link.click();
+        } else {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
+            pdf.addImage(img, 'PNG', 0, 0, 100, 150);
+            pdf.save(`Ticket-${nome}.pdf`);
+        }
+    }
+
+    carregar();
+</script>
+</body>
+</html>
