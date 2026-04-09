@@ -1,1 +1,220 @@
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fechamento Financeiro - Arena</title>
+    <style>
+        :root { 
+            --primary: #e62117; 
+            --success: #166534;
+            --pending: #854d0e;
+            --bg: #ffffff;
+            --text: #1e293b;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+
+        .container { width: 100%; max-width: 600px; margin-top: 30px; }
+        
+        h2 { text-align: center; font-weight: 800; color: #000; margin-bottom: 30px; }
+
+        /* Dashboard de Valores */
+        .dashboard { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; margin-bottom: 25px; 
+        }
+        
+        .card { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0;
+            padding: 20px; border-radius: 12px;
+            text-align: center;
+        }
+
+        .card-destaque { 
+            grid-column: span 2; 
+            background: #fff1f2; 
+            border: 2px solid var(--primary); 
+        }
+
+        .card h3 { margin: 0; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .card p { margin: 8px 0 0; font-size: 24px; font-weight: 800; }
+
+        /* Caixa do Extrato */
+        .extrato-box { 
+            background: #fff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .titulo-extrato { 
+            font-weight: 800; font-size: 14px; color: #94a3b8;
+            border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px;
+            display: flex; justify-content: space-between;
+        }
+
+        .item-extrato { 
+            display: flex; justify-content: space-between; 
+            padding: 12px 0; border-bottom: 1px dashed #edf2f7;
+            font-size: 15px;
+        }
+
+        .item-total { 
+            border-top: 2px solid #1e293b; border-bottom: none;
+            margin-top: 15px; padding-top: 15px; font-weight: 800; font-size: 18px;
+        }
+
+        .negativo { color: #e11d48; }
+        .positivo { color: #059669; }
+
+        .btn-update {
+            width: 100%; margin-top: 20px; padding: 15px;
+            background: #000; color: #fff; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-update:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>FINANCEIRO ARENA</h2>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Valor Bruto Total</h3>
+            <p id="res-bruto">R$ 0,00</p>
+        </div>
+        <div class="card">
+            <h3>Total Pendente</h3>
+            <p style="color:var(--pending)" id="res-pendente">R$ 0,00</p>
+        </div>
+        <div class="card card-destaque">
+            <h3>Saldo Líquido Final</h3>
+            <p style="color:var(--primary)" id="res-liquido">R$ 0,00</p>
+        </div>
+    </div>
+
+    <div class="extrato-box">
+        <div class="titulo-extrato">
+            <span>DESCRIÇÃO</span>
+            <span>VALOR</span>
+        </div>
+        
+        <div class="item-extrato">
+            <span>Receita Confirmada</span>
+            <span id="ext-receita" class="positivo">R$ 0,00</span>
+        </div>
+
+        <div class="item-extrato">
+            <span>Taxa Plataforma (10%)</span>
+            <span id="ext-taxa-adm" class="negativo">R$ 0,00</span>
+        </div>
+
+        <div class="item-extrato">
+            <span>Taxa Cartão (5% sobre confirmados)</span>
+            <span id="ext-taxa-card" class="negativo">R$ 0,00</span>
+        </div>
+
+        <div class="item-extrato item-total">
+            <span>SALDO DISPONÍVEL</span>
+            <span id="ext-final">R$ 0,00</span>
+        </div>
+    </div>
+
+    <button class="btn-update" onclick="carregarFinanceiro()">ATUALIZAR VALORES</button>
+</div>
+
+<script>
+    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
+
+    // Limpa "R$ 33,00" e transforma em número real
+    function limparMoeda(texto) {
+        if (!texto) return 0;
+        let valor = texto.replace(/[^\d,]/g, '').replace(',', '.');
+        return parseFloat(valor) || 0;
+    }
+
+    function formatarMoeda(valor) {
+        return valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+    }
+
+    async function carregarFinanceiro() {
+        try {
+            const resposta = await fetch(URL_CSV);
+            const textoCSV = await resposta.text();
+            const linhas = textoCSV.split(/\r?\n/).filter(l => l.trim() !== "");
+            
+            const separador = linhas[0].includes(';') ? ';' : ',';
+
+            let somaBruta = 0;
+            let somaPendente = 0;
+            let somaConfirmada = 0;
+            let totalTaxaAdm = 0;
+            let totalTaxaCartao = 0;
+
+            for(let i = 1; i < linhas.length; i++) {
+                const regex = new RegExp(`${separador}(?=(?:(?:[^"]*"){2})*[^"]*$)`);
+                const col = linhas[i].split(regex);
+
+                // Coluna H (8ª coluna = índice 7) -> Valor Total
+                const valorUnitario = limparMoeda(col[7]); 
+                
+                // Coluna J (10ª coluna = índice 9) -> Status PENDENTE ou CONFIRMADO
+                const status = (col[9] || "").trim().toUpperCase(); 
+                
+                // Coluna L (12ª coluna = índice 11) -> Tipo de Pagamento
+                const tipoPgto = (col[11] || "").trim().toUpperCase(); 
+
+                // Soma tudo da coluna H independentemente do status
+                somaBruta += valorUnitario;
+
+                // Regra das Condições na Coluna J
+                if (status.includes('PENDENTE')) {
+                    somaPendente += valorUnitario;
+                } else if (status.includes('CONFIRMADO') || status.includes('PAGO')) {
+                    somaConfirmada += valorUnitario;
+                    
+                    // Taxas aplicadas APENAS sobre os confirmados
+                    totalTaxaAdm += (valorUnitario * 0.10);
+                    if (tipoPgto.includes('CART') || tipoPgto.includes('CARTÃO')) {
+                        totalTaxaCartao += (valorUnitario * 0.05);
+                    }
+                }
+            }
+
+            // O saldo final é o Confirmado menos as taxas
+            const saldoFinal = somaConfirmada - totalTaxaAdm - totalTaxaCartao;
+
+            // Atualiza a tela
+            document.getElementById('res-bruto').innerText = formatarMoeda(somaBruta);
+            document.getElementById('res-pendente').innerText = formatarMoeda(somaPendente);
+            document.getElementById('res-liquido').innerText = formatarMoeda(saldoFinal);
+
+            document.getElementById('ext-receita').innerText = "+ " + formatarMoeda(somaConfirmada);
+            document.getElementById('ext-taxa-adm').innerText = "- " + formatarMoeda(totalTaxaAdm);
+            document.getElementById('ext-taxa-card').innerText = "- " + formatarMoeda(totalTaxaCartao);
+            document.getElementById('ext-final').innerText = formatarMoeda(saldoFinal);
+
+        } catch (erro) {
+            alert("Erro ao ler a planilha. Verifique se ela está publicada como CSV.");
+            console.error(erro);
+        }
+    }
+
+    carregarFinanceiro();
+</script>
+
+</body>
+</html>
