@@ -2,98 +2,226 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-in Arena - Controle de Acesso</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Check-in Arena - Arena Competidor</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        :root {
+            --primary: #e62117;
+            --primary-soft: rgba(230, 33, 23, 0.1);
+            --bg: #0f172a; /* Fundo Dark Profissional */
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --success: #22c55e;
+            --warning: #eab308;
+            --error: #ef4444;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0b;
-            color: white;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Premium */
+        header {
+            background: #000000;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .logo-box { max-width: 120px; }
+        .logo-box img { width: 100%; height: auto; display: block; filter: brightness(1.2); }
+
+        .btn-back {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        /* Layout Container */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
         }
 
-        h2 { color: #e62117; text-transform: uppercase; margin-bottom: 5px; }
-        #status-planilha { font-size: 11px; color: #94a3b8; margin-bottom: 15px; }
+        .header-text { text-align: center; margin-bottom: 1.5rem; }
+        .header-text h1 { font-size: 1.5rem; font-weight: 800; margin: 0; color: var(--primary); }
+        #status-planilha { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
+        /* Scanner Area */
         #reader {
             width: 100%;
-            max-width: 400px;
-            border: 2px solid #27272a;
-            border-radius: 15px;
+            border: 2px solid #334155;
+            border-radius: 24px;
             overflow: hidden;
-            background: #16161a;
+            background: #000;
+            box-shadow: var(--shadow);
         }
 
-        .result-card {
-            margin-top: 20px;
+        /* Overlay do Scanner (ajuste para a biblioteca) */
+        #reader__scan_region { background: #000; }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--card);
+            padding: 12px 20px;
+            border-radius: 16px;
+            margin-top: 1.5rem;
+            border: 1px solid #334155;
+            font-size: 0.9rem;
+            font-weight: 600;
             width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .count-badge {
+            background: var(--success);
+            color: #000;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+        }
+
+        /* Result Card */
+        .result-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
             max-width: 400px;
-            padding: 20px;
-            border-radius: 15px;
+            padding: 30px 20px;
+            border-radius: 28px;
             text-align: center;
             display: none;
+            z-index: 2000;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Cores de Status */
-        .success { background-color: #15803d; border: 2px solid #22c55e; } /* Liberado */
-        .warning { background-color: #a16207; border: 2px solid #eab308; } /* Já Entrou */
-        .error { background-color: #991b1b; border: 2px solid #ef4444; }   /* Não existe */
+        @keyframes popIn {
+            from { opacity: 0; transform: translate(-50%, -40%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .success { background: #064e3b; border: 3px solid var(--success); color: #ecfdf5; }
+        .warning { background: #78350f; border: 3px solid var(--warning); color: #fffbeb; }
+        .error { background: #7f1d1d; border: 3px solid var(--error); color: #fef2f2; }
+
+        .result-card i { font-size: 3rem; margin-bottom: 15px; }
+        .result-card h3 { margin: 0 0 10px 0; font-size: 1.4rem; font-weight: 800; }
+        .result-card p { margin: 0 0 20px 0; font-size: 1rem; line-height: 1.5; }
 
         .btn-reset {
-            margin-top: 15px;
-            padding: 12px 25px;
+            width: 100%;
+            padding: 16px;
             background: white;
             color: black;
             border: none;
-            border-radius: 8px;
+            border-radius: 14px;
             font-weight: 800;
+            font-size: 1rem;
             cursor: pointer;
             text-transform: uppercase;
         }
 
-        .stats {
-            margin-top: 15px;
-            font-size: 13px;
-            background: #16161a;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #27272a;
+        /* Overlay Background ao validar */
+        #overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            z-index: 1500;
+        }
+
+        .btn-clear {
+            margin-top: auto;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 0.7rem;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 20px;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
 
-    <h2>CHECK-IN ARENA</h2>
-    <div id="status-planilha">Sincronizando dados...</div>
+    <header>
+        <div class="logo-box">
+            <img src="../../img/arena02.png" alt="Arena Competidor">
+        </div>
+        <a href="menu.html" class="btn-back">
+            <i class="fa-solid fa-house"></i>
+        </a>
+    </header>
 
-    <div id="reader"></div>
+    <main class="container">
+        <section class="header-text">
+            <h1>Check-in Arena</h1>
+            <div id="status-planilha">Sincronizando...</div>
+        </section>
+
+        <div id="reader"></div>
+
+        <div class="stats-bar">
+            <span>Entradas Confirmadas</span>
+            <span class="count-badge" id="count-checkin">0</span>
+        </div>
+
+        <button onclick="limparHistorico()" class="btn-clear">Limpar histórico local</button>
+    </main>
+
+    <div id="overlay"></div>
 
     <div id="result" class="result-card">
+        <i id="res-icon" class="fa-solid"></i>
         <h3 id="res-title">---</h3>
         <p id="res-info">---</p>
         <button class="btn-reset" onclick="resetScanner()">PRÓXIMO DA FILA</button>
     </div>
-
-    <div class="stats">
-        Check-ins realizados: <span id="count-checkin" style="color:#22c55e; font-weight:bold;">0</span>
-    </div>
-
-    <button onclick="limparHistorico()" style="margin-top:30px; background:none; border:none; color:#444; font-size:10px; text-decoration:underline; cursor:pointer;">Limpar histórico de entrada deste aparelho</button>
 
 <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
     let baseDados = [];
     let html5QrCode;
 
-    // Inicialização
     async function carregarPlanilha() {
         try {
             const response = await fetch(CSV_URL);
@@ -101,19 +229,19 @@
             const linhas = data.split('\n').slice(1);
             
             baseDados = linhas.map(linha => {
-                const colunas = linha.split(',');
+                const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 return {
-                    ord: colunas[1]?.trim(),
-                    nome: colunas[2]?.trim(),
-                    cpf: colunas[3]?.trim()
+                    ord: colunas[1]?.replace(/"/g, '').trim(),
+                    nome: colunas[2]?.replace(/"/g, '').trim(),
+                    cpf: colunas[3]?.replace(/"/g, '').trim()
                 };
             }).filter(item => item.ord);
 
-            document.getElementById('status-planilha').innerText = `LISTA ATUALIZADA: ${baseDados.length} INSCRITOS`;
+            document.getElementById('status-planilha').innerText = `Online: ${baseDados.length} inscritos`;
             atualizarContador();
             iniciarScanner();
         } catch (error) {
-            document.getElementById('status-planilha').innerText = "ERRO DE CONEXÃO";
+            document.getElementById('status-planilha').innerText = "Erro de conexão";
         }
     }
 
@@ -121,7 +249,7 @@
         html5QrCode = new Html5Qrcode("reader");
         html5QrCode.start(
             { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
+            { fps: 15, qrbox: { width: 250, height: 250 } },
             onScanSuccess
         );
     }
@@ -131,38 +259,41 @@
         vibrar(100);
 
         const resultCard = document.getElementById('result');
+        const overlay = document.getElementById('overlay');
         const title = document.getElementById('res-title');
         const info = document.getElementById('res-info');
+        const icon = document.getElementById('res-icon');
         
+        overlay.style.display = "block";
         resultCard.style.display = "block";
 
-        // 1. Verifica se o código existe na planilha
         const participante = baseDados.find(item => item.ord === decodedText);
 
         if (!participante) {
             resultCard.className = "result-card error";
-            title.innerText = "TICKET INVÁLIDO";
-            info.innerText = `O código #${decodedText} não existe no sistema.`;
+            icon.className = "fa-solid fa-circle-xmark";
+            title.innerText = "INVÁLIDO";
+            info.innerText = `Pedido #${decodedText} não encontrado.`;
             vibrar([100, 50, 100]);
             return;
         }
 
-        // 2. Verifica se o código JÁ FOI USADO (LocalStorage)
         const jaEntrou = localStorage.getItem(`checkin_${decodedText}`);
 
         if (jaEntrou) {
             resultCard.className = "result-card warning";
-            title.innerText = "ALERTA: JÁ ENTROU!";
-            info.innerHTML = `Este ticket pertence a <b>${participante.nome}</b> e já foi validado às ${jaEntrou}. <br><br><b>ENTRADA NEGADA.</b>`;
+            icon.className = "fa-solid fa-triangle-exclamation";
+            title.innerText = "JÁ ENTROU!";
+            info.innerHTML = `<b>${participante.nome}</b><br>Entrada em: ${jaEntrou}`;
             vibrar([500]);
         } else {
-            // 3. Primeira entrada: Registrar
-            const horaAtual = new Date().toLocaleTimeString();
+            const horaAtual = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
             localStorage.setItem(`checkin_${decodedText}`, horaAtual);
             
             resultCard.className = "result-card success";
-            title.innerText = "ACESSO LIBERADO";
-            info.innerHTML = `<b>${participante.nome}</b><br>CPF: ${participante.cpf}<br>Pedido: #${participante.ord}`;
+            icon.className = "fa-solid fa-circle-check";
+            title.innerText = "LIBERADO";
+            info.innerHTML = `<b>${participante.nome}</b><br>Pedido: #${participante.ord}`;
             
             atualizarContador();
             vibrar([100, 100]);
@@ -171,6 +302,7 @@
 
     function resetScanner() {
         document.getElementById('result').style.display = "none";
+        document.getElementById('overlay').style.display = "none";
         html5QrCode.resume();
     }
 
@@ -180,12 +312,11 @@
     }
 
     function limparHistorico() {
-        if(confirm("Isso apagará todos os registros de entrada salvos NESTE CELULAR. Deseja continuar?")) {
+        if(confirm("Zerar as entradas salvas neste aparelho?")) {
             Object.keys(localStorage).forEach(k => {
                 if(k.startsWith('checkin_')) localStorage.removeItem(k);
             });
             atualizarContador();
-            alert("Histórico zerado.");
         }
     }
 
