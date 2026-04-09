@@ -2,304 +2,376 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tickets - Arena Competidor</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        :root { 
-            --primary: #e62117; 
-            --bg: #f8fafc; 
-            --card: #ffffff; 
-            --text: #1e293b; 
+        :root {
+            --primary: #e62117;
+            --primary-soft: #fff1f0;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --success: #059669;
+            --warning: #854d0e;
             --border: #e2e8f0;
-            --success: #22c55e;
-            --warning: #eab308;
-            --muted: #64748b;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        body { 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            padding: 15px; 
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
+            padding: 0;
         }
 
-        .container { max-width: 900px; margin: 0 auto; }
-        
-        h2 { text-align: center; letter-spacing: 1px; margin-bottom: 25px; color: var(--primary); font-weight: 800; font-size: 1.5rem; }
+        /* Header Premium */
+        header {
+            background: var(--card);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
 
-        /* Dashboard Stats - Responsivo */
-        .stats-container {
+        .logo-box { max-width: 140px; }
+        .logo-box img { width: 100%; height: auto; display: block; }
+
+        .quick-scan {
+            background: var(--primary);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(230, 33, 23, 0.2);
+        }
+
+        /* Layout Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .header-text { margin-bottom: 2rem; }
+        .header-text h1 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+
+        /* Stats Dashboard */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .stat-card {
             background: var(--card);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 1.2rem;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card span { display: block; font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+        .stat-card b { font-size: 1.4rem; font-weight: 800; }
+        .stat-card.total { border-bottom: 4px solid var(--text); }
+        .stat-card.pago { border-bottom: 4px solid var(--success); }
+        .stat-card.pendente { border-bottom: 4px solid var(--warning); }
+
+        /* Busca */
+        .search-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+            background: white;
+        }
+
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+
+        /* Tabela Estilizada */
+        .table-container {
+            background: var(--card);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
 
-        .stat-card span {
-            display: block;
-            font-size: 10px;
-            color: var(--muted);
-            text-transform: uppercase;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-card b { font-size: 20px; color: var(--text); }
-        .stat-card.total { border-top: 4px solid var(--primary); }
-        .stat-card.pago { border-top: 4px solid var(--success); }
-        .stat-card.pendente { border-top: 4px solid var(--warning); }
-
-        /* Busca */
-        .search-box { display: flex; gap: 10px; margin-bottom: 20px; flex-direction: column; }
-        input { 
-            flex: 1; padding: 12px; border-radius: 8px; 
-            border: 1px solid var(--border); background: #fff; color: #000; 
-            font-size: 14px; outline: none; width: 100%; box-sizing: border-box;
-        }
-        input:focus { border-color: var(--primary); }
-
-        /* Tabela Responsiva */
-        .table-wrapper { overflow-x: auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; min-width: 500px; }
-        
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background: #f1f5f9; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; padding: 15px; text-align: left; font-size: 0.7rem; text-transform: uppercase; color: var(--text-light); letter-spacing: 1px; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 
         .status-badge {
-            padding: 4px 8px; border-radius: 20px; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
         }
+
         .status-pago { background: #dcfce7; color: #166534; }
         .status-pendente { background: #fef9c3; color: #854d0e; }
 
-        .btn-gen { 
-            background: var(--primary); color: white; border: none; 
-            padding: 8px 12px; border-radius: 6px; cursor: pointer; 
-            font-weight: bold; font-size: 11px; transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .btn-gen:disabled {
-            background: #cbd5e1;
-            color: #94a3b8;
-            cursor: not-allowed;
-            transform: none !important;
+        .btn-gen {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        /* Modal */
-        .modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(15, 23, 42, 0.95); z-index: 100; justify-content: center; 
-            align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box;
-        }
-        
-        .ticket-box { 
-            width: 100%; max-width: 300px; background: white; color: black; border-radius: 15px; 
-            padding: 20px; text-align: center; border: 1px solid #eee;
-        }
-        .ticket-header { font-weight: 900; font-size: 18px; border-bottom: 2px dashed #eee; padding-bottom: 10px; margin-bottom: 15px; color: #e62117; }
-        .ticket-info { margin-bottom: 10px; }
-        .ticket-info label { display: block; font-size: 9px; color: #888; text-transform: uppercase; }
-        .ticket-info b { font-size: 14px; color: #222; word-break: break-word; }
-        
-        .qr-area { margin: 10px 0; display: flex; justify-content: center; }
-        .qr-area img { width: 140px; height: 140px; }
+        .btn-gen:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+        .btn-gen:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
 
-        .controls { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; }
-        .btn-dl { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 12px; flex: 1; min-width: 120px; }
+        /* Modal e Ticket */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9); z-index: 2000;
+            justify-content: center; align-items: center; flex-direction: column; padding: 20px;
+        }
 
-        /* Media Queries para Celular */
+        .ticket-box {
+            width: 100%; max-width: 320px; background: white; border-radius: 20px;
+            padding: 25px; text-align: center; position: relative;
+        }
+
+        .ticket-header { font-weight: 900; font-size: 1.2rem; color: var(--primary); border-bottom: 2px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        .ticket-info { margin-bottom: 12px; }
+        .ticket-info label { display: block; font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
+        .ticket-info b { font-size: 1.1rem; color: var(--text); }
+
+        .qr-area { margin: 15px 0; display: flex; justify-content: center; }
+        .qr-area img { width: 160px; height: 160px; border: 8px solid #f8fafc; border-radius: 12px; }
+
+        .modal-controls { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; }
+        .btn-modal { padding: 14px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
+
+        /* Responsividade */
         @media (max-width: 600px) {
-            .stats-container { grid-template-columns: 1fr; }
-            .search-box { flex-direction: column; }
-            h2 { font-size: 1.2rem; }
-            .btn-dl { font-size: 11px; }
+            .stats-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+            .search-area { grid-template-columns: 1fr; }
+            td:nth-child(1) { display: none; } /* Esconde ID no mobile para focar no nome */
+            th:nth-child(1) { display: none; }
+            .modal-controls { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>ARENA COMPETIDOR</h2>
-    
-    <div class="stats-container">
-        <div class="stat-card total"><span>Total</span><b id="count-total">0</b></div>
-        <div class="stat-card pago"><span>Confirmados</span><b id="count-pago">0</b></div>
-        <div class="stat-card pendente"><span>Pendentes</span><b id="count-pendente">0</b></div>
-    </div>
+    <header>
+        <div class="logo-box">
+            <img src="logo.png" alt="Arena Competidor">
+        </div>
+        <a href="validador.html" class="quick-scan">
+            <i class="fa-solid fa-qrcode"></i>
+        </a>
+    </header>
 
-    <div class="search-box">
-        <input type="text" id="fNome" placeholder="Buscar por Nome..." onkeyup="filter()">
-        <input type="text" id="fCPF" placeholder="Buscar por CPF..." onkeyup="filter()">
-    </div>
+    <main class="container">
+        <section class="header-text">
+            <h1>Gestão de Ingressos</h1>
+        </section>
 
-    <div class="table-wrapper">
-        <table id="tabela">
-            <thead>
-                <tr>
-                    <th>PEDIDO</th>
-                    <th>COMPRADOR</th>
-                    <th>STATUS</th>
-                    <th>AÇÃO</th>
-                </tr>
-            </thead>
-            <tbody id="lista"></tbody>
-        </table>
-    </div>
-</div>
+        <div class="stats-grid">
+            <div class="stat-card total"><span>Inscritos</span><b id="count-total">0</b></div>
+            <div class="stat-card pago"><span>Confirmados</span><b id="count-pago">0</b></div>
+            <div class="stat-card pendente"><span>Pendentes</span><b id="count-pendente">0</b></div>
+        </div>
 
-<div id="modal" class="modal">
-    <div id="capture-area">
-        <div class="ticket-box">
-            <div class="ticket-header">X1 DE JIU JITSU</div>
-            <div class="ticket-info"><label>Comprador</label><b id="t-nome">---</b></div>
-            <div class="ticket-info"><label>Documento</label><b id="t-cpf">---</b></div>
-            <div class="qr-area" id="qr-result"></div>
-            <div class="ticket-info"><label>ID Verificador</label><b id="t-ord">#---</b></div>
-            <div style="font-size: 8px; color: #999; margin-top: 10px;">
-                GINÁSIO DA SECRETARIA DE EDUCAÇÃO<br>RECIFE/PE • 17 ABRIL | 18H
+        <div class="search-area">
+            <input type="text" id="fNome" placeholder="🔍 Buscar por Nome..." onkeyup="filter()">
+            <input type="text" id="fCPF" placeholder="💳 Buscar por CPF..." onkeyup="filter()">
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Comprador</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="lista">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div id="capture-area">
+            <div class="ticket-box">
+                <div class="ticket-header">X1 DE JIU JITSU</div>
+                <div class="ticket-info"><label>Comprador</label><b id="t-nome">---</b></div>
+                <div class="ticket-info"><label>Documento</label><b id="t-cpf">---</b></div>
+                <div class="qr-area" id="qr-result"></div>
+                <div class="ticket-info"><label>Código Verificador</label><b id="t-ord">#---</b></div>
+                <div style="font-size: 9px; color: var(--text-light); margin-top: 10px; line-height: 1.4;">
+                    GINÁSIO DA SECRETARIA DE EDUCAÇÃO<br><b>17 ABRIL | 18H</b>
+                </div>
             </div>
         </div>
+        <div class="modal-controls">
+            <button class="btn-modal" style="background:#22c55e; color:white" onclick="exportar('png')"><i class="fa-solid fa-image"></i> IMAGEM</button>
+            <button class="btn-modal" style="background:#ef4444; color:white" onclick="exportar('pdf')"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            <button class="btn-modal" style="background:#64748b; color:white; grid-column: span 1;" onclick="fechar()">VOLTAR</button>
+        </div>
     </div>
-    <div class="controls">
-        <button class="btn-dl" style="background:#25d366; color:white" onclick="exportar('png')">SALVAR IMAGEM</button>
-        <button class="btn-dl" style="background:#e62117; color:white" onclick="exportar('pdf')">PDF</button>
-        <button class="btn-dl" style="background:#64748b; color:white" onclick="fechar()">VOLTAR</button>
-    </div>
-</div>
 
-<div id="qr-buffer" style="display:none"></div>
+    <div id="qr-buffer" style="display:none"></div>
 
-<script>
-    const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
-    let dados = [];
+    <script>
+        const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
+        let dados = [];
 
-    async function carregar() {
-        try {
-            const res = await fetch(URL);
-            const txt = await res.text();
-            const linhas = txt.split('\n').slice(1);
-            
-            dados = linhas.map(l => {
-                const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
-                return { 
-                    ord: c[1]?.replace(/"/g, '').trim(), 
-                    nome: c[2]?.replace(/"/g, '').trim(), 
-                    cpf: c[3]?.replace(/"/g, '').trim(),
-                    status: c[9]?.replace(/"/g, '').trim() || "Pendente"
-                };
-            }).filter(x => x.ord);
+        async function carregar() {
+            try {
+                const res = await fetch(URL);
+                const txt = await res.text();
+                const linhas = txt.split('\n').slice(1);
+                
+                dados = linhas.map(l => {
+                    const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
+                    return { 
+                        ord: c[1]?.replace(/"/g, '').trim(), 
+                        nome: c[2]?.replace(/"/g, '').trim(), 
+                        cpf: c[3]?.replace(/"/g, '').trim(),
+                        status: c[9]?.replace(/"/g, '').trim() || "Pendente"
+                    };
+                }).filter(x => x.ord);
 
-            dados.sort((a, b) => a.nome.localeCompare(b.nome));
-            render(dados);
-        } catch (e) { console.error(e); }
-    }
-
-    function render(lista) {
-        const total = lista.length;
-        const pagos = lista.filter(i => isPago(i.status)).length;
-        
-        document.getElementById('count-total').innerText = total;
-        document.getElementById('count-pago').innerText = pagos;
-        document.getElementById('count-pendente').innerText = total - pagos;
-
-        document.getElementById('lista').innerHTML = lista.map(i => {
-            const confirmado = isPago(i.status);
-            const statusClass = confirmado ? 'status-pago' : 'status-pendente';
-            
-            // Lógica do Botão: Se não confirmado, fica disabled
-            const btnAcao = confirmado 
-                ? `<button class="btn-gen" onclick="gerar('${i.ord}','${i.nome}','${i.cpf}')">TICKET</button>`
-                : `<button class="btn-gen" disabled title="Pagamento Pendente">BLOQUEADO</button>`;
-
-            return `
-                <tr>
-                    <td><small>#${i.ord}</small></td>
-                    <td><b>${i.nome}</b><br><small style="color:#888">${i.cpf}</small></td>
-                    <td><span class="status-badge ${statusClass}">${i.status}</span></td>
-                    <td>${btnAcao}</td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    function isPago(status) {
-        const s = status.toLowerCase();
-        return s.includes('pago') || s.includes('confirmado');
-    }
-
-    function filter() {
-        const n = document.getElementById('fNome').value.toLowerCase();
-        const c = document.getElementById('fCPF').value.toLowerCase();
-        const filtrados = dados.filter(i => 
-            i.nome.toLowerCase().includes(n) && i.cpf.includes(c)
-        );
-        render(filtrados);
-    }
-
-    function gerar(ord, nome, cpf) {
-        document.getElementById('t-nome').innerText = nome;
-        document.getElementById('t-cpf').innerText = cpf;
-        document.getElementById('t-ord').innerText = "#" + ord;
-        
-        const buffer = document.getElementById('qr-buffer');
-        const result = document.getElementById('qr-result');
-        buffer.innerHTML = "";
-        result.innerHTML = "Gerando QR...";
-
-        new QRCode(buffer, { text: ord, width: 256, height: 256 });
-
-        setTimeout(() => {
-            const canvas = buffer.querySelector('canvas');
-            if(canvas) {
-                const imgTag = document.createElement("img");
-                imgTag.src = canvas.toDataURL("image/png");
-                result.innerHTML = "";
-                result.appendChild(imgTag);
-            }
-        }, 300);
-
-        document.getElementById('modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Trava scroll do fundo
-    }
-
-    function fechar() { 
-        document.getElementById('modal').style.display = 'none'; 
-        document.body.style.overflow = 'auto';
-    }
-
-    async function exportar(tipo) {
-        const area = document.getElementById('capture-area');
-        const canvas = await html2canvas(area, { scale: 3 });
-        const img = canvas.toDataURL("image/png");
-        const nome = document.getElementById('t-nome').innerText;
-
-        if(tipo === 'png') {
-            const link = document.createElement('a');
-            link.download = `Ticket-${nome}.png`;
-            link.href = img;
-            link.click();
-        } else {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
-            pdf.addImage(img, 'PNG', 0, 0, 100, 150);
-            pdf.save(`Ticket-${nome}.pdf`);
+                dados.sort((a, b) => a.nome.localeCompare(b.nome));
+                render(dados);
+            } catch (e) { console.error(e); }
         }
-    }
 
-    carregar();
-</script>
+        function render(lista) {
+            const total = lista.length;
+            const pagos = lista.filter(i => isPago(i.status)).length;
+            
+            document.getElementById('count-total').innerText = total;
+            document.getElementById('count-pago').innerText = pagos;
+            document.getElementById('count-pendente').innerText = total - pagos;
+
+            document.getElementById('lista').innerHTML = lista.map(i => {
+                const confirmado = isPago(i.status);
+                const statusClass = confirmado ? 'status-pago' : 'status-pendente';
+                
+                const btnAcao = confirmado 
+                    ? `<button class="btn-gen" onclick="gerar('${i.ord}','${i.nome}','${i.cpf}')">TICKET</button>`
+                    : `<button class="btn-gen" disabled>BLOQUEADO</button>`;
+
+                return `
+                    <tr>
+                        <td style="color:#94a3b8">#${i.ord}</td>
+                        <td><b>${i.nome}</b><br><small style="color:var(--text-light)">${i.cpf}</small></td>
+                        <td><span class="status-badge ${statusClass}">${i.status}</span></td>
+                        <td>${btnAcao}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function isPago(status) {
+            const s = status.toLowerCase();
+            return s.includes('pago') || s.includes('confirmado');
+        }
+
+        function filter() {
+            const n = document.getElementById('fNome').value.toLowerCase();
+            const c = document.getElementById('fCPF').value.toLowerCase();
+            const filtrados = dados.filter(i => 
+                i.nome.toLowerCase().includes(n) && i.cpf.includes(c)
+            );
+            render(filtrados);
+        }
+
+        function gerar(ord, nome, cpf) {
+            document.getElementById('t-nome').innerText = nome;
+            document.getElementById('t-cpf').innerText = cpf;
+            document.getElementById('t-ord').innerText = "#" + ord;
+            
+            const buffer = document.getElementById('qr-buffer');
+            const result = document.getElementById('qr-result');
+            buffer.innerHTML = "";
+            result.innerHTML = "Gerando...";
+
+            new QRCode(buffer, { text: ord, width: 256, height: 256 });
+
+            setTimeout(() => {
+                const canvas = buffer.querySelector('canvas');
+                if(canvas) {
+                    const imgTag = document.createElement("img");
+                    imgTag.src = canvas.toDataURL("image/png");
+                    result.innerHTML = "";
+                    result.appendChild(imgTag);
+                }
+            }, 300);
+
+            document.getElementById('modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fechar() { 
+            document.getElementById('modal').style.display = 'none'; 
+            document.body.style.overflow = 'auto';
+        }
+
+        async function exportar(tipo) {
+            const area = document.getElementById('capture-area');
+            const canvas = await html2canvas(area, { scale: 3, useCORS: true });
+            const img = canvas.toDataURL("image/png");
+            const nome = document.getElementById('t-nome').innerText;
+
+            if(tipo === 'png') {
+                const link = document.createElement('a');
+                link.download = `Arena-${nome}.png`;
+                link.href = img;
+                link.click();
+            } else {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
+                pdf.addImage(img, 'PNG', 0, 0, 100, 150);
+                pdf.save(`Arena-${nome}.pdf`);
+            }
+        }
+
+        carregar();
+    </script>
 </body>
 </html>
