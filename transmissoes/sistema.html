@@ -26,7 +26,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* SCROLLBAR PERSONALIZADA */
+/* SCROLLBAR */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
@@ -63,14 +63,18 @@ header {
 .logo {
   width: 46px;
   height: 46px;
-  border-radius: 14px;
-  background: linear-gradient(145deg, var(--red), var(--red2));
+  border-radius: 12px;
+  overflow: hidden; /* Garante que a imagem respeite o border-radius */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 22px;
-  box-shadow: 0 0 25px rgba(255, 0, 0, .25);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Faz a imagem preencher o espaço sem distorcer */
 }
 
 .brand h1 {
@@ -166,7 +170,7 @@ main {
 }
 
 .card {
-  height: 180px; /* Reduzido para focar na proporção de vídeo */
+  height: 180px;
   background: var(--card);
   border: 2px solid var(--line);
   border-radius: 18px;
@@ -184,7 +188,6 @@ main {
   box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 }
 
-/* Card Ativo no momento */
 .card.active {
   border-color: var(--red);
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
@@ -205,7 +208,6 @@ main {
 
 .card-top small { color: var(--red); font-weight: bold; }
 
-/* Usando Thumbnails para não travar o navegador com 7 iframes */
 .thumb-container {
   position: relative;
   flex: 1;
@@ -218,14 +220,14 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.8;
+  opacity: 0.7;
   transition: opacity 0.3s;
 }
 
 .play-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,10 +236,9 @@ main {
 }
 
 .play-overlay svg {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   fill: #fff;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
   transform: scale(0.8);
   transition: transform 0.3s ease;
 }
@@ -247,25 +248,14 @@ main {
 .card:hover .play-overlay svg { transform: scale(1); }
 
 /* RESPONSIVO */
-@media(max-width: 1400px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
-}
-
+@media(max-width: 1400px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 @media(max-width: 900px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
   .featured { height: 320px; }
 }
-
 @media(max-width: 650px) {
   .grid { grid-template-columns: 1fr; }
-  .featured { height: 260px; }
-  header {
-    flex-direction: column;
-    height: auto;
-    padding: 16px;
-    gap: 12px;
-  }
-  .top { justify-content: center; }
+  header { flex-direction: column; height: auto; padding: 16px; gap: 12px; }
   main { height: calc(100vh - 140px); }
 }
 </style>
@@ -274,7 +264,9 @@ main {
 
 <header>
   <div class="brand">
-    <div class="logo">A</div>
+    <div class="logo">
+      <img src="../img/arena2.png" alt="Arena Logo">
+    </div>
     <h1>Arena <span>Competidor</span></h1>
   </div>
 
@@ -295,8 +287,7 @@ main {
       </div>
       <small style="color:var(--muted)">AO VIVO</small>
     </div>
-    
-    <iframe id="mainFrame" src="https://www.youtube.com/embed/FgkvumJ2YWw?autoplay=1&mute=0" allow="autoplay; encrypted-media" allowfullscreen title="Transmissão Principal"></iframe>
+    <iframe id="mainFrame" src="https://www.youtube.com/embed/FgkvumJ2YWw?autoplay=1&mute=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </section>
 
   <section class="grid" id="videoGrid">
@@ -304,60 +295,48 @@ main {
     <div class="card active" data-id="FgkvumJ2YWw" data-name="Área 01">
       <div class="card-top"><span>Área 01</span><small>LIVE</small></div>
       <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/FgkvumJ2YWw/hqdefault.jpg" alt="Thumbnail Área 01">
-        <div class="play-overlay">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img src="https://img.youtube.com/vi/FgkvumJ2YWw/hqdefault.jpg">
+        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
     </div>
 
     <div class="card" data-id="c8MzmYr9HYY" data-name="Área 02">
       <div class="card-top"><span>Área 02</span><small>LIVE</small></div>
       <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/c8MzmYr9HYY/hqdefault.jpg" alt="Thumbnail Área 02">
-        <div class="play-overlay">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img src="https://img.youtube.com/vi/c8MzmYr9HYY/hqdefault.jpg">
+        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
     </div>
 
     <div class="card" data-id="XZpK2uyC_Js" data-name="Área 03">
       <div class="card-top"><span>Área 03</span><small>LIVE</small></div>
       <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/XZpK2uyC_Js/hqdefault.jpg" alt="Thumbnail Área 03">
-        <div class="play-overlay">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img src="https://img.youtube.com/vi/XZpK2uyC_Js/hqdefault.jpg">
+        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
     </div>
 
     <div class="card" data-id="xIEzJ-gVNvo" data-name="Área 04">
       <div class="card-top"><span>Área 04</span><small>LIVE</small></div>
       <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/xIEzJ-gVNvo/hqdefault.jpg" alt="Thumbnail Área 04">
-        <div class="play-overlay">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img src="https://img.youtube.com/vi/xIEzJ-gVNvo/hqdefault.jpg">
+        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
     </div>
 
     <div class="card" data-id="msst6vTPCmM" data-name="Área 05">
       <div class="card-top"><span>Área 05</span><small>LIVE</small></div>
       <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/msst6vTPCmM/hqdefault.jpg" alt="Thumbnail Área 05">
-        <div class="play-overlay">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img src="https://img.youtube.com/vi/msst6vTPCmM/hqdefault.jpg">
+        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
     </div>
 
     <div class="card" data-id="a1pbOBqM8XE" data-name="Área 06">
       <div class="card-top"><span>Área 06</span><small>LIVE</small></div>
       <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/a1pbOBqM8XE/hqdefault.jpg" alt="Thumbnail Área 06">
-        <div class="play-overlay">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img src="https://img.youtube.com/vi/a1pbOBqM8XE/hqdefault.jpg">
+        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
     </div>
 
@@ -365,37 +344,29 @@ main {
 </main>
 
 <script>
-  // Controle do Relógio
-  const clockElement = document.getElementById("clock");
+  // Relógio
   function updateClock() {
-    clockElement.innerText = new Date().toLocaleTimeString("pt-BR");
+    document.getElementById("clock").innerText = new Date().toLocaleTimeString("pt-BR");
   }
   setInterval(updateClock, 1000);
   updateClock();
 
-  // Controle de Troca de Vídeos
+  // Troca de Vídeos
   const cards = document.querySelectorAll('.card');
   const mainTitle = document.getElementById('mainTitle');
   const mainFrame = document.getElementById('mainFrame');
 
   cards.forEach(card => {
     card.addEventListener('click', function() {
-      // Remove a classe ativa de todos
       cards.forEach(c => c.classList.remove('active'));
-      
-      // Adiciona a classe ativa no clicado
       this.classList.add('active');
 
-      // Coleta os dados do dataset (data-id e data-name)
       const videoId = this.getAttribute('data-id');
       const videoName = this.getAttribute('data-name');
 
-      // Atualiza o player principal
       mainTitle.innerText = `${videoName} • Principal`;
-      // O parâmetro autoplay=1 tenta rodar direto ao trocar, e allow="autoplay" ajuda nisso.
       mainFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
       
-      // Opcional: Rolar a página para o topo em telas menores
       if(window.innerWidth <= 900) {
         document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
       }
