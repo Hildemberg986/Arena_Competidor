@@ -11,18 +11,12 @@
   --card: #111111;
   --line: #262626;
   --red: #ff1f1f;
-  --red2: #a40000;
   --text: #ffffff;
   --muted: #9d9d9d;
   --green: #19d66b;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
 
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 8px; }
@@ -30,333 +24,168 @@
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 
 body {
-  background: 
-    radial-gradient(circle at top right, #220000 0%, transparent 25%),
-    radial-gradient(circle at bottom left, #120000 0%, transparent 25%),
-    var(--bg);
-  color: #fff;
-  height: 100vh;
-  overflow: hidden;
+  background: radial-gradient(circle at top right, #220000 0%, transparent 25%), var(--bg);
+  color: #fff; height: 100vh; overflow: hidden;
 }
 
-/* HEADER */
 header {
-  height: 85px; /* Aumentado levemente para acomodar a logo maior */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px;
-  background: rgba(8, 8, 8, .92);
-  backdrop-filter: blur(10px);
+  height: 90px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px; background: rgba(8, 8, 8, .92); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-}
+.logo { height: 70px; width: 180px; display: flex; align-items: center; }
+.logo img { height: 100%; width: 100%; object-fit: contain; }
 
-.logo {
-  height: 65px; /* Logo maior como solicitado */
-  width: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo img {
-  height: 100%;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.2));
-}
-
-.top {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
+.top { display: flex; gap: 10px; }
 .stat {
-  padding: 11px 15px;
-  background: #101010;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  font-size: 13px;
-  color: #aaa;
+  padding: 11px 15px; background: #101010; border: 1px solid var(--line);
+  border-radius: 16px; font-size: 13px; color: #aaa;
 }
 
-.stat b { color: #fff; }
+main { padding: 16px; height: calc(100vh - 90px); overflow-y: auto; }
 
-/* MAIN */
-main {
-  padding: 16px;
-  height: calc(100vh - 85px);
-  overflow-y: auto;
-}
-
-/* FEATURED */
 .featured {
-  height: 440px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 24px;
+  height: 440px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; margin-bottom: 24px;
 }
 
 .feature-top {
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  background: #161616;
-  border-bottom: 1px solid #222;
+  height: 48px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; background: #161616; border-bottom: 1px solid #222;
 }
 
-.live-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 800;
-  font-size: 14px;
-}
+.live-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 10px rgba(25, 214, 107, .7);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(25, 214, 107, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(25, 214, 107, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(25, 214, 107, 0); }
-}
-
-.featured iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  flex: 1;
-}
-
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-  padding-bottom: 30px;
-}
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding-bottom: 30px; }
 
 .card {
-  height: 180px;
-  background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 18px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
+  height: 180px; background: var(--card); border: 2px solid var(--line);
+  border-radius: 18px; overflow: hidden; cursor: pointer; transition: 0.2s;
+  display: flex; flex-direction: column;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  border-color: #444;
-}
+.card:hover { border-color: #444; transform: translateY(-3px); }
+.card.active { border-color: var(--red); box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
 
-.card.active {
-  border-color: var(--red);
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
-}
-
-.card-top {
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  background: #151515;
-  border-bottom: 1px solid #222;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 2;
-}
-
+.card-top { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: #151515; font-size: 12px; }
 .card-top small { color: var(--red); font-weight: bold; }
 
-.thumb-container {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  overflow: hidden;
-  background: #000;
-}
-
-.thumb-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-}
+.thumb-container { position: relative; flex: 1; background: #000; }
+.thumb-container img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 
 .play-overlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all 0.3s ease;
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
 }
-
-.play-overlay svg {
-  width: 38px;
-  height: 38px;
-  fill: #fff;
-}
-
-.card:hover .thumb-container img { opacity: 1; }
 .card:hover .play-overlay { opacity: 1; }
+.card:hover .thumb-container img { opacity: 1; }
 
-/* RESPONSIVO */
-@media(max-width: 1400px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-@media(max-width: 900px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
-  .featured { height: 320px; }
-}
+@media(max-width: 1200px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 @media(max-width: 650px) {
   .grid { grid-template-columns: 1fr; }
   header { flex-direction: column; height: auto; padding: 15px; gap: 15px; }
-  .logo { height: 50px; }
-  main { height: calc(100vh - 150px); }
+  .logo { width: 100%; justify-content: center; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand">
-    <div class="logo">
-      <img src="../img/arena2.png" alt="Arena Logo">
+  <div class="logo"><img src="../img/arena2.png" alt="Logo"></div>
+  <div class="top" id="statsHeader">
     </div>
-  </div>
-
-  <div class="top">
-    <div class="stat">🔴 Áreas <b>6 AO VIVO</b></div>
-    <div class="stat">🏆 Open Caicó</div>
-    <div class="stat">🎥 Direção PRO</div>
-    <div class="stat">⏱ <b id="clock"></b></div>
-  </div>
 </header>
 
 <main>
   <section class="featured">
     <div class="feature-top">
-      <div class="live-badge">
-        <div class="dot"></div>
-        <span id="mainTitle">Área 01 • Principal</span>
-      </div>
+      <div class="live-badge"><div class="dot"></div><span id="mainTitle">Carregando...</span></div>
       <small style="color:var(--muted)">AO VIVO</small>
     </div>
-    <iframe id="mainFrame" src="https://www.youtube.com/embed/FgkvumJ2YWw?autoplay=1&mute=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <iframe id="mainFrame" src="" allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>
   </section>
 
   <section class="grid" id="videoGrid">
-    
-    <div class="card active" data-id="FgkvumJ2YWw" data-name="Área 01">
-      <div class="card-top"><span>Área 01</span><small>LIVE</small></div>
-      <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/FgkvumJ2YWw/hqdefault.jpg">
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>
-    </div>
-
-    <div class="card" data-id="c8MzmYr9HYY" data-name="Área 02">
-      <div class="card-top"><span>Área 02</span><small>LIVE</small></div>
-      <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/c8MzmYr9HYY/hqdefault.jpg">
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>
-    </div>
-
-    <div class="card" data-id="XZpK2uyC_Js" data-name="Área 03">
-      <div class="card-top"><span>Área 03</span><small>LIVE</small></div>
-      <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/XZpK2uyC_Js/hqdefault.jpg">
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>
-    </div>
-
-    <div class="card" data-id="xIEzJ-gVNvo" data-name="Área 04">
-      <div class="card-top"><span>Área 04</span><small>LIVE</small></div>
-      <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/xIEzJ-gVNvo/hqdefault.jpg">
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>
-    </div>
-
-    <div class="card" data-id="msst6vTPCmM" data-name="Área 05">
-      <div class="card-top"><span>Área 05</span><small>LIVE</small></div>
-      <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/msst6vTPCmM/hqdefault.jpg">
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>
-    </div>
-
-    <div class="card" data-id="a1pbOBqM8XE" data-name="Área 06">
-      <div class="card-top"><span>Área 06</span><small>LIVE</small></div>
-      <div class="thumb-container">
-        <img src="https://img.youtube.com/vi/a1pbOBqM8XE/hqdefault.jpg">
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>
-    </div>
-
-  </section>
+    </section>
 </main>
 
 <script>
-  // Relógio digital
-  function updateClock() {
-    document.getElementById("clock").innerText = new Date().toLocaleTimeString("pt-BR");
+  // 1. DADOS SIMULADOS (O que viria da API)
+  const apiData = {
+    evento: "Open Caicó",
+    direcao: "Direção PRO",
+    cameras: [
+      { id: "FgkvumJ2YWw", nome: "Área 01", principal: true },
+      { id: "c8MzmYr9HYY", nome: "Área 02", principal: false },
+      { id: "XZpK2uyC_Js", nome: "Área 03", principal: false },
+      { id: "xIEzJ-gVNvo", nome: "Área 04", principal: false },
+      { id: "msst6vTPCmM", nome: "Área 05", principal: false },
+      { id: "a1pbOBqM8XE", nome: "Área 06", principal: false }
+    ]
+  };
+
+  // 2. FUNÇÃO PARA CARREGAR O CONTEÚDO
+  function initArena() {
+    const grid = document.getElementById('videoGrid');
+    const statsHeader = document.getElementById('statsHeader');
+    
+    // Atualiza Header Stats
+    statsHeader.innerHTML = `
+      <div class="stat">🔴 Áreas <b>${apiData.cameras.length} AO VIVO</b></div>
+      <div class="stat">🏆 ${apiData.evento}</div>
+      <div class="stat">🎥 ${apiData.direcao}</div>
+      <div class="stat">⏱ <b id="clock">00:00:00</b></div>
+    `;
+
+    // Gera os Cards Dinamicamente
+    grid.innerHTML = apiData.cameras.map(cam => `
+      <div class="card ${cam.principal ? 'active' : ''}" onclick="changeVideo('${cam.id}', '${cam.nome}', this)">
+        <div class="card-top"><span>${cam.nome}</span><small>LIVE</small></div>
+        <div class="thumb-container">
+          <img src="https://img.youtube.com/vi/${cam.id}/hqdefault.jpg">
+          <div class="play-overlay">
+            <svg width="40" height="40" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Define o vídeo inicial
+    const principal = apiData.cameras.find(c => c.principal);
+    changeVideo(principal.id, principal.nome);
+    startClock();
   }
-  setInterval(updateClock, 1000);
-  updateClock();
 
-  // Lógica de troca de câmeras
-  const cards = document.querySelectorAll('.card');
-  const mainTitle = document.getElementById('mainTitle');
-  const mainFrame = document.getElementById('mainFrame');
+  // 3. LOGICA DE TROCA
+  function changeVideo(id, nome, element) {
+    document.getElementById('mainTitle').innerText = `${nome} • Principal`;
+    document.getElementById('mainFrame').src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=0`;
+    
+    if(element) {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      element.classList.add('active');
+    }
+  }
 
-  cards.forEach(card => {
-    card.addEventListener('click', function() {
-      // Estilo do card ativo
-      cards.forEach(c => c.classList.remove('active'));
-      this.classList.add('active');
+  // 4. RELÓGIO
+  function startClock() {
+    setInterval(() => {
+      document.getElementById("clock").innerText = new Date().toLocaleTimeString("pt-BR");
+    }, 1000);
+  }
 
-      // Troca do vídeo
-      const videoId = this.getAttribute('data-id');
-      const videoName = this.getAttribute('data-name');
+  // Inicializa tudo
+  window.onload = initArena;
 
-      mainTitle.innerText = `${videoName} • Principal`;
-      mainFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
-      
-      // Auto-scroll para o topo no mobile
-      if(window.innerWidth <= 900) {
-        document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
-  });
+  /* Para usar com API REAL, você faria:
+     fetch('URL_DA_SUA_API')
+       .then(res => res.json())
+       .then(data => { 
+          // substitua apiData por data e chame initArena()
+       });
+  */
 </script>
 
 </body>
