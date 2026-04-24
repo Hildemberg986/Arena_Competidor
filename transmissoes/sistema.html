@@ -9,10 +9,8 @@
 :root {
   --bg: #050505;
   --card: #111111;
-  --card2: #171717;
   --line: #262626;
   --red: #ff1f1f;
-  --red-hover: #cc0000;
   --red2: #a40000;
   --text: #ffffff;
   --muted: #9d9d9d;
@@ -30,7 +28,6 @@
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #333; }
 
 body {
   background: 
@@ -44,7 +41,7 @@ body {
 
 /* HEADER */
 header {
-  height: 78px;
+  height: 85px; /* Aumentado levemente para acomodar a logo maior */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -57,33 +54,22 @@ header {
 .brand {
   display: flex;
   align-items: center;
-  gap: 14px;
 }
 
 .logo {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  overflow: hidden; /* Garante que a imagem respeite o border-radius */
+  height: 65px; /* Logo maior como solicitado */
+  width: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
 }
 
 .logo img {
-  width: 100%;
   height: 100%;
-  object-fit: cover; /* Faz a imagem preencher o espaço sem distorcer */
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.2));
 }
-
-.brand h1 {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: .5px;
-}
-
-.brand span { color: var(--red); }
 
 .top {
   display: flex;
@@ -105,13 +91,13 @@ header {
 /* MAIN */
 main {
   padding: 16px;
-  height: calc(100vh - 78px);
+  height: calc(100vh - 85px);
   overflow-y: auto;
 }
 
 /* FEATURED */
 .featured {
-  height: 420px;
+  height: 440px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -166,7 +152,7 @@ main {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
 }
 
 .card {
@@ -185,7 +171,6 @@ main {
 .card:hover {
   transform: translateY(-4px);
   border-color: #444;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 }
 
 .card.active {
@@ -201,7 +186,7 @@ main {
   padding: 0 12px;
   background: #151515;
   border-bottom: 1px solid #222;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   z-index: 2;
 }
@@ -239,13 +224,10 @@ main {
   width: 38px;
   height: 38px;
   fill: #fff;
-  transform: scale(0.8);
-  transition: transform 0.3s ease;
 }
 
 .card:hover .thumb-container img { opacity: 1; }
 .card:hover .play-overlay { opacity: 1; }
-.card:hover .play-overlay svg { transform: scale(1); }
 
 /* RESPONSIVO */
 @media(max-width: 1400px) { .grid { grid-template-columns: repeat(3, 1fr); } }
@@ -255,8 +237,9 @@ main {
 }
 @media(max-width: 650px) {
   .grid { grid-template-columns: 1fr; }
-  header { flex-direction: column; height: auto; padding: 16px; gap: 12px; }
-  main { height: calc(100vh - 140px); }
+  header { flex-direction: column; height: auto; padding: 15px; gap: 15px; }
+  .logo { height: 50px; }
+  main { height: calc(100vh - 150px); }
 }
 </style>
 </head>
@@ -267,7 +250,6 @@ main {
     <div class="logo">
       <img src="../img/arena2.png" alt="Arena Logo">
     </div>
-    <h1>Arena <span>Competidor</span></h1>
   </div>
 
   <div class="top">
@@ -344,29 +326,32 @@ main {
 </main>
 
 <script>
-  // Relógio
+  // Relógio digital
   function updateClock() {
     document.getElementById("clock").innerText = new Date().toLocaleTimeString("pt-BR");
   }
   setInterval(updateClock, 1000);
   updateClock();
 
-  // Troca de Vídeos
+  // Lógica de troca de câmeras
   const cards = document.querySelectorAll('.card');
   const mainTitle = document.getElementById('mainTitle');
   const mainFrame = document.getElementById('mainFrame');
 
   cards.forEach(card => {
     card.addEventListener('click', function() {
+      // Estilo do card ativo
       cards.forEach(c => c.classList.remove('active'));
       this.classList.add('active');
 
+      // Troca do vídeo
       const videoId = this.getAttribute('data-id');
       const videoName = this.getAttribute('data-name');
 
       mainTitle.innerText = `${videoName} • Principal`;
       mainFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
       
+      // Auto-scroll para o topo no mobile
       if(window.innerWidth <= 900) {
         document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
       }
