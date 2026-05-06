@@ -115,8 +115,8 @@
 
                 <label>Tipo de Inscrição:</label>
                 <select id="tipo-inscricao">
-                    <option value="90.00">Categoria (R$ 90,00)</option>
-                    <option value="140.00">Categoria + Absoluto (R$ 140,00)</option>
+                    <option value="120.00">Categoria (R$ 120,00)</option>
+                    <option value="180.00">Categoria + Absoluto (R$ 180,00)</option>
                 </select>
 
                 <label>Método utilizado (após pagar):</label>
@@ -130,14 +130,14 @@
            
            <table class="summary-table">
                <tbody>
-                   <tr><td>Subtotal</td><td id="linha-categoria-valor">R$ 90,00</td></tr>
-                   <tr id="linha-absoluto" style="display:none;"><td>Absoluto</td><td>R$ 50,00</td></tr>
-                   <tr class="total-row"><th>Total a Pagar</th><td id="valor-total">R$ 90,00</td></tr>
+                   <tr><td>Subtotal</td><td id="linha-categoria-valor">R$ 120,00</td></tr>
+                   <tr id="linha-absoluto" style="display:none;"><td>Absoluto</td><td>R$ 60,00</td></tr>
+                   <tr class="total-row"><th>Total a Pagar</th><td id="valor-total">R$ 120,00</td></tr>
                </tbody>
            </table>
            
            <button id="btn-toggle-pix-direto" class="btn-action-main">
-               VER DADOS PARA PAGAMENTO (R$ 90,00)
+               VER DADOS PARA PAGAMENTO (R$ 120,00)
            </button>
            
            <div id="pix-direto-details">
@@ -190,7 +190,7 @@
 
             document.getElementById('valor-total').innerText = `R$ ${formatado}`;
             document.getElementById('btn-toggle-pix-direto').innerText = `VER DADOS PARA PAGAMENTO (R$ ${formatado})`;
-            document.getElementById('linha-absoluto').style.display = valor > 90 ? 'table-row' : 'none';
+            document.getElementById('linha-absoluto').style.display = valor > 120 ? 'table-row' : 'none';
 
             const link = document.getElementById('whatsapp-link');
             if(nome && ordem && metodo) {
