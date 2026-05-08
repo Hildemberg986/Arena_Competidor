@@ -75,6 +75,24 @@
         .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
         .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
 
+        /* Estilos do Status (Confirmada/Aguardando) */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .status-confirmado {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-aguardando {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
         #photoModal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -161,6 +179,8 @@
                     if (clean === "FOTO" || clean.includes("FOTO")) colMap.FOTO = c;
                     if (clean.includes("EQUIPE")) colMap.EQUIPE = c;
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
+                    // Mapeia a coluna R (que é a 18ª coluna, ou seja, índice 17) para STATUS
+                    if (i === 17) colMap.STATUS = c;
                 });
 
                 dadosAtletas = linhas.slice(1).map(linha => {
@@ -253,10 +273,16 @@
                         <div class="accordion-header" onclick="toggleAcc(this)">${ch} (${atletas.length})</div>
                         <div class="accordion-content">
                             <table>
-                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th></tr></thead>
+                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th><th>Status</th></tr></thead>
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
+                                        
+                                        // Verifica o texto do status para aplicar a cor correta
+                                        const statusTxt = a[colMap.STATUS] || '---';
+                                        const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
+                                        const statusClass = isConfirmado ? 'status-confirmado' : 'status-aguardando';
+
                                         return `
                                         <tr>
                                             <td data-label="Atleta">
@@ -270,6 +296,9 @@
                                             </td>
                                             <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
                                             <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
+                                            <td data-label="Status">
+                                                <span class="status-badge ${statusClass}">${statusTxt}</span>
+                                            </td>
                                         </tr>
                                     `}).join('')}
                                 </tbody>
@@ -289,7 +318,6 @@
         // Listener para mudanças nos selects
         document.querySelectorAll('select').forEach(s => {
             s.addEventListener('change', (e) => {
-                // Quando um filtro muda, renderizamos e pedimos para atualizar as opções dos outros selects
                 renderizar(true);
             });
         });
