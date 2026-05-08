@@ -9,6 +9,8 @@
     <style>
         :root {
             --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-yellow: #f59e0b;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -115,6 +117,12 @@
             color: #374151;
         }
 
+        .status-badge {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
         .link-voltar {
             display: block; width: fit-content; margin: 40px auto;
             padding: 14px 30px; background-color: #111827; color: #fff;
@@ -165,25 +173,28 @@
 
                 const headers = rows[0].map(h => h.toUpperCase().trim());
                 
-                // Mapeamento dinâmico de índices
-                const idxOrd = headers.indexOf('ORD');
-                const idxNome = headers.indexOf('NOME COMPLETO');
-                const idxEquipe = headers.indexOf('SUA EQUIPE');
-                const idxProfessor = headers.indexOf('PROFESSOR');
-                const idxFaixa = headers.indexOf('SUA FAIXA');
-                const idxCat = headers.indexOf('SUA CATEGORIA');
-                const idxSexo = headers.indexOf('SEXO');
-                const idxAbs = headers.indexOf('ABSOLUTO');
+                const idx = {
+                    ord: headers.indexOf('ORD'),
+                    nome: headers.indexOf('NOME COMPLETO'),
+                    equipe: headers.indexOf('SUA EQUIPE'),
+                    professor: headers.indexOf('PROFESSOR'),
+                    faixa: headers.indexOf('SUA FAIXA'),
+                    cat: headers.indexOf('SUA CATEGORIA'),
+                    sexo: headers.indexOf('SEXO'),
+                    abs: headers.indexOf('ABSOLUTO'),
+                    status: 17 // Coluna R
+                };
 
                 const data = rows.slice(1).map(row => ({
-                    ord: row[idxOrd] || '-',
-                    nome: row[idxNome] || '',
-                    equipe: row[idxEquipe] || '',
-                    professor: row[idxProfessor] || 'Não informado',
-                    faixa: (row[idxFaixa] || 'BRANCA').toUpperCase(),
-                    categoria: row[idxCat] || '',
-                    sexo: (row[idxSexo] || '').toUpperCase(),
-                    absoluto: (row[idxAbs] || '').toUpperCase()
+                    ord: row[idx.ord] || '-',
+                    nome: row[idx.nome] || '',
+                    equipe: row[idx.equipe] || '',
+                    professor: row[idx.professor] || 'Não informado',
+                    faixa: (row[idx.faixa] || 'BRANCA').toUpperCase(),
+                    categoria: row[idx.cat] || '',
+                    sexo: (row[idx.sexo] || '').toUpperCase(),
+                    absoluto: (row[idx.abs] || '').toUpperCase(),
+                    status: row[idx.status] || 'Aguardando'
                 })).filter(atleta => atleta.absoluto === 'SIM');
 
                 renderizar(data);
@@ -238,18 +249,25 @@
                                         <th>ORD</th>
                                         <th>Atleta</th>
                                         <th>Equipe</th>
-                                        <th>Professor</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${atletas.map(a => `
+                                    ${atletas.map(a => {
+                                        const isConfirmado = a.status.toLowerCase().includes('confirmado');
+                                        const statusColor = isConfirmado ? 'var(--accent-green)' : 'var(--accent-yellow)';
+                                        
+                                        return `
                                         <tr>
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
                                             <td data-label="Atleta">${a.nome}</td>
                                             <td data-label="Equipe">${a.equipe}</td>
-                                            <td data-label="Professor">${a.professor}</td>
+                                            <td data-label="Status" class="status-badge" style="color: ${statusColor}">
+                                                ● ${a.status}
+                                            </td>
                                         </tr>
-                                    `).join('')}
+                                        `;
+                                    }).join('')}
                                 </tbody>
                             </table>
                         </div>
