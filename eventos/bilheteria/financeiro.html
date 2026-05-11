@@ -6,6 +6,8 @@
     <title>Financeiro - Arena Competidor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
         :root {
             --primary: #e62117;
             --primary-soft: #fff1f0;
@@ -22,14 +24,13 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
             padding: 0;
         }
 
-        /* Header Premium */
         header {
             background: var(--card);
             padding: 1rem 1.5rem;
@@ -45,22 +46,6 @@
         .logo-box { max-width: 140px; }
         .logo-box img { width: 100%; height: auto; display: block; }
 
-        .quick-scan {
-            background: var(--primary);
-            color: white;
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 1.3rem;
-            box-shadow: 0 6px 15px rgba(230, 33, 23, 0.3);
-            transition: var(--transition);
-        }
-
-        /* Layout Container */
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -71,7 +56,6 @@
         .header-text h1 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
         .header-text p { color: var(--text-light); margin: 5px 0 0 0; }
 
-        /* Dashboard de Cards */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -110,7 +94,6 @@
             color: var(--text);
         }
 
-        /* Extrato Estilo Recibo */
         .extrato-box {
             background: var(--card);
             border-radius: 24px;
@@ -151,7 +134,6 @@
         .negativo { color: var(--primary); font-weight: 600; }
         .positivo { color: var(--success); font-weight: 600; }
 
-        /* Botão */
         .btn-update {
             width: 100%;
             background: var(--text);
@@ -181,7 +163,6 @@
             font-weight: 600;
         }
 
-        /* Mobile */
         @media (max-width: 600px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .card-destaque { grid-column: span 1; }
@@ -196,7 +177,6 @@
         <div class="logo-box">
             <img src="../../img/arena03.png" alt="Arena Competidor">
         </div>
-       
     </header>
 
     <main class="container">
@@ -207,15 +187,15 @@
 
         <div class="dashboard-grid">
             <div class="card-val">
-                <h3>PRÉ-VENDAS (PAGAS E NÃO PAGAS)</h3>
+                <h3>PRÉ-VENDAS TOTAIS</h3>
                 <p id="res-bruto">R$ 0,00</p>
             </div>
             <div class="card-val">
-                <h3>NÃO PAGO</h3>
+                <h3>PENDENTE</h3>
                 <p style="color:var(--warning)" id="res-pendente">R$ 0,00</p>
             </div>
             <div class="card-val card-destaque">
-                <h3>Saldo Líquido</h3>
+                <h3>Saldo Líquido Real</h3>
                 <p style="color:var(--primary)" id="res-liquido">R$ 0,00</p>
             </div>
         </div>
@@ -227,12 +207,12 @@
             </div>
             
             <div class="item-extrato">
-                <span>Receita Confirmada (VALOR PAGO)</span>
+                <span>Receita Confirmada (PAGA)</span>
                 <span id="ext-receita" class="positivo">R$ 0,00</span>
             </div>
 
             <div class="item-extrato">
-                <span>Taxa Plataforma (10%)</span>
+                <span>Taxa Plataforma (R$ 2,00 por un.)</span>
                 <span id="ext-taxa-adm" class="negativo">R$ 0,00</span>
             </div>
 
@@ -242,7 +222,7 @@
             </div>
 
             <div class="item-extrato item-total">
-                <span>SALDO DISPONÍVEL (VALOR REAL)</span>
+                <span>SALDO DISPONÍVEL</span>
                 <span id="ext-final">R$ 0,00</span>
             </div>
         </div>
@@ -253,7 +233,7 @@
     </main>
 
     <footer>
-        ARENA COMPETIDOR &bull; FINANCEIRO V2.0
+        ARENA COMPETIDOR &bull; FINANCEIRO V2.1
     </footer>
 
     <script>
@@ -292,34 +272,46 @@
 
                     somaBruta += valorUnitario;
 
-                    if (status.includes('PENDENTE')) {
-                        somaPendente += valorUnitario;
-                    } else if (status.includes('CONFIRMADO') || status.includes('PAGO')) {
+                    // Lógica para pedidos Confirmados/Pagos
+                    if (status.includes('CONFIRMADO') || status.includes('PAGO')) {
                         somaConfirmada += valorUnitario;
-                        totalTaxaAdm += (valorUnitario * 0.10);
+                        
+                        // TAXA FIXA DE R$ 2,00 POR INGRESSO PAGO
+                        totalTaxaAdm += 2.00;
+
+                        // TAXA DE CARTÃO (SE APLICÁVEL)
                         if (tipoPgto.includes('CART') || tipoPgto.includes('CARTÃO')) {
                             totalTaxaCartao += (valorUnitario * 0.05);
                         }
+                    } 
+                    // Lógica para pedidos Pendentes
+                    else if (status.includes('PENDENTE')) {
+                        somaPendente += valorUnitario;
                     }
                 }
 
                 const saldoFinal = somaConfirmada - totalTaxaAdm - totalTaxaCartao;
 
+                // Atualizar Dashboard
                 document.getElementById('res-bruto').innerText = formatarMoeda(somaBruta);
                 document.getElementById('res-pendente').innerText = formatarMoeda(somaPendente);
                 document.getElementById('res-liquido').innerText = formatarMoeda(saldoFinal);
+                
+                // Atualizar Extrato
                 document.getElementById('ext-receita').innerText = "+ " + formatarMoeda(somaConfirmada);
                 document.getElementById('ext-taxa-adm').innerText = "- " + formatarMoeda(totalTaxaAdm);
                 document.getElementById('ext-taxa-card').innerText = "- " + formatarMoeda(totalTaxaCartao);
                 document.getElementById('ext-final').innerText = formatarMoeda(saldoFinal);
 
             } catch (erro) {
-                alert("Erro ao atualizar dados.");
+                console.error(erro);
+                alert("Erro ao ler os dados da planilha. Verifique a conexão.");
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-rotate"></i> ATUALIZAR VALORES';
             }
         }
 
+        // Carrega automaticamente ao abrir a página
         carregarFinanceiro();
     </script>
 </body>
