@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout Premium - X1 Jiu-Jitsu</title>
+    <title>Checkout Premium - Desafio da Várzea</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Oswald:wght@700&display=swap');
 
@@ -39,7 +39,6 @@
             padding: 40px 20px;
         }
 
-        /* Banner Lateral */
         .event-sidebar { position: sticky; top: 40px; height: fit-content; }
 
         .event-card-premium {
@@ -78,7 +77,6 @@
             text-transform: uppercase;
         }
 
-        /* Form Estilizado */
         .checkout-main { display: flex; flex-direction: column; gap: 20px; }
 
         .glass-card {
@@ -117,7 +115,6 @@
 
         input:focus { border-color: var(--primary); }
         
-        /* Estilo para erro no CPF */
         input.invalid { border-color: var(--error); box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1); }
         .error-msg { color: var(--error); font-size: 10px; margin-top: 5px; display: none; font-weight: bold; }
 
@@ -160,7 +157,10 @@
             text-transform: uppercase;
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(230, 33, 23, 0.3);
+            transition: 0.3s;
         }
+
+        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
 
         @media (max-width: 900px) {
             .container { grid-template-columns: 1fr; padding: 15px; }
@@ -174,13 +174,13 @@
 <div class="container">
     <aside class="event-sidebar">
         <div class="event-card-premium">
-            <img src="x12.JPEG" alt="Evento X1">
+            <img src="IMG_3608.PNG" alt="Evento Desafio da Várzea">
             <div class="event-info-overlay">
                 <span class="status-badge">● Evento Confirmado</span>
-                <h1>X1 de JIU-JITSU</h1>
+                <h1>DESAFIO DA VÁRZEA</h1>
                 <p style="color: var(--text-dim); margin-top: 10px;">
-                    📅 17 de Abril • 18:00h<br>
-                    📍 Rua Antônio Curado, 525, Engenho do Meio - Recife/PE
+                    📅 22 de Maio • 19:00h<br>
+                    📍 Traculhaém
                 </p>
             </div>
         </div>
@@ -233,13 +233,13 @@
         <div class="glass-card">
             <div style="display: flex; justify-content: space-between; color: var(--text-dim);">
                 <span>Total Bruto</span>
-                <span id="subtotal-txt">R$ 30,00</span>
+                <span id="subtotal-txt">R$ 9,90</span>
             </div>
             <div style="display: flex; justify-content: space-between; color: var(--text-dim); margin-top: 5px;">
-                <span>Taxa de Sistema (10%)</span>
-                <span id="tax-txt">R$ 3,00</span>
+                <span>Taxa de Sistema</span>
+                <span id="tax-txt">R$ 2,00</span>
             </div>
-            <span class="total-price" id="total-txt">R$ 33,00</span>
+            <span class="total-price" id="total-txt">R$ 11,90</span>
             <button type="submit" form="payForm" class="btn-pay" id="mainBtn">Finalizar Pagamento</button>
         </div>
     </main>
@@ -247,7 +247,8 @@
 
 <script>
     let qtd = 1;
-    const basePrice = 30.00;
+    const basePrice = 9.90;
+    const baseTax = 2.00; // Taxa unitária por ingresso
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXUBHP6JutPI5plU40nEeYKIoV0LYsTaWxxykgQj5CQPjAWhpiIIAsQs9TEM9R95E/exec";
 
     function updateQty(v) {
@@ -258,15 +259,15 @@
     }
 
     function calculate() {
-        const sub = qtd * basePrice;
-        const tax = sub * 0.10;
-        const total = sub + tax;
-        document.getElementById('subtotal-txt').innerText = `R$ ${sub.toFixed(2).replace('.',',')}`;
-        document.getElementById('tax-txt').innerText = `R$ ${tax.toFixed(2).replace('.',',')}`;
+        const subtotal = qtd * basePrice;
+        const totalTax = qtd * baseTax; // Taxa proporcional à quantidade
+        const total = subtotal + totalTax;
+        
+        document.getElementById('subtotal-txt').innerText = `R$ ${subtotal.toFixed(2).replace('.',',')}`;
+        document.getElementById('tax-txt').innerText = `R$ ${totalTax.toFixed(2).replace('.',',')}`;
         document.getElementById('total-txt').innerText = `R$ ${total.toFixed(2).replace('.',',')}`;
     }
 
-    // Função de Validação de CPF (Algoritmo Real)
     function validarCPF(cpf) {
         cpf = cpf.replace(/[^\d]+/g, '');
         if (cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -283,13 +284,12 @@
         return true;
     }
 
-    // Máscaras
     const mask = (id, fn) => {
-        document.getElementById(id).oninput = e => {
+        const el = document.getElementById(id);
+        el.oninput = e => {
             e.target.value = fn(e.target.value);
-            // Se for CPF, remove o estado de erro ao digitar
             if(id === 'cpf') {
-                e.target.classList.remove('invalid');
+                el.classList.remove('invalid');
                 document.getElementById('cpf-error').style.display = 'none';
             }
         };
@@ -298,26 +298,24 @@
     mask('tel', v => v.replace(/\D/g, '').replace(/^(\d{2})(\d)/g, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2").substring(0, 15));
     mask('cpf', v => v.replace(/\D/g, '').replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2").substring(0, 14));
 
-    // ENVIO CORRIGIDO COM VALIDAÇÃO
     document.getElementById('payForm').onsubmit = async (e) => {
         e.preventDefault();
         
         const cpfInput = document.getElementById('cpf');
         const cpfValue = cpfInput.value;
 
-        // VERIFICAÇÃO DO CPF
         if (!validarCPF(cpfValue)) {
             cpfInput.classList.add('invalid');
             document.getElementById('cpf-error').style.display = 'block';
             cpfInput.focus();
-            return; // Interrompe o envio
+            return;
         }
 
         const btn = document.getElementById('mainBtn');
         btn.disabled = true;
         btn.innerHTML = "Sincronizando pedido... ⏳";
 
-        const ordId = "X1-" + Date.now().toString().slice(-6);
+        const ordId = "DV-" + Date.now().toString().slice(-6);
         const totalStr = document.getElementById('total-txt').innerText;
         const nomeComp = document.getElementById('nome').value;
         
@@ -333,23 +331,23 @@
             celular: celular,
             email: document.getElementById('email').value,
             valor: totalStr,
-            descricao: qtd + "x Ingresso(s) X1 Jiu-Jitsu"
+            descricao: `${qtd}x Ingresso(s) Desafio da Várzea`
         };
 
         try {
             fetch(SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors",
-                keepalive: true,
                 body: JSON.stringify(payload)
             });
         } catch(err) {
-            console.log("Erro de rede silencioso");
+            console.log("Erro de rede");
         }
 
         setTimeout(() => {
-            window.location.href = `pagamento.html?ord=${ordId}&valor=${encodeURIComponent(totalStr)}&nome=${encodeURIComponent(nomeComp)}&qtd=${qtd}`;
-        }, 1800);
+            const urlFinal = `pagamento.html?ord=${ordId}&valor=${encodeURIComponent(totalStr)}&nome=${encodeURIComponent(nomeComp)}&qtd=${qtd}`;
+            window.location.href = urlFinal;
+        }, 1500);
     };
 </script>
 
