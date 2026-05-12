@@ -3,144 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPEN CAICÓ DE JIU-JITSU | Arena Competidor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <title>Portal AC | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <!-- Ícones -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* =========================================
-           CONFIGURAÇÕES TEMA SENOGI
-           ========================================= */
         :root {
-            --primary-color: #2563eb; 
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #111827;
-            --text-secondary: #6b7280;
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --radius: 16px;
+            --primary: #2563eb;
+            --accent: #3b82f6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.8);
+            --radius-lg: 24px;
+            --radius-md: 12px;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
+            background: radial-gradient(circle at top right, #e2e8f0, #f8fafc);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
+        /* Header Original Mantido */
         header {
             width: 100%; text-align: center; padding: 15px 0;
             background-color: #000; position: fixed; top: 0; z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-        header img { max-width: 250px; width: 80%; height: auto; }
+        header img { max-width: 200px; width: 60%; height: auto; }
 
-        /* =========================================
-           CONTEÚDO PRINCIPAL
-           ========================================= */
-        .main-content {
-            margin-top: 140px;
-            width: 90%;
-            max-width: 500px;
+        .container {
+            margin-top: 120px;
+            width: 95%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 60px;
+        }
+
+        /* Hero Section */
+        .hero {
             text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-bottom: 40px;
+            padding: 40px 20px;
         }
 
         h1 {
             font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 2.2rem;
-            color: var(--text-main);
-            margin-bottom: 10px;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #1e293b, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        p.subtitle {
-            color: var(--text-secondary);
-            margin-bottom: 40px;
-            font-size: 1rem;
+        /* Grid de Botões Principais */
+        .grid-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .opcoes-checagem {
+        .btn-main {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            width: 100%;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
         }
 
-        .btn-checagem {
+        .btn-main:hover {
+            transform: translateY(-8px);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-main i { margin-bottom: 12px; }
+
+        /* YouTube Live Card */
+        .live-card {
+            background: #ff0000;
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 24px;
-            background-color: var(--card-bg);
-            color: var(--text-main);
+            margin-bottom: 40px;
             text-decoration: none;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: var(--radius);
-            border: 1px solid #e5e7eb;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: opacity 0.3s;
         }
 
-        .btn-checagem:hover {
-            background-color: #fff;
-            border-color: var(--primary-color);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            color: var(--primary-color);
+        .live-card:hover { opacity: 0.9; }
+
+        .live-info h3 { margin: 0; font-family: 'Poppins'; }
+        .live-info span { font-size: 0.9rem; opacity: 0.8; }
+
+        /* Próximos Eventos */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Poppins';
+            font-size: 1.2rem;
+            margin-bottom: 20px;
         }
 
-        .btn-checagem::after {
-            content: '→';
-            font-size: 1.4rem;
-            transition: transform 0.3s ease;
+        .event-list {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        .btn-checagem:hover::after {
-            transform: translateX(5px);
+        .event-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        /* BOTÃO VOLTAR EVENTO */
-        .btn-voltar-evento {
-            display: inline-block;
-            margin-top: 40px;
-            padding: 14px 30px;
-            background-color: #111827;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            border: 1px solid #111827;
-        }
+        .event-item:last-child { border: none; }
 
-        .btn-voltar-evento:hover {
-            background-color: transparent;
-            color: #111827;
-            transform: translateY(-2px);
-        }
-        
-        .footer {
-            padding: 40px 0;
-            width: 100%;
+        .event-date {
+            background: #f1f5f9;
+            padding: 8px;
+            border-radius: 8px;
             text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+            min-width: 50px;
+            margin-right: 15px;
+            font-weight: 700;
+            font-size: 0.8rem;
         }
 
-        @media (max-width: 768px) {
-            .main-content { margin-top: 110px; }
-            h1 { font-size: 1.8rem; }
-            .btn-checagem { padding: 20px; font-size: 1rem; }
-            .btn-voltar-evento { width: 100%; box-sizing: border-box; }
+        /* Galeria de Fotos */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .photo-grid img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            transition: transform 0.3s;
+        }
+
+        .photo-grid img:hover { transform: scale(1.05); }
+
+        .btn-back {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .grid-options { grid-template-columns: 1fr; }
+            .photo-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -152,33 +191,43 @@
         </a>
     </header>
 
-    <div class="main-content">
-        <h1>ESCOLHA SUA MODALIDADE</h1>
-        <h2>Open Caicó de Jiu-Jitsu</h2>
-        <p class="subtitle">Selecione o tipo de modalidade desejada</p>
-        
-        <div class="opcoes-checagem">
-            <a href="opencaicoGI.html" class="btn-checagem">
-                Inscrição (COM KIMONO)
+    <div class="container">
+        <section class="hero">
+            <h1>Portal Arena Competidor</h1>
+            <p>Selecione sua modalidade ou acompanhe o evento</p>
+        </section>
+
+        <!-- Botões de Inscrição -->
+        <div class="grid-options">
+            <a href="https://www.arenacompetidor.com/" class="btn-main">
+                <i data-lucide="shield-check" size="32"></i>
+                Próximos Eventos
             </a>
-            
-            <a href="opencaicoNOGI.html" class="btn-checagem">
-                Inscrição (SEM KIMONO)
-            </a>
-            
-            <a href="https://www.youtube.com/channel/UCAagqCNKNX02STp9dWR2-yg" class="btn-checagem">
-                Transmissões AO VIVO
+            <a href="https://www.arenacompetidor.com/fotos.html" class="btn-main">
+                <i data-lucide="zap" size="32"></i>
+                Fotos dos Eventos
             </a>
         </div>
 
-        <a href="https://arenacompetidor.com/" class="btn-voltar-evento">
-            ← Voltar ao Arena Competidor
+        <!-- Card YouTube Live -->
+        <a href="https://www.youtube.com/watch?v=a1pbOBqM8XE&list=PLW7Gh4N7ywNpjaVJ8Ie_ju9w7n-Wi6xMh" class="live-card">
+            <div class="live-info">
+                <span><i data-lucide="play-circle" style="vertical-align: middle;"></i> AO VIVO AGORA</span>
+                <h3>Assista no YouTube</h3>
+            </div>
+            <i data-lucide="external-link"></i>
         </a>
-    </div>
-    
-    <div class="footer">
-        &copy; 2026 Arena Competidor. Todos os direitos reservados.
+
+       
     </div>
 
+    <footer style="text-align: center; padding: 20px; color: #64748b; font-size: 0.8rem;">
+        &copy; 2026 Arena Competidor. Todos os direitos reservados.
+    </footer>
+
+    <script>
+        // Inicializa os ícones Lucide
+        lucide.createIcons();
+    </script>
 </body>
 </html>
