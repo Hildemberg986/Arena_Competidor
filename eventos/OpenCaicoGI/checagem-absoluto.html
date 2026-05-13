@@ -147,8 +147,8 @@
     </header>
 
     <div class="main-content">
-        <h1>Checagem de Absoluto</h1>
-        <div id="loading-message">Carregando inscritos...</div>
+        <h1>Checagem de Absoluto (Confirmados)</h1>
+        <div id="loading-message">Carregando inscritos confirmados...</div>
         <div id="listaInscritosAbsoluto"></div>
         <a href="checagem.html" class="link-voltar">Voltar para Opções</a>
     </div>
@@ -177,7 +177,6 @@
                     ord: headers.indexOf('ORD'),
                     nome: headers.indexOf('NOME COMPLETO'),
                     equipe: headers.indexOf('SUA EQUIPE'),
-                    professor: headers.indexOf('PROFESSOR'),
                     faixa: headers.indexOf('SUA FAIXA'),
                     cat: headers.indexOf('SUA CATEGORIA'),
                     sexo: headers.indexOf('SEXO'),
@@ -189,13 +188,17 @@
                     ord: row[idx.ord] || '-',
                     nome: row[idx.nome] || '',
                     equipe: row[idx.equipe] || '',
-                    professor: row[idx.professor] || 'Não informado',
                     faixa: (row[idx.faixa] || 'BRANCA').toUpperCase(),
                     categoria: row[idx.cat] || '',
                     sexo: (row[idx.sexo] || '').toUpperCase(),
                     absoluto: (row[idx.abs] || '').toUpperCase(),
                     status: row[idx.status] || 'Aguardando'
-                })).filter(atleta => atleta.absoluto === 'SIM');
+                })).filter(atleta => {
+                    // FILTRO DUPLO: Deve estar no absoluto SIM E status CONFIRMADO
+                    const isAbsoluto = atleta.absoluto === 'SIM';
+                    const isConfirmado = atleta.status.toLowerCase().includes('confirmad');
+                    return isAbsoluto && isConfirmado;
+                });
 
                 renderizar(data);
             } catch (error) {
@@ -210,7 +213,7 @@
             document.getElementById('loading-message').style.display = 'none';
 
             if (data.length === 0) {
-                container.innerHTML = '<p style="text-align:center;">Nenhum atleta no Absoluto encontrado.</p>';
+                container.innerHTML = '<p style="text-align:center;">Nenhum atleta confirmado no Absoluto encontrado.</p>';
                 return;
             }
 
@@ -253,21 +256,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${atletas.map(a => {
-                                        const isConfirmado = a.status.toLowerCase().includes('confirmado');
-                                        const statusColor = isConfirmado ? 'var(--accent-green)' : 'var(--accent-yellow)';
-                                        
-                                        return `
+                                    ${atletas.map(a => `
                                         <tr>
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
                                             <td data-label="Atleta">${a.nome}</td>
                                             <td data-label="Equipe">${a.equipe}</td>
-                                            <td data-label="Status" class="status-badge" style="color: ${statusColor}">
+                                            <td data-label="Status" class="status-badge" style="color: var(--accent-green)">
                                                 ● ${a.status}
                                             </td>
                                         </tr>
-                                        `;
-                                    }).join('')}
+                                    `).join('')}
                                 </tbody>
                             </table>
                         </div>
