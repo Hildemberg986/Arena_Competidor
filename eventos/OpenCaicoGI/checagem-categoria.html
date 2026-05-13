@@ -75,7 +75,6 @@
         .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
         .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
 
-        /* Estilos do Status (Confirmada/Aguardando) */
         .status-badge {
             padding: 4px 10px;
             border-radius: 20px;
@@ -87,10 +86,6 @@
         .status-confirmado {
             background-color: #d1fae5;
             color: #065f46;
-        }
-        .status-aguardando {
-            background-color: #fef3c7;
-            color: #92400e;
         }
 
         #photoModal {
@@ -128,7 +123,7 @@
     </div>
 
     <div class="main-content">
-        <h1>Checagem de Inscritos</h1>
+        <h1>Checagem de Inscritos Confirmados</h1>
 
         <div class="filtros-container">
             <div class="filtro-grupo"><label>Gênero</label><select id="filtroGenero"><option value="todos">Todos</option></select></div>
@@ -179,7 +174,6 @@
                     if (clean === "FOTO" || clean.includes("FOTO")) colMap.FOTO = c;
                     if (clean.includes("EQUIPE")) colMap.EQUIPE = c;
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
-                    // Mapeia a coluna R (que é a 18ª coluna, ou seja, índice 17) para STATUS
                     if (i === 17) colMap.STATUS = c;
                 });
 
@@ -191,7 +185,7 @@
                 });
 
                 document.getElementById('loading').style.display = 'none';
-                renderizar(true); // Inicializa filtros e lista
+                renderizar(true);
             } catch (e) { document.getElementById('loading').innerHTML = "Erro na conexão."; }
         }
 
@@ -208,14 +202,12 @@
                 const select = document.getElementById(id);
                 const valorAtual = select.value;
                 
-                // Pega apenas as opções que existem nos dados ATUALMENTE filtrados
                 const opcoesSet = new Set();
                 filtrados.forEach(a => { if(a[campo]) opcoesSet.add(a[campo]) });
 
                 const arr = Array.from(opcoesSet).sort();
                 if(id === 'filtroFaixa') arr.sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99) - (ORDEM_FAIXAS[b.toUpperCase()]||99));
 
-                // Reconstruir o select mantendo "Todos"
                 select.innerHTML = '<option value="todos">Todos</option>';
                 arr.forEach(optValue => {
                     const el = document.createElement('option');
@@ -234,21 +226,23 @@
             const fC = document.getElementById('filtroCategoria').value;
             const fP = document.getElementById('filtroPeso').value;
 
-            // 1. Filtrar os dados reais para a tabela
-            const filtradosParaTabela = dadosAtletas.filter(a => 
-                (fG === 'todos' || a['SEXO'] === fG) &&
-                (fF === 'todos' || a['SUA FAIXA'] === fF) &&
-                (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
-                (fP === 'todos' || a['SEU PESO'] === fP)
-            );
+            // FILTRO PRINCIPAL: Apenas quem contém "Confirmad" no Status
+            const filtradosParaTabela = dadosAtletas.filter(a => {
+                const statusTxt = a[colMap.STATUS] || '';
+                const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
 
-            // 2. Lógica de Filtros Dependentes
-            // Se mudamos um filtro, precisamos saber quais opções restam nos outros
+                return isConfirmado && 
+                    (fG === 'todos' || a['SEXO'] === fG) &&
+                    (fF === 'todos' || a['SUA FAIXA'] === fF) &&
+                    (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
+                    (fP === 'todos' || a['SEU PESO'] === fP);
+            });
+
             if(atualizarFiltros) {
-                atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : dadosAtletas) : dadosAtletas);
+                // Filtros dependentes baseados apenas nos confirmados
+                atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : []) : []);
             }
 
-            // 3. Gerar o HTML da lista
             container.innerHTML = '';
             const estrutura = {};
             filtradosParaTabela.forEach(a => {
@@ -277,11 +271,7 @@
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
-                                        
-                                        // Verifica o texto do status para aplicar a cor correta
                                         const statusTxt = a[colMap.STATUS] || '---';
-                                        const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
-                                        const statusClass = isConfirmado ? 'status-confirmado' : 'status-aguardando';
 
                                         return `
                                         <tr>
@@ -297,7 +287,7 @@
                                             <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
                                             <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
                                             <td data-label="Status">
-                                                <span class="status-badge ${statusClass}">${statusTxt}</span>
+                                                <span class="status-badge status-confirmado">${statusTxt}</span>
                                             </td>
                                         </tr>
                                     `}).join('')}
@@ -315,11 +305,8 @@
             el.nextElementSibling.classList.toggle('open');
         }
 
-        // Listener para mudanças nos selects
         document.querySelectorAll('select').forEach(s => {
-            s.addEventListener('change', (e) => {
-                renderizar(true);
-            });
+            s.addEventListener('change', () => renderizar(true));
         });
 
         carregarDados();
