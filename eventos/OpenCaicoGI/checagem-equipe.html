@@ -10,7 +10,6 @@
         :root {
             --primary-color: #2563eb; 
             --accent-green: #22c55e;
-            --accent-yellow: #f59e0b;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -84,7 +83,6 @@
             color: var(--accent-green);
             margin: 4px 0 0 0;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .accordion-header::after {
@@ -146,6 +144,7 @@
             font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
+            color: var(--accent-green);
         }
 
         .link-voltar {
@@ -158,19 +157,15 @@
             border-radius: 12px;
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
-            transition: all 0.3s ease;
         }
-        .link-voltar:hover { background-color: var(--primary-color); transform: translateY(-2px); }
 
         #loading-message { padding: 50px; font-weight: 600; color: var(--primary-color); }
 
         @media (max-width: 768px) {
-            .main-content { margin-top: 110px; }
             thead { display: none; }
             tr { display: block; border-bottom: 2px solid #f3f4f6; padding: 10px 0; }
-            td { display: flex; justify-content: space-between; border: none; padding: 6px 0; }
-            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; text-align: left; margin-right: 10px;}
-            td { text-align: right; }
+            td { display: flex; justify-content: space-between; border: none; padding: 6px 0; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); float: left; }
         }
     </style>
 </head>
@@ -224,7 +219,7 @@
                     faixa: headers.indexOf('SUA FAIXA'),
                     peso: headers.indexOf('SEU PESO'),
                     categoria: headers.indexOf('SUA CATEGORIA'),
-                    status: 17 // Coluna R (18ª coluna)
+                    status: 17 // Coluna R
                 };
 
                 const data = lines.slice(1).map(line => {
@@ -237,9 +232,9 @@
                         faixa: values[idx.faixa] || '',
                         peso: values[idx.peso] || '',
                         categoria: values[idx.categoria] || '',
-                        status: values[idx.status] || 'Aguardando'
+                        status: values[idx.status] || ''
                     };
-                });
+                }).filter(atleta => atleta.status.toLowerCase().includes('confirmado'));
 
                 renderEquipes(data);
             } catch (error) {
@@ -252,30 +247,29 @@
             const container = document.getElementById('listaEquipes');
             container.innerHTML = '';
             document.getElementById('loading-message').style.display = 'none';
-            const estrutura = {};
 
+            if (data.length === 0) {
+                container.innerHTML = '<p style="text-align:center">Nenhum atleta confirmado no momento.</p>';
+                return;
+            }
+
+            const estrutura = {};
             data.forEach(atleta => {
                 const equipe = atleta.equipe;
                 const professor = atleta.professor;
-
                 if (!estrutura[equipe]) estrutura[equipe] = { total: 0, professores: {} };
                 if (!estrutura[equipe].professores[professor]) estrutura[equipe].professores[professor] = [];
-                
                 estrutura[equipe].professores[professor].push(atleta);
                 estrutura[equipe].total++;
             });
 
-            const equipesOrdenadas = Object.keys(estrutura).sort();
-
-            equipesOrdenadas.forEach(nomeEquipe => {
+            Object.keys(estrutura).sort().forEach(nomeEquipe => {
                 const infoEquipe = estrutura[nomeEquipe];
                 const item = document.createElement('div');
                 item.className = 'accordion-item';
                 
                 let htmlProfessores = '';
-                const professoresOrdenados = Object.keys(infoEquipe.professores).sort();
-
-                professoresOrdenados.forEach(prof => {
+                Object.keys(infoEquipe.professores).sort().forEach(prof => {
                     htmlProfessores += `
                         <div class="professor-section">
                             <div class="professor-name">Professor: ${prof}</div>
@@ -284,30 +278,19 @@
                                     <tr>
                                         <th>ORD</th>
                                         <th>Atleta</th>
-                                        <th>Faixa</th>
-                                        <th>Peso</th>
                                         <th>Categoria</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${infoEquipe.professores[prof].map(a => {
-                                        const isConfirmado = a.status.toLowerCase().includes('confirmado');
-                                        const statusColor = isConfirmado ? 'var(--accent-green)' : 'var(--accent-yellow)';
-                                        
-                                        return `
+                                    ${infoEquipe.professores[prof].map(a => `
                                         <tr>
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
-                                            <td data-label="Atleta">${a.nome}</td>
-                                            <td data-label="Faixa">${a.faixa}</td>
-                                            <td data-label="Peso">${a.peso}</td>
+                                            <td data-label="Atleta"><strong>${a.nome}</strong><br><small>${a.faixa} / ${a.peso}</small></td>
                                             <td data-label="Categoria">${a.categoria}</td>
-                                            <td data-label="Status" class="status-cell" style="color: ${statusColor}">
-                                                ● ${a.status}
-                                            </td>
+                                            <td data-label="Status" class="status-cell">● ${a.status}</td>
                                         </tr>
-                                        `;
-                                    }).join('')}
+                                    `).join('')}
                                 </tbody>
                             </table>
                         </div>
@@ -318,7 +301,7 @@
                     <div class="accordion-header" onclick="toggleAcc(this)">
                         <div class="team-info">
                             <h2>${nomeEquipe}</h2>
-                            <p>${infoEquipe.total} Atleta(s) Inscrito(s)</p>
+                            <p>${infoEquipe.total} Atleta(s) Confirmado(s)</p>
                         </div>
                     </div>
                     <div class="accordion-content">${htmlProfessores}</div>
