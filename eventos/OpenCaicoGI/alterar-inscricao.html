@@ -7,9 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* =========================================
-           CONFIGURAÇÕES TEMA SENOGI
-           ========================================= */
         :root {
             --primary-color: #2563eb; 
             --accent-green: #22c55e;
@@ -52,7 +49,6 @@
             color: #111827;
         }
 
-        /* CARD STYLE */
         .card {
             background: var(--card-bg);
             padding: 30px;
@@ -69,11 +65,10 @@
             border-radius: 8px; font-size: 1rem; box-sizing: border-box;
             font-family: inherit; outline: none;
         }
-        input:focus { border-color: var(--primary-color); ring: 2px solid #bfdbfe; }
+        input:focus { border-color: var(--primary-color); }
 
         .obs-ord { font-size: 0.85rem; color: var(--text-secondary); margin: -10px 0 20px; text-align: left; }
 
-        /* BUTTONS */
         .btn {
             width: 100%; padding: 14px; border: none; border-radius: 10px;
             font-weight: 600; font-size: 1rem; cursor: pointer;
@@ -90,7 +85,6 @@
         .btn-outline { background: transparent; border: 1px solid #d1d5db; color: var(--text-main); margin-top: 10px; }
         .btn-outline:hover { background: #f9fafb; }
 
-        /* RESULTADO / TABELA */
         #resultado { display: none; }
         .info-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         .info-table td { padding: 14px 10px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; text-align: left; }
@@ -104,7 +98,6 @@
         .status-confirmado { background: #dcfce7; color: #166534; }
         .status-pendente { background: #fee2e2; color: #991b1b; }
 
-        /* LOADER */
         .loader {
             border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
             border-radius: 50%; width: 40px; height: 40px;
@@ -117,7 +110,6 @@
         @media (max-width: 600px) {
             h1 { font-size: 1.6rem; }
             .card { padding: 20px; }
-            .main-content { margin: 20px auto; }
         }
     </style>
 </head>
@@ -132,6 +124,7 @@
     <div class="main-content">
         <h1>Verificar Inscrição</h1>
         
+        <!-- CONTAINER DE BUSCA -->
         <div id="search-container" class="card">
             <form id="verificationForm">
                 <div class="form-group">
@@ -149,8 +142,10 @@
 
         <div id="loader" class="loader"></div>
 
+        <!-- RESULTADO DA BUSCA -->
         <div id="resultado" class="card"></div>
 
+        <!-- FORMULÁRIO DE EDIÇÃO (WHATSAPP) -->
         <div id="edit-container" class="card" style="display: none;">
             <h2 style="font-size: 1.3rem; margin-top: 0; font-family: 'Poppins';">Solicitar Alteração</h2>
             <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 25px;">
@@ -179,108 +174,127 @@
         &copy; 2026 Arena Competidor. Todos os direitos reservados.
     </div>
 
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // URL do seu Web App (Apps Script)
-        const sheetURL = 'https://script.google.com/macros/s/AKfycbwe_t6u7nL2kdZIbK1xGIJuqw6qMeaxFWsAEVFkOGUudtC-iZKC-mfhlxhiTmYZ7iLUFw/exec';
-        
-        const FAIXAS = ['BRANCA', 'CINZA', 'AMARELA', 'LARANJA', 'VERDE', 'AZUL', 'ROXA', 'MARROM', 'PRETA'];
-        const PESOS = ['GALO', 'PLUMA', 'PENA', 'LEVE', 'MÉDIO', 'MEIO-PESADO', 'PESADO', 'SUPER PESADO', 'PESADÍSSIMO'];
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sheetURL = 'https://script.google.com/macros/s/AKfycbwe_t6u7nL2kdZIbK1xGIJuqw6qMeaxFWsAEVFkOGUudtC-iZKC-mfhlxhiTmYZ7iLUFw/exec';
+            
+            const FAIXAS = ['BRANCA', 'CINZA', 'AMARELA', 'LARANJA', 'VERDE', 'AZUL', 'ROXA', 'MARROM', 'PRETA'];
+            const PESOS = ['GALO', 'PLUMA', 'PENA', 'LEVE', 'MÉDIO', 'MEIO-PESADO', 'PESADO', 'SUPER PESADO', 'PESADÍSSIMO'];
 
-        let atletaAtual = null;
+            let atletaAtual = null;
 
-        const searchContainer = document.getElementById('search-container');
-        const resultDiv = document.getElementById('resultado');
-        const editContainer = document.getElementById('edit-container');
-        const loader = document.getElementById('loader');
+            const searchContainer = document.getElementById('search-container');
+            const resultDiv = document.getElementById('resultado');
+            const editContainer = document.getElementById('edit-container');
+            const loader = document.getElementById('loader');
 
-        document.getElementById('verificationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const ordBusca = document.getElementById('ord').value.trim();
-            const nascimentoBusca = document.getElementById('dataNascimento').value;
+            // --- BUSCA DE ATLETA ---
+            document.getElementById('verificationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const ordBusca = document.getElementById('ord').value.trim();
 
-            searchContainer.style.display = 'none';
-            loader.style.display = 'block';
+                searchContainer.style.display = 'none';
+                loader.style.display = 'block';
 
-            Papa.parse(sheetURL, {
-                download: true,
-                header: false, // IMPORTANTE: Mudar para false pois o Script envia dados filtrados
-                skipEmptyLines: true,
-                complete: function(results) {
-                    loader.style.display = 'none';
-                    
-                    // Como desativamos o header, results.data é um array de arrays.
-                    // Vamos procurar o atleta comparando a coluna 1 (ORD) e a coluna 5 (Data de Nasc - Oculta no CSV mas presente se você seguiu o passo anterior)
-                    // NOTA: No passo anterior, deixamos a Data de Nasc como "" no CSV por segurança. 
-                    // Se você quiser validar por data, precisará liberar a coluna r[5] no Code.gs ou usar apenas o ORD.
-                    
-                    atletaAtual = results.data.find(row => {
-                        // row[1] é a coluna ORD. row[0] é o Timestamp.
-                        return String(row[1]).trim() === ordBusca;
-                    });
+                Papa.parse(sheetURL, {
+                    download: true,
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        loader.style.display = 'none';
+                        
+                        const row = results.data.find(r => String(r[1]).trim() === ordBusca);
 
-                    if (atletaAtual) {
-                        // Mapeamos o array de volta para nomes amigáveis para o restante do código
-                        // Seguindo a ordem que definimos no doGet do Code.gs:
-                        atletaAtual = {
-                            'NOME COMPLETO': atletaAtual[2],
-                            'SUA EQUIPE': atletaAtual[9],
-                            'SUA FAIXA': atletaAtual[11],
-                            'SUA CATEGORIA': atletaAtual[12],
-                            'SEU PESO': atletaAtual[13],
-                            'ABSOLUTO': atletaAtual[14],
-                            'STATUS DO PAGAMENTO': atletaAtual[17], // Coluna R
-                            'ORD': atletaAtual[1]
-                        };
-                        showResult();
-                    } else {
-                        alert('Atleta não encontrado! Verifique o número de ORD.');
+                        if (row) {
+                            atletaAtual = {
+                                'NOME COMPLETO': row[2],
+                                'SUA EQUIPE': row[9],
+                                'SUA FAIXA': row[11],
+                                'SUA CATEGORIA': row[12],
+                                'SEU PESO': row[13],
+                                'ABSOLUTO': row[14],
+                                'STATUS DO PAGAMENTO': row[17],
+                                'ORD': row[1]
+                            };
+                            showResult();
+                        } else {
+                            alert('Atleta não encontrado! Verifique o número de ORD.');
+                            searchContainer.style.display = 'block';
+                        }
+                    },
+                    error: function() {
+                        loader.style.display = 'none';
+                        alert('Erro ao carregar banco de dados.');
                         searchContainer.style.display = 'block';
                     }
-                },
-                error: function() {
-                    loader.style.display = 'none';
-                    alert('Erro ao carregar banco de dados.');
-                    searchContainer.style.display = 'block';
-                }
+                });
+            });
+
+            // --- MOSTRAR RESULTADO ---
+            function showResult() {
+                const status = (atletaAtual['STATUS DO PAGAMENTO'] || 'PENDENTE').toUpperCase();
+                const isConfirmado = status.includes('PAGO') || status.includes('CONFIRMADO') || status.includes('OK');
+                const badgeClass = isConfirmado ? 'status-confirmado' : 'status-pendente';
+
+                resultDiv.innerHTML = `
+                    <h3 style="margin-top:0; font-family: 'Poppins';">Dados da Inscrição</h3>
+                    <table class="info-table">
+                        <tr><td>Nome</td><td>${atletaAtual['NOME COMPLETO']}</td></tr>
+                        <tr><td>Equipe</td><td>${atletaAtual['SUA EQUIPE']}</td></tr>
+                        <tr><td>Faixa</td><td>${atletaAtual['SUA FAIXA']}</td></tr>
+                        <tr><td>Peso</td><td>${atletaAtual['SEU PESO']}</td></tr>
+                        <tr><td>Categoria</td><td>${atletaAtual['SUA CATEGORIA']}</td></tr>
+                        <tr><td>Status</td><td><span class="status-badge ${badgeClass}">${status}</span></td></tr>
+                    </table>
+                    ${isConfirmado ? 
+                        '<button id="btnAbrirEdit" class="btn btn-primary">Solicitar Alteração</button>' : 
+                        '<div style="background:#fff1f2; color:#be123c; padding:15px; border-radius:8px; font-size:0.85rem; margin-top:10px;">⚠️ Pagamento não identificado.</div>'
+                    }
+                    <button onclick="location.reload()" class="btn btn-outline">Voltar</button>
+                `;
+                resultDiv.style.display = 'block';
+
+                // Adiciona evento ao botão gerado dinamicamente
+                const btnEdit = document.getElementById('btnAbrirEdit');
+                if(btnEdit) btnEdit.addEventListener('click', openEdit);
+            }
+
+            // --- ABRIR EDIÇÃO ---
+            function openEdit() {
+                resultDiv.style.display = 'none';
+                editContainer.style.display = 'block';
+                document.getElementById('novaFaixa').innerHTML = FAIXAS.map(f => `<option value="${f}" ${f === atletaAtual['SUA FAIXA'] ? 'selected' : ''}>${f}</option>`).join('');
+                document.getElementById('novoPeso').innerHTML = PESOS.map(p => `<option value="${p}" ${p === atletaAtual['SEU PESO'] ? 'selected' : ''}>${p}</option>`).join('');
+                document.getElementById('novaCategoriaInput').value = atletaAtual['SUA CATEGORIA'];
+            }
+
+            // --- ENVIO WHATSAPP ---
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const novaFaixa = document.getElementById('novaFaixa').value;
+                const novoPeso = document.getElementById('novoPeso').value;
+                const novaCategoria = document.getElementById('novaCategoriaInput').value;
+                const numeroZap = "5584987513740";
+
+                const mensagem = `*Solicitação de Alteração - Arena Competidor*%0A%0A` +
+                    `*Atleta:* ${atletaAtual['NOME COMPLETO']}%0A` +
+                    `*ORD:* ${atletaAtual['ORD']}%0A` +
+                    `----------------------------%0A` +
+                    `*DE:* ${atletaAtual['SUA FAIXA']} | ${atletaAtual['SEU PESO']} | ${atletaAtual['SUA CATEGORIA']}%0A` +
+                    `*PARA:* ${novaFaixa} | ${novoPeso} | ${novaCategoria}`;
+
+                const url = `https://api.whatsapp.com/send?phone=${numeroZap}&text=${mensagem}`;
+                window.open(url, '_blank');
+            });
+
+            // --- CANCELAR EDIÇÃO ---
+            document.getElementById('cancelEditBtn').addEventListener('click', function() {
+                editContainer.style.display = 'none';
+                resultDiv.style.display = 'block';
             });
         });
-
-        function showResult() {
-            const status = (atletaAtual['STATUS DO PAGAMENTO'] || 'PENDENTE').toUpperCase();
-            const isConfirmado = status.includes('PAGO') || status.includes('CONFIRMADO') || status.includes('OK');
-            const badgeClass = isConfirmado ? 'status-confirmado' : 'status-pendente';
-
-            resultDiv.innerHTML = `
-                <h3 style="margin-top:0; font-family: 'Poppins';">Dados da Inscrição</h3>
-                <table class="info-table">
-                    <tr><td>Nome</td><td>${atletaAtual['NOME COMPLETO']}</td></tr>
-                    <tr><td>Equipe</td><td>${atletaAtual['SUA EQUIPE']}</td></tr>
-                    <tr><td>Faixa</td><td>${atletaAtual['SUA FAIXA']}</td></tr>
-                    <tr><td>Peso</td><td>${atletaAtual['SEU PESO']}</td></tr>
-                    <tr><td>Categoria</td><td>${atletaAtual['SUA CATEGORIA']}</td></tr>
-                    <tr><td>Status</td><td><span class="status-badge ${badgeClass}">${status}</span></td></tr>
-                </table>
-                ${isConfirmado ? 
-                    '<button onclick="openEdit()" class="btn btn-primary">Solicitar Alteração</button>' : 
-                    '<div style="background:#fff1f2; color:#be123c; padding:15px; border-radius:8px; font-size:0.85rem; margin-top:10px;">⚠️ Pagamento não identificado.</div>'
-                }
-                <button onclick="location.reload()" class="btn btn-outline">Voltar</button>
-            `;
-            resultDiv.style.display = 'block';
-        }
-
-        window.openEdit = () => {
-            resultDiv.style.display = 'none';
-            editContainer.style.display = 'block';
-            document.getElementById('novaFaixa').innerHTML = FAIXAS.map(f => `<option value="${f}">${f}</option>`).join('');
-            document.getElementById('novoPeso').innerHTML = PESOS.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('novaCategoriaInput').value = atletaAtual['SUA CATEGORIA'];
-        };
-
-        // ... (resto do seu código de WhatsApp e Cancelar permanece igual)
-    });
-</script>
+    </script>
 </body>
 </html>
