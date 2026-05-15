@@ -41,6 +41,19 @@
         .pay-header h2 { margin: 0; font-family: 'Oswald'; text-transform: uppercase; color: #e62117; font-size: 1.3rem; }
         .order-id { font-size: 0.7rem; color: #a1a1aa; margin-top: 3px; font-weight: bold; }
 
+        /* NOVO ESTILO DO AVISO CRÍTICO */
+        .critical-notice {
+            background: #ffcc00;
+            color: #000;
+            padding: 12px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            line-height: 1.2;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e6b800;
+        }
+
         .pay-body { padding: 15px 20px 20px; text-align: center; }
 
         .amount-box { margin-bottom: 15px; }
@@ -137,6 +150,11 @@
     <div class="pay-header">
         <h2>Pagamento Seguro</h2>
         <div class="order-id">PEDIDO: <span id="ord-id">---</span></div>
+    </div>
+
+    <!-- NOVO BANNER DE AVISO -->
+    <div class="critical-notice">
+        ⚠️ ATENÇÃO: O ingresso SÓ SERÁ LIBERADO após o envio do comprovante pelo WhatsApp abaixo!
     </div>
 
     <div class="pay-body">
