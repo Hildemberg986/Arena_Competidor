@@ -1,192 +1,198 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Arena Competidor • Live Center PRO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARENA MASTER CONTROL v4.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        .glass { background: #080808; border: 1px solid #1a1a1a; }
+        .video-feed { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border: 1px solid #222; }
+        .video-feed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        /* Sistema de Cores de Conexão */
+        .status-excellent { background: #22c55e; box-shadow: 0 0 10px #22c55e; } 
+        .status-regular { background: #eab308; box-shadow: 0 0 10px #eab308; }   
+        .status-poor { background: #ef4444; box-shadow: 0 0 10px #ef4444; }      
+        .status-offline { background: #475569; }
 
-<style>
-:root {
-  --bg: #050505;
-  --card: #111111;
-  --line: #262626;
-  --red: #ff1f1f;
-  --text: #ffffff;
-  --muted: #9d9d9d;
-  --green: #19d66b;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
-
-body {
-  background: radial-gradient(circle at top right, #220000 0%, transparent 25%), var(--bg);
-  color: #fff; height: 100vh; overflow: hidden;
-}
-
-header {
-  height: 90px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 22px; background: rgba(8, 8, 8, .92); backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
-}
-
-.logo { height: 70px; width: 180px; display: flex; align-items: center; }
-.logo img { height: 100%; width: 100%; object-fit: contain; }
-
-.top { display: flex; gap: 10px; }
-.stat {
-  padding: 11px 15px; background: #101010; border: 1px solid var(--line);
-  border-radius: 16px; font-size: 13px; color: #aaa;
-}
-
-main { padding: 16px; height: calc(100vh - 90px); overflow-y: auto; }
-
-.featured {
-  height: 440px; background: var(--card); border: 1px solid var(--line);
-  border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; margin-bottom: 24px;
-}
-
-.feature-top {
-  height: 48px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px; background: #161616; border-bottom: 1px solid #222;
-}
-
-.live-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; }
-.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
-
-.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding-bottom: 30px; }
-
-.card {
-  height: 180px; background: var(--card); border: 2px solid var(--line);
-  border-radius: 18px; overflow: hidden; cursor: pointer; transition: 0.2s;
-  display: flex; flex-direction: column;
-}
-
-.card:hover { border-color: #444; transform: translateY(-3px); }
-.card.active { border-color: var(--red); box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
-
-.card-top { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: #151515; font-size: 12px; }
-.card-top small { color: var(--red); font-weight: bold; }
-
-.thumb-container { position: relative; flex: 1; background: #000; }
-.thumb-container img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
-
-.play-overlay {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
-}
-.card:hover .play-overlay { opacity: 1; }
-.card:hover .thumb-container img { opacity: 1; }
-
-@media(max-width: 1200px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-@media(max-width: 650px) {
-  .grid { grid-template-columns: 1fr; }
-  header { flex-direction: column; height: auto; padding: 15px; gap: 15px; }
-  .logo { width: 100%; justify-content: center; }
-}
-</style>
+        .kpi-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-top: 2px solid #dc2626; }
+        .grid-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+        ::-webkit-scrollbar { width: 2px; }
+        ::-webkit-scrollbar-thumb { background: #dc2626; }
+    </style>
 </head>
-<body>
+<body class="flex flex-col p-2">
 
-<header>
-  <div class="logo"><img src="../img/arena2.png" alt="Logo"></div>
-  <div class="top" id="statsHeader">
-    </div>
-</header>
+    <div id="app" class="flex flex-col h-full">
+        
+        <header class="flex justify-between items-center mb-4 px-2">
+            <img src="img/arena2.png" alt="Arena Logo" class="h-5 w-auto"> 
+            
+            <div class="flex gap-3">
+                <div class="kpi-card px-5 py-1 rounded">
+                    <p class="text-[7px] text-gray-500 uppercase font-bold">Total Live Viewers</p>
+                    <p class="text-xl font-black text-red-600 leading-none">{{ totalLiveViewers }}</p>
+                </div>
+                <div class="kpi-card px-5 py-1 rounded">
+                    <p class="text-[7px] text-gray-500 uppercase font-bold">Channel Subscribers</p>
+                    <p class="text-xl font-black text-white leading-none">{{ channelData.subs }}</p>
+                </div>
+                <div class="kpi-card px-5 py-1 rounded">
+                    <p class="text-[7px] text-gray-500 uppercase font-bold">Total Channel Views</p>
+                    <p class="text-xl font-black text-white leading-none">{{ channelData.totalViews }}</p>
+                </div>
+            </div>
+        </header>
 
-<main>
-  <section class="featured">
-    <div class="feature-top">
-      <div class="live-badge"><div class="dot"></div><span id="mainTitle">Carregando...</span></div>
-      <small style="color:var(--muted)">AO VIVO</small>
-    </div>
-    <iframe id="mainFrame" src="" allow="autoplay; encrypted-media" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>
-  </section>
+        <div class="grid grid-6 gap-3 mb-6">
+            <div v-for="(stream, index) in streams" :key="index" class="flex flex-col gap-2">
+                <div class="video-feed rounded shadow-2xl">
+                    <iframe :src="'https://www.youtube.com/embed/' + stream.id + '?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0'" frameborder="0" allowfullscreen></iframe>
+                </div>
 
-  <section class="grid" id="videoGrid">
-    </section>
-</main>
+                <div class="glass p-2 rounded relative">
+                    <div class="absolute top-0 left-0 w-full h-1 transition-colors duration-500" :class="getConnectionClass(stream)"></div>
+                    
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-[10px] font-black text-white italic tracking-tighter">{{ stream.area }}</span>
+                        <span class="text-[8px] font-bold" :class="stream.isLive ? 'text-green-500' : 'text-gray-600'">
+                            {{ stream.isLive ? 'ESTÁVEL' : 'OFFLINE' }}
+                        </span>
+                    </div>
 
-<script>
-  // 1. DADOS SIMULADOS (O que viria da API)
-  const apiData = {
-    evento: "Open Caicó",
-    direcao: "Direção PRO",
-    cameras: [
-      { id: "FgkvumJ2YWw", nome: "Área 01", principal: true },
-      { id: "c8MzmYr9HYY", nome: "Área 02", principal: false },
-      { id: "XZpK2uyC_Js", nome: "Área 03", principal: false },
-      { id: "xIEzJ-gVNvo", nome: "Área 04", principal: false },
-      { id: "msst6vTPCmM", nome: "Área 05", principal: false },
-      { id: "a1pbOBqM8XE", nome: "Área 06", principal: false }
-    ]
-  };
-
-  // 2. FUNÇÃO PARA CARREGAR O CONTEÚDO
-  function initArena() {
-    const grid = document.getElementById('videoGrid');
-    const statsHeader = document.getElementById('statsHeader');
-    
-    // Atualiza Header Stats
-    statsHeader.innerHTML = `
-      <div class="stat">🔴 Áreas <b>${apiData.cameras.length} AO VIVO</b></div>
-      <div class="stat">🏆 ${apiData.evento}</div>
-      <div class="stat">🎥 ${apiData.direcao}</div>
-      <div class="stat">⏱ <b id="clock">00:00:00</b></div>
-    `;
-
-    // Gera os Cards Dinamicamente
-    grid.innerHTML = apiData.cameras.map(cam => `
-      <div class="card ${cam.principal ? 'active' : ''}" onclick="changeVideo('${cam.id}', '${cam.nome}', this)">
-        <div class="card-top"><span>${cam.nome}</span><small>LIVE</small></div>
-        <div class="thumb-container">
-          <img src="https://img.youtube.com/vi/${cam.id}/hqdefault.jpg">
-          <div class="play-overlay">
-            <svg width="40" height="40" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-white/5 font-mono">
+                        <div>
+                            <p class="text-[7px] text-gray-500 uppercase">Viewers</p>
+                            <p class="text-[11px] font-bold text-red-500">{{ stream.viewers }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[7px] text-gray-500 uppercase">Status</p>
+                            <p class="text-[8px] text-gray-300 uppercase">{{ stream.isLive ? 'Transmitindo' : 'Aguardando' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    `).join('');
 
-    // Define o vídeo inicial
-    const principal = apiData.cameras.find(c => c.principal);
-    changeVideo(principal.id, principal.nome);
-    startClock();
-  }
+        <footer class="flex-grow flex gap-4 min-h-0 bg-black border-t border-white/5 pt-4">
+            <div class="flex-grow glass p-3 overflow-hidden flex flex-col rounded-lg">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-[10px] font-bold text-red-600 uppercase tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Arena Engine Live Logs
+                    </h4>
+                    <span class="text-[8px] font-mono text-gray-600">PRODUCTION MODE | VER 4.2.0</span>
+                </div>
+                <div class="flex-grow overflow-y-auto space-y-1 font-mono text-[9px] text-gray-400">
+                    <p v-for="log in logs" class="border-b border-white/5 pb-0.5 last:border-0">
+                        <span class="text-red-900">[{{ log.time }}]</span> 
+                        <span class="text-white opacity-50">#</span> {{ log.msg }}
+                    </p>
+                </div>
+            </div>
 
-  // 3. LOGICA DE TROCA
-  function changeVideo(id, nome, element) {
-    document.getElementById('mainTitle').innerText = `${nome} • Principal`;
-    document.getElementById('mainFrame').src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=0`;
-    
-    if(element) {
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-      element.classList.add('active');
-    }
-  }
+            <div class="w-64 glass p-4 rounded-lg flex flex-col justify-between border-l-4 border-l-red-600">
+                <h4 class="text-[10px] font-black text-white uppercase mb-4 tracking-tighter italic">Network Integrity</h4>
+                <div class="space-y-4">
+                    <div v-for="metric in systemHealth">
+                        <div class="flex justify-between text-[8px] mb-1 uppercase text-gray-500">
+                            <span>{{ metric.label }}</span>
+                            <span :class="metric.color">{{ metric.value }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-900 h-1"><div :class="metric.bg" class="h-full" :style="{width: metric.value + '%'}"></div></div>
+                    </div>
+                </div>
+                <div class="mt-4 text-[7px] text-gray-700 leading-tight">
+                    ARENA COMPETIDOR TECHNOLOGY<br>MASTER CONTROL UNIT
+                </div>
+            </div>
+        </footer>
+    </div>
 
-  // 4. RELÓGIO
-  function startClock() {
-    setInterval(() => {
-      document.getElementById("clock").innerText = new Date().toLocaleTimeString("pt-BR");
-    }, 1000);
-  }
+    <script>
+        const { createApp } = Vue
+        createApp({
+            data() {
+                return {
+                    apiKey: 'AIzaSyDQqZZ09WngQEuA8ATRoQlHTYDHkMh8gdM', // SUA CHAVE VALIDADA
+                    channelId: 'UCAagqCNKNX02STp9dWR2-yg', // SEU ID DE CANAL
+                    currentDomain: window.location.hostname,
+                    channelData: { subs: '...', totalViews: '...' },
+                    totalLiveViewers: 0,
+                    streams: [
+                        { area: 'AREA 01', id: 'FgkvumJ2YWw', viewers: 0, isLive: false },
+                        { area: 'AREA 02', id: 'c8MzmYr9HYY', viewers: 0, isLive: false },
+                        { area: 'AREA 03', id: 'XZpK2uyC_Js', viewers: 0, isLive: false },
+                        { area: 'AREA 04', id: 'xIEzJ-gVNvo', viewers: 0, isLive: false },
+                        { area: 'AREA 05', id: 'msst6vTPCmM', viewers: 0, isLive: false },
+                        { area: 'AREA 06', id: 'a1pbOBqM8XE', viewers: 0, isLive: false }
+                    ],
+                    systemHealth: [
+                        { label: 'Stream Stability', value: 100, color: 'text-green-500', bg: 'bg-green-500' },
+                        { label: 'API Response', value: 100, color: 'text-white', bg: 'bg-white' },
+                        { label: 'Buffer Rate', value: 0, color: 'text-red-600', bg: 'bg-red-600' }
+                    ],
+                    logs: []
+                }
+            },
+            methods: {
+                async fetchYouTubeData() {
+                    try {
+                        // FETCH CHANNEL DATA
+                        const chRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${this.channelId}&key=${this.apiKey}`);
+                        const chData = await chRes.json();
+                        if(chData.items) {
+                            const s = chData.items[0].statistics;
+                            this.channelData.subs = Number(s.subscriberCount).toLocaleString('pt-BR');
+                            this.channelData.totalViews = Number(s.viewCount).toLocaleString('pt-BR');
+                        }
 
-  // Inicializa tudo
-  window.onload = initArena;
+                        // FETCH VIDEO LIVE DATA
+                        const vIds = this.streams.map(s => s.id).join(',');
+                        const vRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${vIds}&key=${this.apiKey}`);
+                        const vData = await vRes.json();
+                        
+                        let currentTotal = 0;
+                        
+                        // Reseta estados antes de mapear
+                        this.streams.forEach(s => { s.isLive = false; s.viewers = 0; });
 
-  /* Para usar com API REAL, você faria:
-     fetch('URL_DA_SUA_API')
-       .then(res => res.json())
-       .then(data => { 
-          // substitua apiData por data e chame initArena()
-       });
-  */
-</script>
+                        vData.items?.forEach((item) => {
+                            const idx = this.streams.findIndex(s => s.id === item.id);
+                            if (idx !== -1) {
+                                const viewers = parseInt(item.liveStreamingDetails?.concurrentViewers || 0);
+                                this.streams[idx].viewers = viewers;
+                                this.streams[idx].isLive = true;
+                                currentTotal += viewers;
+                            }
+                        });
 
+                        this.totalLiveViewers = currentTotal;
+                        this.addLog(`Sincronização OK. Global Viewers: ${currentTotal}`);
+
+                    } catch (error) {
+                        this.addLog("CRITICAL: Falha na comunicação com YouTube API", 'error');
+                    }
+                },
+                getConnectionClass(stream) {
+                    if (!stream.isLive) return 'status-offline';
+                    if (stream.viewers > 0) return 'status-excellent';
+                    return 'status-regular';
+                },
+                addLog(msg) {
+                    this.logs.unshift({ time: new Date().toLocaleTimeString(), msg });
+                    if (this.logs.length > 50) this.logs.pop();
+                }
+            },
+            mounted() {
+                this.addLog("Arena Master Control Iniciado.");
+                this.fetchYouTubeData();
+                // Refresh automático a cada 60 segundos
+                setInterval(this.fetchYouTubeData, 60000);
+            }
+        }).mount('#app')
+    </script>
 </body>
 </html>
