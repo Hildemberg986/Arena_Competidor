@@ -221,9 +221,9 @@
                 <span id="ext-taxa-card" class="negativo">R$ 0,00</span>
             </div>
 
-            <!-- Mantive a linha oculta no extrato apenas se o valor for maior que zero -->
+            <!-- Linha da Retirada (só aparece se o valor for maior que zero) -->
             <div class="item-extrato" id="row-saque" style="display: none;">
-                <span>Saques Realizados</span>
+                <span>Retirada</span>
                 <span id="ext-saque" class="negativo">R$ 0,00</span>
             </div>
 
@@ -302,10 +302,10 @@
                     }
                 }
 
-                // Cálculo aplicando a dedução estática definida no código
+                // O valor definido em VALOR_SAQUE_MANUAL desconta diretamente aqui no saldo final
                 const saldoFinal = somaConfirmada - totalTaxaAdm - totalTaxaCartao - VALOR_SAQUE_MANUAL;
 
-                // Atualizar Dashboard
+                // Atualizar Dashboard (O Saldo Líquido Real agora já mostra o valor descontado)
                 document.getElementById('res-bruto').innerText = formatarMoeda(somaBruta);
                 document.getElementById('res-pendente').innerText = formatarMoeda(somaPendente);
                 document.getElementById('res-liquido').innerText = formatarMoeda(saldoFinal);
@@ -315,7 +315,7 @@
                 document.getElementById('ext-taxa-adm').innerText = "- " + formatarMoeda(totalTaxaAdm);
                 document.getElementById('ext-taxa-card').innerText = "- " + formatarMoeda(totalTaxaCartao);
                 
-                // Exibe a linha de saque no extrato apenas se houver valor preenchido ocultamente
+                // Exibe a linha de "Retirada" se ela for configurada com valor maior que zero
                 const rowSaque = document.getElementById('row-saque');
                 if (VALOR_SAQUE_MANUAL > 0) {
                     rowSaque.style.display = 'flex';
