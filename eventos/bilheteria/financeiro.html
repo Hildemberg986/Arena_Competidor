@@ -94,61 +94,6 @@
             color: var(--text);
         }
 
-        /* Seção de Saque */
-        .saque-box {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.03);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .saque-box label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .saque-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            max-width: 200px;
-            width: 100%;
-        }
-
-        .saque-input-wrapper span {
-            position: absolute;
-            left: 12px;
-            font-weight: 600;
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        .saque-input-wrapper input {
-            width: 100%;
-            padding: 10px 12px 10px 40px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .saque-input-wrapper input:focus {
-            border-color: var(--text);
-        }
-
         .extrato-box {
             background: var(--card);
             border-radius: 24px;
@@ -223,8 +168,6 @@
             .card-destaque { grid-column: span 1; }
             .container { padding: 1.5rem 1rem; }
             .extrato-box { padding: 1.5rem; }
-            .saque-box { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .saque-input-wrapper { max-width: 100%; }
         }
     </style>
 </head>
@@ -257,15 +200,6 @@
             </div>
         </div>
 
-        <!-- Bloco para definição do Saque -->
-        <div class="saque-box">
-            <label for="val-saque">Definir Valor de Saque Realizado</label>
-            <div class="saque-input-wrapper">
-                <span>R$</span>
-                <input type="number" id="val-saque" step="0.01" min="0" placeholder="0,00" oninput="atualizarTotaisInterface()">
-            </div>
-        </div>
-
         <div class="extrato-box">
             <div class="titulo-extrato">
                 <span>Descrição</span>
@@ -287,8 +221,8 @@
                 <span id="ext-taxa-card" class="negativo">R$ 0,00</span>
             </div>
 
-            <!-- Linha do Saque adicionada dinamicamente no extrato -->
-            <div class="item-extrato">
+            <!-- Mantive a linha oculta no extrato apenas se o valor for maior que zero -->
+            <div class="item-extrato" id="row-saque" style="display: none;">
                 <span>Saques Realizados</span>
                 <span id="ext-saque" class="negativo">R$ 0,00</span>
             </div>
@@ -309,16 +243,13 @@
     </footer>
 
     <script>
-        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
+        // ==========================================
+        //  DEFINA O VALOR DO SAQUE MANUALMENTE AQUI:
+        // ==========================================
+        const VALOR_SAQUE_MANUAL = 0.00; 
+        // ==========================================
 
-        // Variáveis globais para recalcular sem precisar refazer o fetch da planilha toda hora
-        let dadosGlobais = {
-            somaBruto: 0,
-            somaPendente: 0,
-            somaConfirmada: 0,
-            totalTaxaAdm: 0,
-            totalTaxaCartao: 0
-        };
+        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
 
         function limparMoeda(texto) {
             if (!texto) return 0;
@@ -328,30 +259,6 @@
 
         function formatarMoeda(valor) {
             return valor.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-        }
-
-        // Função isolada para recalcular os valores finais tirando o saque da jogada
-        function atualizarTotaisInterface() {
-            const inputSaque = document.getElementById('val-saque');
-            let valorSaque = parseFloat(inputSaque.value) || 0;
-            
-            // Salva o valor no navegador para não sumir ao dar F5
-            localStorage.setItem('arena_valor_saque', inputSaque.value);
-
-            const saldoLiquidoSemSaque = dadosGlobais.somaConfirmada - dadosGlobais.totalTaxaAdm - dadosGlobais.totalTaxaCartao;
-            const saldoFinalComSaque = saldoLiquidoSemSaque - valorSaque;
-
-            // Atualizar Dashboard
-            document.getElementById('res-bruto').innerText = formatarMoeda(dadosGlobais.somaBruto);
-            document.getElementById('res-pendente').innerText = formatarMoeda(dadosGlobais.somaPendente);
-            document.getElementById('res-liquido').innerText = formatarMoeda(saldoFinalComSaque);
-            
-            // Atualizar Extrato
-            document.getElementById('ext-receita').innerText = "+ " + formatarMoeda(dadosGlobais.somaConfirmada);
-            document.getElementById('ext-taxa-adm').innerText = "- " + formatarMoeda(dadosGlobais.totalTaxaAdm);
-            document.getElementById('ext-taxa-card').innerText = "- " + formatarMoeda(dadosGlobais.totalTaxaCartao);
-            document.getElementById('ext-saque').innerText = "- " + formatarMoeda(valorSaque);
-            document.getElementById('ext-final').innerText = formatarMoeda(saldoFinalComSaque);
         }
 
         async function carregarFinanceiro() {
@@ -364,11 +271,8 @@
                 const linhas = textoCSV.split(/\r?\n/).filter(l => l.trim() !== "");
                 const separador = linhas[0].includes(';') ? ';' : ',';
 
-                dadosGlobais.somaBruto = 0;
-                dadosGlobais.somaPendente = 0;
-                dadosGlobais.somaConfirmada = 0;
-                dadosGlobais.totalTaxaAdm = 0;
-                dadosGlobais.totalTaxaCartao = 0;
+                let somaBruta = 0, somaPendente = 0, somaConfirmada = 0;
+                let totalTaxaAdm = 0, totalTaxaCartao = 0;
 
                 for(let i = 1; i < linhas.length; i++) {
                     const regex = new RegExp(`${separador}(?=(?:(?:[^"]*"){2})*[^"]*$)`);
@@ -378,28 +282,49 @@
                     const status = (col[9] || "").trim().toUpperCase(); 
                     const tipoPgto = (col[11] || "").trim().toUpperCase(); 
 
-                    dadosGlobais.somaBruto += valorUnitario;
+                    somaBruta += valorUnitario;
 
                     // Lógica para pedidos Confirmados/Pagos
                     if (status.includes('CONFIRMADO') || status.includes('PAGO')) {
-                        dadosGlobais.somaConfirmada += valorUnitario;
+                        somaConfirmada += valorUnitario;
                         
                         // TAXA FIXA DE R$ 2,00 POR INGRESSO PAGO
-                        dadosGlobais.totalTaxaAdm += 2.00;
+                        totalTaxaAdm += 2.00;
 
                         // TAXA DE CARTÃO (SE APLICÁVEL)
                         if (tipoPgto.includes('CART') || tipoPgto.includes('CARTÃO')) {
-                            dadosGlobais.totalTaxaCartao += (valorUnitario * 0.05);
+                            totalTaxaCartao += (valorUnitario * 0.05);
                         }
                     } 
                     // Lógica para pedidos Pendentes
                     else if (status.includes('PENDENTE')) {
-                        dadosGlobais.somaPendente += valorUnitario;
+                        somaPendente += valorUnitario;
                     }
                 }
 
-                // Renderiza as informações na tela considerando o valor do saque atual
-                atualizarTotaisInterface();
+                // Cálculo aplicando a dedução estática definida no código
+                const saldoFinal = somaConfirmada - totalTaxaAdm - totalTaxaCartao - VALOR_SAQUE_MANUAL;
+
+                // Atualizar Dashboard
+                document.getElementById('res-bruto').innerText = formatarMoeda(somaBruta);
+                document.getElementById('res-pendente').innerText = formatarMoeda(somaPendente);
+                document.getElementById('res-liquido').innerText = formatarMoeda(saldoFinal);
+                
+                // Atualizar Extrato
+                document.getElementById('ext-receita').innerText = "+ " + formatarMoeda(somaConfirmada);
+                document.getElementById('ext-taxa-adm').innerText = "- " + formatarMoeda(totalTaxaAdm);
+                document.getElementById('ext-taxa-card').innerText = "- " + formatarMoeda(totalTaxaCartao);
+                
+                // Exibe a linha de saque no extrato apenas se houver valor preenchido ocultamente
+                const rowSaque = document.getElementById('row-saque');
+                if (VALOR_SAQUE_MANUAL > 0) {
+                    rowSaque.style.display = 'flex';
+                    document.getElementById('ext-saque').innerText = "- " + formatarMoeda(VALOR_SAQUE_MANUAL);
+                } else {
+                    rowSaque.style.display = 'none';
+                }
+
+                document.getElementById('ext-final').innerText = formatarMoeda(saldoFinal);
 
             } catch (erro) {
                 console.error(erro);
@@ -407,12 +332,6 @@
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-rotate"></i> ATUALIZAR VALORES';
             }
-        }
-
-        // Recupera o último valor sacado que ficou salvo no navegador ao abrir o app
-        const saqueSalvo = localStorage.getItem('arena_valor_saque');
-        if (saqueSalvo) {
-            document.getElementById('val-saque').value = saqueSalvo;
         }
 
         // Carrega automaticamente ao abrir a página
