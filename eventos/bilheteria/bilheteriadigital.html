@@ -1,345 +1,141 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tickets - Arena Competidor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio da Várzea - 1º Lote Encerrado</title>
+    <!-- Google Fonts para uma tipografia marcante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #e62117;
-            --primary-soft: #fff1f0;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #0f172a;
-            --text-light: #64748b;
-            --success: #059669;
-            --warning: #854d0e;
-            --border: #e2e8f0;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; }
-
-        header {
-            background: var(--card); padding: 1rem 1.5rem; display: flex; align-items: center;
-            justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0b0b0b;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        .logo-box { max-width: 140px; }
-        .logo-box img { width: 100%; height: auto; }
-
-        .container { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
-        .header-text h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 2rem; letter-spacing: -0.5px; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { 
-            background: var(--card); padding: 1.2rem; border-radius: 20px; text-align: center; 
-            border: 1px solid var(--border); box-shadow: var(--shadow);
-        }
-        .stat-card span { display: block; font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
-        .stat-card b { font-size: 1.4rem; font-weight: 800; }
-        .stat-card.total { border-bottom: 4px solid var(--text); }
-        .stat-card.pago { border-bottom: 4px solid var(--success); }
-        .stat-card.pendente { border-bottom: 4px solid var(--warning); }
-
-        .search-area { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 2rem; }
-        input { 
-            width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border); 
-            font-size: 0.95rem; outline: none; transition: var(--transition);
-        }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
-
-        .table-container { 
-            background: var(--card); border-radius: 24px; overflow: hidden; 
-            box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 100px;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f1f5f9; padding: 15px; text-align: left; font-size: 0.7rem; text-transform: uppercase; color: var(--text-light); }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
-
-        .check-col { width: 45px; text-align: center; }
-        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--success); }
-
-        .status-badge { padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
-        .status-pago { background: #dcfce7; color: #166534; }
-        .status-pendente { background: #fef9c3; color: #854d0e; }
-
-        .btn-gen { 
-            background: var(--primary); color: white; border: none; padding: 10px 14px; 
-            border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.75rem;
-        }
-        .btn-gen:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
-
-        .batch-action {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            background: var(--success); color: white; padding: 16px 32px; border-radius: 50px;
-            font-weight: 800; box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4);
-            border: none; cursor: pointer; display: none; z-index: 1500;
+        /* Fundo com textura ou efeito de luz de estádio/arena */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: 1;
         }
 
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column;
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
         }
-        .ticket-box { width: 320px; background: white; border-radius: 20px; padding: 25px; text-align: center; }
-        .ticket-header { font-weight: 900; font-size: 1.2rem; color: var(--primary); border-bottom: 2px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .ticket-info label { display: block; font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
-        .ticket-info b { font-size: 1.1rem; color: var(--text); }
-        .qr-area { margin: 15px 0; display: flex; justify-content: center; }
-        .qr-area img { width: 160px; height: 160px; border: 8px solid #f8fafc; border-radius: 12px; }
 
-        .modal-controls { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 320px; }
-        .btn-modal { padding: 14px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .badge {
+            background-color: #e50914;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+            animation: pulse 2s infinite;
+        }
 
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            td:nth-child(2), th:nth-child(2) { display: none; }
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        h1 span {
+            color: #e50914;
+            display: block;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 40px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .alert-box {
+            border-left: 4px solid #e50914;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        .alert-box strong {
+            color: #ffffff;
+            display: block;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            font-style: normal;
+            margin-bottom: 5px;
+        }
+
+        /* Animação do Badge para dar sensação de urgência */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsivo para celulares menores */
+        @media (max-width: 480px) {
+            h1 { font-size: 2.2rem; }
+            p { font-size: 1rem; }
+            .alert-box strong { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-box"><img src="../../img/arena03.png" alt="Arena Competidor"></div>
-    </header>
+    <div class="container">
+        <!-- Aviso de status -->
+        <div class="badge">Esgotado</div>
 
-    <main class="container">
-        <section class="header-text"><h1>Gestão de Ingressos</h1></section>
+        <!-- Título Principal -->
+        <h1>O 1º Lote do <span>Desafio da Várzea</span> Encerrou!</h1>
 
-        <div class="stats-grid">
-            <div class="stat-card total"><span>Inscritos</span><b id="count-total">0</b></div>
-            <div class="stat-card pago"><span>Confirmados</span><b id="count-pago">0</b></div>
-            <div class="stat-card pendente"><span>Pendentes</span><b id="count-pendente">0</b></div>
-        </div>
+        <!-- Mensagem de suporte -->
+        <p>Quem voou, garantiu o menor preço. Quem vacilou, vai ter que correr no próximo.</p>
 
-        <div class="search-area">
-            <input type="text" id="fNome" placeholder="🔍 Buscar por Nome..." onkeyup="filter()">
-            <input type="text" id="fCPF" placeholder="💳 Buscar por CPF..." onkeyup="filter()">
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="check-col"><input type="checkbox" id="check-all" onclick="toggleAll(this)"></th>
-                        <th>ID</th>
-                        <th>Comprador</th>
-                        <th>Status</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="lista"></tbody>
-            </table>
-        </div>
-
-        <button id="btn-lote" class="batch-action" onclick="gerarLote()">
-            <i class="fa-solid fa-file-pdf"></i> GERAR PDF EM LOTE (<span id="selected-count">0</span>)
-        </button>
-    </main>
-
-    <div id="modal" class="modal">
-        <div id="capture-area">
-            <div class="ticket-box">
-                <div class="ticket-header">DESAFIO DA VARZEA</div>
-                <div class="ticket-info"><label>Comprador</label><b id="t-nome">---</b></div>
-                <div class="ticket-info"><label>Documento</label><b id="t-cpf">---</b></div>
-                <div class="qr-area" id="qr-result"></div>
-                <div class="ticket-info"><label>Código Verificador</label><b id="t-ord">#---</b></div>
-                <div style="font-size: 9px; color: var(--text-light); margin-top: 10px;">
-                   TRACUNHAEM<br><b>22 MAIO | 19H</b>
-                </div>
-            </div>
-        </div>
-        <div class="modal-controls">
-            <button class="btn-modal" style="background:#22c55e; color:white" onclick="exportar('png')">IMAGEM</button>
-            <button class="btn-modal" style="background:#ef4444; color:white" onclick="exportar('pdf')">PDF</button>
-            <button class="btn-modal" style="background:#64748b; color:white; grid-column: span 2;" onclick="fechar()">VOLTAR</button>
+        <!-- Chamada para o 2º lote -->
+        <div class="alert-box">
+            <strong>Fique ligado!</strong>
+            O 2º lote será liberado já já. Não perca o cronograma!
         </div>
     </div>
 
-    <div id="qr-buffer" style="display:none"></div>
-
-    <script>
-    const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTsSkG0cUG5M97JKFuhR2x4GEaQlfjwL7qzsewbwckztIQczN73-tMRL_fO-O8t_viigYaUQlTntlq_/pub?output=csv";
-    let dados = [];
-
-    async function carregar() {
-        try {
-            const res = await fetch(URL);
-            const txt = await res.text();
-            const linhas = txt.split('\n').slice(1);
-            dados = linhas.map(l => {
-                const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
-                return { 
-                    ord: c[1]?.replace(/"/g, '').trim(), 
-                    nome: c[2]?.replace(/"/g, '').trim(), 
-                    cpf: c[3]?.replace(/"/g, '').trim(),
-                    status: c[9]?.replace(/"/g, '').trim() || "Pendente"
-                };
-            }).filter(x => x.ord);
-            dados.sort((a, b) => a.nome.localeCompare(b.nome));
-            render(dados);
-        } catch (e) { console.error(e); }
-    }
-
-    function isPago(status) {
-        const s = status.toLowerCase();
-        return s.includes('pago') || s.includes('confirmado');
-    }
-
-    function render(lista) {
-        document.getElementById('count-total').innerText = lista.length;
-        document.getElementById('count-pago').innerText = lista.filter(i => isPago(i.status)).length;
-        document.getElementById('count-pendente').innerText = lista.filter(i => !isPago(i.status)).length;
-
-        document.getElementById('lista').innerHTML = lista.map(i => {
-            const confirmado = isPago(i.status);
-            return `
-                <tr>
-                    <td class="check-col"><input type="checkbox" class="ticket-check" data-ord="${i.ord}" data-nome="${i.nome}" data-cpf="${i.cpf}" ${!confirmado ? 'disabled' : ''} onchange="updateBatchButton()"></td>
-                    <td style="color:#94a3b8">#${i.ord}</td>
-                    <td><b>${i.nome}</b><br><small>${i.cpf}</small></td>
-                    <td><span class="status-badge ${confirmado ? 'status-pago' : 'status-pendente'}">${i.status}</span></td>
-                    <td><button class="btn-gen" ${!confirmado ? 'disabled' : ''} onclick="gerar('${i.ord}','${i.nome}','${i.cpf}')">${confirmado ? 'TICKET' : 'BLOQUEADO'}</button></td>
-                </tr>`;
-        }).join('');
-    }
-
-    function toggleAll(master) {
-        document.querySelectorAll('.ticket-check').forEach(c => { if(!c.disabled) c.checked = master.checked; });
-        updateBatchButton();
-    }
-
-    function updateBatchButton() {
-        const sel = document.querySelectorAll('.ticket-check:checked').length;
-        document.getElementById('selected-count').innerText = sel;
-        document.getElementById('btn-lote').style.display = sel > 0 ? 'block' : 'none';
-    }
-
-    function filter() {
-        const n = document.getElementById('fNome').value.toLowerCase();
-        const c = document.getElementById('fCPF').value.toLowerCase();
-        render(dados.filter(i => i.nome.toLowerCase().includes(n) && i.cpf.includes(c)));
-    }
-
-    // Função ajustada para garantir que o QR Code e os dados estejam lá
-    async function prepararTicket(ord, nome, cpf) {
-        document.getElementById('t-nome').innerText = nome;
-        document.getElementById('t-cpf').innerText = cpf;
-        document.getElementById('t-ord').innerText = "#" + ord;
-        
-        const buffer = document.getElementById('qr-buffer');
-        buffer.innerHTML = "";
-        
-        // Criar QR Code
-        new QRCode(buffer, { text: ord, width: 256, height: 256, correctLevel : QRCode.CorrectLevel.H });
-
-        // Aguardar o canvas do QR Code ser criado
-        return new Promise((resolve) => {
-            const checkCanvas = setInterval(() => {
-                const canvas = buffer.querySelector('canvas');
-                if (canvas) {
-                    clearInterval(checkCanvas);
-                    const img = document.createElement("img");
-                    img.src = canvas.toDataURL("image/png");
-                    const result = document.getElementById('qr-result');
-                    result.innerHTML = "";
-                    result.appendChild(img);
-                    resolve();
-                }
-            }, 50);
-        });
-    }
-
-    function gerar(ord, nome, cpf) {
-        prepararTicket(ord, nome, cpf).then(() => {
-            document.getElementById('modal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        });
-    }
-
-    async function gerarLote() {
-        const sel = Array.from(document.querySelectorAll('.ticket-check:checked'));
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
-        const btn = document.getElementById('btn-lote');
-        const modal = document.getElementById('modal');
-        const originalHTML = btn.innerHTML;
-        
-        btn.disabled = true;
-
-        // IMPORTANTE: Mostra o modal mas o joga para fora da tela
-        // Isso força o navegador a renderizar o conteúdo para o html2canvas
-        modal.style.display = 'flex';
-        modal.style.opacity = '0';
-        modal.style.pointerEvents = 'none';
-
-        for (let i = 0; i < sel.length; i++) {
-            btn.innerHTML = `<i class='fa-solid fa-spinner fa-spin'></i> Criando ${i+1}/${sel.length}...`;
-            
-            const item = sel[i].dataset;
-            await prepararTicket(item.ord, item.nome, item.cpf);
-            
-            // Pequena pausa para garantir que o DOM atualizou
-            await new Promise(r => setTimeout(r, 100));
-
-            const canvas = await html2canvas(document.getElementById('capture-area'), { 
-                scale: 2, 
-                logging: false, 
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: "#ffffff" 
-            });
-
-            const imgData = canvas.toDataURL("image/jpeg", 0.9);
-            
-            if (i > 0) pdf.addPage([100, 150]);
-            pdf.addImage(imgData, 'JPEG', 0, 0, 100, 150);
-            
-            // Limpa o canvas para evitar estouro de memória
-            canvas.width = 0;
-            canvas.height = 0;
-        }
-
-        // Restaura o estado original
-        modal.style.display = 'none';
-        modal.style.opacity = '1';
-        modal.style.pointerEvents = 'all';
-        
-        pdf.save(`Lote-Arena-${Date.now()}.pdf`);
-        btn.disabled = false;
-        btn.innerHTML = originalHTML;
-    }
-
-    function fechar() { 
-        document.getElementById('modal').style.display = 'none'; 
-        document.body.style.overflow = 'auto'; 
-    }
-
-    async function exportar(tipo) {
-        const canvas = await html2canvas(document.getElementById('capture-area'), { scale: 3 });
-        if(tipo === 'png') {
-            const link = document.createElement('a');
-            link.download = `Ticket.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-        } else {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
-            pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), 'JPEG', 0, 0, 100, 150);
-            pdf.save(`Ticket.pdf`);
-        }
-    }
-
-    carregar();
-</script>
 </body>
 </html>
