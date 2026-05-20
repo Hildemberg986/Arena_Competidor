@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Combate Oficial - Fullscreen TV</title>
+    <title>Painel de Combate Oficial - Ultra Responsive TV</title>
     <style>
         * {
             margin: 0;
@@ -13,30 +13,31 @@
         }
 
         body {
-            background-color: #878787;
+            background-color: #020202; /* Retornado para o preto profundo para melhor contraste na TV */
             color: #ffffff;
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 30px 40px;
+            padding: 2vh 4vw;
             overflow: hidden;
             position: relative;
         }
 
-        /* --- TOPO: LOGO CENTRALIZADA E RELÓGIO DISCRETO À DIREITA --- */
+        /* --- TOPO: LOGO CENTRALIZADA E RELÓGIO FLUIDO --- */
         header {
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            height: 18vh;
+            height: 14vh;
+            min-height: 60px;
         }
 
         .logo-container {
             height: 100%;
-            max-width: 50%;
+            max-width: 60%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -50,34 +51,33 @@
         }
 
         .logo-fallback {
-            font-size: 3.5rem;
+            font-size: 3.5vh;
             font-weight: 900;
             color: #ff000d;
             text-transform: uppercase;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             text-align: center;
             line-height: 1.1;
             text-shadow: 0px 4px 20px rgba(229, 9, 20, 0.3);
         }
 
-        /* Relógio no canto superior direito */
         .brand-clock {
             position: absolute;
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 2rem;
+            font-size: 2.2vh;
             font-weight: 700;
             font-family: monospace;
             color: #ffffff;
             letter-spacing: 1px;
-            background: rgba(15, 15, 15, 0.6);
-            padding: 6px 16px;
+            background: rgba(15, 15, 15, 0.8);
+            padding: 0.8vh 1.5vw;
             border-radius: 6px;
-            border: 1px solid #111;
+            border: 1px solid #222;
         }
 
-        /* --- CENTRO: STATUS E TIMER MASSIVO --- */
+        /* --- CENTRO: AREA DO CRONÔMETRO DINÂMICO --- */
         main {
             flex: 1;
             display: flex;
@@ -85,62 +85,67 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            margin: 20px 0;
+            margin: 1vh 0;
+            width: 100%;
         }
 
         .status-banner {
-            font-size: 3.8rem;
+            font-size: 4.5vh; /* Baseado na altura da tela */
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 10px;
-            margin-bottom: -10px;
+            letter-spacing: 1.2vw;
+            margin-bottom: 0.5vh;
             transition: all 0.3s ease;
         }
 
-        .status-banner.work { color: #ff000d; text-shadow: 0 0 30px rgba(229,9,20,0.4); }
-        .status-banner.rest { color: #00ff66; text-shadow: 0 0 30px rgba(0,255,102,0.4); }
-        .status-banner.paused { color: #ffcc00; text-shadow: 0 0 30px rgba(255,204,0,0.3); }
+        .status-banner.work { color: #ff000d; text-shadow: 0 0 30px rgba(229,9,20,0.5); }
+        .status-banner.rest { color: #00ff66; text-shadow: 0 0 30px rgba(0,255,102,0.5); }
+        .status-banner.paused { color: #ffcc00; text-shadow: 0 0 30px rgba(255,204,0,0.4); }
 
         .main-timer {
-            font-size: 26rem; /* Gigante ocupando quase toda a tela */
+            font-size: 38vh; /* Ocupa dinamicamente a altura perfeita da tela sem quebrar */
             font-weight: 900;
             font-family: monospace;
             line-height: 0.8;
             color: #ffffff;
-            letter-spacing: -6px;
+            letter-spacing: -0.5vw;
             text-shadow: 0px 15px 50px rgba(0,0,0,0.9);
         }
 
         .round-display {
-            font-size: 4.5rem;
+            font-size: 5vh;
             font-weight: 800;
             text-transform: uppercase;
             color: #ffffff;
-            letter-spacing: 3px;
-            margin-top: -10px;
+            letter-spacing: 2px;
+            margin-top: 1vh;
         }
 
         .round-display span {
-            color: #e50914;
-            font-size: 5.5rem;
-            margin-left: 15px;
+            color: #ff000d;
+            font-size: 6.2vh;
+            margin-left: 10px;
+            line-height: 1;
         }
 
-        /* --- PAINEL INFERIOR: BOTÕES DE CONTROLE REMOTO TV --- */
+        /* --- INFERIOR: PAINEL ADAPTÁVEL PARA CONTROLES --- */
         footer {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 1.5vh;
             border-top: 2px solid #111;
-            padding-top: 25px;
+            padding-top: 2vh;
+            height: 18vh;
+            min-height: 120px;
         }
 
         .time-options {
             display: flex;
-            gap: 15px;
-            width: 70%;
+            gap: 1vw;
+            width: 100%;
+            max-width: 800px;
             justify-content: center;
         }
 
@@ -149,17 +154,17 @@
             background-color: #0c0c0c;
             color: #777;
             border: 2px solid #222;
-            padding: 14px 10px;
-            font-size: 1.2rem;
+            padding: 1.2vh 0.5vw;
+            font-size: 1.1rem;
             font-weight: 700;
             text-transform: uppercase;
             border-radius: 8px;
             cursor: pointer;
             outline: none;
             transition: all 0.15s ease;
+            white-space: nowrap;
         }
 
-        /* Foco das setas do controle da TV */
         .btn-option:focus {
             border-color: #ffcc00 !important;
             color: #fff !important;
@@ -170,7 +175,7 @@
 
         .btn-option.active {
             background-color: #111;
-            border-color: #e50914;
+            border-color: #ff000d;
             color: #ffffff;
             box-shadow: inset 0 0 10px rgba(229, 9, 20, 0.2);
         }
@@ -182,8 +187,9 @@
 
         .action-controls {
             display: flex;
-            gap: 20px;
-            width: 70%;
+            gap: 1.5vw;
+            width: 100%;
+            max-width: 800px;
         }
 
         .btn {
@@ -191,8 +197,8 @@
             background-color: #111;
             color: #fff;
             border: 2px solid #333;
-            padding: 18px 0;
-            font-size: 1.6rem;
+            padding: 1.5vh 0;
+            font-size: 1.4rem;
             font-weight: 800;
             text-transform: uppercase;
             border-radius: 10px;
@@ -208,8 +214,8 @@
         }
 
         .btn-start {
-            background-color: #e50914;
-            border-color: #e50914;
+            background-color: #ff000d;
+            border-color: #ff000d;
             flex: 3;
         }
 
@@ -227,34 +233,38 @@
 
         .btn-reset { color: #aaa; }
 
-        /* Ajustes para resoluções ou proporções verticais menores */
-        @media (max-height: 950px) {
-            .main-timer { font-size: 21rem; }
-            .status-banner { font-size: 3rem; }
-            .round-display { font-size: 3.5rem; .round-display span { font-size: 4.5rem; } }
-            .time-options, .action-controls { width: 85%; }
+        /* REGRAS DE ADAPTAÇÃO PARA FORMATOS DE TELA EXTREMOS (Ex: Celular em pé ou tablets pequenos) */
+        @media (max-width: 768px) or (orientation: portrait) {
+            .main-timer { font-size: 20vh; }
+            .status-banner { font-size: 3.5vh; }
+            .round-display { font-size: 4vh; .round-display span { font-size: 5vh; } }
+            .time-options, .action-controls { max-width: 100%; }
+            .brand-clock { position: relative; right: auto; top: auto; transform: none; margin-left: 20px; }
+            header { justify-content: space-between; padding: 0 10px; }
+            .btn { font-size: 1.1rem; padding: 12px 0; }
+            .btn-option { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- TOPO: LOGO CENTRALIZADA + RELÓGIO À DIREITA -->
+    <!-- TOPO -->
     <header>
         <div class="logo-container">
             <img src="wateam.png" alt="Logo Academia" onerror="this.style.display='none'; document.getElementById('fallback').style.display='block'">
-            <div id="fallback" class="logo-fallback" style="display: none;">WA TEAM<br><span style="color:#fff; font-size:1.5rem; letter-spacing:6px;">COMBAT TEAM</span></div>
+            <div id="fallback" class="logo-fallback" style="display: none;">WA TEAM<br><span style="color:#fff; font-size:1.5vh; letter-spacing:4px;">COMBAT TEAM</span></div>
         </div>
         <div class="brand-clock" id="clock">00:00:00</div>
     </header>
 
-    <!-- ÁREA CENTRAL DO TIMER EM TELA CHEIA -->
+    <!-- ÁREA CENTRAL DO TIMER -->
     <main>
         <div class="status-banner paused" id="status-text">CONFIGURAÇÃO</div>
         <div class="main-timer" id="timer-display">05:00</div>
         <div class="round-display" id="round-display">ROUND <span>1</span></div>
     </main>
 
-    <!-- INFERIOR: PAINEL DE CONTROLE (SETAS DA TV) -->
+    <!-- INFERIOR (OTIMIZADO PARA CONTROLE DE SMART TV) -->
     <footer>
         <div class="time-options">
             <button class="btn-option" data-seconds="120" tabindex="1">2 Min</button>
