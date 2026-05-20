@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #878787; /* Retornado para o preto profundo para melhor contraste na TV */
+            background-color: #b9b9b9;
             color: #ffffff;
             height: 100vh;
             display: flex;
@@ -47,18 +47,18 @@
             max-height: 100%;
             max-width: 100%;
             object-fit: contain;
-            filter: drop-shadow(0px 0px 25px rgba(229, 9, 20, 0.2));
+            filter: drop-shadow(0px 0px 25px rgba(0, 0, 0, 0.2));
         }
 
         .logo-fallback {
             font-size: 3.5vh;
             font-weight: 900;
-            color: #ff000d;
+            color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 4px;
             text-align: center;
             line-height: 1.1;
-            text-shadow: 0px 4px 20px rgba(229, 9, 20, 0.3);
+            text-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .brand-clock {
@@ -66,7 +66,7 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 2.2vh;
+            font-size: 4.2vh;
             font-weight: 700;
             font-family: monospace;
             color: #ffffff;
@@ -90,7 +90,7 @@
         }
 
         .status-banner {
-            font-size: 4.5vh; /* Baseado na altura da tela */
+            font-size: 4.5vh;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1.2vw;
@@ -98,12 +98,12 @@
             transition: all 0.3s ease;
         }
 
-        .status-banner.work { color: #ff000d; text-shadow: 0 0 30px rgba(229,9,20,0.5); }
+        .status-banner.work { color: #ffffff; text-shadow: 0 0 30px rgba(229,9,20,0.5); }
         .status-banner.rest { color: #ffffff; text-shadow: 0 0 30px rgba(0,255,102,0.5); }
         .status-banner.paused { color: #ffffff; text-shadow: 0 0 30px rgba(255,204,0,0.4); }
 
         .main-timer {
-            font-size: 38vh; /* Ocupa dinamicamente a altura perfeita da tela sem quebrar */
+            font-size: 38vh;
             font-weight: 900;
             font-family: monospace;
             line-height: 0.8;
@@ -128,7 +128,7 @@
             line-height: 1;
         }
 
-        /* --- INFERIOR: PAINEL ADAPTÁVEL PARA CONTROLES --- */
+        /* --- INFERIOR --- */
         footer {
             width: 100%;
             display: flex;
@@ -145,7 +145,7 @@
             display: flex;
             gap: 1vw;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             justify-content: center;
         }
 
@@ -166,7 +166,7 @@
         }
 
         .btn-option:focus {
-            border-color: #ffcc00 !important;
+            border-color: #000000 !important;
             color: #fff !important;
             background-color: #1a1a1a;
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
@@ -175,7 +175,7 @@
 
         .btn-option.active {
             background-color: #111;
-            border-color: #ff000d;
+            border-color: #000000;
             color: #ffffff;
             box-shadow: inset 0 0 10px rgba(229, 9, 20, 0.2);
         }
@@ -189,7 +189,7 @@
             display: flex;
             gap: 1.5vw;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
         }
 
         .btn {
@@ -233,11 +233,11 @@
 
         .btn-reset { color: #aaa; }
 
-        /* REGRAS DE ADAPTAÇÃO PARA FORMATOS DE TELA EXTREMOS (Ex: Celular em pé ou tablets pequenos) */
         @media (max-width: 768px) or (orientation: portrait) {
             .main-timer { font-size: 20vh; }
             .status-banner { font-size: 3.5vh; }
-            .round-display { font-size: 4vh; .round-display span { font-size: 5vh; } }
+            .round-display { font-size: 4vh; }
+            .round-display span { font-size: 5vh; }
             .time-options, .action-controls { max-width: 100%; }
             .brand-clock { position: relative; right: auto; top: auto; transform: none; margin-left: 20px; }
             header { justify-content: space-between; padding: 0 10px; }
@@ -264,23 +264,24 @@
         <div class="round-display" id="round-display">ROUND <span>1</span></div>
     </main>
 
-    <!-- INFERIOR (OTIMIZADO PARA CONTROLE DE SMART TV) -->
+    <!-- INFERIOR -->
     <footer>
         <div class="time-options">
-            <button class="btn-option" data-seconds="120" tabindex="1">2 Min</button>
-            <button class="btn-option active" data-seconds="300" tabindex="2">5 Min</button>
-            <button class="btn-option" data-seconds="480" tabindex="3">8 Min</button>
-            <button class="btn-option" data-seconds="600" tabindex="4">10 Min</button>
+            <button class="btn-option" data-seconds="45" tabindex="1">45 Seg (Extra)</button>
+            <button class="btn-option" data-seconds="120" tabindex="2">2 Min</button>
+            <button class="btn-option active" data-seconds="300" tabindex="3">5 Min</button>
+            <button class="btn-option" data-seconds="480" tabindex="4">8 Min</button>
+            <button class="btn-option" data-seconds="600" tabindex="5">10 Min</button>
         </div>
 
         <div class="action-controls">
-            <button class="btn btn-start" id="btn-start-pause" tabindex="5">Iniciar</button>
-            <button class="btn btn-reset" id="btn-reset" tabindex="6">Resetar</button>
+            <button class="btn btn-start" id="btn-start-pause" tabindex="6">Iniciar</button>
+            <button class="btn btn-reset" id="btn-reset" tabindex="7">Resetar</button>
         </div>
     </footer>
 
     <!-- AUDIO SINC -->
-    <audio id="sound-horn" src="https://actions.google.com/sounds/v1/alarms/air_horn_03.ogg" preload="auto"></audio>
+    <audio id="sound-horn" src="buzina.mp3" preload="auto"></audio>
     <audio id="sound-warning" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
 
     <script>
@@ -291,7 +292,7 @@
         let countdownInterval = null;
         let warningPlayed = false;
 
-        const restDuration = 60; 
+        const restDuration = 35; 
 
         const timerDisplay = document.getElementById('timer-display');
         const statusText = document.getElementById('status-text');
@@ -303,6 +304,9 @@
 
         const soundHorn = document.getElementById('sound-horn');
         const soundWarning = document.getElementById('sound-warning');
+
+        soundHorn.volume = 1.0;
+        soundWarning.volume = 1.0;
 
         function updateClock() {
             const now = new Date();
@@ -352,13 +356,14 @@
 
         function playSound(audioElement) {
             audioElement.currentTime = 0;
-            audioElement.play().catch(e => console.log("Áudio aguardando clique inicial."));
+            audioElement.volume = 1.0; 
+            audioElement.play().catch(e => console.log("Aguardando interação inicial."));
         }
 
         function tick() {
             if (timerSeconds > 0) {
                 timerSeconds--;
-                if (!isResting && timerSeconds === 10 && !warningPlayed) {
+                if (!isResting && timerSeconds === 10 && !warningPlayed && getSelectedRoundTime() > 10) {
                     playSound(soundWarning);
                     warningPlayed = true;
                 }
@@ -384,15 +389,20 @@
                 if (disable) {
                     btn.removeAttribute('tabindex');
                 } else {
-                    if(btn.textContent.includes("2")) btn.setAttribute('tabindex', '1');
-                    if(btn.textContent.includes("5")) btn.setAttribute('tabindex', '2');
-                    if(btn.textContent.includes("8")) btn.setAttribute('tabindex', '3');
-                    if(btn.textContent.includes("10")) btn.setAttribute('tabindex', '4');
+                    if(btn.textContent.includes("45")) btn.setAttribute('tabindex', '1');
+                    if(btn.textContent.includes("2")) btn.setAttribute('tabindex', '2');
+                    if(btn.textContent.includes("5")) btn.setAttribute('tabindex', '3');
+                    if(btn.textContent.includes("8")) btn.setAttribute('tabindex', '4');
+                    if(btn.textContent.includes("10")) btn.setAttribute('tabindex', '5');
                 }
             });
         }
 
         function startPause() {
+            soundHorn.volume = 1.0;
+            soundWarning.volume = 1.0;
+            
+            // "Prepara" o áudio para tocar sem bloqueio de segurança do navegador
             soundHorn.play().then(() => { soundHorn.pause(); }).catch(() => {});
             soundWarning.play().then(() => { soundWarning.pause(); }).catch(() => {});
 
