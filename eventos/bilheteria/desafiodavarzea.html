@@ -1,358 +1,141 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout Premium - Desafio da Várzea</title>
+    <title>Desafio da Várzea - 1º Lote Encerrado</title>
+    <!-- Google Fonts para uma tipografia marcante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Oswald:wght@700&display=swap');
-
-        :root {
-            --primary: #e62117;
-            --primary-hover: #ff2a1f;
-            --bg: #0a0a0b;
-            --card-bg: #16161a;
-            --input-bg: #0f0f12;
-            --text: #ffffff;
-            --text-dim: #94a3b8;
-            --border: #27272a;
-            --accent: #25d366;
-            --error: #ff4444;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0; padding: 0;
-            line-height: 1.5;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0b0b0b;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fundo com textura ou efeito de luz de estádio/arena */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: 1;
         }
 
         .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 420px;
-            gap: 40px;
-            padding: 40px 20px;
-        }
-
-        .event-sidebar { position: sticky; top: 40px; height: fit-content; }
-
-        .event-card-premium {
-            background: var(--card-bg);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        .event-card-premium img {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-width: 600px;
             width: 100%;
-            height: auto;
-            max-height: 500px; /* Ajuste aqui se o seu cartaz for muito longo */
-            object-fit: contain; 
-            background: #000;
-            display: block;
         }
 
-        .event-info-overlay { padding: 30px; }
-
-        .status-badge {
-            background: rgba(230, 33, 23, 0.1);
-            color: var(--primary);
-            padding: 6px 12px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 800;
+        .badge {
+            background-color: #e50914;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 0.9rem;
             text-transform: uppercase;
-            border: 1px solid rgba(230, 33, 23, 0.2);
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 4px;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+            animation: pulse 2s infinite;
         }
 
-        .event-info-overlay h1 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 2.2rem;
-            margin: 0;
+        h1 {
+            font-size: 3rem;
             text-transform: uppercase;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
         }
 
-        .checkout-main { display: flex; flex-direction: column; gap: 20px; }
-
-        .glass-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 32px;
-            border: 1px solid var(--border);
-        }
-
-        .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
-        .step-number {
-            width: 28px; height: 28px;
-            background: var(--primary);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800;
-        }
-
-        .input-wrapper { margin-bottom: 20px; position: relative; }
-        .input-wrapper label {
-            display: block; font-size: 12px; font-weight: 600;
-            color: var(--text-dim); margin-bottom: 8px;
-        }
-
-        input {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 14px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        input:focus { border-color: var(--primary); }
-        
-        input.invalid { border-color: var(--error); box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1); }
-        .error-msg { color: var(--error); font-size: 10px; margin-top: 5px; display: none; font-weight: bold; }
-
-        .qty-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--input-bg);
-            padding: 12px 20px;
-            border-radius: 16px;
-        }
-
-        .qty-btn {
-            width: 40px; height: 40px;
-            border-radius: 12px;
-            border: none;
-            background: var(--border);
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .total-price {
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: right;
-            margin: 10px 0 25px 0;
+        h1 span {
+            color: #e50914;
             display: block;
         }
 
-        .btn-pay {
-            width: 100%;
-            padding: 22px;
-            border-radius: 18px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            font-size: 16px;
-            font-weight: 800;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(230, 33, 23, 0.3);
-            transition: 0.3s;
+        p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 40px;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
-        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+        .alert-box {
+            border-left: 4px solid #e50914;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
 
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; padding: 15px; }
-            .event-sidebar { position: relative; top: 0; margin-bottom: 20px; }
-            .form-row { grid-template-columns: 1fr !important; gap: 0 !important; }
+        .alert-box strong {
+            color: #ffffff;
+            display: block;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            font-style: normal;
+            margin-bottom: 5px;
+        }
+
+        /* Animação do Badge para dar sensação de urgência */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsivo para celulares menores */
+        @media (max-width: 480px) {
+            h1 { font-size: 2.2rem; }
+            p { font-size: 1rem; }
+            .alert-box strong { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <aside class="event-sidebar">
-        <div class="event-card-premium">
-            <img src="IMG_3608.png" alt="Evento Desafio da Várzea">
-            <div class="event-info-overlay">
-                <span class="status-badge">● Evento Confirmado</span>
-                <h1>DESAFIO DA VÁRZEA</h1>
-                <p style="color: var(--text-dim); margin-top: 10px;">
-                    📅 22 de Maio • 19:00h<br>
-                    📍 Traculhaém
-                </p>
-            </div>
+    <div class="container">
+        <!-- Aviso de status -->
+        <div class="badge">Esgotado</div>
+
+        <!-- Título Principal -->
+        <h1>O 1º Lote do <span>Desafio da Várzea</span> Encerrou!</h1>
+
+        <!-- Mensagem de suporte -->
+        <p>Quem voou, garantiu o menor preço. Quem vacilou, vai ter que correr no próximo.</p>
+
+        <!-- Chamada para o 2º lote -->
+        <div class="alert-box">
+            <strong>Fique ligado!</strong>
+            O 2º lote será liberado já já. Não perca o cronograma!
         </div>
-    </aside>
-
-    <main class="checkout-main">
-        <div class="glass-card">
-            <div class="step-header">
-                <div class="step-number">1</div>
-                <h3 style="margin:0; font-size:16px;">QUANTIDADE</h3>
-            </div>
-            <div class="qty-box">
-                <b>Ingresso Individual</b>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <button class="qty-btn" onclick="updateQty(-1)">-</button>
-                    <b id="qty-val">1</b>
-                    <button class="qty-btn" onclick="updateQty(1)">+</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card">
-            <div class="step-header">
-                <div class="step-number">2</div>
-                <h3 style="margin:0; font-size:16px;">SEUS DADOS</h3>
-            </div>
-            <form id="payForm">
-                <div class="input-wrapper">
-                    <label>NOME COMPLETO</label>
-                    <input type="text" id="nome" required placeholder="Ex: João Silva">
-                </div>
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="input-wrapper">
-                        <label>CPF</label>
-                        <input type="text" id="cpf" required placeholder="000.000.000-00">
-                        <span id="cpf-error" class="error-msg">CPF INVÁLIDO</span>
-                    </div>
-                    <div class="input-wrapper">
-                        <label>WHATSAPP (COM DDD)</label>
-                        <input type="text" id="tel" required placeholder="(84) 98888-7777">
-                    </div>
-                </div>
-                <div class="input-wrapper">
-                    <label>E-MAIL</label>
-                    <input type="email" id="email" required placeholder="contato@exemplo.com">
-                </div>
-            </form>
-        </div>
-
-        <div class="glass-card">
-            <div style="display: flex; justify-content: space-between; color: var(--text-dim);">
-                <span>Total Bruto</span>
-                <span id="subtotal-txt">R$9,90</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; color: var(--text-dim); margin-top: 5px;">
-                <span>Taxa de Sistema</span>
-                <span id="tax-txt">R$ 2,00</span>
-            </div>
-            <span class="total-price" id="total-txt">R$ 11,90</span>
-            <button type="submit" form="payForm" class="btn-pay" id="mainBtn">Finalizar Pagamento</button>
-        </div>
-    </main>
-</div>
-
-<script>
-    let qtd = 1;
-    const basePrice = 9.90;
-    const baseTax = 2.00;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXUBHP6JutPI5plU40nEeYKIoV0LYsTaWxxykgQj5CQPjAWhpiIIAsQs9TEM9R95E/exec";
-
-    function updateQty(v) {
-        qtd += v;
-        if (qtd < 1) qtd = 1;
-        document.getElementById('qty-val').innerText = qtd;
-        calculate();
-    }
-
-    function calculate() {
-        const subtotal = qtd * basePrice;
-        const totalTax = qtd * baseTax;
-        const total = subtotal + totalTax;
-        
-        document.getElementById('subtotal-txt').innerText = `R$ ${subtotal.toFixed(2).replace('.',',')}`;
-        document.getElementById('tax-txt').innerText = `R$ ${totalTax.toFixed(2).replace('.',',')}`;
-        document.getElementById('total-txt').innerText = `R$ ${total.toFixed(2).replace('.',',')}`;
-    }
-
-    function validarCPF(cpf) {
-        cpf = cpf.replace(/[^\d]+/g, '');
-        if (cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-        let add = 0;
-        for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
-        let rev = 11 - (add % 11);
-        if (rev == 10 || rev == 11) rev = 0;
-        if (rev != parseInt(cpf.charAt(9))) return false;
-        add = 0;
-        for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
-        rev = 11 - (add % 11);
-        if (rev == 10 || rev == 11) rev = 0;
-        if (rev != parseInt(cpf.charAt(10))) return false;
-        return true;
-    }
-
-    const mask = (id, fn) => {
-        const el = document.getElementById(id);
-        el.oninput = e => {
-            e.target.value = fn(e.target.value);
-            if(id === 'cpf') {
-                el.classList.remove('invalid');
-                document.getElementById('cpf-error').style.display = 'none';
-            }
-        };
-    };
-
-    mask('tel', v => v.replace(/\D/g, '').replace(/^(\d{2})(\d)/g, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2").substring(0, 15));
-    mask('cpf', v => v.replace(/\D/g, '').replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2").substring(0, 14));
-
-    document.getElementById('payForm').onsubmit = async (e) => {
-        e.preventDefault();
-        
-        const cpfInput = document.getElementById('cpf');
-        const cpfValue = cpfInput.value;
-
-        if (!validarCPF(cpfValue)) {
-            cpfInput.classList.add('invalid');
-            document.getElementById('cpf-error').style.display = 'block';
-            cpfInput.focus();
-            return;
-        }
-
-        const btn = document.getElementById('mainBtn');
-        btn.disabled = true;
-        btn.innerHTML = "Sincronizando pedido... ⏳";
-
-        const ordId = "DV-" + Date.now().toString().slice(-6);
-        const totalStr = document.getElementById('total-txt').innerText;
-        const nomeComp = document.getElementById('nome').value;
-        
-        const rawTel = document.getElementById('tel').value.replace(/\D/g, ''); 
-        const ddd = rawTel.substring(0, 2);
-        const celular = rawTel.substring(2);
-
-        const payload = {
-            ord: ordId,
-            nome: nomeComp,
-            cpf: cpfValue,
-            ddd: ddd,
-            celular: celular,
-            email: document.getElementById('email').value,
-            valor: totalStr,
-            descricao: `${qtd}x Ingresso(s) Desafio da Várzea`
-        };
-
-        try {
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify(payload)
-            });
-        } catch(err) {
-            console.log("Erro de rede");
-        }
-
-        setTimeout(() => {
-            const urlFinal = `pagamento.html?ord=${ordId}&valor=${encodeURIComponent(totalStr)}&nome=${encodeURIComponent(nomeComp)}&qtd=${qtd}`;
-            window.location.href = urlFinal;
-        }, 1500);
-    };
-</script>
+    </div>
 
 </body>
 </html>
