@@ -311,8 +311,8 @@
         function updateClock() {
             const now = new Date();
             clockDisplay.textContent = String(now.getHours()).padStart(2, '0') + ':' +
-                                      String(now.getMinutes()).padStart(2, '0') + ':' +
-                                      String(now.getSeconds()).padStart(2, '0');
+                                       String(now.getMinutes()).padStart(2, '0') + ':' +
+                                       String(now.getSeconds()).padStart(2, '0');
         }
         setInterval(updateClock, 1000);
         updateClock();
@@ -363,7 +363,8 @@
         function tick() {
             if (timerSeconds > 0) {
                 timerSeconds--;
-                if (!isResting && timerSeconds === 10 && !warningPlayed && getSelectedRoundTime() > 10) {
+                // Executa o bipe perfeitamente nos 10 segundos finais para qualquer round configurado
+                if (!isResting && timerSeconds === 10 && !warningPlayed) {
                     playSound(soundWarning);
                     warningPlayed = true;
                 }
@@ -402,7 +403,6 @@
             soundHorn.volume = 1.0;
             soundWarning.volume = 1.0;
             
-            // "Prepara" o áudio para tocar sem bloqueio de segurança do navegador
             soundHorn.play().then(() => { soundHorn.pause(); }).catch(() => {});
             soundWarning.play().then(() => { soundWarning.pause(); }).catch(() => {});
 
