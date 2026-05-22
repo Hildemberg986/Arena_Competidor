@@ -45,35 +45,36 @@
             background: linear-gradient(180deg, #1f1f23 0%, var(--bg-dark) 100%);
             border-bottom: 2px solid var(--border-red);
             border-radius: 8px;
-            gap: 10px;
+            gap: 15px;
         }
 
         .logos-center-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 30px; /* Espaçamento elegante entre as logos */
         }
 
+        /* Área das Logos Otimizada para PNG Transparente */
         .logo-area {
-            width: 130px;
-            height: 65px;
-            border: 2px dashed #333;
-            border-radius: 8px;
+            width: auto;
+            height: 65px; /* Altura fixa para manter o padrão visual */
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 11px;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            background-color: rgba(255,255,255,0.02);
-            overflow: hidden;
         }
 
         .logo-area img {
-            width: 100%;
             height: 100%;
+            width: auto;
             object-fit: contain;
+            /* Sombra projetada na silhueta do PNG, eliminando o aspecto quadrado */
+            filter: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.7)); 
+            transition: transform 0.3s ease;
+        }
+
+        .logo-area img:hover {
+            transform: scale(1.05); /* Efeito interativo sutil ao passar o mouse */
         }
 
         h1 {
@@ -138,7 +139,7 @@
 
         .player {
             padding: 5px 8px;
-            height: 42px; /* Aumentado ligeiramente para comportar as 2 linhas de forma folgada */
+            height: 42px; /* Comporta as 2 linhas de forma folgada */
             font-size: 11px;
             font-weight: 600;
             cursor: pointer;
@@ -225,22 +226,19 @@
 </head>
 <body>
 
-    <!-- Topo: Título e as 3 Logos Centralizadas Juntas -->
+    <!-- Topo: Título e as 3 Logos Centralizadas e Sem Bordas -->
     <div class="header-container">
         <h1>Confrontos</h1>
         
         <div class="logos-center-wrapper">
             <div class="logo-area">
-                <img src="ney.png" alt="Logo 1">
-                Logo 1
+                <img src="ney2.png" alt="Logo Ney">
             </div>
             <div class="logo-area">
-             <img src="gad.png" alt="Logo 2">
-                Logo 2
+                <img src="gad.png" alt="Logo Gad">
             </div>
             <div class="logo-area">
-                <img src="arena.png" alt="Logo 3">
-                Logo 3
+                <img src="arena.png" alt="Logo Arena">
             </div>
         </div>
     </div>
