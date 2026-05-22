@@ -3,80 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaveamento - 64 Atletas</title>
+    <title>Confrontos - 32 Duplas</title>
     <style>
         :root {
-            --bg-dark: #0b0b0b;
-            --card-bg: #1a1a1a;
-            --border-red: #d32f2f;
+            --bg-dark: #070708;
+            --card-bg: #141416;
+            --border-red: #e50914;
             --text-white: #ffffff;
-            --hover-bg: #2a2a2a;
+            --text-gray: #aaaaaa;
+            --hover-bg: #282830;
+            --accent-blue: #007bff;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-white);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Mantém a tela travada sem barras de rolagem */
+        }
+
+        /* Layout do Topo: Título e as 3 Logos juntas */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1920px;
+            margin-bottom: 15px;
+            padding: 10px 40px;
+            background: linear-gradient(180deg, #1f1f23 0%, var(--bg-dark) 100%);
+            border-bottom: 2px solid var(--border-red);
+            border-radius: 8px;
+            gap: 10px;
+        }
+
+        .logos-center-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-area {
+            width: 130px;
+            height: 65px;
+            border: 2px dashed #333;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            background-color: rgba(255,255,255,0.02);
+            overflow: hidden;
+        }
+
+        .logo-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         h1 {
             text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 3px solid var(--border-red);
-            padding-bottom: 10px;
-            margin-bottom: 40px;
+            letter-spacing: 3px;
+            margin: 0;
+            font-size: 28px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
         }
 
+        /* Estrutura do Painel - Layout Entrelaçado */
         .tournament-board {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 1800px;
-            overflow-x: auto;
-            padding-bottom: 20px;
+            max-width: 1920px;
+            height: calc(100vh - 160px); 
+            padding: 0 20px;
         }
 
         /* Lados das chaves */
         .bracket-half {
             display: flex;
-            gap: 20px;
+            height: 100%;
+            width: 43%; 
         }
 
         .bracket-half.right {
-            flex-direction: row-reverse; /* Inverte o fluxo para apontar para o centro */
+            flex-direction: row-reverse; 
         }
 
+        /* Colunas de cada Rodada */
         .round {
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
-            min-width: 180px;
+            justify-content: center;
+            width: 25%; 
+            height: 100%;
+            gap: 10px; 
         }
 
+        /* Configuração de alinhamento vertical para o efeito cascata/entrelaçado */
+        .round:nth-child(1) { justify-content: space-around; }
+        .round:nth-child(2) { justify-content: space-around; padding: 20px 0; }
+        .round:nth-child(3) { justify-content: space-around; padding: 60px 0; }
+        .round:nth-child(4) { justify-content: center; }
+
+        /* Estrutura dos Confrontos */
         .match {
             display: flex;
             flex-direction: column;
             background-color: var(--card-bg);
-            border: 1px solid #333;
-            border-radius: 4px;
-            margin: 5px 0;
-            position: relative;
+            border: 1px solid #2a2a2e;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            width: 95%; 
+            max-width: 210px;
+            align-self: center;
         }
 
         .player {
-            padding: 8px 10px;
-            min-height: 20px;
-            font-size: 14px;
+            padding: 5px 8px;
+            height: 42px; /* Aumentado ligeiramente para comportar as 2 linhas de forma folgada */
+            font-size: 11px;
+            font-weight: 600;
             cursor: pointer;
-            border-bottom: 1px solid #333;
-            transition: background 0.2s;
-            outline: none;
+            border-bottom: 1px solid #2a2a2e;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            line-height: 1.3;
+            
+            /* Permite a quebra em até duas linhas sem quebrar o layout */
+            white-space: normal; 
+            word-wrap: break-word;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .player:last-child {
@@ -85,74 +164,133 @@
 
         .player:hover {
             background-color: var(--hover-bg);
+            color: #ff3333;
         }
 
-        /* Primeira rodada tem estilo editável */
-        .player[contenteditable="true"]:empty:before {
-            content: "Nome - Equipe";
-            color: #666;
-        }
-        
         .player[contenteditable="true"] {
-            border-left: 3px solid var(--border-red);
+            border-left: 3px solid var(--accent-blue);
         }
 
-        /* Centro / Final */
+        /* Centro / Grande Final */
         .finals {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0 40px;
-            min-width: 200px;
+            justify-content: center;
+            width: 14%;
+            min-width: 180px;
         }
 
         .finals h2 {
             color: var(--border-red);
             text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            text-shadow: 0 0 8px rgba(229, 9, 20, 0.5);
         }
 
         .final-match {
-            background-color: var(--card-bg);
-            border: 2px solid var(--border-red);
-            border-radius: 6px;
+            background-color: #1a1a1f;
+            border: 3px solid var(--border-red);
+            border-radius: 8px;
             width: 100%;
-            text-align: center;
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.3);
         }
         
         .final-match .player {
-            padding: 15px;
+            height: 55px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 12px;
+            text-align: center;
+            justify-content: center;
+            -webkit-line-clamp: 2;
+        }
+
+        #champion-name {
+            color: #00ff66;
+            margin-top: 20px;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            min-height: 24px;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
 <body>
 
-    <h1>Chaveamento de Lutas</h1>
+    <!-- Topo: Título e as 3 Logos Centralizadas Juntas -->
+    <div class="header-container">
+        <h1>Confrontos</h1>
+        
+        <div class="logos-center-wrapper">
+            <div class="logo-area">
+                <!-- <img src="logo1.png" alt="Logo 1"> -->
+                Logo 1
+            </div>
+            <div class="logo-area">
+                <!-- <img src="logo2.png" alt="Logo 2"> -->
+                Logo 2
+            </div>
+            <div class="logo-area">
+                <!-- <img src="logo3.png" alt="Logo 3"> -->
+                Logo 3
+            </div>
+        </div>
+    </div>
 
+    <!-- Tabuleiro do Torneio -->
     <div class="tournament-board">
-        <!-- Lado Esquerdo será gerado via JS -->
+        <!-- Lado Esquerdo -->
         <div id="left-bracket" class="bracket-half left"></div>
 
-        <!-- Grande Final no Centro -->
+        <!-- Grande Final no Centro Absoluto -->
         <div class="finals">
-            <h2>Final</h2>
+            <h2>Grande Final</h2>
             <div class="final-match">
-                <div class="player" id="final-left" onclick="declareChampion(this)"></div>
-                <div class="player" id="final-right" onclick="declareChampion(this)"></div>
+                <div class="player" id="final-left" onclick="declareChampion(this)">---</div>
+                <div class="player" id="final-right" onclick="declareChampion(this)">---</div>
             </div>
-            <h3 id="champion-name" style="color: #00ff00; margin-top: 20px;"></h3>
+            <div id="champion-name"></div>
         </div>
 
-        <!-- Lado Direito será gerado via JS -->
+        <!-- Lado Direito -->
         <div id="right-bracket" class="bracket-half right"></div>
     </div>
 
     <script>
-        // Configuração de partidas por rodada (32 atletas = 16 lutas iniciais de cada lado)
-        const roundStructure = [16, 8, 4, 2, 1]; 
+        // Distribuição das 32 duplas
+        const teamsLeft = [
+            ["Léo Bhaja E Biga", "Kayki E Wesley"],
+            ["Vitinho E Danielzinho", "Ruan E Lázaro"],
+            ["Dumbo E Cassaco", "Jhoson E Fabinho"],
+            ["Arthu E Galo", "Nego Biza E Victor Bala"],
+            ["Luan Chokito E Ratatulle", "Bimbo E Rato"],
+            ["Neymar E Pedalada", "Thiago E Gabriel"],
+            ["Jamdame E Hariel", "Luiz Oscar E Vitinho"],
+            ["Matheusinho E Pe De Mola", "Angu E L7"]
+        ];
 
-        function buildBracketHalf(sideId, sidePrefix) {
+        const teamsRight = [
+            ["Michel Boleragem Daniel E Leonardo", "Bila Pit Bul E Danilo"],
+            ["Mauro Balada E Edy", "Paulistinha E Joãozinho"],
+            ["Felipe E Mikael", "Neguinho E Rafinha"],
+            ["Riquelme E Edgar Júnior", "Arthu E Ombra"],
+            ["Dada Boladao E Caio", "Juninho E Meyson"],
+            ["Caja E Breninho", "Kiko E Ciro"],
+            ["Lorran E Netinho", "Paulo E Juninho"],
+            ["Nego Jóia E Esquerdinha", "Thale Oi E Dondon"]
+        ];
+
+        const roundStructure = [8, 4, 2, 1]; 
+
+        function buildBracketHalf(sideId, sidePrefix, teamsData) {
             const container = document.getElementById(sideId);
             
             roundStructure.forEach((numMatches, roundIndex) => {
@@ -163,18 +301,18 @@
                     const matchDiv = document.createElement('div');
                     matchDiv.className = 'match';
 
-                    // Criar os dois lutadores da chave
                     for (let slot = 0; slot < 2; slot++) {
                         const playerDiv = document.createElement('div');
                         playerDiv.className = 'player';
                         playerDiv.id = `${sidePrefix}-r${roundIndex}-m${i}-s${slot}`;
                         
-                        // Apenas a primeira rodada é digitável
                         if (roundIndex === 0) {
+                            playerDiv.innerText = teamsData[i][slot];
                             playerDiv.contentEditable = "true";
+                        } else {
+                            playerDiv.innerText = "";
                         }
 
-                        // Função ao clicar (avançar de fase)
                         playerDiv.onclick = function() {
                             advancePlayer(this, sidePrefix, roundIndex, i, slot);
                         };
@@ -189,20 +327,18 @@
 
         function advancePlayer(element, sidePrefix, currentRound, currentMatch, currentSlot) {
             const playerName = element.innerText.trim();
-            if (!playerName) return; // Não avança se estiver vazio
+            if (!playerName || playerName === "---") return; 
 
             const nextRound = currentRound + 1;
             
-            // Se for a última rodada do lado (venceu a semifinal do lado e vai pra Grande Final)
             if (nextRound === roundStructure.length) {
                 const finalSlot = sidePrefix === 'left' ? 'final-left' : 'final-right';
                 document.getElementById(finalSlot).innerText = playerName;
                 return;
             }
 
-            // Calcula a posição na próxima chave
             const nextMatch = Math.floor(currentMatch / 2);
-            const nextSlot = currentMatch % 2; // 0 para cima, 1 para baixo
+            const nextSlot = currentMatch % 2; 
 
             const nextPlayerId = `${sidePrefix}-r${nextRound}-m${nextMatch}-s${nextSlot}`;
             const nextPlayerDiv = document.getElementById(nextPlayerId);
@@ -214,14 +350,13 @@
 
         function declareChampion(element) {
             const championName = element.innerText.trim();
-            if (championName) {
-                document.getElementById('champion-name').innerText = `🏆 CAMPEÃO: ${championName} 🏆`;
+            if (championName && championName !== "---") {
+                document.getElementById('champion-name').innerHTML = `🏆 CAMPEÃO: ${championName} 🏆`;
             }
         }
 
-        // Inicializa as duas metades
-        buildBracketHalf('left-bracket', 'left');
-        buildBracketHalf('right-bracket', 'right');
+        buildBracketHalf('left-bracket', 'left', teamsLeft);
+        buildBracketHalf('right-bracket', 'right', teamsRight);
     </script>
 </body>
 </html>
