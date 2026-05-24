@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão de Eventos</title>
+    <style>
+        /* Variáveis de Cores (Mantidas) */
+        :root {
+            --primary-color: #007bff; /* Azul Principal */
+            --primary-dark: #0056b3;
+            --secondary-color: #6c757d; /* Cinza para o botão Voltar */
+            --success-color: #28a745; 
+            --warning-color: #ffc107; 
+            --danger-color: #dc3545; 
+            --background-color: #f8f9fa; 
+            --text-dark: #343a40; /* Corrigido de 343a0 para 343a40 */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--background-color); 
+            margin: 0; 
+            padding: 0; /* Remove padding do body para gerenciar com o container */
+            color: var(--text-dark);
+            box-sizing: border-box;
+        }
+
+        /* HEADER & TÍTULO CENTRALIZADO */
+        header { 
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            padding: 30px 20px 15px; /* Ajustei o padding horizontal */
+            margin-bottom: 50px; 
+            
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            text-align: center;
+            
+            border-radius: 0 0 8px 8px; /* Mantém a borda na parte de baixo */
+            position: relative; /* Para posicionar o botão de voltar */
+        }
+
+        /* ESTILO DA LOGO */
+        .header-logo {
+            margin-bottom: 10px; 
+        }
+        .header-logo img {
+            width: 250px; 
+            height: auto;
+            max-width: 100%; /* Garante que não ultrapasse a largura do pai */
+        }
+
+        #titulo-principal {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            margin: 10px 0 0; 
+            font-weight: 700;
+        }
+        
+        /* O botão de voltar (AGORA RESPONSIVO) */
+        .btn-voltar-dashboard {
+             display: inline-block; /* Tornamos ele visível */
+             position: absolute; /* Posição absoluta para ficar no canto */
+             top: 20px;
+             left: 20px;
+             
+             background-color: var(--secondary-color);
+             color: white;
+             padding: 8px 15px;
+             text-decoration: none;
+             border-radius: 5px;
+             font-weight: 500;
+             transition: background-color 0.3s;
+             white-space: nowrap;
+        }
+        .btn-voltar-dashboard:hover {
+            background-color: #5a6268;
+        }
+
+        /* CONTAINER PRINCIPAL E GRID DE OPÇÕES */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 20px; /* Ajustei padding para telas menores */
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            padding-bottom: 5px;
+        }
+
+        .opcoes-grid {
+            display: grid;
+            /* Grid Flexível: minmax de 250px é adequado */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* ESTILO DOS CARDS DE OPÇÃO (Mantidos) */
+        .card-opcao {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none; 
+            color: var(--text-dark);
+            border-bottom: 5px solid var(--primary-color); 
+        }
+
+        .card-opcao:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .card-opcao h3 {
+            font-size: 1.5rem;
+            margin: 10px 0 5px;
+            font-weight: 600;
+        }
+
+        .card-opcao p {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        /* Cores e Ícones (Mantidos) */
+        .icon {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .inscricoes .icon { color: var(--primary-color); }
+        .inscricoes { border-bottom-color: var(--primary-color); }
+
+        .financeiro .icon { color: var(--success-color); }
+        .financeiro { border-bottom-color: var(--success-color); }
+
+        .medalhas .icon { color: #8e44ad; } 
+        .medalhas { border-bottom-color: #8e44ad; } 
+        
+        /* --- MÍDIA QUERIES PARA RESPONSIVIDADE --- */
+
+        /* Telas Médias (Tablets e alguns Laptops) */
+        @media (max-width: 992px) {
+            .header-logo img {
+                width: 200px; /* Logo um pouco menor */
+            }
+            #titulo-principal {
+                font-size: 1.8rem; /* Título menor */
+            }
+            .opcoes-grid {
+                /* Reduz o gap para telas médias */
+                gap: 20px; 
+            }
+        }
+
+        /* Telas Pequenas (Celulares) */
+        @media (max-width: 576px) {
+            header {
+                /* Aumenta o padding vertical para dar espaço ao botão "Voltar" no topo */
+                padding: 60px 20px 15px; 
+            }
+            
+            .btn-voltar-dashboard {
+                /* Posiciona melhor o botão Voltar no celular, sem colidir com a logo */
+                top: 15px; 
+                left: 10px;
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+
+            .header-logo img {
+                width: 180px; /* Logo menor no celular */
+            }
+            
+            #titulo-principal {
+                font-size: 1.5rem; /* Título bem menor no celular */
+                /* Adiciona padding horizontal para evitar quebras de linha estranhas */
+                padding: 0 10px; 
+            }
+
+            .container {
+                padding: 0 10px 10px; /* Reduz o padding lateral */
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+                text-align: center; /* Centraliza o título da seção */
+                margin-bottom: 20px;
+            }
+
+            .opcoes-grid {
+                /* Garante que em celular o minmax de 250px força 1 coluna */
+                grid-template-columns: 1fr; 
+                gap: 15px;
+            }
+
+            .card-opcao {
+                padding: 20px; /* Reduz o padding interno dos cards */
+            }
+            
+            .card-opcao h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="dashboard.html" class="btn-voltar-dashboard">&larr; Voltar para Eventos</a>
+
+        <div class="header-logo">
+            <img src="../img/arena_competidor_chaveamento.png" alt="Logo do Evento">
+        </div> 
+        
+        <h1 id="titulo-principal">Painel de Gestão de Eventos</h1>
+    </header>
+
+    <div class="container">
+        <h2>Selecione o Módulo de Gestão</h2>
+        
+        <div class="opcoes-grid">
+            
+            <a href="inscricoes.html" class="card-opcao inscricoes">
+                <span class="icon">📝</span>
+                <h3>Gestão de Inscrições</h3>
+                <p>Confirmação de pagamentos e listagem de atletas.</p>
+            </a>
+            
+            <a href="financeiro.html" class="card-opcao financeiro">
+                <span class="icon">💰</span>
+                <h3>Financeiro</h3>
+                <p>Controle de receitas, despesas e relatórios.</p>
+            </a>
+            
+            <a href="medalhas.html" class="card-opcao medalhas">
+                <span class="icon">🥇</span>
+                <h3>Medalhas / Pódium</h3>
+                <p>Registro de resultados e classificação final.</p>
+            </a>
+
+        </div>
+    </div>
+</body>
+</html>
