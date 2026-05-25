@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atletas Inscritos | Arena Competidor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght=400;700&display=swap');
+
+        :root {
+            --cor-primaria: #d32f2f;
+            --cor-secundaria: #1a1a1a;
+            --cor-sub-bloco: #333333;
+            --cor-faixa-bloco: #555555;
+            --cor-fundo: #f4f7f6;
+            --cor-texto: #333;
+            --cor-borda: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        header img { 
+            max-width: 350px;
+            width: 80%;
+            height: auto;
+        }
+
+        .main-content {
+            margin-top: 130px;
+            width: 95%;
+            max-width: 900px;
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--cor-secundaria);
+        }
+
+        .filtros-area {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .filtros-area input, .filtros-area select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .filtros-area input:focus, .filtros-area select:focus {
+            border-color: var(--cor-primaria);
+        }
+
+        /* --- ESTRUTURA DE AGRUPAMENTO (MODALIDADE -> SEXO -> FAIXA) --- */
+        .modalidade-container {
+            margin-bottom: 40px;
+            text-align: left;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .titulo-modalidade {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #fff;
+            background: var(--cor-primaria);
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .sexo-container {
+            margin-left: 10px;
+            margin-bottom: 20px;
+        }
+
+        .titulo-sexo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            background: var(--cor-sub-bloco);
+            padding: 6px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .faixa-container {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--cor-faixa-bloco);
+            padding-left: 15px;
+        }
+
+        .titulo-faixa {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--cor-faixa-bloco);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- LISTA DE ATLETAS ESTILO TABELA --- */
+        .lista-atletas {
+            background: #fafafa;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--cor-borda);
+        }
+
+        .linha-atleta {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--cor-borda);
+            font-size: 0.9rem;
+            align-items: center;
+        }
+
+        .linha-atleta:last-child {
+            border-bottom: none;
+        }
+
+        .linha-atleta:nth-child(even) {
+            background: #f1f3f2;
+        }
+
+        .atleta-nome {
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #222;
+        }
+
+        .atleta-peso {
+            color: #666;
+            text-align: center;
+        }
+
+        .atleta-idade {
+            color: #666;
+            text-align: right;
+        }
+
+        /* Botão WhatsApp */
+        .whatsapp-fixed-text-button {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            padding: 12px 20px;
+            border-radius: 50px; background-color: #25D366;
+            text-decoration: none; color: white; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        #loading { padding: 50px; font-weight: bold; font-size: 1.2rem; }
+
+        @media (max-width: 600px) {
+            header { padding: 10px 0; }
+            header img { max-width: 220px; }
+            .main-content { margin-top: 95px; width: 92%; }
+            h1 { font-size: 1.4rem; }
+            
+            .filtros-area input, .filtros-area select {
+                min-width: 100%;
+            }
+
+            .modalidade-container { padding: 12px; }
+            .faixa-container { margin-left: 5px; padding-left: 10px; }
+            .linha-atleta { font-size: 0.8rem; padding: 8px 10px; }
+            
+            .whatsapp-text-visible { display: none; }
+            .whatsapp-fixed-text-button { 
+                width: 55px; height: 55px; padding: 0; 
+                border-radius: 50%; 
+            }
+            .whatsapp-fixed-text-button::before {
+                content: 'WA';
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html">
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+
+    <div class="main-content">
+        <h1>ATLETAS INSCRITOS</h1>
+        
+        <div class="filtros-area">
+            <input type="text" id="buscaNome" placeholder="Buscar por nome..." onkeyup="aplicarFiltros()">
+            <select id="buscaModalidade" onchange="aplicarFiltros()">
+                <option value="">Todas as Modalidades</option>
+            </select>
+            <select id="buscaSexo" onchange="aplicarFiltros()">
+                <option value="">Todos os Sexos</option>
+                <option value="MASCULINO">Masculino</option>
+                <option value="FEMININO">Feminino</option>
+            </select>
+        </div>
+
+        <div id="loading">Buscando lista de atletas...</div>
+        <div id="container-geral"></div>
+    </div>
+
+    <a href="https://wa.me/5584996189717" class="whatsapp-fixed-text-button" target="_blank">
+        <span class="whatsapp-text-visible">Suporte</span>
+    </a>
+
+    <script>
+        // URL atualizada enviada por você
+        const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQeZcVAVRHgjX1XbWSR6OJkO29Llt-9gGSTCo_DElLcMhmLz2QNz1m1pBNlnNZV39GKPEVrthW8NNja/pub?output=csv';
+        let todosAtletas = [];
+
+        function carregarDados() {
+            Papa.parse(URL_CSV, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    // Filtra garantindo que a linha possui nome preenchido
+                    todosAtletas = results.data.filter(item => item['NOME COMPLETO']);
+                    popularFiltroModalidade(todosAtletas);
+                    renderizar(todosAtletas);
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        function popularFiltroModalidade(atletas) {
+            const modalidades = [...new Set(atletas.map(a => a['MODALIDADE']))].filter(Boolean).sort();
+            const select = document.getElementById('buscaModalidade');
+            modalidades.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderizar(lista) {
+            const container = document.getElementById('container-geral');
+            container.innerHTML = '';
+
+            if (lista.length === 0) {
+                container.innerHTML = '<p>Nenhum atleta encontrado com os filtros aplicados.</p>';
+                return;
+            }
+
+            // Agrupamento estruturado: Modalidade -> Sexo -> Faixa
+            const agrupado = {};
+
+            lista.forEach(atleta => {
+                const mod = atleta['MODALIDADE'] || 'NÃO DEFINIDO';
+                const sexo = atleta['SEXO'] || 'NÃO DEFINIDO';
+                const faixa = atleta['SUA FAIXA'] || 'NÃO DEFINIDO';
+
+                if (!agrupado[mod]) agrupado[mod] = {};
+                if (!agrupado[mod][sexo]) agrupado[mod][sexo] = {};
+                if (!agrupado[mod][sexo][faixa]) agrupado[mod][sexo][faixa] = [];
+
+                agrupado[mod][sexo][faixa].push(atleta);
+            });
+
+            // Geração do HTML com base no agrupamento estruturado
+            for (const mod in agrupado) {
+                let htmlModalidade = `
+                    <div class="modalidade-container">
+                        <div class="titulo-modalidade">${mod}</div>
+                `;
+
+                for (const sexo in agrupado[mod]) {
+                    htmlModalidade += `
+                        <div class="sexo-container">
+                            <div class="titulo-sexo">${sexo}</div>
+                    `;
+
+                    for (const faixa in agrupado[mod][sexo]) {
+                        const atletasDaFaixa = agrupado[mod][sexo][faixa];
+                        
+                        htmlModalidade += `
+                            <div class="faixa-container">
+                                <div class="titulo-faixa">
+                                    <span>FAIXA: ${faixa}</span>
+                                    <small>(${atletasDaFaixa.length} inscrito(s))</small>
+                                </div>
+                                <div class="lista-atletas">
+                        `;
+
+                        atletasDaFaixa.forEach(atleta => {
+                            const nome = atleta['NOME COMPLETO'];
+                            const peso = atleta['SEU PESO'] || '---';
+                            const idade = atleta['IDADE'] ? `${atleta['IDADE']} anos` : '---';
+
+                            htmlModalidade += `
+                                <div class="linha-atleta">
+                                    <span class="atleta-nome">${nome}</span>
+                                    <span class="atleta-peso">${peso}</span>
+                                    <span class="atleta-idade">${idade}</span>
+                                </div>
+                            `;
+                        });
+
+                        htmlModalidade += `
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    htmlModalidade += `</div>`; // Fecha sexo-container
+                }
+
+                htmlModalidade += `</div>`; // Fecha modalidade-container
+                container.innerHTML += htmlModalidade;
+            }
+        }
+
+        function aplicarFiltros() {
+            const nome = document.getElementById('buscaNome').value.toLowerCase();
+            const modalidade = document.getElementById('buscaModalidade').value;
+            const sexo = document.getElementById('buscaSexo').value;
+
+            const filtrados = todosAtletas.filter(a => {
+                const matchNome = (a['NOME COMPLETO'] || "").toLowerCase().includes(nome);
+                const matchMod = modalidade === "" || a['MODALIDADE'] === modalidade;
+                const matchSexo = sexo === "" || (a['SEXO'] || "").toUpperCase() === sexo;
+                return matchNome && matchMod && matchSexo;
+            });
+
+            renderizar(filtrados);
+        }
+
+        window.onload = carregarDados;
+    </script>
+</body>
+</html>
