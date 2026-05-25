@@ -143,7 +143,7 @@
             justify-content: space-between;
         }
 
-        /* --- LISTA DE ATLETAS ESTILO TABELA --- */
+        /* --- LISTA DE ATLETAS SIMPLIFICADA --- */
         .lista-atletas {
             background: #fafafa;
             border-radius: 8px;
@@ -152,12 +152,10 @@
         }
 
         .linha-atleta {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            padding: 10px 15px;
+            display: block;
+            padding: 12px 15px;
             border-bottom: 1px solid var(--cor-borda);
-            font-size: 0.9rem;
-            align-items: center;
+            font-size: 0.95rem;
         }
 
         .linha-atleta:last-child {
@@ -172,16 +170,7 @@
             font-weight: bold;
             text-transform: uppercase;
             color: #222;
-        }
-
-        .atleta-peso {
-            color: #666;
-            text-align: center;
-        }
-
-        .atleta-idade {
-            color: #666;
-            text-align: right;
+            display: block;
         }
 
         /* Botão WhatsApp */
@@ -208,7 +197,7 @@
 
             .modalidade-container { padding: 12px; }
             .faixa-container { margin-left: 5px; padding-left: 10px; }
-            .linha-atleta { font-size: 0.8rem; padding: 8px 10px; }
+            .linha-atleta { font-size: 0.85rem; padding: 10px 12px; }
             
             .whatsapp-text-visible { display: none; }
             .whatsapp-fixed-text-button { 
@@ -254,7 +243,6 @@
     </a>
 
     <script>
-        // URL atualizada enviada por você
         const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQeZcVAVRHgjX1XbWSR6OJkO29Llt-9gGSTCo_DElLcMhmLz2QNz1m1pBNlnNZV39GKPEVrthW8NNja/pub?output=csv';
         let todosAtletas = [];
 
@@ -264,7 +252,6 @@
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    // Filtra garantindo que a linha possui nome preenchido
                     todosAtletas = results.data.filter(item => item['NOME COMPLETO']);
                     popularFiltroModalidade(todosAtletas);
                     renderizar(todosAtletas);
@@ -293,7 +280,6 @@
                 return;
             }
 
-            // Agrupamento estruturado: Modalidade -> Sexo -> Faixa
             const agrupado = {};
 
             lista.forEach(atleta => {
@@ -308,7 +294,6 @@
                 agrupado[mod][sexo][faixa].push(atleta);
             });
 
-            // Geração do HTML com base no agrupamento estruturado
             for (const mod in agrupado) {
                 let htmlModalidade = `
                     <div class="modalidade-container">
@@ -335,14 +320,10 @@
 
                         atletasDaFaixa.forEach(atleta => {
                             const nome = atleta['NOME COMPLETO'];
-                            const peso = atleta['SEU PESO'] || '---';
-                            const idade = atleta['IDADE'] ? `${atleta['IDADE']} anos` : '---';
 
                             htmlModalidade += `
                                 <div class="linha-atleta">
                                     <span class="atleta-nome">${nome}</span>
-                                    <span class="atleta-peso">${peso}</span>
-                                    <span class="atleta-idade">${idade}</span>
                                 </div>
                             `;
                         });
@@ -353,10 +334,10 @@
                         `;
                     }
 
-                    htmlModalidade += `</div>`; // Fecha sexo-container
+                    htmlModalidade += `</div>`;
                 }
 
-                htmlModalidade += `</div>`; // Fecha modalidade-container
+                htmlModalidade += `</div>`;
                 container.innerHTML += htmlModalidade;
             }
         }
