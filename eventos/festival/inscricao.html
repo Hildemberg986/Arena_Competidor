@@ -65,7 +65,7 @@
         }
 
         form { padding: 30px; display: grid; gap: 20px; }
-        
+         
         .form-section-title {
             grid-column: 1 / -1;
             border-bottom: 2px solid var(--cor-primaria);
@@ -155,6 +155,21 @@
         .btn-submit:hover { background: #b71c1c; }
         .btn-submit:disabled { background: #666; cursor: not-allowed; }
 
+        #grupoAbsoluto {
+            display: none;
+            background: #fff8f8;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px dashed var(--cor-primaria);
+        }
+
+        .badge-categoria {
+            font-weight: normal;
+            color: var(--cor-primaria);
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
         @media (max-width: 600px) {
             body { padding: 0; }
             .container { border-radius: 0; }
@@ -201,7 +216,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="idade">Idade:</label>
+                    <label for="idade">Idade: <span id="txtCategoria" class="badge-categoria"></span></label>
                     <input type="number" id="idade" name="idade" min="1" max="120" required>
                 </div>
             </div>
@@ -237,6 +252,14 @@
                 </div>
             </div>
 
+            <div class="form-group" id="grupoAbsoluto">
+                <label for="absoluto">Deseja lutar o Absoluto? (SOMENTE PARA O JIU JITSU)</label>
+                <select id="absoluto" name="absoluto">
+                    <option value="Não">Não</option>
+                    <option value="Sim">Sim</option>
+                </select>
+            </div>
+
             <div class="form-grid-2">
                 <div class="form-group">
                     <label for="peso">Seu Peso (kg):</label>
@@ -255,6 +278,7 @@
             <p><span>Nome:</span> <span id="res_nome">-</span></p>
             <p><span>Modalidade:</span> <span id="res_modalidade">-</span></p>
             <p><span>Graduação / Peso:</span> <span id="res_categoria">-</span></p>
+            <p><span>Absoluto:</span> <span id="res_absoluto">Não</span></p>
             <p><span>Contato:</span> <span id="res_contato">-</span></p>
             <div class="total-box">Total: R$ <span id="res_total">30,00</span></div>
         </div>
@@ -266,6 +290,10 @@
         const form = document.getElementById('inscricaoForm');
         const modalidadeSelect = document.getElementById('modalidade');
         const faixaSelect = document.getElementById('faixa');
+        const idadeInput = document.getElementById('idade');
+        const grupoAbsoluto = document.getElementById('grupoAbsoluto');
+        const absolutoSelect = document.getElementById('absoluto');
+        const txtCategoria = document.getElementById('txtCategoria');
         const VALOR_INSCRICAO = "30.00";
 
         const faixasPorModalidade = {
@@ -276,6 +304,34 @@
             "MUAY THAI": ["Branco", "Branco Ponta Vermelha", "Vermelho", "Vermelho Ponta Azul", "Azul", "Azul Ponta Preta", "Preta", "Preta Ponta Azul/Preta", "Preta Ponta Vermelha/Preta"],
             "SWORDPLAY": ["Sem Graduação / Iniciante", "Praticante Regular", "Veterano / Capitão"]
         };
+
+        // Lógica de monitoramento da idade para definição de categoria e absoluto
+        idadeInput.addEventListener('input', function() {
+            const idade = parseInt(this.value);
+            
+            if (!idade || idade < 1) {
+                txtCategoria.innerText = "";
+                grupoAbsoluto.style.display = "none";
+                absolutoSelect.value = "Não";
+                return;
+            }
+
+            if (idade === 16 || idade === 17) {
+                txtCategoria.innerText = "(Juvenil)";
+                grupoAbsoluto.style.display = "flex";
+            } else if (idade >= 18 && idade <= 29) {
+                txtCategoria.innerText = "(Adulto)";
+                grupoAbsoluto.style.display = "flex";
+            } else if (idade >= 30) {
+                txtCategoria.innerText = "(Master)";
+                grupoAbsoluto.style.display = "flex";
+            } else {
+                // Menores de 16 anos não lutam absoluto
+                txtCategoria.innerText = "(Infantil/Infanto)";
+                grupoAbsoluto.style.display = "none";
+                absolutoSelect.value = "Não";
+            }
+        });
 
         modalidadeSelect.addEventListener('change', function() {
             const mod = this.value;
@@ -327,9 +383,11 @@
             const peso = document.getElementById('peso').value || '';
             const ddd = document.getElementById('ddd').value || '';
             const celular = document.getElementById('celular').value || '';
+            const absoluto = absolutoSelect.value || 'Não';
 
             document.getElementById('res_nome').innerText = nome;
             document.getElementById('res_modalidade').innerText = modalidade;
+            document.getElementById('res_absoluto').innerText = absoluto;
             
             if (faixa || peso) {
                 document.getElementById('res_categoria').innerText = `${faixa} ${peso ? '('+peso+')' : ''}`.trim();
@@ -359,6 +417,7 @@
                     "CELULAR": document.getElementById('celular').value,
                     "MODALIDADE": document.getElementById('modalidade').value,
                     "SUA FAIXA": document.getElementById('faixa').value,
+                    "ABSOLUTO": absolutoSelect.value, // Novo parâmetro enviado
                     "SEU PESO": document.getElementById('peso').value,
                     "VALOR TOTAL": VALOR_INSCRICAO,
                     "STATUS DO PAGAMENTO": "Pendente",
