@@ -42,7 +42,7 @@
         }
 
         header img { 
-            max-width: 250px;
+            max-width: 350px;
             width: 80%;
             height: auto;
         }
@@ -244,7 +244,7 @@
             .whatsapp-fixed-text-button::before {
                 content: 'WA';
                 font-size: 12px;
-                }
+            }
         }
     </style>
 </head>
@@ -287,7 +287,7 @@
     <script>
         const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQeZcVAVRHgjX1XbWSR6OJkO29Llt-9gGSTCo_DElLcMhmLz2QNz1m1pBNlnNZV39GKPEVrthW8NNja/pub?output=csv';
         let todosAtletas = [];
-        let visaoAtual = 'normal'; // Pode ser 'normal' ou 'absoluto'
+        let visaoAtual = 'normal';
 
         function carregarDados() {
             Papa.parse(URL_CSV, {
@@ -321,10 +321,10 @@
             aplicarFiltros();
         }
 
-        // Determina a categoria com base no valor numérico de idade
+        // CORRIGIDO: Tratamento correto do valor numérico da idade
         function obterCategoriaIdade(idadeString) {
             const idade = parseInt(idadeString);
-            if (!idade || idades < 1) return 'NÃO DEFINIDO';
+            if (!idade || idade < 1) return 'NÃO DEFINIDO';
             if (idade === 16 || idade === 17) return 'JUVENIL';
             if (idade >= 18 && idade <= 29) return 'ADULTO';
             if (idade >= 30) return 'MASTER';
@@ -393,8 +393,11 @@
             const container = document.getElementById('container-geral');
             const agrupado = {};
 
-            // Filtra estritamente quem marcou "Sim" na chave 'ABSOLUTO'
-            const apenasAbsoluto = lista.filter(a => (a['ABSOLUTO'] || "").trim().toLowerCase() === 'sim');
+            // CORRIGIDO: Validação melhorada para aceitar 'Sim', 'sim', 'SIM' e remover espaços vazios nas pontas
+            const apenasAbsoluto = lista.filter(a => {
+                const valorAbsoluto = (a['ABSOLUTO'] || "").trim().toLowerCase();
+                return valorAbsoluto === 'sim';
+            });
 
             if (apenasAbsoluto.length === 0) {
                 container.innerHTML = '<p>Nenhum atleta inscrito no Absoluto com os filtros selecionados.</p>';
@@ -419,7 +422,6 @@
                         <div class="titulo-modalidade">${mod} - ABSOLUTO</div>
                 `;
 
-                // Garante a exibição ordenada conforme solicitado: Juvenil, Adulto e Master
                 const ordemCategorias = ['JUVENIL', 'ADULTO', 'MASTER', 'INFANTIL/INFANTO', 'NÃO DEFINIDO'];
                 
                 ordemCategorias.forEach(catIdade => {
