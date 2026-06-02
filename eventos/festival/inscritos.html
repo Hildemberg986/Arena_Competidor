@@ -6,7 +6,7 @@
     <title>Atletas Inscritos | Arena Competidor</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght=400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
         :root {
             --cor-primaria: #d32f2f;
@@ -61,6 +61,31 @@
             color: var(--cor-secundaria);
         }
 
+        /* --- BOTÕES DE SELEÇÃO DE VISÃO --- */
+        .abas-visao {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-aba {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: 2px solid var(--cor-primaria);
+            background: #fff;
+            color: var(--cor-primaria);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-aba.ativo {
+            background: var(--cor-primaria);
+            color: #fff;
+        }
+
         .filtros-area {
             background: #fff;
             padding: 15px;
@@ -87,7 +112,7 @@
             border-color: var(--cor-primaria);
         }
 
-        /* --- ESTRUTURA DE AGRUPAMENTO (MODALIDADE -> SEXO -> FAIXA) --- */
+        /* --- ESTRUTURA DE AGRUPAMENTO --- */
         .modalidade-container {
             margin-bottom: 40px;
             text-align: left;
@@ -143,7 +168,7 @@
             justify-content: space-between;
         }
 
-        /* --- LISTA DE ATLETAS SIMPLIFICADA --- */
+        /* --- LISTA DE ATLETAS --- */
         .lista-atletas {
             background: #fafafa;
             border-radius: 8px;
@@ -152,7 +177,9 @@
         }
 
         .linha-atleta {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 12px 15px;
             border-bottom: 1px solid var(--cor-borda);
             font-size: 0.95rem;
@@ -170,7 +197,14 @@
             font-weight: bold;
             text-transform: uppercase;
             color: #222;
-            display: block;
+        }
+
+        .atleta-detalhe-peso {
+            font-size: 0.85rem;
+            color: #666;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 4px;
         }
 
         /* Botão WhatsApp */
@@ -188,9 +222,12 @@
         @media (max-width: 600px) {
             header { padding: 10px 0; }
             header img { max-width: 220px; }
-            .main-content { margin-top: 95px; width: 92%; }
+            .main-content { margin-top: 110px; width: 92%; }
             h1 { font-size: 1.4rem; }
             
+            .abas-visao { flex-direction: column; gap: 5px; width: 100%; }
+            .btn-aba { width: 100%; padding: 10px; }
+
             .filtros-area input, .filtros-area select {
                 min-width: 100%;
             }
@@ -207,7 +244,7 @@
             .whatsapp-fixed-text-button::before {
                 content: 'WA';
                 font-size: 12px;
-            }
+                }
         }
     </style>
 </head>
@@ -221,6 +258,11 @@
 
     <div class="main-content">
         <h1>ATLETAS INSCRITOS</h1>
+
+        <div class="abas-visao">
+            <button id="btnNormal" class="btn-aba ativo" onclick="mudarVisao('normal')">Categorias Normais</button>
+            <button id="btnAbsoluto" class="btn-aba" onclick="mudarVisao('absoluto')">Apenas Absoluto 🏆</button>
+        </div>
         
         <div class="filtros-area">
             <input type="text" id="buscaNome" placeholder="Buscar por nome..." onkeyup="aplicarFiltros()">
@@ -245,6 +287,7 @@
     <script>
         const URL_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQeZcVAVRHgjX1XbWSR6OJkO29Llt-9gGSTCo_DElLcMhmLz2QNz1m1pBNlnNZV39GKPEVrthW8NNja/pub?output=csv';
         let todosAtletas = [];
+        let visaoAtual = 'normal'; // Pode ser 'normal' ou 'absoluto'
 
         function carregarDados() {
             Papa.parse(URL_CSV, {
@@ -254,7 +297,7 @@
                 complete: function(results) {
                     todosAtletas = results.data.filter(item => item['NOME COMPLETO']);
                     popularFiltroModalidade(todosAtletas);
-                    renderizar(todosAtletas);
+                    aplicarFiltros();
                     document.getElementById('loading').style.display = 'none';
                 }
             });
@@ -271,15 +314,25 @@
             });
         }
 
-        function renderizar(lista) {
+        function mudarVisao(tipo) {
+            visaoAtual = tipo;
+            document.getElementById('btnNormal').classList.toggle('ativo', tipo === 'normal');
+            document.getElementById('btnAbsoluto').classList.toggle('ativo', tipo === 'absoluto');
+            aplicarFiltros();
+        }
+
+        // Determina a categoria com base no valor numérico de idade
+        function obterCategoriaIdade(idadeString) {
+            const idade = parseInt(idadeString);
+            if (!idade || idades < 1) return 'NÃO DEFINIDO';
+            if (idade === 16 || idade === 17) return 'JUVENIL';
+            if (idade >= 18 && idade <= 29) return 'ADULTO';
+            if (idade >= 30) return 'MASTER';
+            return 'INFANTIL/INFANTO';
+        }
+
+        function renderizarNormal(lista) {
             const container = document.getElementById('container-geral');
-            container.innerHTML = '';
-
-            if (lista.length === 0) {
-                container.innerHTML = '<p>Nenhum atleta encontrado com os filtros aplicados.</p>';
-                return;
-            }
-
             const agrupado = {};
 
             lista.forEach(atleta => {
@@ -319,23 +372,89 @@
                         `;
 
                         atletasDaFaixa.forEach(atleta => {
-                            const nome = atleta['NOME COMPLETO'];
-
                             htmlModalidade += `
                                 <div class="linha-atleta">
-                                    <span class="atleta-nome">${nome}</span>
+                                    <span class="atleta-nome">${atleta['NOME COMPLETO']}</span>
+                                    <span class="atleta-detalhe-peso">${atleta['SEU PESO'] || '-'}</span>
                                 </div>
                             `;
                         });
 
-                        htmlModalidade += `
-                                </div>
-                            </div>
-                        `;
+                        htmlModalidade += `</div></div>`;
                     }
-
                     htmlModalidade += `</div>`;
                 }
+                htmlModalidade += `</div>`;
+                container.innerHTML += htmlModalidade;
+            }
+        }
+
+        function renderizarAbsoluto(lista) {
+            const container = document.getElementById('container-geral');
+            const agrupado = {};
+
+            // Filtra estritamente quem marcou "Sim" na chave 'ABSOLUTO'
+            const apenasAbsoluto = lista.filter(a => (a['ABSOLUTO'] || "").trim().toLowerCase() === 'sim');
+
+            if (apenasAbsoluto.length === 0) {
+                container.innerHTML = '<p>Nenhum atleta inscrito no Absoluto com os filtros selecionados.</p>';
+                return;
+            }
+
+            apenasAbsoluto.forEach(atleta => {
+                const mod = atleta['MODALIDADE'] || 'NÃO DEFINIDO';
+                const catIdade = obterCategoriaIdade(atleta['IDADE']);
+                const faixa = atleta['SUA FAIXA'] || 'NÃO DEFINIDO';
+
+                if (!agrupado[mod]) agrupado[mod] = {};
+                if (!agrupado[mod][catIdade]) agrupado[mod][catIdade] = {};
+                if (!agrupado[mod][catIdade][faixa]) agrupado[mod][catIdade][faixa] = [];
+
+                agrupado[mod][catIdade][faixa].push(atleta);
+            });
+
+            for (const mod in agrupado) {
+                let htmlModalidade = `
+                    <div class="modalidade-container">
+                        <div class="titulo-modalidade">${mod} - ABSOLUTO</div>
+                `;
+
+                // Garante a exibição ordenada conforme solicitado: Juvenil, Adulto e Master
+                const ordemCategorias = ['JUVENIL', 'ADULTO', 'MASTER', 'INFANTIL/INFANTO', 'NÃO DEFINIDO'];
+                
+                ordemCategorias.forEach(catIdade => {
+                    if (agrupado[mod][catIdade]) {
+                        htmlModalidade += `
+                            <div class="sexo-container">
+                                <div class="titulo-sexo">${catIdade}</div>
+                        `;
+
+                        for (const faixa in agrupado[mod][catIdade]) {
+                            const atletasDaFaixa = agrupado[mod][catIdade][faixa];
+
+                            htmlModalidade += `
+                                <div class="faixa-container">
+                                    <div class="titulo-faixa">
+                                        <span>FAIXA: ${faixa}</span>
+                                        <small>(${atletasDaFaixa.length} no absoluto)</small>
+                                    </div>
+                                    <div class="lista-atletas">
+                            `;
+
+                            atletasDaFaixa.forEach(atleta => {
+                                htmlModalidade += `
+                                    <div class="linha-atleta">
+                                        <span class="atleta-nome">${atleta['NOME COMPLETO']}</span>
+                                        <span class="atleta-detalhe-peso">${atleta['SEXO']} | ${atleta['SEU PESO'] || '-'}</span>
+                                    </div>
+                                `;
+                            });
+
+                            htmlModalidade += `</div></div>`;
+                        }
+                        htmlModalidade += `</div>`;
+                    }
+                });
 
                 htmlModalidade += `</div>`;
                 container.innerHTML += htmlModalidade;
@@ -343,6 +462,9 @@
         }
 
         function aplicarFiltros() {
+            const container = document.getElementById('container-geral');
+            container.innerHTML = '';
+
             const nome = document.getElementById('buscaNome').value.toLowerCase();
             const modalidade = document.getElementById('buscaModalidade').value;
             const sexo = document.getElementById('buscaSexo').value;
@@ -354,7 +476,16 @@
                 return matchNome && matchMod && matchSexo;
             });
 
-            renderizar(filtrados);
+            if (filtrados.length === 0) {
+                container.innerHTML = '<p>Nenhum atleta encontrado com os filtros aplicados.</p>';
+                return;
+            }
+
+            if (visaoAtual === 'normal') {
+                renderizarNormal(filtrados);
+            } else {
+                renderizarAbsoluto(filtrados);
+            }
         }
 
         window.onload = carregarDados;
