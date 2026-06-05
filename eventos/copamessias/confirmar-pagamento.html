@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Competidor | Pagamento e Confirmação</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        :root { 
+            --cor-primaria: #007bff; 
+            --cor-secundaria: #343a40; 
+            --cor-destaque: #28a745; 
+            --cor-fundo: #f8f9fa; 
+            --cor-texto: #495057; 
+            --cor-borda: #dee2e6; 
+            --cor-whatsapp: #25D366; 
+            --cor-alerta: #ffc107; 
+            --cor-nubank: #038439;
+            --cor-copia: #6c757d; 
+        } 
+        body { font-family: 'Roboto', sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; text-align: center; padding: 20px 0; background-color: #000; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        header img { max-width: 250px; }
+        .main-content { margin-top: 100px; width: 90%; max-width: 800px; flex-grow: 1; padding-bottom: 40px; }
+        h1 { color: var(--cor-secundaria); font-weight: 700; font-size: 2.5rem; text-align: center; margin-bottom: 40px; }
+        
+        .confirmation-container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; align-items: center; text-align: center; }
+        
+        .info-box { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 20px; border-radius: 5px; margin-bottom: 30px; width: 100%; box-sizing: border-box; }
+        .info-box h2 { color: #856404; margin-top: 0; font-size: 1.8rem; }
+
+        .input-fields { width: 100%; margin-bottom: 30px; text-align: left; }
+        .input-fields label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--cor-secundaria); }
+        .input-fields input, .input-fields select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border: 1px solid var(--cor-borda); 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+
+        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .summary-table th, .summary-table td { border: 1px solid var(--cor-borda); padding: 12px 15px; text-align: left; }
+        .summary-table th { background-color: #f1f1f1; }
+        .summary-table .total-row th, .summary-table .total-row td { background-color: var(--cor-destaque); color: #fff; font-size: 1.2rem; font-weight: bold; }
+        
+        .btn-action-main {
+            display: block; width: 100%; padding: 18px; font-size: 1.2rem; font-weight: bold; color: #fff; 
+            background-color: var(--cor-destaque); border: none; border-radius: 8px; cursor: pointer; 
+            transition: 0.3s; text-decoration: none; text-align: center; box-sizing: border-box; 
+        }
+        .btn-action-main:hover { background-color: #218838; }
+
+        .nubank-box {
+            background-color: #f7ebff; border: 2px solid var(--cor-nubank); padding: 20px;
+            border-radius: 10px; margin-bottom: 20px; text-align: center;
+        }
+        .btn-copy-nubank {
+            background-color: var(--cor-nubank); color: white; border: none; padding: 12px;
+            width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        #pix-direto-details { 
+            display: none; margin-top: 20px; width: 100%; box-sizing: border-box;
+            background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
+        }
+        
+        .copy-button { background-color: var(--cor-copia); color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
+        
+        .whatsapp-btn { 
+            display: block; width: 100%; padding: 15px; font-size: 1.2rem; font-weight: bold; color: #fff; 
+            background-color: var(--cor-whatsapp); border: none; border-radius: 5px; text-decoration: none; 
+            text-align: center; box-sizing: border-box; margin-top: 20px; pointer-events: none; opacity: 0.5;
+        }
+        .whatsapp-btn.enabled { pointer-events: auto; opacity: 1; }
+
+        .divider { margin: 20px 0; border-bottom: 1px solid #ccc; position: relative; }
+        .divider span { position: absolute; top: -10px; background: #f8f9fa; padding: 0 10px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: #777; }
+
+        .footer { margin-top: 20px; font-size: 0.9rem; color: #777; padding-bottom: 20px; }
+
+        @media (max-width: 768px) { .main-content { margin-top: 30px; } h1 { font-size: 1.8rem; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor Logo"></a>
+    </header>
+
+    <div class="main-content">
+       <h1>Pagamento e Confirmação</h1>
+       <div class="confirmation-container">
+           
+           <div class="info-box">
+               <h2>👋 Próximos Passos</h2>
+               <p>1. Selecione o evento e preencha seus dados.</p>
+               <p>2. Clique no botão verde para ver a <b>Chave PIX</b>.</p>
+               <p>3. Pague e envie o comprovante pelo botão do WhatsApp.</p>
+           </div>
+           
+           <div class="input-fields">
+                <label>Selecionar Evento:</label>
+                <select id="selecao-evento">
+                    <option value="Copa Messias de Jiu-jitsu">Copa Messias de Jiu-jitsu</option>
+                </select>
+
+                <label>Nome do Atleta:</label>
+                <input type="text" id="nome-atleta" placeholder="Nome Completo" required>
+
+                <label>CPF ou Nº de Ordem:</label>
+                <input type="text" id="numero-ordem" placeholder="Documento do Atleta" required>
+
+                <label>Tipo de Inscrição:</label>
+                <select id="tipo-inscricao">
+                    <option value="75.00">Categoria (R$ 75,00)</option>
+                    <option value="120.00">Categoria + Absoluto (R$ 120,00)</option>
+                </select>
+
+                <label>Método utilizado (após pagar):</label>
+                <select id="metodo-pagamento">
+                    <option value="" disabled selected>Selecione após pagar</option>
+                    <option value="Chave Aleatória Nubank">Chave Aleatória (Infinite Pay)</option>
+                    <option value="PIX CNPJ">PIX Direto (CNPJ)</option>
+                    <option value="PIX QR Code">PIX QR Code / Copia e Cola</option>
+                </select>
+           </div>
+           
+           <table class="summary-table">
+               <tbody>
+                   <tr><td>Subtotal</td><td id="linha-categoria-valor">R$ 0,00</td></tr>
+                   <tr id="linha-absoluto" style="display:none;"><td>Taxa Adicional</td><td id="linha-extra-texto">Absoluto</td></tr>
+                   <tr class="total-row"><th>Total a Pagar</th><td id="valor-total">R$ 0,00</td></tr>
+               </tbody>
+           </table>
+           
+           <button id="btn-toggle-pix-direto" class="btn-action-main">
+               VER DADOS PARA PAGAMENTO
+           </button>
+           
+           <div id="pix-direto-details">
+                <div class="nubank-box">
+                    <strong style="color: var(--cor-nubank);">OPÇÃO 1: Chave Aleatória (Infinite Pay)</strong>
+                    <p style="font-size: 0.9rem; margin: 5px 0;">Copie e cole no seu banco:</p>
+                    <code id="chave-aleatoria" style="background: #eee; padding: 5px; display: block; margin: 10px 0; word-break: break-all;">d94d5312-9232-4da8-9bb6-edb9575005c5</code>
+                    <button class="btn-copy-nubank" onclick="copiarTexto('d94d5312-9232-4da8-9bb6-edb9575005c5', this)">Copiar Chave Aleatória 📋</button>
+                </div>
+
+                <div class="divider"><span>OU USE O CNPJ / QR CODE</span></div>
+
+                <p><strong>Chave CNPJ:</strong> <span id="chave-pix-cnpj">62.810.446/0001-39</span></p>
+                <button class="copy-button" onclick="copiarTexto('62.810.446/0001-39', this)">Copiar CNPJ 📋</button>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="../../img/IMG_5467.jpg" alt="QR Code" style="max-width: 150px; border: 1px solid #ccc;">
+                    <button class="copy-button" onclick="copiarTexto('00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA', this)">Copiar PIX Copia e Cola 📋</button>
+                </div>
+                <p style="color: red; font-size: 0.8rem; margin-top: 10px;">* Confirme se o valor no App é o mesmo do resumo acima.</p>
+           </div>
+
+           <a id="whatsapp-link" href="#" target="_blank" class="whatsapp-btn">
+               Preencha os campos para liberar o envio
+           </a>
+           
+       </div>
+    </div>
+
+    <div class="footer">&copy; 2026 Arena Competidor.</div>
+
+    <script>
+        const inputs = ['nome-atleta', 'numero-ordem', 'tipo-inscricao', 'metodo-pagamento', 'selecao-evento'];
+        
+        function copiarTexto(texto, btn) {
+            navigator.clipboard.writeText(texto).then(() => {
+                const original = btn.innerText;
+                btn.innerText = 'Copiado! ✅';
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
+
+        // Captura dados da URL se existirem (vindo da página de inscrição)
+        function carregarDadosURL() {
+            const params = new URLSearchParams(window.location.search);
+            const nome = params.get('atleta');
+            const valor = params.get('valor');
+            if(nome) document.getElementById('nome-atleta').value = decodeURIComponent(nome);
+            if(valor) document.getElementById('tipo-inscricao').value = valor;
+            atualizar();
+        }
+
+        function atualizar() {
+            const evento = document.getElementById('selecao-evento').value;
+            const nome = document.getElementById('nome-atleta').value;
+            const ordem = document.getElementById('numero-ordem').value;
+            const valor = parseFloat(document.getElementById('tipo-inscricao').value);
+            const metodo = document.getElementById('metodo-pagamento').value;
+            const formatado = valor.toFixed(2).replace('.', ',');
+
+            document.getElementById('linha-categoria-valor').innerText = `R$ ${formatado}`;
+            document.getElementById('valor-total').innerText = `R$ ${formatado}`;
+            document.getElementById('btn-toggle-pix-direto').innerText = `VER DADOS PARA PAGAMENTO (R$ ${formatado})`;
+            
+            // Mostra linha de absoluto quando for Categoria + Absoluto
+            document.getElementById('linha-absoluto').style.display = valor === 120 ? 'table-row' : 'none';
+
+            if (valor === 120) {
+            document.getElementById('linha-extra-texto').innerText = 'Absoluto R$ 45,00';
+}
+
+            const link = document.getElementById('whatsapp-link');
+            if(nome && ordem && metodo) {
+                link.classList.add('enabled');
+                link.innerText = 'Enviar Comprovante pelo WhatsApp 📱';
+                const msg = encodeURIComponent(`✅ COMPROVANTE\nEvento: ${evento}\nAtleta: ${nome}\nID: ${ordem}\nValor: R$ ${formatado}\nMétodo: ${metodo}`);
+                link.href = `https://api.whatsapp.com/send?phone=5584996841020&text=${msg}`;
+            } else {
+                link.classList.remove('enabled');
+                link.innerText = 'Preencha os campos para liberar o envio';
+            }
+        }
+
+        document.getElementById('btn-toggle-pix-direto').addEventListener('click', function() {
+            const box = document.getElementById('pix-direto-details');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            if(box.style.display === 'block') box.scrollIntoView({behavior: 'smooth'});
+        });
+
+        inputs.forEach(id => document.getElementById(id).addEventListener('input', atualizar));
+        
+        window.onload = carregarDadosURL;
+    </script>
+</body>
+</html>
