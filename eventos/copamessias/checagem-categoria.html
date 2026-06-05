@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem Categorias | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb; 
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        header {
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
+        }
+        header img { max-width: 250px; width: 80%; height: auto; }
+
+        .main-content { margin-top: 140px; width: 95%; max-width: 1100px; padding-bottom: 60px; }
+
+        h1 { font-family: 'Poppins', sans-serif; color: #111827; font-weight: 700; font-size: 1.8rem; text-align: center; margin-bottom: 30px; }
+
+        .filtros-container {
+            background: var(--card-bg); padding: 20px; border-radius: var(--radius);
+            box-shadow: var(--shadow-md); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px; margin-bottom: 30px;
+        }
+
+        .filtro-grupo { display: flex; flex-direction: column; gap: 6px; }
+        .filtro-grupo label { font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; }
+        .filtro-grupo select { padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb; background-color: #f9fafb; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+        .faixa-group-header {
+            background-color: #111827; color: #fff; padding: 12px 20px; border-radius: 8px;
+            margin: 30px 0 15px 0; font-family: 'Poppins', sans-serif; font-weight: 700;
+            text-transform: uppercase; font-size: 0.9rem; display: flex; align-items: center; gap: 10px;
+        }
+        .faixa-group-header::before { content: ''; width: 4px; height: 18px; background: var(--primary-color); border-radius: 2px; }
+
+        .accordion-item { background: var(--card-bg); border-radius: 12px; margin-bottom: 8px; box-shadow: 2px 2px 8px rgba(0,0,0,0.03); overflow: hidden; border: 1px solid #e5e7eb; }
+        .accordion-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.95rem; background: #fff; }
+        .accordion-header::after { content: '▼'; font-size: 0.7rem; color: var(--text-secondary); }
+        .accordion-header.active::after { content: '▲'; }
+        
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fff; }
+        .accordion-content.open { max-height: 8000px; padding: 0 20px 20px; border-top: 1px solid #f3f4f6; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; border-bottom: 1px solid #f3f4f6; }
+        td { padding: 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.85rem; vertical-align: middle; }
+
+        .atleta-perfil { display: flex; align-items: center; gap: 12px; }
+        .atleta-foto {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+            border: 2px solid #e5e7eb; background-color: #eee; flex-shrink: 0;
+            cursor: zoom-in; transition: transform 0.2s;
+        }
+        .atleta-foto:hover { transform: scale(1.1); }
+        .atleta-info-txt { display: flex; flex-direction: column; }
+        .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
+        .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
+
+        /* Estilos do Status (Confirmada/Aguardando) */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .status-confirmado {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-aguardando {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        #photoModal {
+            display: none; position: fixed; z-index: 2000; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+            justify-content: center; align-items: center; cursor: zoom-out;
+        }
+        #photoModal img { 
+            max-width: 90%; max-height: 80%; border-radius: 12px; 
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transform: scale(0.7); animation: zoomIn 0.3s forwards;
+        }
+        @keyframes zoomIn { to { transform: scale(1); } }
+
+        #loading { text-align: center; padding: 40px; font-weight: 600; color: var(--primary-color); }
+
+        @media (max-width: 768px) {
+            thead { display: none; }
+            tr { display: block; border-bottom: 1px solid #f3f4f6; padding: 15px 0; }
+            td { display: flex; justify-content: space-between; align-items: center; border: none; padding: 5px 0; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; text-align: left; }
+            td[data-label="Atleta"] { justify-content: flex-start; text-align: left; gap: 12px; }
+            td[data-label="Atleta"]::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor"></a>
+    </header>
+
+    <div id="photoModal" onclick="this.style.display='none'">
+        <img id="modalImg" src="">
+    </div>
+
+    <div class="main-content">
+        <h1>Checagem de Inscritos</h1>
+
+        <div class="filtros-container">
+            <div class="filtro-grupo"><label>Gênero</label><select id="filtroGenero"><option value="todos">Todos</option></select></div>
+            <div class="filtro-grupo"><label>Faixa</label><select id="filtroFaixa"><option value="todos">Todos</option></select></div>
+            <div class="filtro-grupo"><label>Categoria</label><select id="filtroCategoria"><option value="todos">Todos</option></select></div>
+            <div class="filtro-grupo"><label>Peso</label><select id="filtroPeso"><option value="todos">Todos</option></select></div>
+        </div>
+
+        <div id="loading">Sincronizando Banco de Dados...</div>
+        <div id="listaInscritos"></div>
+    </div>
+
+    <script>
+        const CSV_URL = 'https://script.google.com/macros/s/AKfycbxhGu_PmUEbp2dew7_XlVuf_1e4pMNBTJFyJqJUSVc_yQSdeVmpNq3SVDMA0Ci6dus47Q/exec';
+        const FOTO_PADRAO = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+        const ORDEM_FAIXAS = { 'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5, 'VERDE': 6, 'LARANJA': 7, 'AMARELA': 8, 'CINZA': 9 };
+        
+        let dadosAtletas = [];
+        let colMap = {};
+
+        function abrirFoto(src) {
+            const modal = document.getElementById('photoModal');
+            const img = document.getElementById('modalImg');
+            img.src = src;
+            modal.style.display = 'flex';
+        }
+
+        function tratarLinkFoto(url) {
+            if (!url) return FOTO_PADRAO;
+            if (url.includes('drive.google.com')) {
+                const id = url.split('id=')[1] || url.split('/d/')[1]?.split('/')[0];
+                return id ? `https://lh3.googleusercontent.com/u/0/d/${id}` : FOTO_PADRAO;
+            }
+            return url;
+        }
+
+        async function carregarDados() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const linhas = csvText.split('\n').filter(l => l.trim() !== '');
+                const cabecalhoOriginal = linhas[0].split(',').map(c => c.trim().replace(/"/g, ''));
+                
+                cabecalhoOriginal.forEach((c, i) => {
+                    const clean = c.toUpperCase();
+                    if (clean.includes("ORD")) colMap.ORD = c;
+                    if (clean.includes("NOME COMPLETO")) colMap.NOME = c;
+                    if (clean === "FOTO" || clean.includes("FOTO")) colMap.FOTO = c;
+                    if (clean.includes("EQUIPE")) colMap.EQUIPE = c;
+                    if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
+                    // Mapeia a coluna R (que é a 18ª coluna, ou seja, índice 17) para STATUS
+                    if (i === 17) colMap.STATUS = c;
+                });
+
+                dadosAtletas = linhas.slice(1).map(linha => {
+                    const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    let obj = {};
+                    cabecalhoOriginal.forEach((c, i) => { obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; });
+                    return obj;
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                renderizar(true); // Inicializa filtros e lista
+            } catch (e) { document.getElementById('loading').innerHTML = "Erro na conexão."; }
+        }
+
+        function atualizarOpcoesDosFiltros(filtrados) {
+            const selects = {
+                'filtroGenero': 'SEXO',
+                'filtroFaixa': 'SUA FAIXA',
+                'filtroCategoria': 'SUA CATEGORIA',
+                'filtroPeso': 'SEU PESO'
+            };
+
+            Object.keys(selects).forEach(id => {
+                const campo = selects[id];
+                const select = document.getElementById(id);
+                const valorAtual = select.value;
+                
+                // Pega apenas as opções que existem nos dados ATUALMENTE filtrados
+                const opcoesSet = new Set();
+                filtrados.forEach(a => { if(a[campo]) opcoesSet.add(a[campo]) });
+
+                const arr = Array.from(opcoesSet).sort();
+                if(id === 'filtroFaixa') arr.sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99) - (ORDEM_FAIXAS[b.toUpperCase()]||99));
+
+                // Reconstruir o select mantendo "Todos"
+                select.innerHTML = '<option value="todos">Todos</option>';
+                arr.forEach(optValue => {
+                    const el = document.createElement('option');
+                    el.value = optValue;
+                    el.textContent = optValue;
+                    if(optValue === valorAtual) el.selected = true;
+                    select.appendChild(el);
+                });
+            });
+        }
+
+        function renderizar(atualizarFiltros = false) {
+            const container = document.getElementById('listaInscritos');
+            const fG = document.getElementById('filtroGenero').value;
+            const fF = document.getElementById('filtroFaixa').value;
+            const fC = document.getElementById('filtroCategoria').value;
+            const fP = document.getElementById('filtroPeso').value;
+
+            // 1. Filtrar os dados reais para a tabela
+            const filtradosParaTabela = dadosAtletas.filter(a => 
+                (fG === 'todos' || a['SEXO'] === fG) &&
+                (fF === 'todos' || a['SUA FAIXA'] === fF) &&
+                (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
+                (fP === 'todos' || a['SEU PESO'] === fP)
+            );
+
+            // 2. Lógica de Filtros Dependentes
+            // Se mudamos um filtro, precisamos saber quais opções restam nos outros
+            if(atualizarFiltros) {
+                atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : dadosAtletas) : dadosAtletas);
+            }
+
+            // 3. Gerar o HTML da lista
+            container.innerHTML = '';
+            const estrutura = {};
+            filtradosParaTabela.forEach(a => {
+                const fx = a['SUA FAIXA'] || 'BRANCA';
+                const ch = `${a['SUA CATEGORIA']} - ${a['SEU PESO']} (${a['SEXO']})`;
+                if (!estrutura[fx]) estrutura[fx] = {};
+                if (!estrutura[fx][ch]) estrutura[fx][ch] = [];
+                estrutura[fx][ch].push(a);
+            });
+
+            Object.keys(estrutura).sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99)-(ORDEM_FAIXAS[b.toUpperCase()]||99)).forEach(fx => {
+                const divFaixa = document.createElement('div');
+                divFaixa.className = 'faixa-group-header';
+                divFaixa.textContent = `Faixa ${fx}`;
+                container.appendChild(divFaixa);
+
+                Object.keys(estrutura[fx]).sort().forEach(ch => {
+                    const atletas = estrutura[fx][ch];
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    item.innerHTML = `
+                        <div class="accordion-header" onclick="toggleAcc(this)">${ch} (${atletas.length})</div>
+                        <div class="accordion-content">
+                            <table>
+                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    ${atletas.map(a => {
+                                        const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
+                                        
+                                        // Verifica o texto do status para aplicar a cor correta
+                                        const statusTxt = a[colMap.STATUS] || '---';
+                                        const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
+                                        const statusClass = isConfirmado ? 'status-confirmado' : 'status-aguardando';
+
+                                        return `
+                                        <tr>
+                                            <td data-label="Atleta">
+                                                <div class="atleta-perfil">
+                                                    <img src="${urlFinal}" class="atleta-foto" onclick="abrirFoto('${urlFinal}')" onerror="this.src='${FOTO_PADRAO}'">
+                                                    <div class="atleta-info-txt">
+                                                        <span class="atleta-ord">ORD: ${a[colMap.ORD] || '---'}</span>
+                                                        <span class="atleta-nome">${a[colMap.NOME] || '---'}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
+                                            <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
+                                            <td data-label="Status">
+                                                <span class="status-badge ${statusClass}">${statusTxt}</span>
+                                            </td>
+                                        </tr>
+                                    `}).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            });
+        }
+
+        function toggleAcc(el) {
+            el.classList.toggle('active');
+            el.nextElementSibling.classList.toggle('open');
+        }
+
+        // Listener para mudanças nos selects
+        document.querySelectorAll('select').forEach(s => {
+            s.addEventListener('change', (e) => {
+                renderizar(true);
+            });
+        });
+
+        carregarDados();
+    </script>
+</body>
+</html>

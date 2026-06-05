@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arena Competidor | Pagamento de Inscrição</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+        :root { 
+            --cor-primaria: #007bff; 
+            --cor-secundaria: #343a40; 
+            --cor-fundo: #f8f9fa; 
+            --cor-texto: #495057; 
+            --cor-borda: #dee2e6; 
+            --cor-whatsapp: #25D366; 
+            --cor-nubank: #03730c;
+        } 
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--cor-fundo); 
+            color: var(--cor-texto); 
+            margin: 0; padding: 0; 
+            display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; 
+        }
+
+        header { 
+            width: 100%; 
+            text-align: center; 
+            padding: 15px 10px; 
+            background-color: #000; 
+            position: fixed; 
+            top: 0; left: 0; 
+            z-index: 1000; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+        }
+        header img { 
+            width: 100%; height: auto;
+            max-height: 70px; max-width: 250px; 
+            object-fit: contain;
+        }
+
+        .main-content { 
+            margin-top: 120px; 
+            width: 95%; 
+            max-width: 500px; 
+            flex-grow: 1; 
+            padding-bottom: 40px; 
+        }
+        
+        h1 { 
+            color: var(--cor-secundaria); 
+            font-weight: 700; font-size: 1.6rem; 
+            text-align: center; margin-bottom: 20px; 
+        }
+        
+        .payment-container { 
+            background-color: #fff; 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+        
+        /* --- RESUMO COM ALERTA --- */
+        .payment-summary { 
+            background-color: #f9fafb;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--cor-borda);
+        }
+
+        .payment-summary h2 { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            color: #94a3b8; 
+            margin: 0 0 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .payment-details p { 
+            font-size: 0.95rem; 
+            margin: 10px 0; 
+            display: flex; justify-content: space-between;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .payment-details p span { font-weight: 700; color: var(--cor-secundaria); text-align: right; }
+
+        /* ALERTA SUBIDO PARA O RESUMO */
+        .alerta-resumo {
+            background-color: #ffcc00;
+            border: 1px solid #ff0000;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .alerta-resumo strong { color: #000000; font-size: 0.9rem; display: block; }
+        .alerta-resumo p { font-size: 0.8rem; margin: 5px 0 0 0; color: #000000; line-height: 1.3; }
+
+        .nubank-highlight {
+            background: linear-gradient(135deg, #f7ebff 0%, #ffffff 100%);
+            border: 2px solid var(--cor-nubank);
+            border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;
+        }
+
+        .btn-nubank {
+            background-color: var(--cor-nubank); color: white;
+            border: none; padding: 16px; width: 100%; border-radius: 10px;
+            font-weight: bold; cursor: pointer; font-size: 1rem;
+        }
+
+        .divider { width: 100%; height: 1px; background-color: var(--cor-borda); margin: 25px 0; position: relative; text-align: center; }
+        .divider span { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; color: #94a3b8; font-size: 0.75rem; font-weight: bold; }
+
+        .qrcode-section { text-align: center; }
+        #pix-qrcode-img { 
+            width: 100%; max-width: 180px; height: auto;
+            padding: 10px; border: 1px solid var(--cor-borda); 
+            border-radius: 12px; margin-bottom: 15px; background: white; 
+        }
+
+        .pix-copia-btn {
+            background-color: #f3f4f6; border: 1px solid var(--cor-borda);
+            padding: 14px; width: 100%; border-radius: 10px;
+            font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 0.9rem;
+        }
+
+        .btn-pay.whatsapp { 
+            background-color: var(--cor-whatsapp); color: white;
+            text-decoration: none; padding: 18px; border-radius: 12px;
+            text-align: center; font-weight: bold; display: block; font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+        } 
+        
+        .footer { padding: 30px 10px; text-align: center; color: #94a3b8; font-size: 0.8rem; }
+
+        @media (max-width: 380px) {
+            h1 { font-size: 1.4rem; }
+            .payment-details p { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html"><img src="../../img/arena2.png" alt="Arena Competidor Logo"></a>
+    </header>
+
+    <div class="main-content">
+        <h1>Concluir Pagamento</h1>
+        
+        <div class="payment-container">
+            <div class="payment-summary">
+                <h2>Resumo da Inscrição</h2>
+                <div class="payment-details">
+                    <p><strong>Evento:</strong> <span>COPA MESSIAS DE JIU JITSU</span></p>
+                    <p><strong>Atleta:</strong> <span id="nome-atleta">Carregando...</span></p>
+                    <p><strong>Valor Total:</strong> <span id="valor-pagamento">Carregando...</span></p>
+                </div>
+                
+                <div class="alerta-resumo">
+                    <strong>ENVIO DO COMPROVANTE OBRIGATÓRIO</strong>
+                    <p>Sua inscrição só será confirmada após clicar no botão do <b>WhatsApp ao final desta página</b> para enviar o recibo.</p>
+                </div>
+            </div>
+            
+            <div class="payment-form">
+                <div class="nubank-highlight">
+                    <p style="color: var(--cor-nubank); font-weight: bold; margin-bottom: 12px; font-size: 0.95rem;">Pagar com Chave PIX (INFINITE PAY)</p>
+                    <button class="btn-nubank" onclick="copiarTexto('d94d5312-9232-4da8-9bb6-edb9575005c5', 'infinite-btn-text')">
+                        <span id="infinite-btn-text">Copiar Chave Aleatória</span> 📋
+                    </button>
+                    <small style="display: block; margin-top: 10px; color: #94a3b8; font-size: 0.75rem;">Favorecido: 62.810.446 Valter Silva Brasil</small>
+                </div>
+
+                <div class="divider"><span>OU USE O QR CODE</span></div>
+
+                <div class="qrcode-section">
+                    <img id="pix-qrcode-img" src="../../img/IMG_5482.jpg" alt="PIX QR Code">
+                    <button class="pix-copia-btn" onclick="copiarTexto('00020126360014br.gov.bcb.pix0114628104460001395204000053039865802BR592462.810.446 VALTER SILVA 6009Sao Paulo610901227-20062240520daqr27030924361048376304C2FA', 'copia-text')">
+                        <span id="copia-text">Copiar Código Pix Copia e Cola</span> 📋
+                    </button>
+                </div>
+
+                <p style="text-align: center; font-size: 0.85rem; color: #666; margin-bottom: 15px;">
+                    Após pagar os <b id="valor-pix-info">R$ 0,00</b>, clique abaixo:
+                </p>
+
+                <a href="#" target="_blank" class="btn-pay whatsapp" id="whatsapp-link">
+                    Enviar Comprovante agora
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">&copy; 2026 Arena Competidor.</div>
+
+    <script>
+        function copiarTexto(texto, elementId) {
+            const btnText = document.getElementById(elementId);
+            const originalText = btnText.innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                btnText.innerText = 'Copiado! ✅';
+                setTimeout(() => { btnText.innerText = originalText; }, 3000);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const atleta = params.get('atleta') || "Atleta não identificado";
+            const valorRaw = params.get('valor');
+            const valor = valorRaw ? parseFloat(valorRaw) : 0;
+            const valorFormatado = `R$ ${valor.toFixed(2).replace('.', ',')}`;
+            
+            document.getElementById('nome-atleta').innerText = atleta;
+            document.getElementById('valor-pagamento').innerText = valorFormatado;
+            document.getElementById('valor-pix-info').innerText = valorFormatado;
+
+            const whatsappLink = document.getElementById('whatsapp-link'); 
+            const baseText = encodeURIComponent(`Olá, segue comprovante do atleta ${atleta} para o COPA MESSIAS DE JIU JITSU.`);
+            whatsappLink.href = `https://api.whatsapp.com/send?phone=5584996841020&text=${baseText}`;
+        });
+    </script>
+</body>
+</html>
