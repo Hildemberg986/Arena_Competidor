@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campo Grande Open de Jiu-Jitsu | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CONFIGURAÇÕES DO CABEÇALHO
+           ========================================= */
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            background-color: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            max-width: 250px;
+            width: 80%;
+            height: auto;
+        }
+
+        /* =========================================
+           ESTILOS DO CONTADOR (NOVO)
+           ========================================= */
+        .countdown-wrapper {
+            width: 100%;
+            background: #ffffff;
+            color: white;
+            padding: 15px 0;
+            margin-top: 80px; /* Compensa o header fixo */
+            display: flex;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .countdown-content {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .countdown-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #000000;
+        }
+        .timer-grid {
+            display: flex;
+            gap: 15px;
+        }
+        .timer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 55px;
+        }
+        .timer-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff0000;
+            line-height: 1;
+        }
+        .timer-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #000000;
+            margin-top: 4px;
+        }
+
+        /* =========================================
+           ESTILOS GERAIS ORIGINAIS
+           ========================================= */
+        :root {
+            --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-top: 40px; /* Reduzido pois o contador já tem margem */
+            width: 90%;
+            max-width: 1000px;
+            padding-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #111827;
+            font-weight: 700;
+            font-size: 2rem;
+            text-align: center;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card-banner {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            aspect-ratio: 4/5; 
+            position: relative;
+        }
+
+        .card-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            object-position: top center; 
+            transition: transform 0.5s ease;
+        }
+
+        .card-banner:hover img {
+            transform: scale(1.03);
+        }
+
+        .actions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .side-sponsor-container {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .side-sponsor-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        .side-sponsor-image-wrapper {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
+        .side-sponsor-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            display: block;
+        }
+
+        .btn-modern {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid transparent;
+        }
+
+        .btn-modern:active { transform: scale(0.98); }
+
+        .btn-primary-action {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            font-size: 1.1rem;
+            padding: 18px;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+            border: none;
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, #4ade80 0%, #15803d 100%);
+            box-shadow: 0 6px 15px rgba(34, 197, 94, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background-color: white;
+            color: var(--accent-red);
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-danger:hover {
+            background-color: #fef2f2;
+            border-color: var(--accent-red);
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .info-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 15px;
+        }
+
+        .info-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-box {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: inline-block;
+        }
+
+        .info-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 25px;
+            font-style: italic;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .footer {
+            padding: 30px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        /* POP-UP (MODAL) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            position: relative;
+            background: transparent;
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+        }
+        
+        .modal-overlay.active { opacity: 1; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        /* WHATSAPP */
+        .whatsapp-fixed-text-button {
+            position: fixed;
+            bottom: 25px; 
+            right: 25px; 
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 50px;
+            background-color: #25D366;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .card-banner { aspect-ratio: 4/5; max-height: none; }
+        }
+
+        @media (max-width: 768px) {
+            header img { max-width: 220px; }
+        }
+
+        @media (max-width: 600px) {
+            .countdown-wrapper { margin-top: 70px; padding: 10px 0; }
+            .countdown-content { flex-direction: column; gap: 8px; }
+            .timer-number { font-size: 1.2rem; }
+            
+            .main-content { margin-top: 20px; }
+            h1 { font-size: 1.5rem; }
+            .actions-grid { grid-template-columns: 1fr; }
+            .btn-primary-action { grid-column: auto; }
+            
+            .whatsapp-fixed-text-button { width: 55px; height: 55px; padding: 0; border-radius: 50%; bottom: 20px; right: 20px; }
+            .whatsapp-text-visible { display: none; }
+            .whatsapp-icon-only { margin-right: 0; width: 28px; height: 28px; }
+            .close-modal-btn { right: 10px; top: -35px; }
+            .side-sponsor-image-wrapper { height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html">
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+
+    <div class="countdown-wrapper">
+        <div class="countdown-content">
+            <span class="countdown-title">O evento começa em:</span>
+            <div class="timer-grid">
+                <div class="timer-item">
+                    <span id="days" class="timer-number">00</span>
+                    <span class="timer-label">Dias</span>
+                </div>
+                <div class="timer-item">
+                    <span id="hours" class="timer-number">00</span>
+                    <span class="timer-label">Horas</span>
+                </div>
+                <div class="timer-item">
+                    <span id="minutes" class="timer-number">00</span>
+                    <span class="timer-label">Min</span>
+                </div>
+                <div class="timer-item">
+                    <span id="seconds" class="timer-number">00</span>
+                    <span class="timer-label">Seg</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1>Campo Grande Open de Jiu-Jitsu</h1>
+        
+        <div class="dashboard-grid">
+            <div class="card-banner">
+                <img src="../../img/campogrande.jpeg" alt="Banner do Desafio">
+            </div>
+
+            <div class="actions-container">
+                <div class="actions-grid">
+                    <a href="../../meu-evento-agd.html" class="btn-modern btn-primary-action">
+                        Realizar Inscrição Agora
+                    </a>
+                    <a href="../../meu-evento-agd.html" class="btn-modern btn-secondary">
+                        Pagar Inscrição
+                    </a>
+                    <a href="../../meu-evento-agd.html" class="btn-modern btn-secondary">
+                        Alterar Inscrição
+                    </a>
+                    <a href="../../meu-evento-agd.html" class="btn-modern btn-secondary">
+                        Checagem
+                    </a>
+                    <a href="../../meu-evento-agd.html" class="btn-modern btn-secondary">
+                        Visualizar Chaves
+                    </a>
+                    <a href="https://drive.google.com/file/d/1AO94mEig-tgpM_Kyxyj6wim3IxFc0R5h/view?usp=sharing" class="btn-modern btn-danger" target="_blank">
+                        Baixar Edital (PDF)
+                    </a>
+                    <a href="../../fotos.html" class="btn-modern btn-secondary" style="color: var(--primary-color); border-color: var(--primary-color);">
+                        Fotos do Evento
+                    </a>
+                </div>
+
+                <div class="side-sponsor-container">
+                    <div class="side-sponsor-title">PARCEIRO ARENA COMPETIDOR</div>
+                    <div class="side-sponsor-image-wrapper">
+                        <img src="../../img/parceiro1.png" alt="Patrocinador Oficial">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2>Detalhes do Evento</h2>
+            <div class="info-details-grid">
+                <div class="info-item">
+                    <span class="info-label">Data do Evento</span>
+                    <span class="info-value"><span class="icon-box" style="background:#ef4444"></span> 06 Setembro 2026</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Horário</span>
+                    <span class="info-value"><span class="icon-box" style="background:#f59e0b"></span> Início às 08:30h</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Encerramento Inscrições</span>
+                    <span class="info-value"><span class="icon-box" style="background:#10b981"></span> 02 Setembro 2026</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Local</span>
+                    <span class="info-value">Quadra de Esportes Ronaldo Nazareno, Campo Grande/RN</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Checagem</span>
+                    <span class="info-value">A definir</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Divulgação Chaves</span>
+                    <span class="info-value">A definir</span>
+                </div>
+            </div>
+            <div class="info-note">
+                 As datas e horários estão sujeitos a alteração pela organização do evento. Fique atento às atualizações.
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        &copy; 2026 Arena Competidor. Todos os direitos reservados.
+    </div>
+
+    <a href="https://wa.me/5584987513740?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20falar%20com%20o%20suporte." class="whatsapp-fixed-text-button" target="_blank" rel="noopener noreferrer">
+        <svg class="whatsapp-icon-only" style="width: 24px; height: 24px; color: white; margin-right: 10px;" viewBox="0 0 16 16">
+            <path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.601 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.535c0-3.626 2.951-6.574 6.591-6.574A6.56 6.56 0 0 1 14.37 7.923c0 3.626-2.951 6.574-6.59 6.574z"/>
+        </svg>
+        <span class="whatsapp-text-visible" style="color: white; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif;">Suporte</span>
+    </a>
+
+  
+
+    <script>
+        /* SCRIPT DO CONTADOR */
+        function updateCountdown() {
+            const eventDate = new Date('Sep 06, 2026 08:00:00').getTime();
+            const now = new Date().getTime();
+            const diff = eventDate - now;
+
+            if (diff <= 0) {
+                document.querySelector('.countdown-wrapper').innerHTML = "<strong style='color:#22c55e'>O EVENTO JÁ COMEÇOU!</strong>";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        /* FUNÇÕES DO MODAL */
+        function openModal() {
+            const modal = document.getElementById('sponsorModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('sponsorModal');
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(openModal, 1000);
+        });
+
+        document.getElementById('sponsorModal').addEventListener('click', function(e) {
+            if (e.target === this) { closeModal(); }
+        });
+    </script>
+
+</body>
+</html>
