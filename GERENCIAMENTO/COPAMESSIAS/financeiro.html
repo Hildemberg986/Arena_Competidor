@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro do Evento</title>
+    <style>
+        /* Variáveis de Cores */
+        :root {
+            --primary-color: #2563eb; 
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #16a34a; 
+            --warning-color: #d97706; 
+            --danger-color: #dc2626; 
+            --background-color: #f8fafc; 
+            --text-dark: #0f172a;
+            --info-color: #0ea5e9;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--background-color); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text-dark);
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER & TÍTULO CENTRALIZADO */
+        header { 
+            background-color: #ffffff;
+            box-shadow: var(--card-shadow); 
+            padding: 50px 20px 20px; 
+            margin-bottom: 40px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            text-align: center;
+            border-radius: 0 0 12px 12px; 
+            position: relative; 
+        }
+        .header-logo img {
+            width: 220px; 
+            height: auto;
+            max-width: 100%;
+        }
+        #titulo-principal {
+            color: var(--text-dark);
+            font-size: 1.8rem;
+            margin: 15px 0 0;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        .btn-voltar-dashboard {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            z-index: 10; 
+            border: 1px solid #cbd5e1;
+        }
+        .btn-voltar-dashboard:hover {
+             background-color: #e2e8f0;
+             transform: translateY(-1px);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 40px; 
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin: 35px 0 15px 0;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        /* QUADRO RESUMO (3 COLUNAS) - GRID */
+        .quadro-resumo-financeiro { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px; 
+            margin-bottom: 30px; 
+        }
+
+        .card-valor { 
+            background-color: #fff; 
+            padding: 20px;
+            border-radius: 12px; 
+            text-align: left; 
+            box-shadow: var(--card-shadow); 
+            border-left: 5px solid;
+            transition: transform 0.2s ease;
+        }
+        .card-valor:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-valor h3 { 
+            margin: 0 0 8px 0; 
+            font-size: 0.85rem; 
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .card-valor .valor { 
+            font-size: 2rem; 
+            margin: 0; 
+            font-weight: 800; 
+            letter-spacing: -0.05em;
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
+        }
+        .card-valor .sub-info {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            margin-top: 6px;
+        }
+
+        .total-nominal { border-left-color: #1e293b; }
+        .total-nominal .valor { color: #1e293b; }
+        .total-confirmado { border-left-color: var(--success-color); }
+        .total-confirmado .valor { color: var(--success-color); }
+        .total-pendente { border-left-color: var(--warning-color); }
+        .total-pendente .valor { color: var(--warning-color); }
+
+        /* TABELA DE DETALHES FINANCEIROS E PAGAMENTOS - GRID */
+        .financeiro-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr; 
+            gap: 24px;
+        }
+
+        .card-detalhes, .card-pagamentos {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-detalhes table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .card-detalhes th, .card-detalhes td {
+            padding: 14px 0;
+            text-align: left;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        .card-detalhes th {
+            font-weight: 500;
+            color: #475569;
+            width: 70%;
+        }
+
+        .card-detalhes .resultado {
+            font-weight: 600;
+            text-align: right;
+            color: var(--text-dark);
+        }
+        .card-detalhes tr:last-child th, .card-detalhes tr:last-child td {
+            border-bottom: none;
+            font-size: 1.25rem;
+            padding-top: 20px;
+            border-top: 2px solid var(--primary-color);
+            font-weight: 800;
+        }
+        .saldo-total { color: var(--info-color) !important; }
+
+        /* Card de Pagamentos */
+        .card-pagamentos h3 {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .card-pagamentos ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .card-pagamentos li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .card-pagamentos li strong {
+            color: var(--primary-color);
+            background-color: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        /* --- MÍDIA QUERIES PARA RESPONSIVIDADE --- */
+        @media (max-width: 992px) {
+            .quadro-resumo-financeiro { grid-template-columns: 1fr; gap: 14px; }
+            .financeiro-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+
+        @media (max-width: 600px) {
+            header { padding: 50px 10px 15px; margin-bottom: 25px; border-radius: 0; }
+            .btn-voltar-dashboard { top: 12px; left: 12px; padding: 6px 12px; font-size: 0.8rem; }
+            .header-logo img { width: 160px; }
+            #titulo-principal { font-size: 1.4rem; }
+            .container { padding: 0 14px 20px; }
+            h2 { font-size: 1.15rem; text-align: left; margin-top: 25px; }
+            .card-valor .valor { font-size: 1.75rem; }
+            .card-detalhes, .card-pagamentos { padding: 16px; }
+            .card-detalhes th, .card-detalhes td { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-logo">
+            <img src="../img/arena_competidor_chaveamento.png" alt="Logo do Evento">
+        </div> 
+        <h1 id="titulo-principal">Painel Financeiro do Evento</h1>
+        <a href="dashboard-event.html" class="btn-voltar-dashboard">&larr; Voltar</a>
+    </header>
+
+    <div class="container">
+        <h2>Resumo Financeiro</h2>
+
+        <div class="quadro-resumo-financeiro">
+            <div class="card-valor total-nominal">
+                <h3>Valor Nominal Total do Evento</h3>
+                <p class="valor" id="valorTotalEvento">R$ 0,00</p>
+                <p class="sub-info" id="totalInscritos">0 Inscritos no Total</p>
+            </div>
+            
+            <div class="card-valor total-confirmado">
+                <h3>Valor Confirmado (Recebido)</h3>
+                <p class="valor" id="valorConfirmado">R$ 0,00</p>
+                <p class="sub-info"><span id="atletasPagos">0</span> Atletas Pagos</p>
+            </div>
+            
+            <div class="card-valor total-pendente">
+                <h3>Valor Pendente a Receber</h3>
+                <p class="valor" id="valorPendente">R$ 0,00</p>
+                <p class="sub-info"><span id="atletasPendentes">0</span> Atletas Faltam Pagar</p>
+            </div>
+        </div>
+
+        <div class="financeiro-grid">
+            <div class="card-detalhes">
+                <h2>Cálculo de Receita Líquida</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Valor Total Recebido (Bruto)</th>
+                            <td class="resultado" id="valorRecebidoBruto">R$ 0,00</td>
+                        </tr>
+                        <tr>
+                            <th>Comissão do Site (R$ 5,00 por Atleta Confirmado)</th>
+                            <td class="resultado" id="comissaoSite">- R$ 0,00</td>
+                        </tr>
+                        <tr>
+                            <th>Taxas de Cartão (5% sobre inscrições no Cartão)</th>
+                            <td class="resultado" id="taxasCartao">- R$ 0,00</td>
+                        </tr>
+                        <tr>
+                            <th>Saque/Retirada</th>
+                            <td class="resultado" id="valorSaque">- R$ 0,00</td>
+                        </tr>
+                        <tr>
+                            <th>Inscrições Direto ao Administrador do Evento(ADM)</th>
+                            <td class="resultado" id="valorAdminTotal" style="color: var(--danger-color);">- R$ 0,00</td>
+                        </tr>
+                        <tr>
+                            <th>Saldo Líquido Total do Evento</th>
+                            <td class="resultado saldo-total" id="saldoTotal">R$ 0,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-pagamentos">
+                <h3>Distribuição de Pagamentos</h3>
+                <ul>
+                    <li>PIX: <strong id="countPix">0</strong></li>
+                    <li>Dinheiro em Espécie: <strong id="countDinheiro">0</strong></li>
+                    <li>Cartão de Crédito/Débito: <strong id="countCartao">0</strong></li>
+                    <li>Pagamento Administrativo (ADM): <strong id="countAdmin">0</strong></li>
+                    <li>Outros/Não Especificados: <strong id="countOutros">0</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CSV_URL = "https://script.google.com/macros/s/AKfycbxhGu_PmUEbp2dew7_XlVuf_1e4pMNBTJFyJqJUSVc_yQSdeVmpNq3SVDMA0Ci6dus47Q/exec";
+        const TAXA_COMISSAO_SITE = 5.00; 
+        const TAXA_CARTAO_PERCENTUAL = 0.05; 
+        const VALOR_SAQUE_MANUAL = 0.00; 
+
+        const formatCurrency = (value) => {
+            const num = parseFloat(value);
+            return isNaN(num) ? 'R$ 0,00' : num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+
+        async function carregarDadosFinanceiros() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const dados = parseCSV(csvText);
+                calcularEExibir(dados);
+            } catch (error) {
+                console.error("Erro ao carregar os dados do CSV:", error);
+                document.querySelector('.container').innerHTML = '<p style="color: red; text-align: center;">Não foi possível carregar os dados financeiros.</p>';
+            }
+        }
+
+        function splitCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes; 
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
+            if (lines.length < 2) return [];
+
+            const headers = splitCSVLine(lines[0]).map(h => h.toUpperCase().replace(/"/g, ''));
+            const data = [];
+
+            const indexMap = {
+                'VALOR TOTAL': headers.indexOf('VALOR TOTAL'),
+                'STATUS DO PAGAMENTO': headers.indexOf('STATUS DO PAGAMENTO'),
+                'VALOR RECEBIDO': headers.indexOf('VALOR RECEBIDO'),
+                'TIPO DE PAGAMENTO': headers.indexOf('TIPO DE PAGAMENTO')
+            };
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = splitCSVLine(lines[i]);
+                
+                // Validação flexível: a linha precisa ter pelo menos dados básicos estruturados
+                if (values.length < 3) continue;
+
+                const parseValue = (val) => {
+                    if (!val) return 0;
+                    let clean = String(val).replace('R$', '').trim();
+                    if(clean.includes(',') && clean.includes('.')) {
+                        clean = clean.replace(/\./g, '').replace(',', '.');
+                    } else {
+                        clean = clean.replace(',', '.');
+                    }
+                    const num = parseFloat(clean);
+                    return isNaN(num) ? 0 : num;
+                };
+
+                let statusRaw = values[indexMap['STATUS DO PAGAMENTO']] || '';
+                let status = 'Pendente';
+                
+                if (statusRaw.toLowerCase() === 'confirmado') {
+                    status = 'Confirmado';
+                } else if (statusRaw.toLowerCase() === 'cancelado') {
+                    status = 'Cancelado';
+                }
+
+                // Identificação prioritária da Coluna S (índice 18) para o tipo de pagamento
+                let tipoTexto = '';
+                if (values[18] && values[18].toUpperCase().includes('ADM')) {
+                    tipoTexto = 'ADM';
+                } else if (indexMap['TIPO DE PAGAMENTO'] !== -1 && values[indexMap['TIPO DE PAGAMENTO']]) {
+                    tipoTexto = values[indexMap['TIPO DE PAGAMENTO']].toUpperCase();
+                } else if (values[18]) {
+                    tipoTexto = values[18].toUpperCase();
+                }
+
+                data.push({
+                    valorNominal: parseValue(values[indexMap['VALOR TOTAL']]),
+                    status: status,
+                    valorRecebido: parseValue(values[indexMap['VALOR RECEBIDO']]),
+                    tipoPagamento: tipoTexto
+                });
+            }
+            return data;
+        }
+
+        function calcularEExibir(data) {
+            let totalNominal = 0;
+            let valorConfirmado = 0;
+            let valorPendente = 0;
+            let atletasPagos = 0;
+            let atletasPendentes = 0;
+            let valorRecebidoBruto = 0;
+            let valorAdminRecebido = 0; 
+            
+            let pagamentos = { pix: 0, dinheiro: 0, cartao: 0, admin: 0, outros: 0 };
+            let valorCartaoRecebido = 0;
+
+            data.forEach(item => {
+                totalNominal += item.valorNominal;
+
+                if (item.status === 'Confirmado') {
+                    valorConfirmado += item.valorNominal;
+                    atletasPagos++;
+                    valorRecebidoBruto += item.valorRecebido;
+
+                    const tipo = item.tipoPagamento;
+                    if (tipo.includes('ADM') || tipo.includes('ADMIN') || tipo.includes('ADMINISTRAÇÃO')) {
+                        pagamentos.admin++;
+                        valorAdminRecebido += item.valorRecebido; 
+                    } else if (tipo.includes('PIX')) {
+                        pagamentos.pix++;
+                    } else if (tipo.includes('DINHEIRO') || tipo.includes('ESPÉCIE') || tipo.includes('CASH')) {
+                        pagamentos.dinheiro++;
+                    } else if (tipo.includes('CARTÃO') || tipo.includes('CRÉDITO') || tipo.includes('DÉBITO') || tipo.includes('CARD')) {
+                        pagamentos.cartao++;
+                        valorCartaoRecebido += item.valorRecebido;
+                    } else {
+                        pagamentos.outros++;
+                    }
+
+                } else if (item.status === 'Pendente') {
+                    valorPendente += item.valorNominal;
+                    atletasPendentes++;
+                }
+            });
+
+            const comissaoSite = atletasPagos * TAXA_COMISSAO_SITE;
+            const taxasCartao = valorCartaoRecebido * TAXA_CARTAO_PERCENTUAL;
+            const despesaSaque = VALOR_SAQUE_MANUAL; 
+            
+            // Dedução correta: tira tudo diretamente do Bruto para gerar o Líquido Final
+            const saldoTotal = valorRecebidoBruto - comissaoSite - taxasCartao - despesaSaque - valorAdminRecebido;
+
+            // Renderização na Tela
+            document.getElementById('valorTotalEvento').textContent = formatCurrency(totalNominal);
+            document.getElementById('totalInscritos').textContent = `${data.length} Inscritos no Total`;
+            
+            document.getElementById('valorConfirmado').textContent = formatCurrency(valorConfirmado);
+            document.getElementById('atletasPagos').textContent = atletasPagos;
+
+            document.getElementById('valorPendente').textContent = formatCurrency(valorPendente);
+            document.getElementById('atletasPendentes').textContent = atletasPendentes;
+
+            document.getElementById('valorRecebidoBruto').textContent = formatCurrency(valorRecebidoBruto);
+            document.getElementById('comissaoSite').textContent = `- ${formatCurrency(comissaoSite)}`;
+            document.getElementById('taxasCartao').textContent = `- ${formatCurrency(taxasCartao)}`;
+            document.getElementById('valorSaque').textContent = `- ${formatCurrency(despesaSaque)}`;
+            document.getElementById('valorAdminTotal').textContent = `- ${formatCurrency(valorAdminRecebido)}`;
+            
+            document.getElementById('saldoTotal').textContent = formatCurrency(saldoTotal);
+
+            document.getElementById('countPix').textContent = pagamentos.pix;
+            document.getElementById('countDinheiro').textContent = pagamentos.dinheiro;
+            document.getElementById('countCartao').textContent = pagamentos.cartao;
+            document.getElementById('countAdmin').textContent = pagamentos.admin;
+            document.getElementById('countOutros').textContent = pagamentos.outros;
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarDadosFinanceiros);
+    </script>
+</body>
+</html>
