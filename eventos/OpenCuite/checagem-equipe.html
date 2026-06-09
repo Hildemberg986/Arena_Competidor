@@ -223,8 +223,7 @@
                     professor: headers.findIndex(h => h.includes('PROFESSOR')),
                     faixa: headers.indexOf('SUA FAIXA'),
                     peso: headers.indexOf('SEU PESO'),
-                    categoria: headers.indexOf('SUA CATEGORIA'),
-                    status: 17 // Coluna R (18ª coluna)
+                    categoria: headers.indexOf('SUA CATEGORIA')
                 };
 
                 const data = lines.slice(1).map(line => {
@@ -236,8 +235,7 @@
                         professor: values[idx.professor] || 'NÃO INFORMADO',
                         faixa: values[idx.faixa] || '',
                         peso: values[idx.peso] || '',
-                        categoria: values[idx.categoria] || '',
-                        status: values[idx.status] || 'Aguardando'
+                        categoria: values[idx.categoria] || ''
                     };
                 });
 
@@ -287,14 +285,10 @@
                                         <th>Faixa</th>
                                         <th>Peso</th>
                                         <th>Categoria</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${infoEquipe.professores[prof].map(a => {
-                                        const isConfirmado = a.status.toLowerCase().includes('confirmado');
-                                        const statusColor = isConfirmado ? 'var(--accent-green)' : 'var(--accent-yellow)';
-                                        
                                         return `
                                         <tr>
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
@@ -302,9 +296,6 @@
                                             <td data-label="Faixa">${a.faixa}</td>
                                             <td data-label="Peso">${a.peso}</td>
                                             <td data-label="Categoria">${a.categoria}</td>
-                                            <td data-label="Status" class="status-cell" style="color: ${statusColor}">
-                                                ● ${a.status}
-                                            </td>
                                         </tr>
                                         `;
                                     }).join('')}
