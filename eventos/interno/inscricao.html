@@ -331,9 +331,9 @@
         <div class="extrato">
             <h2>Extrato da Inscrição</h2>
             <p><span>Categoria, Faixa e Peso:</span> <span id="extratoCategoria">Aguardando preenchimento</span></p>
-            <p><span>Valor da Inscrição:</span> <span id="valorCategoria">R$ 65,00</span></p>
+            <p><span>Valor da Inscrição:</span> <span id="valorCategoria">R$ 60,00</span></p>
             <p id="extratoAbsoluto" style="display:none;"><span>Valor do Absoluto:</span> <span id="valorAbsoluto">R$ 60,00</span></p>
-            <h3><span>Total a Pagar:</span> <span id="totalPagar">R$ 65,00</span></h3>
+            <h3><span>Total a Pagar:</span> <span id="totalPagar">R$ 60,00</span></h3>
         </div>
 
         <button type="submit" form="inscricaoForm">Salvar Inscrição e Ir para o Pagamento</button>
@@ -537,13 +537,13 @@
         }
 
         function atualizarExtrato() {
-            let total = 65.00;
+            let total = 60.00;
             const cat = categoriaSelect.value || '...';
             const faix = faixaInput.value || '...';
             const pes = pesoInput.value || '...';
             categoriaIdadeInput.value = cat;
             
-            if (absolutoCheckbox.checked) total += 65.00;
+            if (absolutoCheckbox.checked) total += 60.00;
             extratoAbsoluto.style.display = absolutoCheckbox.checked ? 'flex' : 'none';
             extratoCategoriaSpan.innerText = `${cat}, ${faix}, ${pes}`;
             totalPagar.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
