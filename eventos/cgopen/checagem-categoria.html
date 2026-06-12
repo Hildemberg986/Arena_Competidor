@@ -75,23 +75,6 @@
         .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
         .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
 
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-        .status-confirmado {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-        .status-aguardando {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
         #photoModal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -169,18 +152,15 @@
             return url;
         }
 
-        // Normalização de faixas (Infantis e a nova regra Juvenil Azul/Roxa)
         function normalizarFaixa(faixa, categoria) {
             if (!faixa) return 'BRANCA';
             const fUpper = faixa.trim().toUpperCase();
             const cUpper = categoria ? categoria.trim().toUpperCase() : '';
 
-            // Regra Juvenil Azul e Roxa juntas
             if (cUpper.includes('JUVENIL') && (fUpper === 'AZUL' || fUpper === 'ROXA')) {
                 return 'AZUL / ROXA';
             }
             
-            // Regras das faixas infantis anteriores
             if (fUpper === 'CINZA' || fUpper === 'AMARELA') {
                 return 'CINZA / AMARELA';
             }
@@ -190,7 +170,6 @@
             return fUpper;
         }
 
-        // Normalização de categoria (Isola Master 1 e junta Master 2 ao 7)
         function normalizarCategoria(categoria) {
             if (!categoria) return '';
             const cUpper = categoria.trim().toUpperCase();
@@ -218,7 +197,6 @@
                     if (clean === "FOTO" || clean.includes("FOTO")) colMap.FOTO = c;
                     if (clean.includes("EQUIPE")) colMap.EQUIPE = c;
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
-                    if (i === 17) colMap.STATUS = c;
                 });
 
                 dadosAtletas = linhas.slice(1).map(linha => {
@@ -226,7 +204,6 @@
                     let obj = {};
                     cabecalhoOriginal.forEach((c, i) => { obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; });
                     
-                    // IMPORTANTE: Primeiro processa a categoria, pois a faixa juvenil depende dela
                     if (obj['SUA CATEGORIA']) {
                         obj['SUA CATEGORIA'] = normalizarCategoria(obj['SUA CATEGORIA']);
                     }
@@ -317,13 +294,10 @@
                         <div class="accordion-header" onclick="toggleAcc(this)">${ch} (${atletas.length})</div>
                         <div class="accordion-content">
                             <table>
-                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th><th>Status</th></tr></thead>
+                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th></tr></thead>
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
-                                        const statusTxt = a[colMap.STATUS] || '---';
-                                        const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
-                                        const statusClass = isConfirmado ? 'status-confirmado' : 'status-aguardando';
 
                                         return `
                                         <tr>
@@ -338,9 +312,6 @@
                                             </td>
                                             <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
                                             <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
-                                            <td data-label="Status">
-                                                <span class="status-badge ${statusClass}">${statusTxt}</span>
-                                            </td>
                                         </tr>
                                     `}).join('')}
                                 </tbody>
