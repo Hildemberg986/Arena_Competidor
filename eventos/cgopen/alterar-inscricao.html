@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Inscrição | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb; 
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+
+        header {
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
+        }
+        header img { max-width: 250px; width: 80%; height: auto; }
+
+        .main-content {
+            width: 95%;
+            max-width: 600px;
+            margin: 40px auto;
+            flex-grow: 1;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700; font-size: 2rem;
+            text-align: center; margin-bottom: 30px;
+            color: #111827;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+        }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+        
+        input, select {
+            width: 100%; padding: 12px; border: 1px solid #e5e7eb;
+            border-radius: 8px; font-size: 1rem; box-sizing: border-box;
+            font-family: inherit; outline: none;
+        }
+        input:focus { border-color: var(--primary-color); }
+
+        .obs-ord { font-size: 0.85rem; color: var(--text-secondary); margin: -10px 0 20px; text-align: left; }
+
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 10px;
+            font-weight: 600; font-size: 1rem; cursor: pointer;
+            transition: 0.3s; font-family: 'Poppins', sans-serif;
+            display: block; text-decoration: none; text-align: center;
+            box-sizing: border-box;
+        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+        
+        .btn-wa { background: #25d366; color: white; margin-top: 15px; }
+        .btn-wa:hover { background: #1eb956; }
+
+        .btn-outline { background: transparent; border: 1px solid #d1d5db; color: var(--text-main); margin-top: 10px; }
+        .btn-outline:hover { background: #f9fafb; }
+
+        #resultado { display: none; }
+        .info-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .info-table td { padding: 14px 10px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; text-align: left; }
+        .info-table td:first-child { font-weight: 600; color: var(--text-secondary); width: 40%; }
+        .info-table tr:last-child td { border-bottom: none; }
+
+        .status-badge {
+            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: 700; text-transform: uppercase; display: inline-block;
+        }
+        .status-confirmado { background: #dcfce7; color: #166534; }
+        .status-pendente { background: #fee2e2; color: #991b1b; }
+
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin: 40px auto; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .footer { padding: 40px 0; width: 100%; text-align: center; font-size: 0.85rem; color: var(--text-secondary); }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="senogi_currais.html">
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
+    </header>
+
+    <div class="main-content">
+        <h1>Verificar Inscrição</h1>
+        
+        <!-- CONTAINER DE BUSCA -->
+        <div id="search-container" class="card">
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="ord">Número de ORD</label>
+                    <input type="text" id="ord" placeholder="Digite seu número de ORD" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataNascimento">Data de Nascimento</label>
+                    <input type="date" id="dataNascimento" required>
+                </div>
+                <p class="obs-ord">O número de ORD está disponível na lista de checagem do evento.</p>
+                <button type="submit" class="btn btn-primary">Verificar Dados</button>
+            </form>
+        </div>
+
+        <div id="loader" class="loader"></div>
+
+        <!-- RESULTADO DA BUSCA -->
+        <div id="resultado" class="card"></div>
+
+        <!-- FORMULÁRIO DE EDIÇÃO (WHATSAPP) -->
+        <div id="edit-container" class="card" style="display: none;">
+            <h2 style="font-size: 1.3rem; margin-top: 0; font-family: 'Poppins';">Solicitar Alteração</h2>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 25px;">
+                Preencha os novos dados abaixo. Ao clicar em enviar, você será direcionado ao WhatsApp da organização.
+            </p>
+            <form id="editForm">
+                <div class="form-group">
+                    <label>Nova Faixa</label>
+                    <select id="novaFaixa" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Novo Peso</label>
+                    <select id="novoPeso" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Nova Categoria / Idade (Opcional)</label>
+                    <input type="text" id="novaCategoriaInput" placeholder="Ex: Master 1 ou Adulto">
+                </div>
+                <button type="submit" class="btn btn-wa">Enviar Solicitação via WhatsApp</button>
+                <button type="button" class="btn btn-outline" id="cancelEditBtn">Cancelar e Voltar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Arena Competidor. Todos os direitos reservados.
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sheetURL = 'https://script.google.com/macros/s/AKfycbyGLX8b3wx8gty-Fym-vuGMEBWRQa5M2HY-JnQIc1j58B_xcCoaBZxG2bMI2ZxFOopULg/exec';
+            
+            const FAIXAS = ['BRANCA', 'CINZA', 'AMARELA', 'LARANJA', 'VERDE', 'AZUL', 'ROXA', 'MARROM', 'PRETA'];
+            const PESOS = ['GALO', 'PLUMA', 'PENA', 'LEVE', 'MÉDIO', 'MEIO-PESADO', 'PESADO', 'SUPER PESADO', 'PESADÍSSIMO'];
+
+            let atletaAtual = null;
+
+            const searchContainer = document.getElementById('search-container');
+            const resultDiv = document.getElementById('resultado');
+            const editContainer = document.getElementById('edit-container');
+            const loader = document.getElementById('loader');
+
+            // --- BUSCA DE ATLETA ---
+            document.getElementById('verificationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const ordBusca = document.getElementById('ord').value.trim();
+
+                searchContainer.style.display = 'none';
+                loader.style.display = 'block';
+
+                Papa.parse(sheetURL, {
+                    download: true,
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        loader.style.display = 'none';
+                        
+                        const row = results.data.find(r => String(r[1]).trim() === ordBusca);
+
+                        if (row) {
+                            atletaAtual = {
+                                'NOME COMPLETO': row[2],
+                                'SUA EQUIPE': row[9],
+                                'SUA FAIXA': row[11],
+                                'SUA CATEGORIA': row[12],
+                                'SEU PESO': row[13],
+                                'ABSOLUTO': row[14],
+                                'STATUS DO PAGAMENTO': row[17],
+                                'ORD': row[1]
+                            };
+                            showResult();
+                        } else {
+                            alert('Atleta não encontrado! Verifique o número de ORD.');
+                            searchContainer.style.display = 'block';
+                        }
+                    },
+                    error: function() {
+                        loader.style.display = 'none';
+                        alert('Erro ao carregar banco de dados.');
+                        searchContainer.style.display = 'block';
+                    }
+                });
+            });
+
+            // --- MOSTRAR RESULTADO ---
+            function showResult() {
+                const status = (atletaAtual['STATUS DO PAGAMENTO'] || 'PENDENTE').toUpperCase();
+                const isConfirmado = status.includes('PAGO') || status.includes('CONFIRMADO') || status.includes('OK');
+                const badgeClass = isConfirmado ? 'status-confirmado' : 'status-pendente';
+
+                resultDiv.innerHTML = `
+                    <h3 style="margin-top:0; font-family: 'Poppins';">Dados da Inscrição</h3>
+                    <table class="info-table">
+                        <tr><td>Nome</td><td>${atletaAtual['NOME COMPLETO']}</td></tr>
+                        <tr><td>Equipe</td><td>${atletaAtual['SUA EQUIPE']}</td></tr>
+                        <tr><td>Faixa</td><td>${atletaAtual['SUA FAIXA']}</td></tr>
+                        <tr><td>Peso</td><td>${atletaAtual['SEU PESO']}</td></tr>
+                        <tr><td>Categoria</td><td>${atletaAtual['SUA CATEGORIA']}</td></tr>
+                        <tr><td>Status</td><td><span class="status-badge ${badgeClass}">${status}</span></td></tr>
+                    </table>
+                    ${isConfirmado ? 
+                        '<button id="btnAbrirEdit" class="btn btn-primary">Solicitar Alteração</button>' : 
+                        '<div style="background:#fff1f2; color:#be123c; padding:15px; border-radius:8px; font-size:0.85rem; margin-top:10px;">⚠️ Pagamento não identificado.</div>'
+                    }
+                    <button onclick="location.reload()" class="btn btn-outline">Voltar</button>
+                `;
+                resultDiv.style.display = 'block';
+
+                // Adiciona evento ao botão gerado dinamicamente
+                const btnEdit = document.getElementById('btnAbrirEdit');
+                if(btnEdit) btnEdit.addEventListener('click', openEdit);
+            }
+
+            // --- ABRIR EDIÇÃO ---
+            function openEdit() {
+                resultDiv.style.display = 'none';
+                editContainer.style.display = 'block';
+                document.getElementById('novaFaixa').innerHTML = FAIXAS.map(f => `<option value="${f}" ${f === atletaAtual['SUA FAIXA'] ? 'selected' : ''}>${f}</option>`).join('');
+                document.getElementById('novoPeso').innerHTML = PESOS.map(p => `<option value="${p}" ${p === atletaAtual['SEU PESO'] ? 'selected' : ''}>${p}</option>`).join('');
+                document.getElementById('novaCategoriaInput').value = atletaAtual['SUA CATEGORIA'];
+            }
+
+            // --- ENVIO WHATSAPP ---
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const novaFaixa = document.getElementById('novaFaixa').value;
+                const novoPeso = document.getElementById('novoPeso').value;
+                const novaCategoria = document.getElementById('novaCategoriaInput').value;
+                const numeroZap = "5584996841020";
+
+                const mensagem = `*Solicitação de Alteração - Arena Competidor*%0A%0A` +
+                    `*Atleta:* ${atletaAtual['NOME COMPLETO']}%0A` +
+                    `*ORD:* ${atletaAtual['ORD']}%0A` +
+                    `----------------------------%0A` +
+                    `*DE:* ${atletaAtual['SUA FAIXA']} | ${atletaAtual['SEU PESO']} | ${atletaAtual['SUA CATEGORIA']}%0A` +
+                    `*PARA:* ${novaFaixa} | ${novoPeso} | ${novaCategoria}`;
+
+                const url = `https://api.whatsapp.com/send?phone=${numeroZap}&text=${mensagem}`;
+                window.open(url, '_blank');
+            });
+
+            // --- CANCELAR EDIÇÃO ---
+            document.getElementById('cancelEditBtn').addEventListener('click', function() {
+                editContainer.style.display = 'none';
+                resultDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
