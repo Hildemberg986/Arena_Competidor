@@ -154,7 +154,7 @@
         };
 
         function parseCSV(text) {
-            const regex = /,(?=(?:?:[^"]*"){2})*[^"]*$)/;
+            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
             const lines = text.split(/\r?\n/);
             return lines.map(line => line.split(regex).map(field => field.replace(/^"|"$/g, '').trim()));
         }
@@ -179,6 +179,12 @@
                     sexo: headers.indexOf('SEXO'),
                     abs: headers.indexOf('ABSOLUTO')
                 };
+
+                // Se o índice da coluna ABSOLUTO não for encontrado, encerra para evitar erros
+                if (idx.abs === -1) {
+                    document.getElementById('loading-message').textContent = '❌ Coluna "ABSOLUTO" não encontrada na planilha.';
+                    return;
+                }
 
                 const data = rows.slice(1).map(row => {
                     let faixaOriginal = (row[idx.faixa] || 'BRANCA').toUpperCase().trim();
@@ -224,7 +230,7 @@
                         faixa: faixaFinal,
                         categoria: categoriaFinal,
                         sexo: sexoOriginal.includes('FEMININO') || sexoOriginal === 'F' ? 'FEMININO' : 'MASCULINO',
-                        absoluto: (row[idx.abs] || '').toUpperCase()
+                        absoluto: (row[idx.abs] || '').toUpperCase().trim() // .trim() adicionado para remover espaços extras
                     };
                 }).filter(atleta => atleta.absoluto === 'SIM');
 
