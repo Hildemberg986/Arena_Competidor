@@ -126,7 +126,13 @@
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv';
         const FOTO_PADRAO = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-        const ORDEM_FAIXAS = { 'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5, 'VERDE': 6, 'LARANJA': 7, 'AMARELA': 8, 'CINZA': 9 };
+        
+        // Ordem atualizada contemplando os novos grupos mesclados
+        const ORDEM_FAIXAS = { 
+            'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5, 
+            'VERDE / LARANJA': 6, 'VERDE': 6, 'LARANJA': 6,
+            'CINZA / AMARELA': 7, 'AMARELA': 7, 'CINZA': 7
+        };
         
         let dadosAtletas = [];
         let colMap = {};
@@ -145,6 +151,29 @@
                 return id ? `https://lh3.googleusercontent.com/u/0/d/${id}` : FOTO_PADRAO;
             }
             return url;
+        }
+
+        // Função para unificar as faixas infantis requisitadas
+        function normalizarFaixa(faixa) {
+            if (!faixa) return 'BRANCA';
+            const fUpper = faixa.trim().toUpperCase();
+            if (fUpper === 'CINZA' || fUpper === 'AMARELA') {
+                return 'CINZA / AMARELA';
+            }
+            if (fUpper === 'LARANJA' || fUpper === 'VERDE') {
+                return 'VERDE / LARANJA';
+            }
+            return fUpper;
+        }
+
+        // Função para juntar todas as categorias Master (1 a 7) em um único grupo "MASTER"
+        function normalizarCategoria(categoria) {
+            if (!categoria) return '';
+            const cUpper = categoria.trim().toUpperCase();
+            if (cUpper.startsWith('MASTER')) {
+                return 'MASTER';
+            }
+            return cUpper;
         }
 
         async function carregarDados() {
@@ -166,13 +195,22 @@
                 dadosAtletas = linhas.slice(1).map(linha => {
                     const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     let obj = {};
-                    cabecalhoOriginal.forEach((c, i) => { obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; });
+                    cabecalhoOriginal.forEach((c, i) => { 
+                        obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; 
+                    });
+
+                    // Normalizações aplicadas diretamente na extração dos dados originais
+                    if(obj['SUA FAIXA']) obj['SUA FAIXA'] = normalizarFaixa(obj['SUA FAIXA']);
+                    if(obj['SUA CATEGORIA']) obj['SUA CATEGORIA'] = normalizarCategoria(obj['SUA CATEGORIA']);
+
                     return obj;
                 });
 
                 document.getElementById('loading').style.display = 'none';
-                renderizar(true); // Inicializa filtros e lista
-            } catch (e) { document.getElementById('loading').innerHTML = "Erro na conexão."; }
+                renderizar(true);
+            } catch (e) { 
+                document.getElementById('loading').innerHTML = "Erro na conexão."; 
+            }
         }
 
         function atualizarOpcoesDosFiltros(filtrados) {
@@ -188,14 +226,12 @@
                 const select = document.getElementById(id);
                 const valorAtual = select.value;
                 
-                // Pega apenas as opções que existem nos dados ATUALMENTE filtrados
                 const opcoesSet = new Set();
                 filtrados.forEach(a => { if(a[campo]) opcoesSet.add(a[campo]) });
 
                 const arr = Array.from(opcoesSet).sort();
                 if(id === 'filtroFaixa') arr.sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99) - (ORDEM_FAIXAS[b.toUpperCase()]||99));
 
-                // Reconstruir o select mantendo "Todos"
                 select.innerHTML = '<option value="todos">Todos</option>';
                 arr.forEach(optValue => {
                     const el = document.createElement('option');
@@ -214,7 +250,6 @@
             const fC = document.getElementById('filtroCategoria').value;
             const fP = document.getElementById('filtroPeso').value;
 
-            // 1. Filtrar os dados reais para a tabela
             const filtradosParaTabela = dadosAtletas.filter(a => 
                 (fG === 'todos' || a['SEXO'] === fG) &&
                 (fF === 'todos' || a['SUA FAIXA'] === fF) &&
@@ -222,13 +257,10 @@
                 (fP === 'todos' || a['SEU PESO'] === fP)
             );
 
-            // 2. Lógica de Filtros Dependentes
-            // Se mudamos um filtro, precisamos saber quais opções restam nos outros
             if(atualizarFiltros) {
                 atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : dadosAtletas) : dadosAtletas);
             }
 
-            // 3. Gerar o HTML da lista
             container.innerHTML = '';
             const estrutura = {};
             filtradosParaTabela.forEach(a => {
@@ -242,7 +274,7 @@
             Object.keys(estrutura).sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99)-(ORDEM_FAIXAS[b.toUpperCase()]||99)).forEach(fx => {
                 const divFaixa = document.createElement('div');
                 divFaixa.className = 'faixa-group-header';
-                divFaixa.textContent = `Faixa ${fx}`;
+                divFaixa.textContent = fx.startsWith('FAIXA') ? fx : `Faixa ${fx}`;
                 container.appendChild(divFaixa);
 
                 Object.keys(estrutura[fx]).sort().forEach(ch => {
@@ -286,10 +318,8 @@
             el.nextElementSibling.classList.toggle('open');
         }
 
-        // Listener para mudanças nos selects
         document.querySelectorAll('select').forEach(s => {
             s.addEventListener('change', (e) => {
-                // Quando um filtro muda, renderizamos e pedimos para atualizar as opções dos outros selects
                 renderizar(true);
             });
         });
