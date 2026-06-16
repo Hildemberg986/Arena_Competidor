@@ -127,7 +127,6 @@
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv';
         const FOTO_PADRAO = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
         
-        // Ordem atualizada contemplando os novos grupos mesclados
         const ORDEM_FAIXAS = { 
             'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5, 
             'VERDE / LARANJA': 6, 'VERDE': 6, 'LARANJA': 6,
@@ -153,27 +152,63 @@
             return url;
         }
 
-        // Função para unificar as faixas infantis requisitadas
         function normalizarFaixa(faixa) {
             if (!faixa) return 'BRANCA';
             const fUpper = faixa.trim().toUpperCase();
-            if (fUpper === 'CINZA' || fUpper === 'AMARELA') {
-                return 'CINZA / AMARELA';
-            }
-            if (fUpper === 'LARANJA' || fUpper === 'VERDE') {
-                return 'VERDE / LARANJA';
-            }
+            if (fUpper === 'CINZA' || fUpper === 'AMARELA') return 'CINZA / AMARELA';
+            if (fUpper === 'LARANJA' || fUpper === 'VERDE') return 'VERDE / LARANJA';
             return fUpper;
         }
 
-        // Função para juntar todas as categorias Master (1 a 7) em um único grupo "MASTER"
+        // 1. Unificando as categorias principais requisitadas
         function normalizarCategoria(categoria) {
             if (!categoria) return '';
             const cUpper = categoria.trim().toUpperCase();
-            if (cUpper.startsWith('MASTER')) {
-                return 'MASTER';
-            }
+            
+            if (cUpper.startsWith('PRÉ-MIRIM') || cUpper.startsWith('MIRIM')) return 'MIRIM';
+            if (cUpper.startsWith('INFANTIL')) return 'INFANTIL';
+            if (cUpper.startsWith('INFANTO-JUVENIL')) return 'INFANTO-JUVENIL';
+            if (cUpper.startsWith('JUVENIL')) return 'JUVENIL';
+            if (cUpper.startsWith('MASTER')) return 'MASTER';
+            
             return cUpper;
+        }
+
+        // 2. Extraindo o valor numérico do peso original e encaixando nas novas faixas de peso
+        function normalizarPeso(pesoString, categoriaNormalizada) {
+            if (!pesoString) return 'NÃO DEFINIDO';
+            
+            // Procura por números decimais na string do peso (ex: "33,2" ou "35")
+            const match = pesoString.replace(',', '.').match(/([0-9]+(?:\.[0-9]+)?)/);
+            if (!match) return pesoString.toUpperCase();
+            
+            const pesoNum = parseFloat(match[1]);
+
+            if (categoriaNormalizada === 'MIRIM') {
+                if (pesoNum <= 27.2) return 'CATEGORIA A - ATÉ 27,2KG';
+                if (pesoNum <= 33.2) return 'CATEGORIA B - ATÉ 33,2KG';
+                return 'CATEGORIA C - ACIMA DE 33,2KG';
+            }
+
+            if (categoriaNormalizada === 'INFANTIL') {
+                if (pesoNum <= 48) return 'LEVE - ATÉ 48KG';
+                if (pesoNum <= 52) return 'MÉDIO - ATÉ 52KG';
+                return 'PESADO - ACIMA DE 52KG';
+            }
+
+            if (categoriaNormalizada === 'INFANTO-JUVENIL') {
+                if (pesoNum <= 48) return 'LEVE - ATÉ 48KG';
+                if (pesoNum <= 60) return 'MÉDIO - ATÉ 60KG';
+                return 'PESADO - ACIMA DE 60KG';
+            }
+
+            if (categoriaNormalizada === 'JUVENIL') {
+                if (pesoNum <= 64) return 'LEVE - ATÉ 64KG';
+                if (pesoNum <= 74) return 'MÉDIO - ATÉ 74KG';
+                return 'PESADO - ACIMA DE 74KG';
+            }
+
+            return pesoString.toUpperCase(); // Mantém o padrão original para Adulto e Master
         }
 
         async function carregarDados() {
@@ -199,9 +234,10 @@
                         obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; 
                     });
 
-                    // Normalizações aplicadas diretamente na extração dos dados originais
+                    // Aplicação sequencial de normalização
                     if(obj['SUA FAIXA']) obj['SUA FAIXA'] = normalizarFaixa(obj['SUA FAIXA']);
                     if(obj['SUA CATEGORIA']) obj['SUA CATEGORIA'] = normalizarCategoria(obj['SUA CATEGORIA']);
+                    if(obj['SEU PESO']) obj['SEU PESO'] = normalizarPeso(obj['SEU PESO'], obj['SUA CATEGORIA']);
 
                     return obj;
                 });
