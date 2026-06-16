@@ -6,6 +6,7 @@
     <title>Panfleto Oficial - Arena Competidor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
+    <!-- Biblioteca necessária para converter o HTML em Imagem PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -75,7 +76,7 @@
             filter: brightness(1.1);
         }
 
-        /* Wrapper invisível necessário para o html2canvas não bugar as bordas do elemento principal */
+        /* Wrapper invisível necessário para o html2canvas não bugar as bordas */
         .flyer-wrapper {
             padding: 1px;
             background-color: #1e1e24;
@@ -115,13 +116,13 @@
         .size-a5 .header-title span { font-size: 0.6rem; }
         
         .size-a5 .events-grid { gap: 4px; }
-        .size-a5 .event-card { height: 42px; border-radius: 4px; }
-        .size-a5 .event-banner-wrapper { width: 42px; height: 42px; }
-        .size-a5 .event-details { padding: 3px 6px; }
+        .size-a5 .event-card { height: 58px; border-radius: 4px; }
+        .size-a5 .event-banner-wrapper { width: 58px; height: 58px; }
+        .size-a5 .event-details { padding: 4px 6px; gap: 2px; }
         
-        .size-a5 .event-title { font-size: 0.62rem; }
+        .size-a5 .event-title { font-size: 0.62rem; white-space: normal; -webkit-line-clamp: 2; }
         .size-a5 .badge { font-size: 0.5rem; padding: 1px 3px; border-radius: 2px; }
-        .size-a5 .event-meta { font-size: 0.55rem; }
+        .size-a5 .event-meta { font-size: 0.55rem; white-space: normal; }
         .size-a5 .event-date { font-size: 0.58rem; }
         
         .size-a5 .cta-footer { margin-top: 8px; padding: 6px 12px; }
@@ -180,13 +181,13 @@
             border-radius: 6px;
             overflow: hidden;
             display: flex;
-            height: 62px; /* Altura compacta fixa para caber perfeitamente */
+            height: 85px; /* AUMENTADO: De 62px para 85px para dar mais destaque ao banner */
         }
 
         .event-banner-wrapper {
-            width: 62px;
-            height: 62px;
-            background-color: #000000; /* Garante fundo preto se a imagem precisar preencher */
+            width: 85px; /* AUMENTADO proporcionalmente */
+            height: 85px;
+            background-color: #000000;
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -196,34 +197,40 @@
         .event-banner-wrapper img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* AJUSTADO: Não corta mais nenhuma parte da imagem do banner */
+            object-fit: contain; /* Mantém a proporção correta sem cortar nada */
             background-color: #000000;
         }
 
         .event-details {
-            padding: 6px 10px;
+            padding: 8px 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             flex-grow: 1;
             min-width: 0;
+            gap: 4px;
         }
 
         .event-row-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 5px;
+            align-items: flex-start; /* Alinhado ao topo para permitir títulos longos */
+            gap: 6px;
         }
 
         .event-title {
             font-size: 0.85rem;
             font-weight: 700;
             color: #ffffff;
-            white-space: nowrap;
+            text-transform: uppercase;
+            /* Permite quebrar em até 2 linhas caso o título seja grande */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-transform: uppercase;
+            white-space: normal; 
+            line-height: 1.2;
         }
 
         .badge {
@@ -234,23 +241,29 @@
             font-weight: 900;
             text-transform: uppercase;
             flex-shrink: 0;
+            margin-top: 1px;
         }
         .badge-open { background-color: #22c55e; color: #ffffff; }
         .badge-soon { background-color: #f59e0b; color: #000000; }
-        .badge-closed { background-color: #ef4444; color: #ffffff; }
+        .badge-closed { background-color: #6b7280; color: #ffffff; }
 
         .event-row-bottom {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
+            gap: 4px;
         }
 
         .event-meta {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-gray);
-            white-space: nowrap;
+            /* Permite quebra de linha nas infos se necessário */
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.3;
         }
 
         .event-meta span {
@@ -263,6 +276,7 @@
             font-weight: 900;
             color: var(--primary-red);
             flex-shrink: 0;
+            white-space: nowrap;
         }
 
         /* --- RODAPÉ --- */
@@ -309,6 +323,7 @@
 </head>
 <body>
 
+    <!-- PAINEL DE CONTROLE INTERATIVO -->
     <div class="control-panel">
         <span>Tamanho do Panfleto:</span>
         <button class="print-btn" onclick="setPageSize('a4')">Modo A4</button>
@@ -317,9 +332,12 @@
         <button class="print-btn" style="background-color: #22c55e;" id="btnDownload" onclick="downloadFlyerImage()">Baixar Panfleto (Imagem PNG)</button>
     </div>
 
+    <!-- ÁREA ENVOLVENTE DO PANFLETO -->
     <div class="flyer-wrapper">
+        <!-- FOLHA DO PANFLETO -->
         <div class="flyer-page size-a4" id="flyerPage">
             
+            <!-- CABEÇALHO COM LOGO ORIGINAL -->
             <div class="header">
                 <img src="../img/arena2.png" alt="Arena Competidor">
                 <div class="header-title">
@@ -328,8 +346,10 @@
                 </div>
             </div>
 
+            <!-- GRID DOS EVENTOS MANTIDO ORIGINAL -->
             <div class="events-grid">
                 
+                <!-- Evento 4 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/opencuite01.png" alt="Banner">
@@ -340,12 +360,13 @@
                             <span class="badge badge-open">Abertas</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Cuité/PB</span> | Mod: <span>Jiu-Jitsu</span></div>
+                            <div class="event-meta">Local: <span>Cuité/PB</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">02/08/2026</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 5 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/COPAMESSIAS.jpg" alt="Banner">
@@ -362,6 +383,7 @@
                     </div>
                 </div>
 
+                <!-- Evento 6 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/bb2026.JPG" alt="Banner">
@@ -378,6 +400,7 @@
                     </div>
                 </div>
 
+                <!-- Evento 7 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/campogrande.jpeg" alt="Banner">
@@ -394,6 +417,7 @@
                     </div>
                 </div>
 
+                <!-- Evento 8 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/opencatole1.jpeg" alt="Banner">
@@ -410,6 +434,7 @@
                     </div>
                 </div>
 
+                <!-- Evento 9 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/DTC2026.jpeg" alt="Banner">
@@ -420,12 +445,13 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Caicó/RN</span> | Mod: <span>Tático</span></div>
+                            <div class="event-meta">Local: <span>Caicó/RN</span><br>Mod: <span>Tático</span></div>
                             <div class="event-date">Setembro/2026</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 10 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/copapatos2.jpeg" alt="Banner">
@@ -436,12 +462,13 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Patos/PB</span> | Mod: <span>Jiu-Jitsu</span></div>
+                            <div class="event-meta">Local: <span>Patos/PB</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">Outubro/2026</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 11 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/SENOGICURRAISNOVOSAC.jpeg" alt="Banner">
@@ -449,15 +476,16 @@
                     <div class="event-details">
                         <div class="event-row-top">
                             <h2 class="event-title">SENOGI - Etapa Serra Negra</h2>
-                            <span class="badge badge-closed" style="background-color: #6b7280;">Pausadas</span>
+                            <span class="badge badge-soon">EM BREVE</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>S. Negra/RN</span> | Mod: <span>NOGI</span></div>
+                            <div class="event-meta">Local: <span>S. Negra/RN</span><br>Mod: <span>NOGI</span></div>
                             <div class="event-date">22/11/2026</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 12 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/OpenKids.jpg" alt="Banner">
@@ -468,12 +496,13 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>A definir</span> | Mod: <span>Jiu-Jitsu</span></div>
+                            <div class="event-meta">Local: <span>A definir</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">A definir</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 13 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/CopaFeminina.jpg" alt="Banner">
@@ -484,12 +513,13 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Caicó/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                            <div class="event-meta">Local: <span>Caicó/RN</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">15/03/2027</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 14 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/SemKimono.jpg" alt="Banner">
@@ -500,12 +530,13 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>A definir</span> | Mod: <span>NOGI</span></div>
+                            <div class="event-meta">Local: <span>A definir</span><br>Mod: <span>NOGI</span></div>
                             <div class="event-date">A definir</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 15 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/CopaSertao.jpg" alt="Banner">
@@ -516,12 +547,13 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>A definir</span> | Mod: <span>Jiu-Jitsu</span></div>
+                            <div class="event-meta">Local: <span>A definir</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">A definir</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Evento 16 -->
                 <div class="event-card">
                     <div class="event-banner-wrapper">
                         <img src="../img/OpenCaico11.jpg" alt="Banner">
@@ -532,7 +564,7 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Caicó/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                            <div class="event-meta">Local: <span>Caicó/RN</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">Maio/2027</div>
                         </div>
                     </div>
@@ -540,10 +572,11 @@
 
             </div>
 
+            <!-- RODAPÉ INTEGRADO -->
             <div class="cta-footer">
                 <div class="cta-text">
                     <h2>Inscreva-se na plataforma</h2>
-                    <p>A maior plataforma de eventos esportivos do RN, PB e PE.</p>
+                    <p>Garantia de chaves justas, cronograma ágil e resultados em tempo real.</p>
                 </div>
                 <div class="contact-info">
                     <div class="web">arenacompetidor.com</div>
@@ -574,11 +607,10 @@
             btnDownload.innerText = "Processando...";
             btnDownload.disabled = true;
 
-            // Transforma o HTML em uma imagem PNG respeitando as dimensões exatas da folha
             html2canvas(flyer, {
-                scale: 2, // Melhora drasticamente a resolução para textos ficarem legíveis
-                useCORS: true, // Necessário para evitar falhas ao carregar imagens locais/remotas
-                backgroundColor: null // Evita que injete fundo branco artificial
+                scale: 2, // Resolução de alta definição para impressão/postagem
+                useCORS: true, 
+                backgroundColor: null 
             }).then(canvas => {
                 const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
