@@ -116,14 +116,14 @@
         .size-a5 .header-title span { font-size: 0.6rem; }
         
         .size-a5 .events-grid { gap: 4px; }
-        .size-a5 .event-card { height: 58px; border-radius: 4px; }
-        .size-a5 .event-banner-wrapper { width: 58px; height: 58px; }
-        .size-a5 .event-details { padding: 4px 6px; gap: 2px; }
+        .size-a5 .event-card { height: 72px; border-radius: 4px; }
+        .size-a5 .event-banner-wrapper { width: 72px; height: 72px; }
+        .size-a5 .event-details { padding: 6px; gap: 2px; }
         
-        .size-a5 .event-title { font-size: 0.62rem; white-space: normal; -webkit-line-clamp: 2; }
+        .size-a5 .event-title { font-size: 0.65rem; white-space: normal; -webkit-line-clamp: 2; }
         .size-a5 .badge { font-size: 0.5rem; padding: 1px 3px; border-radius: 2px; }
         .size-a5 .event-meta { font-size: 0.55rem; white-space: normal; }
-        .size-a5 .event-date { font-size: 0.58rem; }
+        .size-a5 .event-date { font-size: 0.6rem; }
         
         .size-a5 .cta-footer { margin-top: 8px; padding: 6px 12px; }
         .size-a5 .cta-footer h2 { font-size: 0.75rem; }
@@ -181,12 +181,12 @@
             border-radius: 6px;
             overflow: hidden;
             display: flex;
-            height: 85px; /* AUMENTADO: De 62px para 85px para dar mais destaque ao banner */
+            height: 105px; /* AUMENTADO: De 85px para 105px para dar destaque máximo ao banner */
         }
 
         .event-banner-wrapper {
-            width: 85px; /* AUMENTADO proporcionalmente */
-            height: 85px;
+            width: 105px; /* AUMENTADO proporcionalmente para manter o quadrado perfeito */
+            height: 105px;
             background-color: #000000;
             flex-shrink: 0;
             display: flex;
@@ -197,12 +197,12 @@
         .event-banner-wrapper img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Mantém a proporção correta sem cortar nada */
+            object-fit: contain; /* Garante que a logo do evento não sofra nenhum corte */
             background-color: #000000;
         }
 
         .event-details {
-            padding: 8px 10px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -214,28 +214,27 @@
         .event-row-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start; /* Alinhado ao topo para permitir títulos longos */
+            align-items: flex-start;
             gap: 6px;
         }
 
         .event-title {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
             color: #ffffff;
             text-transform: uppercase;
-            /* Permite quebrar em até 2 linhas caso o título seja grande */
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal; 
-            line-height: 1.2;
+            line-height: 1.25;
         }
 
         .badge {
             display: inline-block;
-            padding: 2px 5px;
+            padding: 2px 6px;
             border-radius: 3px;
             font-size: 0.6rem;
             font-weight: 900;
@@ -255,15 +254,14 @@
         }
 
         .event-meta {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--text-gray);
-            /* Permite quebra de linha nas infos se necessário */
             white-space: normal;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            line-height: 1.3;
+            line-height: 1.35;
         }
 
         .event-meta span {
@@ -272,7 +270,7 @@
         }
 
         .event-date {
-            font-size: 0.78rem;
+            font-size: 0.82rem;
             font-weight: 900;
             color: var(--primary-red);
             flex-shrink: 0;
@@ -377,7 +375,7 @@
                             <span class="badge badge-open">Abertas</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Messias Targino/RN</span></div>
+                            <div class="event-meta">Local: <span>Messias/RN</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">16/08/2026</div>
                         </div>
                     </div>
@@ -394,7 +392,7 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Belém do B. Cruz/PB</span></div>
+                            <div class="event-meta">Local: <span>Belém do B. Cruz/PB</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">30/08/2026</div>
                         </div>
                     </div>
@@ -411,7 +409,7 @@
                             <span class="badge badge-open">Abertas</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Campo Grande/RN</span></div>
+                            <div class="event-meta">Local: <span>Campo Grande/RN</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">06/09/2026</div>
                         </div>
                     </div>
@@ -428,7 +426,7 @@
                             <span class="badge badge-soon">Em Breve</span>
                         </div>
                         <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Catolé do Rocha/PB</span></div>
+                            <div class="event-meta">Local: <span>Catolé do Rocha/PB</span><br>Mod: <span>Jiu-Jitsu</span></div>
                             <div class="event-date">27/09/2026</div>
                         </div>
                     </div>
@@ -476,7 +474,7 @@
                     <div class="event-details">
                         <div class="event-row-top">
                             <h2 class="event-title">SENOGI - Etapa Serra Negra</h2>
-                            <span class="badge badge-soon">EM BREVE</span>
+                            <span class="badge badge-soon">Em breve</span>
                         </div>
                         <div class="event-row-bottom">
                             <div class="event-meta">Local: <span>S. Negra/RN</span><br>Mod: <span>NOGI</span></div>
@@ -608,7 +606,7 @@
             btnDownload.disabled = true;
 
             html2canvas(flyer, {
-                scale: 2, // Resolução de alta definição para impressão/postagem
+                scale: 2, 
                 useCORS: true, 
                 backgroundColor: null 
             }).then(canvas => {
