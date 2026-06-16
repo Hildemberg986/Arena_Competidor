@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Panfleto de Eventos - Arena Competidor</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 8mm 8mm 8mm 8mm;
+            background-color: #0b0b0c;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0b0b0c;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* --- CABEÇALHO COMPACTO --- */
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #161618 100%);
+            border-left: 5px solid #e11d48;
+            padding: 10px 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 4px;
+        }
+
+        .header-text h1 {
+            color: #ffffff;
+            font-size: 18pt;
+            font-weight: 900;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-text h1 span {
+            color: #e11d48;
+        }
+
+        .header-text p {
+            color: #a1a1aa;
+            font-size: 9pt;
+            margin: 2px 0 0 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-badge {
+            background-color: #e11d48;
+            color: white;
+            font-size: 8pt;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        /* --- GRID DE EVENTOS EM TABELA COMPACTA (2 COLUNAS) --- */
+        .events-table {
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 6px;
+        }
+
+        .events-row {
+            display: table-row;
+        }
+
+        .event-card {
+            display: table-cell;
+            width: 50%;
+            background-color: #121214;
+            border: 1px solid #222225;
+            border-radius: 6px;
+            vertical-align: middle;
+            padding: 6px 10px;
+        }
+
+        /* Layout interno horizontal para economizar espaço vertical */
+        .event-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-main {
+            width: 70%;
+        }
+
+        .event-title {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 0 0 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-meta {
+            font-size: 8pt;
+            color: #a1a1aa;
+        }
+
+        .event-meta span {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .event-side {
+            width: 28%;
+            text-align: right;
+        }
+
+        /* Badges de Status ultra compactas */
+        .badge {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 6.5pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .badge-open { background-color: #22c55e; color: #ffffff; }
+        .badge-soon { background-color: #f59e0b; color: #000000; }
+        .badge-closed { background-color: #ef4444; color: #ffffff; }
+
+        .event-date {
+            font-size: 8pt;
+            font-weight: bold;
+            color: #e11d48;
+            display: block;
+        }
+
+        /* --- RODAPÉ ULTRA COMPACTO --- */
+        .cta-footer {
+            margin-top: 10px;
+            background-color: #000000;
+            border-top: 2px solid #e11d48;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 4px;
+        }
+
+        .cta-text h2 {
+            font-size: 10pt;
+            color: #ffffff;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .cta-text p {
+            font-size: 8pt;
+            color: #a1a1aa;
+            margin: 2px 0 0 0;
+        }
+
+        .contact-info {
+            font-size: 10pt;
+            font-weight: bold;
+            text-align: right;
+        }
+        
+        .contact-info .web {
+            color: #e11d48;
+            margin-bottom: 2px;
+        }
+
+        .contact-info .wa {
+            color: #ffffff;
+            font-size: 8.5pt;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-text">
+            <h1>Arena <span>Competidor</span></h1>
+            <p>Calendário Oficial de Torneios</p>
+        </div>
+        <div class="header-badge">CRONOGRAMA 2026/2027</div>
+    </div>
+
+    <div class="events-table">
+        
+        <!-- Linha 1 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Desafio Virtual - Etapa Copa</h2>
+                        <div class="event-meta">Local: <span>Virtual</span> | Mod: <span>Corrida</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-closed">Encerradas</span>
+                        <span class="event-date">01/06/2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Festival Gadelha Team</h2>
+                        <div class="event-meta">Local: <span>A definir</span> | Mod: <span>Festival</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-open">Abertas</span>
+                        <span class="event-date">14/06/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 2 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">1º Interno WGT Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>Currais Novos/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-open">Abertas</span>
+                        <span class="event-date">21/06/2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Open Cuité de Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>Cuité/PB</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-open">Abertas</span>
+                        <span class="event-date">02/08/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 3 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Copa Messias Jiu-Jitsu - 2ª Ed.</h2>
+                        <div class="event-meta">Local: <span>Messias Targino/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-open">Abertas</span>
+                        <span class="event-date">16/08/2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">BBC Open Jiu-Jitsu - 2ª Ed.</h2>
+                        <div class="event-meta">Local: <span>Belém do B. Cruz/PB</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">30/08/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 4 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Campo Grande Open Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>Campo Grande/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-open">Abertas</span>
+                        <span class="event-date">06/09/2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Open Catolé de Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>Catolé do Rocha/PB</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">27/09/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 5 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">DTC - Desafio Tático Caicó</h2>
+                        <div class="event-meta">Local: <span>Caicó/RN</span> | Mod: <span>Tático</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">Set/2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Copa Patos Jiu-Jitsu - 2ª Ed.</h2>
+                        <div class="event-meta">Local: <span>Patos/PB</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">Out/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 6 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">SENOGI - Etapa Serra Negra</h2>
+                        <div class="event-meta">Local: <span>S. Negra do Norte/RN</span> | Mod: <span>NOGI</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-closed">Pausadas</span>
+                        <span class="event-date">22/11/2026</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Open Kids de Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>A definir</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">A definir</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 7 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Copa Feminina de Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>Caicó/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">15/03/2027</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Batalha Sem Kimono</h2>
+                        <div class="event-meta">Local: <span>A definir</span> | Mod: <span>NOGI</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">A definir</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linha 8 -->
+        <div class="events-row">
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Copa Sertão de Jiu-Jitsu</h2>
+                        <div class="event-meta">Local: <span>A definir</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">A definir</span>
+                    </div>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-flex">
+                    <div class="event-main">
+                        <h2 class="event-title">Open Caicó - 11ª Edição</h2>
+                        <div class="event-meta">Local: <span>Caicó/RN</span> | Mod: <span>Jiu-Jitsu</span></div>
+                    </div>
+                    <div class="event-side">
+                        <span class="badge badge-soon">Em Breve</span>
+                        <span class="event-date">Maio/2027</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cta-footer">
+        <div class="cta-text">
+            <h2>Garanta sua vaga!</h2>
+            <p>Inscrições rápidas e seguras pelo celular ou computador.</p>
+        </div>
+        <div class="contact-info">
+            <div class="web">arenacompetidor.com</div>
+            <div class="wa">Suporte: (84) 98751-3740</div>
+        </div>
+    </div>
+
+</body>
+</html>
