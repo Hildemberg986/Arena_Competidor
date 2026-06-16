@@ -76,18 +76,15 @@
             filter: brightness(1.1);
         }
 
-        /* Wrapper invisível necessário para o html2canvas não bugar as bordas */
+        /* Wrapper para garantir o isolamento de renderização */
         .flyer-wrapper {
             padding: 1px;
             background-color: #1e1e24;
         }
 
-        /* --- FOLHA DO PANFLETO --- */
+        /* --- FOLHA DO PANFLETO (Mudado para px fixo para evitar bugs no Canvas) --- */
         .flyer-page {
             background-color: var(--bg-dark);
-            width: 210mm; /* Base A4 */
-            min-height: 297mm;
-            padding: 10mm;
             position: relative;
             box-shadow: 0 0 30px rgba(0,0,0,0.7);
             display: flex;
@@ -95,62 +92,65 @@
             justify-content: space-between;
         }
 
-        /* Classes dinâmicas injetadas por JS para redimensionamento */
+        /* Proporção exata do A4 ajustada para pixels em tela */
         .size-a4 {
-            width: 210mm;
-            min-height: 297mm;
+            width: 794px;
+            height: 1123px;
+            padding: 35px;
         }
         
+        /* Proporção exata do A5 ajustada para pixels em tela */
         .size-a5 {
-            width: 148mm;
-            min-height: 210mm;
-            padding: 5mm;
+            width: 560px;
+            height: 792px;
+            padding: 20px;
         }
 
         /* =========================================================
            CORREÇÃO E AJUSTES DE ESCALA PARA O MODO A5 
            ========================================================= */
-        .size-a5 .header { padding: 6px 12px; margin-bottom: 8px; }
-        .size-a5 .header img { max-height: 18px; }
-        .size-a5 .header-title { font-size: 0.85rem; }
-        .size-a5 .header-title span { font-size: 0.6rem; }
+        .size-a5 .header { padding: 10px 15px; margin-bottom: 12px; }
+        .size-a5 .header img { max-height: 20px; }
+        .size-a5 .header-title { font-size: 0.9rem; }
+        .size-a5 .header-title span { font-size: 0.65rem; }
         
-        .size-a5 .events-grid { gap: 4px; }
-        .size-a5 .event-card { height: 72px; border-radius: 4px; }
-        .size-a5 .event-banner-wrapper { width: 72px; height: 72px; }
-        .size-a5 .event-details { padding: 6px; gap: 2px; }
+        .size-a5 .events-grid { gap: 6px; }
+        .size-a5 .event-card { height: 75px; border-radius: 4px; }
+        .size-a5 .event-banner-wrapper { width: 75px; height: 75px; }
+        .size-a5 .event-details { padding: 6px 10px; gap: 2px; }
         
-        .size-a5 .event-title { font-size: 0.65rem; white-space: normal; -webkit-line-clamp: 2; }
-        .size-a5 .badge { font-size: 0.5rem; padding: 1px 3px; border-radius: 2px; }
-        .size-a5 .event-meta { font-size: 0.55rem; white-space: normal; }
-        .size-a5 .event-date { font-size: 0.6rem; }
+        .size-a5 .event-title { font-size: 0.72rem; -webkit-line-clamp: 2; }
+        .size-a5 .badge { font-size: 0.55rem; padding: 1px 4px; border-radius: 2px; }
+        .size-a5 .event-meta { font-size: 0.62rem; -webkit-line-clamp: 2; }
+        .size-a5 .event-date { font-size: 0.68rem; }
         
-        .size-a5 .cta-footer { margin-top: 8px; padding: 6px 12px; }
-        .size-a5 .cta-footer h2 { font-size: 0.75rem; }
-        .size-a5 .cta-footer p { font-size: 0.58rem; }
-        .size-a5 .contact-info { font-size: 0.75rem; }
-        .size-a5 .contact-info .wa { font-size: 0.65rem; }
+        .size-a5 .cta-footer { margin-top: 12px; padding: 8px 15px; }
+        .size-a5 .cta-footer h2 { font-size: 0.8rem; }
+        .size-a5 .cta-footer p { font-size: 0.65rem; }
+        .size-a5 .contact-info { font-size: 0.8rem; }
+        .size-a5 .contact-info .wa { font-size: 0.68rem; }
         /* ========================================================= */
 
         /* --- CABEÇALHO --- */
         .header {
             background: linear-gradient(135deg, #000000 0%, #161618 100%);
             border-left: 4px solid var(--primary-red);
-            padding: 12px 20px;
-            margin-bottom: 12px;
+            padding: 15px 24px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-radius: 4px;
+            flex-shrink: 0;
         }
 
         .header img {
-            max-height: 26px;
+            max-height: 32px;
             display: block;
         }
 
         .header-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -161,7 +161,7 @@
         .header-title span {
             color: var(--primary-red);
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 400;
             letter-spacing: 0.5px;
             margin-top: 2px;
@@ -171,8 +171,9 @@
         .events-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 10px;
             flex-grow: 1;
+            align-content: start; /* Impede que os cards se estiquem desordenadamente */
         }
 
         .event-card {
@@ -181,12 +182,12 @@
             border-radius: 6px;
             overflow: hidden;
             display: flex;
-            height: 115px; /* AUMENTADO: De 85px para 105px para dar destaque máximo ao banner */
+            height: 105px; 
         }
 
         .event-banner-wrapper {
-            width: 105px; /* AUMENTADO proporcionalmente para manter o quadrado perfeito */
-            height: 115px;
+            width: 105px; 
+            height: 100%;
             background-color: #000000;
             flex-shrink: 0;
             display: flex;
@@ -197,18 +198,17 @@
         .event-banner-wrapper img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Garante que a logo do evento não sofra nenhum corte */
+            object-fit: contain; 
             background-color: #000000;
         }
 
         .event-details {
-            padding: 10px 12px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             flex-grow: 1;
             min-width: 0;
-            gap: 4px;
         }
 
         .event-row-top {
@@ -219,7 +219,7 @@
         }
 
         .event-title {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: #ffffff;
             text-transform: uppercase;
@@ -229,7 +229,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: normal; 
-            line-height: 1.25;
+            line-height: 1.2;
         }
 
         .badge {
@@ -240,7 +240,6 @@
             font-weight: 900;
             text-transform: uppercase;
             flex-shrink: 0;
-            margin-top: 1px;
         }
         .badge-open { background-color: #22c55e; color: #ffffff; }
         .badge-soon { background-color: #f59e0b; color: #000000; }
@@ -254,14 +253,14 @@
         }
 
         .event-meta {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-gray);
             white-space: normal;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            line-height: 1.35;
+            line-height: 1.3;
         }
 
         .event-meta span {
@@ -270,7 +269,7 @@
         }
 
         .event-date {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 900;
             color: var(--primary-red);
             flex-shrink: 0;
@@ -279,14 +278,15 @@
 
         /* --- RODAPÉ --- */
         .cta-footer {
-            margin-top: 12px;
+            margin-top: 20px;
             background-color: #000000;
             border-top: 2px solid var(--primary-red);
-            padding: 10px 20px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-radius: 4px;
+            flex-shrink: 0;
         }
 
         .cta-text h2 {
@@ -335,7 +335,7 @@
         <!-- FOLHA DO PANFLETO -->
         <div class="flyer-page size-a4" id="flyerPage">
             
-            <!-- CABEÇALHO COM LOGO ORIGINAL -->
+            <!-- CABEÇALHO -->
             <div class="header">
                 <img src="../img/arena2.png" alt="Arena Competidor">
                 <div class="header-title">
@@ -344,7 +344,7 @@
                 </div>
             </div>
 
-            <!-- GRID DOS EVENTOS MANTIDO ORIGINAL -->
+            <!-- GRID DOS EVENTOS -->
             <div class="events-grid">
                 
                 <!-- Evento 4 -->
@@ -551,23 +551,6 @@
                     </div>
                 </div>
 
-                <!-- Evento 16 -->
-                <div class="event-card">
-                    <div class="event-banner-wrapper">
-                        <img src="../img/OpenCaico11.jpg" alt="Banner">
-                    </div>
-                    <div class="event-details">
-                        <div class="event-row-top">
-                            <h2 class="event-title">Open Caicó - 11ª Edição</h2>
-                            <span class="badge badge-soon">Em Breve</span>
-                        </div>
-                        <div class="event-row-bottom">
-                            <div class="event-meta">Local: <span>Caicó/RN</span><br>Mod: <span>Jiu-Jitsu</span></div>
-                            <div class="event-date">Maio/2027</div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <!-- RODAPÉ INTEGRADO -->
@@ -605,10 +588,16 @@
             btnDownload.innerText = "Processando...";
             btnDownload.disabled = true;
 
+            // Força o scroll top e garante que clonagem seja limpa
+            window.scrollTo(0, 0);
+
             html2canvas(flyer, {
-                scale: 2, 
+                scale: 3, // Aumentado para 3 para garantir nitidez extrema em telas Retina/4K
                 useCORS: true, 
-                backgroundColor: null 
+                logging: false,
+                backgroundColor: "#09090b", // Força o fundo escuro oficial para evitar transparência
+                width: flyer.offsetWidth,
+                height: flyer.offsetHeight
             }).then(canvas => {
                 const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
