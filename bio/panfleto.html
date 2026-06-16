@@ -94,17 +94,33 @@
         .size-a5 {
             width: 148mm;
             min-height: 210mm;
-            padding: 6mm;
+            padding: 5mm;
         }
 
-        /* Ajustes de escala de fontes automáticos para A5 */
-        .size-a5 .header img { max-height: 20px; }
-        .size-a5 .header-title { font-size: 1rem; }
-        .size-a5 .event-title { font-size: 0.75rem; }
-        .size-a5 .event-meta, .size-a5 .event-date { font-size: 0.65rem; }
-        .size-a5 .badge { font-size: 0.55rem; padding: 1px 4px; }
-        .size-a5 .cta-footer h2 { font-size: 0.9rem; }
-        .size-a5 .cta-footer p, .size-a5 .contact-info { font-size: 0.7rem; }
+        /* =========================================================
+           CORREÇÃO E AJUSTES DE ESCALA PARA O MODO A5 
+           ========================================================= */
+        .size-a5 .header { padding: 6px 12px; margin-bottom: 8px; }
+        .size-a5 .header img { max-height: 18px; }
+        .size-a5 .header-title { font-size: 0.85rem; }
+        .size-a5 .header-title span { font-size: 0.6rem; }
+        
+        .size-a5 .events-grid { gap: 4px; }
+        .size-a5 .event-card { height: 42px; border-radius: 4px; } /* Reduzido de 62px para 42px */
+        .size-a5 .event-banner-wrapper { width: 42px; height: 42px; } /* Reduzido proporcionalmente */
+        .size-a5 .event-details { padding: 3px 6px; }
+        
+        .size-a5 .event-title { font-size: 0.62rem; }
+        .size-a5 .badge { font-size: 0.5rem; padding: 1px 3px; border-radius: 2px; }
+        .size-a5 .event-meta { font-size: 0.55rem; }
+        .size-a5 .event-date { font-size: 0.58rem; }
+        
+        .size-a5 .cta-footer { margin-top: 8px; padding: 6px 12px; }
+        .size-a5 .cta-footer h2 { font-size: 0.75rem; }
+        .size-a5 .cta-footer p { font-size: 0.58rem; }
+        .size-a5 .contact-info { font-size: 0.75rem; }
+        .size-a5 .contact-info .wa { font-size: 0.65rem; }
+        /* ========================================================= */
 
         /* --- CABEÇALHO --- */
         .header {
@@ -183,7 +199,7 @@
         .event-row-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center; /* Mudado para center para alinhar melhor o badge */
             gap: 5px;
         }
 
