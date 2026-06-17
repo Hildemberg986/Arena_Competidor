@@ -71,9 +71,19 @@
             cursor: zoom-in; transition: transform 0.2s;
         }
         .atleta-foto:hover { transform: scale(1.1); }
-        .atleta-info-txt { display: flex; flex-direction: column; }
+        .atleta-info-txt { display: flex; flex-direction: column; gap: 2px; }
+        .atleta-nome-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
         .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
+
+        /* Estilos das Etiquetas de Status */
+        .status-badge {
+            font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; display: inline-block;
+        }
+        .status-confirmado { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .status-pendente { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .status-aguardando { background-color: #ffff8e; color: #4d3300; border: 1px solid #fef661; }
+        .status-desconhecido { background-color: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
 
         #photoModal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0;
@@ -96,6 +106,7 @@
             td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; text-align: left; }
             td[data-label="Atleta"] { justify-content: flex-start; text-align: left; gap: 12px; }
             td[data-label="Atleta"]::before { display: none; }
+            .atleta-nome-wrapper { flex-direction: column; align-items: flex-start; gap: 4px; }
         }
     </style>
 </head>
@@ -160,7 +171,6 @@
             return fUpper;
         }
 
-        // 1. Unificando as categorias principais requisitadas
         function normalizarCategoria(categoria) {
             if (!categoria) return '';
             const cUpper = categoria.trim().toUpperCase();
@@ -174,11 +184,9 @@
             return cUpper;
         }
 
-        // 2. Extraindo o valor numérico do peso original e encaixando nas novas faixas de peso
         function normalizarPeso(pesoString, categoriaNormalizada) {
             if (!pesoString) return 'NÃO DEFINIDO';
             
-            // Procura por números decimais na string do peso (ex: "33,2" ou "35")
             const match = pesoString.replace(',', '.').match(/([0-9]+(?:\.[0-9]+)?)/);
             if (!match) return pesoString.toUpperCase();
             
@@ -208,7 +216,25 @@
                 return 'PESADO - ACIMA DE 74KG';
             }
 
-            return pesoString.toUpperCase(); // Mantém o padrão original para Adulto e Master
+            return pesoString.toUpperCase();
+        }
+
+        // Retorna a classe CSS e o texto correto para o crachá de status
+        function obterBadgeStatus(statusString) {
+            if (!statusString) return `<span class="status-badge status-desconhecido">Não Informado</span>`;
+            
+            const statusClean = statusString.trim().toUpperCase();
+            
+            if (statusClean.includes('CONFIRMADO') || statusClean === 'PAGO' || statusClean === 'SIM') {
+                return `<span class="status-badge status-confirmado">Confirmado</span>`;
+            } else if (statusClean.includes('PENDENTE')) {
+                return `<span class="status-badge status-pendente">Pendente</span>`;
+            } else if (statusClean.includes('AGUARDANDO')) {
+                return `<span class="status-badge status-aguardando">Aguardando</span>`;
+            } else {
+                // Caso a planilha use outro texto qualquer, exibe o próprio texto original formatado
+                return `<span class="status-badge status-desconhecido">${statusString}</span>`;
+            }
         }
 
         async function carregarDados() {
@@ -218,6 +244,7 @@
                 const linhas = csvText.split('\n').filter(l => l.trim() !== '');
                 const cabecalhoOriginal = linhas[0].split(',').map(c => c.trim().replace(/"/g, ''));
                 
+                // Mapeamento dinâmico baseado na posição das colunas
                 cabecalhoOriginal.forEach((c, i) => {
                     const clean = c.toUpperCase();
                     if (clean.includes("ORD")) colMap.ORD = c;
@@ -227,14 +254,16 @@
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
                 });
 
+                // A Coluna R equivale ao índice 17 (0-indexed baseado no alfabeto A=0, B=1... R=17)
+                colMap.STATUS_COL_R = cabecalhoOriginal[17] || null;
+
                 dadosAtletas = linhas.slice(1).map(linha => {
-                    const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const colunas = inlineSplitCSV(linha);
                     let obj = {};
                     cabecalhoOriginal.forEach((c, i) => { 
                         obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; 
                     });
 
-                    // Aplicação sequencial de normalização
                     if(obj['SUA FAIXA']) obj['SUA FAIXA'] = normalizarFaixa(obj['SUA FAIXA']);
                     if(obj['SUA CATEGORIA']) obj['SUA CATEGORIA'] = normalizarCategoria(obj['SUA CATEGORIA']);
                     if(obj['SEU PESO']) obj['SEU PESO'] = normalizarPeso(obj['SEU PESO'], obj['SUA CATEGORIA']);
@@ -247,6 +276,11 @@
             } catch (e) { 
                 document.getElementById('loading').innerHTML = "Erro na conexão."; 
             }
+        }
+
+        // Função auxiliar robusta para separar vírgulas do CSV sem quebrar aspas contendo vírgulas internas
+        function inlineSplitCSV(linha) {
+            return linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         }
 
         function atualizarOpcoesDosFiltros(filtrados) {
@@ -325,6 +359,10 @@
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
+                                        // Pega o valor da coluna R mapeada
+                                        const valorStatus = colMap.STATUS_COL_R ? a[colMap.STATUS_COL_R] : '';
+                                        const badgeHTML = obterBadgeStatus(valorStatus);
+
                                         return `
                                         <tr>
                                             <td data-label="Atleta">
@@ -332,7 +370,10 @@
                                                     <img src="${urlFinal}" class="atleta-foto" onclick="abrirFoto('${urlFinal}')" onerror="this.src='${FOTO_PADRAO}'">
                                                     <div class="atleta-info-txt">
                                                         <span class="atleta-ord">ORD: ${a[colMap.ORD] || '---'}</span>
-                                                        <span class="atleta-nome">${a[colMap.NOME] || '---'}</span>
+                                                        <div class="atleta-nome-wrapper">
+                                                            <span class="atleta-nome">${a[colMap.NOME] || '---'}</span>
+                                                            ${badgeHTML}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
