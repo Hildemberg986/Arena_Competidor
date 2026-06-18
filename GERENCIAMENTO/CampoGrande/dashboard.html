@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Meus Eventos</title>
+    <style>
+        /* Variáveis de Cores */
+        :root {
+            --primary-color: #007bff; /* Azul vibrante */
+            --secondary-color: #6c757d; /* Cinza suave */
+            --background-color: #f8f9fa; /* Fundo mais claro */
+            --card-hover-color: #e9ecef; /* Cor de hover suave */
+            --text-dark: #343a40;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--background-color); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text-dark);
+            box-sizing: border-box;
+        }
+
+        /* HEADER & TÍTULO CENTRALIZADO */
+        header { 
+            background-color: #ffffff; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            padding: 20px 0;
+            margin-bottom: 30px; 
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-title-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1; 
+            text-align: center; /* Garante que o texto fique centrado */
+        }
+
+        .logo { 
+            width: 250px; 
+            height: auto; 
+            margin-bottom: 5px;
+        }
+
+        .main-title {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* Botão Sair */
+        .btn-sair {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap; 
+            /* Adicionado: Para garantir que o botão não encolha demais em telas pequenas */
+            min-width: 60px; 
+            text-align: center;
+        }
+        .btn-sair:hover {
+            background-color: #5a6268;
+        }
+
+        /* GRID E CARDS */
+        .content-area {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .eventos-grid { 
+            display: grid; 
+            /* Grid Flexível: Cria colunas que cabem no espaço, com um mínimo de 280px */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+        }
+
+        .evento-card { 
+            background-color: #fff; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            overflow: hidden; 
+            transition: transform 0.3s, box-shadow 0.3s; 
+            cursor: pointer;
+            text-decoration: none; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .evento-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+        }
+
+        .evento-card img { 
+            width: 100%; 
+            height: 180px; 
+            object-fit: contain; 
+            background-color: #f0f0f0; 
+            padding: 10px; 
+            box-sizing: border-box; 
+        }
+
+        .evento-card h3 { 
+            padding: 15px;
+            margin: 0; 
+            text-align: center; 
+            color: var(--primary-color); 
+            font-size: 1.2rem;
+            font-weight: 700;
+            flex-grow: 1; 
+        }
+
+        /* --- MÍDIA QUERIES PARA RESPONSIVIDADE --- */
+
+        /* Telas Médias (Tablets) */
+        @media (max-width: 992px) {
+            .logo { 
+                width: 200px; /* Reduz o tamanho da logo */
+            }
+            .main-title {
+                font-size: 1.3rem; /* Reduz o tamanho do título */
+            }
+        }
+
+        /* Telas Pequenas (Celulares) */
+        @media (max-width: 576px) {
+            header {
+                padding: 15px 0; /* Padding menor no header */
+            }
+            .header-content {
+                /* Muda o header para empilhar itens em telas muito pequenas */
+                flex-direction: column;
+                justify-content: center;
+                gap: 15px; /* Espaçamento entre os itens */
+            }
+
+            .logo-title-group {
+                order: 1; /* Coloca logo/título no topo */
+            }
+            
+            .btn-sair {
+                order: 2; /* Coloca o botão sair abaixo */
+                width: 100%; /* Ocupa a largura total da coluna em telas pequenas */
+                max-width: 200px; /* Limita a largura máxima do botão */
+                min-width: unset;
+                /* Remove a div vazia que estava empurrando os elementos */
+                display: block; 
+            }
+            /* Remove o placeholder de 80px que só funciona em desktop */
+            .header-content > div:first-child { 
+                display: none; 
+            }
+
+            .logo {
+                width: 180px; /* Logo ainda menor */
+            }
+            .main-title {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                text-align: center; /* Centraliza o título da seção */
+                width: 100%; /* Ocupa a largura total para centralização */
+            }
+
+            .eventos-grid {
+                /* Garante que o grid se ajuste bem ao tamanho da tela */
+                gap: 20px; 
+                padding-bottom: 20px;
+            }
+
+            .evento-card img {
+                height: 150px; /* Reduz a altura da imagem no celular */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div style="width: 80px;"></div> 
+
+            <div class="logo-title-group">
+                <img src="../img/arena_competidor_chaveamento.png" alt="Logo da Organização" class="logo">
+                <h1 class="main-title">Gestão de Eventos - Organização</h1>
+            </div>
+
+            <a href="login.html" class="btn-sair">Sair</a>
+        </div>
+    </header>
+
+    <div class="content-area">
+        <h2 class="section-title">Seus Eventos Ativos</h2>
+        
+        <div class="eventos-grid">
+            <a href="dashboard-event.html" class="evento-card">
+                <img src="../../img/campogrande.jpeg" alt="Banner CG">
+                <h3>CCAMPO GRANDE OPEN DE JIU-JITSU</h3>
+            </a>
+           
+        </div>
+    </div>
+</body>
+</html>
