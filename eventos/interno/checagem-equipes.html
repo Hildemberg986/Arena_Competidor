@@ -132,11 +132,24 @@
         }
         td { padding: 14px 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
 
-        /* Estilo sutil para diferenciar os Status */
+        /* Estilização das Tags de Status */
         .status-tag {
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        /* Verde para confirmado */
+        .status-confirmado {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        /* Amarelo para aguardando / pendente */
+        .status-aguardando {
+            background-color: #fef9c3;
+            color: #854d0e;
         }
 
         .link-voltar {
@@ -161,6 +174,7 @@
             tr { display: block; border-bottom: 2px solid #f3f4f6; padding: 10px 0; }
             td { display: flex; justify-content: space-between; border: none; padding: 6px 0; }
             td::before { content: attr(data-label); font-weight: 700; color: var(--text-secondary); font-size: 0.75rem; }
+            .status-tag { margin-top: -4px; }
         }
     </style>
 </head>
@@ -186,16 +200,15 @@
                 const csvText = await response.text();
                 const lines = csvText.split('\n').filter(line => line.trim() !== '');
                 
-                // Limpeza agressiva de headers para evitar erros de espaço/acentos
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toUpperCase());
                 
-                // Mapeia os índices dinamicamente buscando pela palavra-chave do cabeçalho da planilha
+                // Mapeia os índices dinamicamente, exceto o status que está travado na Coluna R
                 const idx = {
                     nome: headers.indexOf('NOME COMPLETO'),
                     equipe: headers.indexOf('SUA EQUIPE'),
                     professor: headers.findIndex(h => h.includes('PROFESSOR') || h.includes('LÍDER') || h.includes('LIDER')),
                     faixa: headers.indexOf('SUA FAIXA'),
-                    status: headers.findIndex(h => h.includes('STATUS')), // Busca coluna que contenha "STATUS"
+                    status: 17, // Coluna R é estritamente o índice 17 (A=0, B=1 ... R=17)
                     categoria: headers.indexOf('SUA CATEGORIA')
                 };
 
@@ -206,7 +219,7 @@
                         equipe: values[idx.equipe] || 'SEM EQUIPE',
                         professor: values[idx.professor] || 'NÃO INFORMADO',
                         faixa: values[idx.faixa] || '',
-                        status: values[idx.status] || 'AGUARDANDO', // Padrão caso esteja vazio
+                        status: values[idx.status] || 'AGUARDANDO', 
                         categoria: values[idx.categoria] || ''
                     };
                 });
@@ -249,14 +262,24 @@
                                     <tr><th>Atleta</th><th>Faixa</th><th>Categoria</th><th>Status</th></tr>
                                 </thead>
                                 <tbody>
-                                    ${infoEquipe.professores[prof].map(a => `
-                                        <tr>
-                                            <td data-label="Atleta">${a.nome}</td>
-                                            <td data-label="Faixa">${a.faixa}</td>
-                                            <td data-label="Categoria">${a.categoria}</td>
-                                            <td data-label="Status"><span class="status-tag">${a.status}</span></td>
-                                        </tr>
-                                    `).join('')}
+                                    ${infoEquipe.professores[prof].map(a => {
+                                        // Identifica a classe de cor com base no texto do status
+                                        const statusTexto = a.status.toUpperCase();
+                                        let classeStatus = 'status-aguardando'; // Padrão amarelo
+                                        
+                                        if (statusTexto.includes('CONFIRMADO') || statusTexto.includes('PAGO')) {
+                                            classeStatus = 'status-confirmado'; // Verde
+                                        }
+
+                                        return `
+                                            <tr>
+                                                <td data-label="Atleta">${a.nome}</td>
+                                                <td data-label="Faixa">${a.faixa}</td>
+                                                <td data-label="Categoria">${a.categoria}</td>
+                                                <td data-label="Status"><span class="status-tag ${classeStatus}">${a.status}</span></td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
                                 </tbody>
                             </table>
                         </div>
