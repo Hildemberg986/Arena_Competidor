@@ -194,26 +194,32 @@
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnk0AV5e-clwsnK39VE1JiMGpSIPmCHGtTDSbA9WxzZDGSgZlYLU7FhM-B8I_3yoNExXxCMe0k_y4s/pub?output=csv';
         
+        // Função auxiliar para dividir o CSV respeitando aspas (evita quebra por vírgulas internas)
+        function splitCSVLine(line) {
+            const matches = line.match(/(".*?"|[^",\s][^",]*[^",\s]?|[^",\s]|(?<=,)(?=,)|(?<=,)$)/g);
+            return matches ? matches.map(v => v.replace(/^"|Status"$/g, '').trim()) : [];
+        }
+
         async function fetchAndProcessData() {
             try {
                 const response = await fetch(CSV_URL);
                 const csvText = await response.text();
-                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                // Divide por quebra de linha, limpando linhas vazias
+                const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
                 
-                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toUpperCase());
+                const headers = splitCSVLine(lines[0]).map(h => h.toUpperCase());
                 
-                // Mapeia os índices dinamicamente, exceto o status que está travado na Coluna R
                 const idx = {
                     nome: headers.indexOf('NOME COMPLETO'),
                     equipe: headers.indexOf('SUA EQUIPE'),
                     professor: headers.findIndex(h => h.includes('PROFESSOR') || h.includes('LÍDER') || h.includes('LIDER')),
                     faixa: headers.indexOf('SUA FAIXA'),
-                    status: 17, // Coluna R é estritamente o índice 17 (A=0, B=1 ... R=17)
+                    status: 17, // Coluna R travada estritamente no índice 17
                     categoria: headers.indexOf('SUA CATEGORIA')
                 };
 
                 const data = lines.slice(1).map(line => {
-                    const values = line.split(',').map(v => v.replace(/"/g, '').trim());
+                    const values = splitCSVLine(line);
                     return {
                         nome: values[idx.nome] || '',
                         equipe: values[idx.equipe] || 'SEM EQUIPE',
@@ -234,6 +240,7 @@
         function renderEquipes(data) {
             const container = document.getElementById('listaEquipes');
             document.getElementById('loading-message').style.display = 'none';
+            container.innerHTML = ''; // Limpa antes de renderizar
             const estrutura = {};
 
             data.forEach(atleta => {
@@ -263,7 +270,6 @@
                                 </thead>
                                 <tbody>
                                     ${infoEquipe.professores[prof].map(a => {
-                                        // Identifica a classe de cor com base no texto do status
                                         const statusTexto = a.status.toUpperCase();
                                         let classeStatus = 'status-aguardando'; // Padrão amarelo
                                         
