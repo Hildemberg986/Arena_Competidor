@@ -233,7 +233,7 @@
             <div class="card-valor total-nominal">
                 <h3>Valor Nominal Total do Evento</h3>
                 <p class="valor" id="valorTotalEvento">R$ 0,00</p>
-                <p class="sub-info" id="totalInscritos">0 Inscritos no Total</p>
+                <p class="sub-info" id="totalInscritos">0 Inscritos Ativos</p>
             </div>
             
             <div class="card-valor total-confirmado">
@@ -293,7 +293,7 @@
 
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRa9hlLQllUq1ix8zQOhm7pU5C4D6TiuR-68gNpKYPZgxkR9ItuJDRfTjOhxMjzA6gQ68g_854JaAwH/pub?output=csv";
-        const TAXA_COMISSAO_SITE = 3.00; // Alterado para R$ 3,00 conforme seu JS original
+        const TAXA_COMISSAO_SITE = 3.00; 
         const TAXA_CARTAO_PERCENTUAL = 0.05; // 5%
         const VALOR_SAQUE_MANUAL = 0.00; 
 
@@ -314,7 +314,6 @@
             }
         }
 
-        // Nova função robusta para interpretar linhas de CSV com aspas e vírgulas internas
         function splitCSVLine(line) {
             const result = [];
             let current = '';
@@ -323,7 +322,7 @@
             for (let i = 0; i < line.length; i++) {
                 const char = line[i];
                 if (char === '"') {
-                    inQuotes = !inQuotes; // Alterna o estado de aspas
+                    inQuotes = !inQuotes; 
                 } else if (char === ',' && !inQuotes) {
                     result.push(current.trim());
                     current = '';
@@ -336,14 +335,12 @@
         }
 
         function parseCSV(csv) {
-            // Divide por quebras de linha independentemente do sistema operacional
             const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
             if (lines.length < 2) return [];
 
             const headers = splitCSVLine(lines[0]).map(h => h.toUpperCase().replace(/"/g, ''));
             const data = [];
 
-            // Mapeamento exato baseado na lista de colunas fornecida
             const indexMap = {
                 'VALOR TOTAL': headers.indexOf('VALOR TOTAL'),
                 'STATUS DO PAGAMENTO': headers.indexOf('STATUS DO PAGAMENTO'),
@@ -354,12 +351,10 @@
             for (let i = 1; i < lines.length; i++) {
                 const values = splitCSVLine(lines[i]);
                 
-                // Ignorar linhas incompletas ou corrompidas
                 if (values.length < headers.length) continue;
 
                 const parseValue = (val) => {
                     if (!val) return 0;
-                    // Remove R$, espaços e ajusta os separadores decimais (pt-BR para en-US)
                     let clean = String(val).replace('R$', '').trim();
                     if(clean.includes(',') && clean.includes('.')) {
                         clean = clean.replace(/\./g, '').replace(',', '.');
@@ -395,13 +390,18 @@
             let valorPendente = 0;
             let atletasPagos = 0;
             let atletasPendentes = 0;
+            let inscritosAtivos = 0; // Nova variável para ignorar cancelados na contagem visual
             let valorRecebidoBruto = 0;
             
             let pagamentos = { pix: 0, dinheiro: 0, cartao: 0, admin: 0, outros: 0 };
             let valorCartaoRecebido = 0;
 
             data.forEach(item => {
+                // Se o status for cancelado, não soma no nominal do evento nem conta como inscrito ativo
+                if (item.status === 'Cancelado') return; 
+
                 totalNominal += item.valorNominal;
+                inscritosAtivos++;
 
                 if (item.status === 'Confirmado') {
                     valorConfirmado += item.valorNominal;
@@ -409,6 +409,7 @@
                     valorRecebidoBruto += item.valorRecebido;
 
                     const tipo = item.tipoPagamento;
+                    // Correção: Validação estrita em maiúsculas por segurança
                     if (tipo.includes('PIX')) {
                         pagamentos.pix++;
                     } else if (tipo.includes('DINHEIRO') || tipo.includes('ESPÉCIE') || tipo.includes('CASH')) {
@@ -436,7 +437,7 @@
 
             // Renderização na Tela
             document.getElementById('valorTotalEvento').textContent = formatCurrency(totalNominal);
-            document.getElementById('totalInscritos').textContent = `${data.length} Inscritos no Total`;
+            document.getElementById('totalInscritos').textContent = `${inscritosAtivos} Inscritos Ativos`;
             
             document.getElementById('valorConfirmado').textContent = formatCurrency(valorConfirmado);
             document.getElementById('atletasPagos').textContent = atletasPagos;
