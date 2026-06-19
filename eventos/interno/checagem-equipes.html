@@ -132,6 +132,13 @@
         }
         td { padding: 14px 12px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
 
+        /* Estilo sutil para diferenciar os Status */
+        .status-tag {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
         .link-voltar {
             display: inline-block;
             margin-top: 40px;
@@ -182,13 +189,13 @@
                 // Limpeza agressiva de headers para evitar erros de espaço/acentos
                 const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toUpperCase());
                 
-                // Mapeia os índices dinamicamente
+                // Mapeia os índices dinamicamente buscando pela palavra-chave do cabeçalho da planilha
                 const idx = {
                     nome: headers.indexOf('NOME COMPLETO'),
                     equipe: headers.indexOf('SUA EQUIPE'),
                     professor: headers.findIndex(h => h.includes('PROFESSOR') || h.includes('LÍDER') || h.includes('LIDER')),
                     faixa: headers.indexOf('SUA FAIXA'),
-                    peso: headers.indexOf('SEU PESO'),
+                    status: headers.findIndex(h => h.includes('STATUS')), // Busca coluna que contenha "STATUS"
                     categoria: headers.indexOf('SUA CATEGORIA')
                 };
 
@@ -199,7 +206,7 @@
                         equipe: values[idx.equipe] || 'SEM EQUIPE',
                         professor: values[idx.professor] || 'NÃO INFORMADO',
                         faixa: values[idx.faixa] || '',
-                        peso: values[idx.peso] || '',
+                        status: values[idx.status] || 'AGUARDANDO', // Padrão caso esteja vazio
                         categoria: values[idx.categoria] || ''
                     };
                 });
@@ -239,15 +246,15 @@
                             <div class="professor-name">Professor: ${prof}</div>
                             <table>
                                 <thead>
-                                    <tr><th>Atleta</th><th>Faixa</th><th>Peso</th><th>Categoria</th></tr>
+                                    <tr><th>Atleta</th><th>Faixa</th><th>Categoria</th><th>Status</th></tr>
                                 </thead>
                                 <tbody>
                                     ${infoEquipe.professores[prof].map(a => `
                                         <tr>
                                             <td data-label="Atleta">${a.nome}</td>
                                             <td data-label="Faixa">${a.faixa}</td>
-                                            <td data-label="Peso">${a.peso}</td>
                                             <td data-label="Categoria">${a.categoria}</td>
+                                            <td data-label="Status"><span class="status-tag">${a.status}</span></td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
