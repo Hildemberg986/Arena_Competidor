@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel CT - HR Fight Team Ultimate</title>
-    <!-- Google Fonts -->
+    
+    <!-- Google Fonts carregando fontes digitais e a fonte de pincel rasgado agressivo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Orbitron:wght@600;800&family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Permanent+Marker&family=Russo+One&display=swap" rel="stylesheet">
+    
     <!-- Font Awesome para os Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,7 +21,7 @@
         }
 
         body {
-            background-color: #000000; /* Fundo preto extremo */
+            background-color: #000000; /* Fundo preto absoluto */
             color: #ffffff;
             height: 100vh;
             width: 100vw;
@@ -28,13 +30,13 @@
             justify-content: space-between;
             padding: 3vh 3vw;
             overflow: hidden;
-            font-family: 'Russo One', sans-serif; /* Fonte robusta e agressiva para as labels */
+            font-family: 'Russo One', sans-serif;
         }
 
         /* Cores Temáticas */
         .txt-vermelho { color: #e60000; }
         .txt-branco { color: #ffffff; }
-        .txt-cinza { color: #555555; }
+        .txt-cinza { color: #444444; }
 
         /* Moldura interna fina */
         .moldura-painel {
@@ -47,25 +49,25 @@
         }
 
         /* ==========================================
-           ESTRUTURA DE POSICIONAMENTO CENTRAL ABSOLUTO
+           ESTRUTURA DE BLOCOS PROTEGIDOS (LOGO CENTRAL)
         ========================================== */
         .painel-principal {
             position: relative;
             flex: 1;
             width: 100%;
             display: flex;
-            justify-content: center; /* Foco total no centro */
+            justify-content: center;
             align-items: center;
             z-index: 10;
         }
 
-        /* Linhas Divisórias Verticais */
+        /* Linhas Divisórias Verticais do Painel */
         .divisoria-esquerda {
             position: absolute;
             left: 28vw;
             width: 1px;
             height: 52vh;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent);
         }
 
         .divisoria-direita {
@@ -73,10 +75,10 @@
             right: 28vw;
             width: 1px;
             height: 52vh;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent);
         }
 
-        /* LADO ESQUERDO (Hora e Data) */
+        /* BLOCO ESQUERDO: Relógio e Calendário */
         .bloco-esquerda {
             position: absolute;
             left: 1vw;
@@ -86,7 +88,7 @@
             gap: 4vh;
         }
 
-        /* CENTRO (Logo Absoluto) */
+        /* BLOCO CENTRO: Logotipo isolado para centralização absoluta */
         .bloco-centro {
             display: flex;
             flex-direction: column;
@@ -96,7 +98,7 @@
             width: 40vw;
         }
 
-        /* LADO DIREITO (Cronômetro e Controles) */
+        /* BLOCO DIREITO: Temporizador e Botões */
         .bloco-direita {
             position: absolute;
             right: 1vw;
@@ -108,7 +110,7 @@
         }
 
         /* ==========================================
-           COMPONENTES DA ESQUERDA
+           ESTILIZAÇÃO DOS COMPONENTES (ESQUERDA)
         ========================================== */
         .info-grupo {
             display: flex;
@@ -132,12 +134,12 @@
         .valor-digital {
             font-family: 'Orbitron', sans-serif;
             font-size: 3.8vw;
-            font-weight: 800;
+            font-weight: 900;
             line-height: 1;
             letter-spacing: 1px;
         }
 
-        /* Formatação customizada para a data em duas linhas */
+        /* Data organizada em duas linhas (DD/MM em cima, Ano embaixo) */
         .data-container {
             display: flex;
             flex-direction: column;
@@ -146,13 +148,13 @@
         .data-ddmm {
             font-family: 'Orbitron', sans-serif;
             font-size: 4.2vw;
-            font-weight: 800;
+            font-weight: 900;
         }
         .data-aaaa {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.6vw;
-            font-weight: 800;
-            color: #888888;
+            font-size: 2.5vw;
+            font-weight: 900;
+            color: #666666;
             letter-spacing: 4px;
             margin-top: 0.5vh;
         }
@@ -172,13 +174,13 @@
         }
 
         /* ==========================================
-           COMPONENTES DO CENTRO (LOGO)
+           ESTILIZAÇÃO DOS COMPONENTES (CENTRO)
         ========================================== */
         .logo-ct {
             max-width: 95%;
             max-height: 44vh;
             object-fit: contain;
-            filter: drop-shadow(0px 0px 30px rgba(230, 0, 0, 0.3));
+            filter: drop-shadow(0px 0px 30px rgba(230, 0, 0, 0.25));
         }
 
         .sub-logo-texto {
@@ -192,11 +194,11 @@
         .sub-logo-texto p {
             font-size: 1.2vw;
             letter-spacing: 4px;
-            color: #888888;
+            color: #666666;
         }
 
         /* ==========================================
-           COMPONENTES DO TIMER & BOTÕES
+           ESTILIZAÇÃO DOS COMPONENTES (DIREITA)
         ========================================== */
         .timer-container {
             position: relative;
@@ -218,7 +220,7 @@
 
         .circle-ticks {
             fill: none;
-            stroke: #1a1a1a;
+            stroke: #161616;
             stroke-width: 14;
             stroke-dasharray: 2px 4px;
         }
@@ -243,7 +245,7 @@
         .cronometro-texto {
             font-family: 'Orbitron', sans-serif;
             font-size: 3.5vw;
-            font-weight: 800;
+            font-weight: 900;
             letter-spacing: 1px;
         }
 
@@ -264,7 +266,7 @@
             letter-spacing: 1px;
         }
 
-        /* Painel de Controle de Botões Radicais */
+        /* Painel de Botões */
         .controle-botoes {
             display: flex;
             flex-direction: column;
@@ -281,8 +283,8 @@
         }
 
         .btn {
-            background-color: #111111;
-            border: 1px solid #333333;
+            background-color: #0d0d0d;
+            border: 1px solid #262626;
             color: #ffffff;
             font-family: 'Russo One', sans-serif;
             font-size: 1.1vw;
@@ -299,7 +301,7 @@
         .btn:hover {
             background-color: #e60000;
             border-color: #e60000;
-            box-shadow: 0 0 10px rgba(230, 0, 0, 0.4);
+            box-shadow: 0 0 12px rgba(230, 0, 0, 0.4);
         }
 
         .btn-tempo {
@@ -308,8 +310,8 @@
         }
 
         .btn-acao {
-            background-color: #1c1c1c;
-            border-color: #444444;
+            background-color: #141414;
+            border-color: #333333;
         }
         
         .btn-pause {
@@ -319,9 +321,9 @@
             border-left: 3px solid #e60000;
         }
 
-        /* ==========================================
-           PARTE INFERIOR (TEXTO MAIS AGRESSIVO)
-        ========================================== */
+        /* ==========================================================================
+           PARTE INFERIOR: ESTILO IDÊNTICO À IMAGEM ENVIADA (PINCEL RASGADO E AGRESSIVO)
+           ========================================================================== */
         .bloco-inferior {
             text-align: center;
             width: 100%;
@@ -340,13 +342,21 @@
         }
 
         .frase-efeito {
+            /* Fonte de Pincel Texturizado e Rasgado igual à imagem */
             font-family: 'Permanent Marker', cursive; 
-            font-size: 5vw; /* Aumentado para maior impacto */
-            letter-spacing: 4px;
-            /* Efeito de sombreamento duplo agressivo em camadas para parecer saltado */
-            text-shadow: 3px 3px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000, 5px 5px 15px rgba(230, 0, 0, 0.5);
+            font-size: 5.4vw;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-style: italic; /* Força a inclinação dinâmica idêntica à foto */
+            
+            /* Sombra cirúrgica para destacar as ranhuras do pincel contra o fundo preto */
+            text-shadow: 2px 2px 0px #000,
+                         -1px -1px 0px #000,
+                         0px 0px 25px rgba(230, 0, 0, 0.7);
+                         
             white-space: nowrap;
-            transform: scaleY(1.1); /* Estica levemente vertical para dar agressividade */
+            /* Combina esticamento vertical leve e inclinação agressiva para os lados */
+            transform: scaleY(1.1) skewX(-4deg);
         }
 
     </style>
@@ -357,7 +367,7 @@
 
     <div class="painel-principal">
         
-        <!-- LADO ESQUERDO: Relógio e Data Modificada -->
+        <!-- LADO ESQUERDO -->
         <div class="bloco-esquerda">
             <div class="info-grupo">
                 <div class="header-section txt-vermelho">
@@ -379,10 +389,9 @@
             </div>
         </div>
 
-        <!-- DIVISÓRIAS MAIS AFASTADAS PARA PROTEGER O CENTRO -->
         <div class="divisoria-esquerda"></div>
         
-        <!-- CENTRO TOTALMENTE ISOLADO -->
+        <!-- CENTRO -->
         <div class="bloco-centro">
             <img src="logoht.png" alt="Logo CT" class="logo-ct">
             <div class="sub-logo-texto">
@@ -393,7 +402,7 @@
 
         <div class="divisoria-direita"></div>
 
-        <!-- LADO DIREITO: Cronômetro + Painel Interativo de Botões -->
+        <!-- LADO DIREITO -->
         <div class="bloco-direita">
             
             <div class="timer-container">
@@ -410,7 +419,6 @@
                 </div>
             </div>
 
-            <!-- Botões de Controle Integrados -->
             <div class="controle-botoes">
                 <div class="linha-botoes">
                     <button class="btn btn-tempo" onclick="definirTimer(2)">2 Min</button>
@@ -428,7 +436,7 @@
 
     </div>
 
-    <!-- Parte Inferior: Frase com Estilo Agressivo Reforçado -->
+    <!-- PARTE INFERIOR TOTALMENTE REDESENHADA IGUAL À SUA IMAGEM -->
     <div class="bloco-inferior">
         <div class="linha-frase"></div>
         <h1 class="frase-efeito">
@@ -440,9 +448,7 @@
     </div>
 
     <script>
-        // ==========================================
-        // RELÓGIO E DATA ATUALIZADOS
-        // ==========================================
+        // Relógio e Data
         function atualizarRelogio() {
             const agora = new Date();
             const horas = String(agora.getHours()).padStart(2, '0');
@@ -453,7 +459,6 @@
             const dia = String(agora.getDate()).padStart(2, '0');
             const mes = String(agora.getMonth() + 1).padStart(2, '0');
             
-            // Separação da data solicitada
             document.getElementById('txt-data-ddmm').textContent = `${dia}/${mes}`;
             document.getElementById('txt-data-aaaa').textContent = agora.getFullYear();
             
@@ -463,10 +468,8 @@
         setInterval(atualizarRelogio, 1000);
         atualizarRelogio();
 
-        // ==========================================
-        // SISTEMA DO CRONÔMETRO INTERATIVO
-        // ==========================================
-        let tempoInicial = 300; // Começa padrão em 5 minutos (300 segundos)
+        // Cronômetro
+        let tempoInicial = 300;
         let tempoRestante = tempoInicial;
         let intervaloTimer = null;
         let executando = false;
@@ -504,7 +507,6 @@
             }
         }
 
-        // Ações dos Botões
         function definirTimer(minutos) {
             clearInterval(intervaloTimer);
             executando = true;
@@ -539,7 +541,6 @@
             atualizarGrafico();
         }
 
-        // Inicialização automática do gráfico na abertura da página
         atualizarGrafico();
     </script>
 </body>
