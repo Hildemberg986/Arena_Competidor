@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTERNO WGT | Inscrições Encerradas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #061c12; /* Verde bem escuro premium de fundo */
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Fundo com efeito de luz de estádio em tom Amarelo/Dourado */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 221, 0, 0.12) 0%, rgba(0,0,0,0) 75%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-width: 500px; /* Reduzido levemente para melhor leitura em celulares */
+            width: 100%;
+            margin: auto;
+        }
+
+        .badge {
+            background-color: #ffdd00; /* Amarelo Copa */
+            color: #061c12; /* Texto verde escuro para alto contraste */
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(255, 221, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 2.2rem; /* Tamanho fluido e seguro para telas pequenas */
+            text-transform: uppercase;
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        h1 span {
+            color: #00b451; /* Verde vibrante da bandeira */
+            display: block;
+        }
+
+        .subtitle {
+            font-size: 1.3rem; 
+            color: #ffdd00; /* Amarelo */
+            font-weight: 900; 
+            margin-top: -5px; 
+            margin-bottom: 25px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: #dddddd; /* Branco fosco para melhor leitura */
+            margin-bottom: 35px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .alert-box {
+            border-left: 4px solid #ffdd00; /* Detalhe em Amarelo */
+            background: rgba(255, 255, 255, 0.04); /* Fundo branco sutil com transparência */
+            padding: 18px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            text-align: left; /* Alinhamento à esquerda melhora a leitura do bloco */
+        }
+
+        .alert-box strong {
+            color: #ffffff;
+            display: block;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-style: normal;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Animação do Badge */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsividade Extrema (para celulares muito pequenos ou telas estreitas como Moto E, iPhone SE antigo) */
+        @media (max-width: 380px) {
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 1.1rem; }
+            p { font-size: 0.95rem; }
+            .alert-box strong { font-size: 1.1rem; }
+            .badge { font-size: 0.75rem; padding: 6px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="badge">Encerradas</div>
+
+        <h1>Inscrições Encerradas para o <span>1º INTERNO WGT</span></h1>
+
+        <p>As vagas para o maior interno do ano esgotaram. Se você garantiu o seu lugar, prepare-se para entrar no tatame!</p>
+
+        <div class="alert-box">
+            <strong>Ficou de fora?</strong>
+            Fique ligado nas nossas redes sociais para acompanhar os resultados e não perder as próximas etapas!
+        </div>
+    </div>
+
+</body>
+</html>
