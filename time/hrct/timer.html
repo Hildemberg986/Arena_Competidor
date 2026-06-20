@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel CT - HR Fight Team Ultimate</title>
     
-    <!-- Google Fonts carregando fontes digitais e a fonte de pincel rasgado agressivo -->
+    <!-- Importação das fontes direto do servidor do Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Permanent+Marker&family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rubik+Dirt&family=Russo+One&display=swap" rel="stylesheet">
     
     <!-- Font Awesome para os Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -49,7 +49,7 @@
         }
 
         /* ==========================================
-           ESTRUTURA DE BLOCOS PROTEGIDOS (LOGO CENTRAL)
+           ESTRUTURA DE POSICIONAMENTO CENTRAL ABSOLUTO
         ========================================== */
         .painel-principal {
             position: relative;
@@ -139,7 +139,7 @@
             letter-spacing: 1px;
         }
 
-        /* Data organizada em duas linhas (DD/MM em cima, Ano embaixo) */
+        /* Data organizada em duas linhas */
         .data-container {
             display: flex;
             flex-direction: column;
@@ -321,9 +321,9 @@
             border-left: 3px solid #e60000;
         }
 
-        /* ==========================================================================
-           PARTE INFERIOR: ESTILO IDÊNTICO À IMAGEM ENVIADA (PINCEL RASGADO E AGRESSIVO)
-           ========================================================================== */
+        /* ==========================================
+           PARTE INFERIOR: ESTILO DE PINCEL RASGADO
+           ========================================== */
         .bloco-inferior {
             text-align: center;
             width: 100%;
@@ -342,21 +342,17 @@
         }
 
         .frase-efeito {
-            /* Fonte de Pincel Texturizado e Rasgado igual à imagem */
-            font-family: 'Permanent Marker', cursive; 
-            font-size: 5.4vw;
-            letter-spacing: 2px;
+            font-family: 'Rubik Dirt', sans-serif; 
+            font-size: 4.8vw;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            font-style: italic; /* Força a inclinação dinâmica idêntica à foto */
             
-            /* Sombra cirúrgica para destacar as ranhuras do pincel contra o fundo preto */
-            text-shadow: 2px 2px 0px #000,
+            text-shadow: 3px 3px 0px #000,
                          -1px -1px 0px #000,
-                         0px 0px 25px rgba(230, 0, 0, 0.7);
+                         0px 0px 20px rgba(230, 0, 0, 0.6);
                          
             white-space: nowrap;
-            /* Combina esticamento vertical leve e inclinação agressiva para os lados */
-            transform: scaleY(1.1) skewX(-4deg);
+            transform: scaleY(1.05) skewX(-10deg);
         }
 
     </style>
@@ -436,7 +432,7 @@
 
     </div>
 
-    <!-- PARTE INFERIOR TOTALMENTE REDESENHADA IGUAL À SUA IMAGEM -->
+    <!-- PARTE INFERIOR -->
     <div class="bloco-inferior">
         <div class="linha-frase"></div>
         <h1 class="frase-efeito">
@@ -448,6 +444,10 @@
     </div>
 
     <script>
+        // Carregamento dos Arquivos de Áudio
+        const audioBip = new Audio('bip.mp3');
+        const audioBuzina = new Audio('buzina.mp3');
+
         // Relógio e Data
         function atualizarRelogio() {
             const agora = new Date();
@@ -498,12 +498,24 @@
             if (tempoRestante > 0) {
                 tempoRestante--;
                 atualizarGrafico();
+
+                // Gerenciamento dos Sinais Sonoros nos 10 segundos finais
+                if (tempoRestante <= 10 && tempoRestante > 0) {
+                    elementoCronometro.style.color = "#ffcc00"; // Muda para amarelo de atenção
+                    audioBip.currentTime = 0; // Reseta o áudio para tocar sem atraso
+                    audioBip.play().catch(e => console.log("Áudio bloqueado pelo navegador. Clique na tela antes."));
+                }
             } else {
+                // Quando zerar
                 clearInterval(intervaloTimer);
                 executando = false;
                 btnPlayPause.textContent = "Iniciar";
-                elementoCronometro.style.color = "#e60000";
+                elementoCronometro.style.color = "#e60000"; // Fica vermelho fixo no fim
                 circuloProgresso.style.strokeDashoffset = perimetro;
+                
+                // Toca a buzina final
+                audioBuzina.currentTime = 0;
+                audioBuzina.play().catch(e => console.log("Áudio bloqueado pelo navegador. Clique na tela antes."));
             }
         }
 
