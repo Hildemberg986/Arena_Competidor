@@ -219,7 +219,6 @@
             return pesoString.toUpperCase();
         }
 
-        // Retorna a classe CSS e o texto correto para o crachá de status
         function obterBadgeStatus(statusString) {
             if (!statusString) return `<span class="status-badge status-desconhecido">Não Informado</span>`;
             
@@ -232,7 +231,6 @@
             } else if (statusClean.includes('AGUARDANDO')) {
                 return `<span class="status-badge status-aguardando">Aguardando</span>`;
             } else {
-                // Caso a planilha use outro texto qualquer, exibe o próprio texto original formatado
                 return `<span class="status-badge status-desconhecido">${statusString}</span>`;
             }
         }
@@ -244,7 +242,6 @@
                 const linhas = csvText.split('\n').filter(l => l.trim() !== '');
                 const cabecalhoOriginal = linhas[0].split(',').map(c => c.trim().replace(/"/g, ''));
                 
-                // Mapeamento dinâmico baseado na posição das colunas
                 cabecalhoOriginal.forEach((c, i) => {
                     const clean = c.toUpperCase();
                     if (clean.includes("ORD")) colMap.ORD = c;
@@ -254,7 +251,6 @@
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
                 });
 
-                // A Coluna R equivale ao índice 17 (0-indexed baseado no alfabeto A=0, B=1... R=17)
                 colMap.STATUS_COL_R = cabecalhoOriginal[17] || null;
 
                 dadosAtletas = linhas.slice(1).map(linha => {
@@ -278,7 +274,6 @@
             }
         }
 
-        // Função auxiliar robusta para separar vírgulas do CSV sem quebrar aspas contendo vírgulas internas
         function inlineSplitCSV(linha) {
             return linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         }
@@ -320,12 +315,18 @@
             const fC = document.getElementById('filtroCategoria').value;
             const fP = document.getElementById('filtroPeso').value;
 
-            const filtradosParaTabela = dadosAtletas.filter(a => 
-                (fG === 'todos' || a['SEXO'] === fG) &&
-                (fF === 'todos' || a['SUA FAIXA'] === fF) &&
-                (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
-                (fP === 'todos' || a['SEU PESO'] === fP)
-            );
+            // Filtro restrito: Aceita APENAS os atletas confirmados
+            const filtradosParaTabela = dadosAtletas.filter(a => {
+                const valorStatus = colMap.STATUS_COL_R ? (a[colMap.STATUS_COL_R] || '').trim().toUpperCase() : '';
+                const ehConfirmado = valorStatus.includes('CONFIRMADO') || valorStatus === 'PAGO' || valorStatus === 'SIM';
+
+                if (!ehConfirmado) return false;
+
+                return (fG === 'todos' || a['SEXO'] === fG) &&
+                       (fF === 'todos' || a['SUA FAIXA'] === fF) &&
+                       (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
+                       (fP === 'todos' || a['SEU PESO'] === fP);
+            });
 
             if(atualizarFiltros) {
                 atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : dadosAtletas) : dadosAtletas);
@@ -359,7 +360,6 @@
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
-                                        // Pega o valor da coluna R mapeada
                                         const valorStatus = colMap.STATUS_COL_R ? a[colMap.STATUS_COL_R] : '';
                                         const badgeHTML = obterBadgeStatus(valorStatus);
 
