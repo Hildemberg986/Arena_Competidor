@@ -3,115 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaves | Arena Competidor</title>
+    <title>Chaveamento | Arena Competidor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
+        /* =========================================
+           CONFIGURAÇÕES TEMA SENOGI
+           ========================================= */
         :root {
-            --cor-primaria: #007bff;
-            --cor-secundaria: #343a40;
-            --cor-destaque: #28a745;
-            --cor-fundo: #f8f9fa;
-            --cor-texto: #495057;
-            --cor-borda: #dee2e6;
+            --primary-color: #2563eb; 
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-secondary: #6b7280;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo);
-            color: var(--cor-texto);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
             min-height: 100vh;
         }
 
         header {
-            width: 100%;
-            text-align: center;
-            padding: 20px 0;
-            background-color: #000;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%; text-align: center; padding: 15px 0;
+            background-color: #000; position: fixed; top: 0; z-index: 1000;
         }
+        header img { max-width: 250px; width: 80%; height: auto; }
 
-        header img {
-            max-width: 200px;
-        }
-
+        /* =========================================
+           CONTEÚDO PRINCIPAL
+           ========================================= */
         .main-content {
-            margin-top: 150px;
+            margin-top: 140px;
             width: 90%;
-            max-width: 800px;
+            max-width: 500px;
             text-align: center;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+
+        .opcoes-checagem {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .btn-checagem {
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .aviso-container {
+        .btn-checagem:hover {
             background-color: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            color: var(--primary-color);
         }
 
-        .aviso-container h1 {
-            color: var(--cor-secundaria);
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        .btn-checagem::after {
+            content: '→';
+            font-size: 1.4rem;
+            transition: transform 0.3s ease;
         }
 
-        .aviso-container p {
-            font-size: 1.2rem;
-            color: var(--cor-texto);
+        .btn-checagem:hover::after {
+            transform: translateX(5px);
         }
 
-        .link-voltar {
+        /* BOTÃO VOLTAR EVENTO */
+        .btn-voltar-evento {
             display: inline-block;
-            margin-top: 30px;
-            padding: 12px 25px;
-            background-color: var(--cor-secundaria);
+            margin-top: 40px;
+            padding: 14px 30px;
+            background-color: #111827;
             color: #fff;
             text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 1px solid #111827;
         }
 
-        .link-voltar:hover {
-            background-color: #212529;
+        .btn-voltar-evento:hover {
+            background-color: transparent;
+            color: #111827;
+            transform: translateY(-2px);
         }
         
         .footer {
-            margin-top: auto;
-            padding: 20px 0;
+            padding: 40px 0;
             width: 100%;
             text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .main-content { margin-top: 110px; }
+            h1 { font-size: 1.8rem; }
+            .btn-checagem { padding: 20px; font-size: 1rem; }
+            .btn-voltar-evento { width: 100%; box-sizing: border-box; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        <a href="../../index.html">
+            <img src="../../img/arena2.png" alt="Arena Competidor Logo">
+        </a>
     </header>
 
     <div class="main-content">
-        <div class="aviso-container">
-            <h1>Chaves</h1>
-            <p>As chaves estão sendo preparadas e estarão disponíveis em breve. Agradecemos a compreensão!</p>
-            <a href="WGTinterno.html" class="link-voltar">Voltar para o Menu do Evento</a>
+        <h1>CHAVEAMENTO</h1>
+        <p class="subtitle">Selecione o tipo de visualização desejada</p>
+        
+        <div class="opcoes-checagem">
+            <a href="https://drive.google.com/file/d/1ra_IDDXvYmBoIslcMNAcTQ8LjLzHr3gQ/view?usp=sharing" class="btn-checagem">
+                CATEGORIA
+            </a>
+            
         </div>
+
+        <a href="https://arenacompetidor.com" class="btn-voltar-evento">
+            ← Voltar ao Arena Competidor
+        </a>
     </div>
     
     <div class="footer">
