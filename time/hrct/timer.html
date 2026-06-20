@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel CT - HR Fight Team Style</title>
+    <title>Painel CT - HR Fight Team Ultimate</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Orbitron:wght@600;800&family=Russo+One&display=swap" rel="stylesheet">
+    <!-- Font Awesome para os Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -17,8 +19,7 @@
         }
 
         body {
-            background-color: #050505;
-            background-image: radial-gradient(circle, #0f0f0f 0%, #050505 100%);
+            background-color: #000000; /* Fundo preto extremo */
             color: #ffffff;
             height: 100vh;
             width: 100vw;
@@ -27,72 +28,87 @@
             justify-content: space-between;
             padding: 3vh 3vw;
             overflow: hidden;
-            font-family: 'Bebas Neue', sans-serif;
+            font-family: 'Russo One', sans-serif; /* Fonte robusta e agressiva para as labels */
         }
 
         /* Cores Temáticas */
         .txt-vermelho { color: #e60000; }
         .txt-branco { color: #ffffff; }
-        .txt-cinza { color: #666666; }
+        .txt-cinza { color: #555555; }
 
         /* Moldura interna fina */
         .moldura-painel {
             position: absolute;
             top: 2vh; left: 2vw; right: 2vw; bottom: 2vh;
-            border: 1px solid rgba(230, 0, 0, 0.12);
+            border: 1px solid rgba(230, 0, 0, 0.15);
             pointer-events: none;
             border-radius: 15px;
             z-index: 0;
         }
 
         /* ==========================================
-           ESTRUTURA DE CORPO DE TRÊS COLUNAS fixas
+           ESTRUTURA DE POSICIONAMENTO CENTRAL ABSOLUTO
         ========================================== */
         .painel-principal {
-            display: grid;
-            grid-template-columns: 1fr auto 1.3fr auto 1fr; /* Centraliza perfeitamente a coluna do meio */
-            align-items: center;
+            position: relative;
             flex: 1;
             width: 100%;
+            display: flex;
+            justify-content: center; /* Foco total no centro */
+            align-items: center;
             z-index: 10;
         }
 
         /* Linhas Divisórias Verticais */
-        .divisoria {
+        .divisoria-esquerda {
+            position: absolute;
+            left: 28vw;
             width: 1px;
-            height: 50vh;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.25), transparent);
+            height: 52vh;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
         }
 
-        /* COLUNA 1: Esquerda (Hora e Data reduzidos) */
+        .divisoria-direita {
+            position: absolute;
+            right: 28vw;
+            width: 1px;
+            height: 52vh;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        /* LADO ESQUERDO (Hora e Data) */
         .bloco-esquerda {
+            position: absolute;
+            left: 1vw;
+            width: 25vw;
             display: flex;
             flex-direction: column;
             gap: 4vh;
-            padding-left: 1.5vw;
-            justify-content: center;
         }
 
-        /* COLUNA 3: Centro (Logo Absolutamente Centralizado) */
+        /* CENTRO (Logo Absoluto) */
         .bloco-centro {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 2vh;
-            padding: 0 2vw;
+            width: 40vw;
         }
 
-        /* COLUNA 5: Direita (Cronômetro) */
+        /* LADO DIREITO (Cronômetro e Controles) */
         .bloco-direita {
+            position: absolute;
+            right: 1vw;
+            width: 25vw;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding-right: 1.5vw;
+            gap: 2.5vh;
         }
 
         /* ==========================================
-           COMPONENTES REDUZIDOS (Esquerda)
+           COMPONENTES DA ESQUERDA
         ========================================== */
         .info-grupo {
             display: flex;
@@ -103,8 +119,8 @@
             display: flex;
             align-items: center;
             gap: 0.8vw;
-            font-size: 1.5vw; /* Reduzido */
-            letter-spacing: 2px;
+            font-size: 1.4vw;
+            letter-spacing: 1px;
             margin-bottom: 0.5vh;
         }
 
@@ -115,59 +131,79 @@
 
         .valor-digital {
             font-family: 'Orbitron', sans-serif;
-            font-size: 4.2vw; /* Reduzido de 6.2vw para 4.2vw */
-            font-weight: 700;
+            font-size: 3.8vw;
+            font-weight: 800;
             line-height: 1;
             letter-spacing: 1px;
         }
 
-        .sub-data-dia {
-            font-size: 1.6vw; /* Reduzido de 2.2vw para 1.6vw */
-            letter-spacing: 2px;
+        /* Formatação customizada para a data em duas linhas */
+        .data-container {
+            display: flex;
+            flex-direction: column;
+            line-height: 0.9;
+        }
+        .data-ddmm {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.2vw;
+            font-weight: 800;
+        }
+        .data-aaaa {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.6vw;
+            font-weight: 800;
+            color: #888888;
+            letter-spacing: 4px;
             margin-top: 0.5vh;
+        }
+
+        .sub-data-dia {
+            font-size: 1.6vw;
+            letter-spacing: 1px;
+            margin-top: 0.8vh;
             font-weight: bold;
         }
 
         .glow-line {
-            width: 70%;
+            width: 60%;
             height: 1px;
             background: linear-gradient(90deg, #e60000, transparent);
             margin-top: 1vh;
         }
 
         /* ==========================================
-           COMPONENTES CENTRALIZADOS (Centro)
+           COMPONENTES DO CENTRO (LOGO)
         ========================================== */
         .logo-ct {
-            max-width: 90%;
-            max-height: 42vh; /* Ganhou um pouco mais de espaço */
+            max-width: 95%;
+            max-height: 44vh;
             object-fit: contain;
-            filter: drop-shadow(0px 0px 25px rgba(230, 0, 0, 0.25));
+            filter: drop-shadow(0px 0px 30px rgba(230, 0, 0, 0.3));
         }
 
         .sub-logo-texto {
             text-align: center;
         }
         .sub-logo-texto h2 {
-            font-size: 3.5vw;
-            letter-spacing: 2px;
+            font-size: 3.4vw;
+            letter-spacing: 1px;
             line-height: 1;
         }
         .sub-logo-texto p {
-            font-size: 1.3vw;
+            font-size: 1.2vw;
             letter-spacing: 4px;
-            color: #aaaaaa;
+            color: #888888;
         }
 
         /* ==========================================
-           COMPONENTES DO TIMER (Direita)
+           COMPONENTES DO TIMER & BOTÕES
         ========================================== */
         .timer-container {
             position: relative;
-            width: 28vw;
-            height: 28vw;
-            max-width: 380px;
-            max-height: 380px;
+            width: 22vw;
+            height: 22vw;
+            max-width: 310px;
+            max-height: 310px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -182,15 +218,15 @@
 
         .circle-ticks {
             fill: none;
-            stroke: #222222;
-            stroke-width: 12;
+            stroke: #1a1a1a;
+            stroke-width: 14;
             stroke-dasharray: 2px 4px;
         }
 
         .circle-progress {
             fill: none;
             stroke: #e60000;
-            stroke-width: 12;
+            stroke-width: 14;
             stroke-linecap: square;
             transition: stroke-dashoffset 1s linear;
         }
@@ -206,17 +242,16 @@
 
         .cronometro-texto {
             font-family: 'Orbitron', sans-serif;
-            font-size: 4.2vw;
-            font-weight: 700;
+            font-size: 3.5vw;
+            font-weight: 800;
             letter-spacing: 1px;
-            text-shadow: 0 0 15px rgba(230, 0, 0, 0.2);
         }
 
         .cronometro-legendas {
-            font-size: 1.1vw;
+            font-size: 1vw;
             letter-spacing: 5px;
             margin-top: -0.2vh;
-            word-spacing: 8px;
+            word-spacing: 6px;
         }
 
         .topo-cronometro-titulo {
@@ -225,17 +260,72 @@
             display: flex;
             align-items: center;
             gap: 0.5vw;
-            font-size: 1.6vw;
-            letter-spacing: 2px;
+            font-size: 1.4vw;
+            letter-spacing: 1px;
+        }
+
+        /* Painel de Controle de Botões Radicais */
+        .controle-botoes {
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            width: 90%;
+            align-items: center;
+        }
+
+        .linha-botoes {
+            display: flex;
+            gap: 0.6vw;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn {
+            background-color: #111111;
+            border: 1px solid #333333;
+            color: #ffffff;
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.1vw;
+            padding: 0.8vh 1vw;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #e60000;
+            border-color: #e60000;
+            box-shadow: 0 0 10px rgba(230, 0, 0, 0.4);
+        }
+
+        .btn-tempo {
+            font-size: 1.2vw;
+            font-weight: bold;
+        }
+
+        .btn-acao {
+            background-color: #1c1c1c;
+            border-color: #444444;
+        }
+        
+        .btn-pause {
+            border-left: 3px solid #ffcc00;
+        }
+        .btn-reset {
+            border-left: 3px solid #e60000;
         }
 
         /* ==========================================
-           PARTE INFERIOR
+           PARTE INFERIOR (TEXTO MAIS AGRESSIVO)
         ========================================== */
         .bloco-inferior {
             text-align: center;
             width: 100%;
-            padding-bottom: 2vh;
+            padding-bottom: 1vh;
             z-index: 10;
             display: flex;
             justify-content: center;
@@ -245,16 +335,18 @@
 
         .linha-frase {
             flex: 1;
-            height: 3px;
+            height: 4px;
             background: linear-gradient(90deg, transparent, #e60000, transparent);
         }
 
         .frase-efeito {
             font-family: 'Permanent Marker', cursive; 
-            font-size: 4.5vw;
-            letter-spacing: 3px;
-            text-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+            font-size: 5vw; /* Aumentado para maior impacto */
+            letter-spacing: 4px;
+            /* Efeito de sombreamento duplo agressivo em camadas para parecer saltado */
+            text-shadow: 3px 3px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000, 5px 5px 15px rgba(230, 0, 0, 0.5);
             white-space: nowrap;
+            transform: scaleY(1.1); /* Estica levemente vertical para dar agressividade */
         }
 
     </style>
@@ -265,6 +357,7 @@
 
     <div class="painel-principal">
         
+        <!-- LADO ESQUERDO: Relógio e Data Modificada -->
         <div class="bloco-esquerda">
             <div class="info-grupo">
                 <div class="header-section txt-vermelho">
@@ -278,13 +371,18 @@
                 <div class="header-section txt-vermelho">
                     <i class="fa-solid fa-calendar-days"></i> <span>Data</span>
                 </div>
-                <span id="txt-data" class="valor-digital txt-branco">00/00/0000</span>
+                <div class="data-container">
+                    <span id="txt-data-ddmm" class="data-ddmm txt-branco">00/00</span>
+                    <span id="txt-data-aaaa" class="data-aaaa">0000</span>
+                </div>
                 <span id="txt-dia-semana" class="sub-data-dia txt-vermelho">...</span>
             </div>
         </div>
 
-        <div class="divisoria"></div>
-
+        <!-- DIVISÓRIAS MAIS AFASTADAS PARA PROTEGER O CENTRO -->
+        <div class="divisoria-esquerda"></div>
+        
+        <!-- CENTRO TOTALMENTE ISOLADO -->
         <div class="bloco-centro">
             <img src="logoht.png" alt="Logo CT" class="logo-ct">
             <div class="sub-logo-texto">
@@ -293,9 +391,11 @@
             </div>
         </div>
 
-        <div class="divisoria"></div>
+        <div class="divisoria-direita"></div>
 
+        <!-- LADO DIREITO: Cronômetro + Painel Interativo de Botões -->
         <div class="bloco-direita">
+            
             <div class="timer-container">
                 <div class="topo-cronometro-titulo txt-vermelho">
                     <i class="fa-solid fa-stopwatch"></i> <span>CRONÔMETRO</span>
@@ -309,10 +409,26 @@
                     <div class="cronometro-legendas txt-cinza">HH MM SS</div>
                 </div>
             </div>
+
+            <!-- Botões de Controle Integrados -->
+            <div class="controle-botoes">
+                <div class="linha-botoes">
+                    <button class="btn btn-tempo" onclick="definirTimer(2)">2 Min</button>
+                    <button class="btn btn-tempo" onclick="definirTimer(5)">5 Min</button>
+                    <button class="btn btn-tempo" onclick="definirTimer(8)">8 Min</button>
+                    <button class="btn btn-tempo" onclick="definirTimer(10)">10 Min</button>
+                </div>
+                <div class="linha-botoes">
+                    <button id="btn-play-pause" class="btn btn-acao btn-pause" onclick="alternarPlayPause()">Pausar</button>
+                    <button class="btn btn-acao btn-reset" onclick="resetarTimer()">Reset</button>
+                </div>
+            </div>
+
         </div>
 
     </div>
 
+    <!-- Parte Inferior: Frase com Estilo Agressivo Reforçado -->
     <div class="bloco-inferior">
         <div class="linha-frase"></div>
         <h1 class="frase-efeito">
@@ -324,7 +440,9 @@
     </div>
 
     <script>
-        // Relógio e Data ao Vivo
+        // ==========================================
+        // RELÓGIO E DATA ATUALIZADOS
+        // ==========================================
         function atualizarRelogio() {
             const agora = new Date();
             const horas = String(agora.getHours()).padStart(2, '0');
@@ -334,7 +452,10 @@
             
             const dia = String(agora.getDate()).padStart(2, '0');
             const mes = String(agora.getMonth() + 1).padStart(2, '0');
-            document.getElementById('txt-data').textContent = `${dia}/${mes}/${agora.getFullYear()}`;
+            
+            // Separação da data solicitada
+            document.getElementById('txt-data-ddmm').textContent = `${dia}/${mes}`;
+            document.getElementById('txt-data-aaaa').textContent = agora.getFullYear();
             
             const diasSemana = ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'];
             document.getElementById('txt-dia-semana').textContent = diasSemana[agora.getDay()];
@@ -342,11 +463,17 @@
         setInterval(atualizarRelogio, 1000);
         atualizarRelogio();
 
-        // Cronômetro (Ajuste o tempo total em segundos aqui)
-        const TEMPO_INICIAL = 1127; 
-        let tempoRestante = TEMPO_INICIAL;
+        // ==========================================
+        // SISTEMA DO CRONÔMETRO INTERATIVO
+        // ==========================================
+        let tempoInicial = 300; // Começa padrão em 5 minutos (300 segundos)
+        let tempoRestante = tempoInicial;
+        let intervaloTimer = null;
+        let executando = false;
+
         const elementoCronometro = document.getElementById('txt-cronometro');
         const circuloProgresso = document.getElementById('progresso-timer');
+        const btnPlayPause = document.getElementById('btn-play-pause');
         const perimetro = 2 * Math.PI * 68;
         
         circuloProgresso.style.strokeDasharray = perimetro;
@@ -358,22 +485,62 @@
             return `${hrs}:${mins}:${segs}`;
         }
 
-        function atualizarCronometro() {
+        function atualizarGrafico() {
             elementoCronometro.textContent = formatarTempo(tempoRestante);
-            const deslocamento = perimetro - ((tempoRestante / TEMPO_INICIAL) * perimetro);
+            const deslocamento = perimetro - ((tempoRestante / tempoInicial) * perimetro);
             circuloProgresso.style.strokeDashoffset = deslocamento;
+        }
 
+        function tiqueTaque() {
             if (tempoRestante > 0) {
                 tempoRestante--;
+                atualizarGrafico();
             } else {
                 clearInterval(intervaloTimer);
-                elementoCronometro.textContent = "00:00:00";
+                executando = false;
+                btnPlayPause.textContent = "Iniciar";
                 elementoCronometro.style.color = "#e60000";
                 circuloProgresso.style.strokeDashoffset = perimetro;
             }
         }
-        const intervaloTimer = setInterval(atualizarCronometro, 1000);
-        atualizarCronometro();
+
+        // Ações dos Botões
+        function definirTimer(minutos) {
+            clearInterval(intervaloTimer);
+            executando = true;
+            tempoInicial = minutos * 60;
+            tempoRestante = tempoInicial;
+            elementoCronometro.style.color = "#ffffff";
+            btnPlayPause.textContent = "Pausar";
+            atualizarGrafico();
+            intervaloTimer = setInterval(tiqueTaque, 1000);
+        }
+
+        function alternarPlayPause() {
+            if (tempoRestante <= 0) return;
+            
+            if (executando) {
+                clearInterval(intervaloTimer);
+                executando = false;
+                btnPlayPause.textContent = "Iniciar";
+            } else {
+                executando = true;
+                btnPlayPause.textContent = "Pausar";
+                intervaloTimer = setInterval(tiqueTaque, 1000);
+            }
+        }
+
+        function resetarTimer() {
+            clearInterval(intervaloTimer);
+            executando = false;
+            tempoRestante = tempoInicial;
+            elementoCronometro.style.color = "#ffffff";
+            btnPlayPause.textContent = "Iniciar";
+            atualizarGrafico();
+        }
+
+        // Inicialização automática do gráfico na abertura da página
+        atualizarGrafico();
     </script>
 </body>
 </html>
