@@ -10,7 +10,6 @@
         :root {
             --primary-color: #2563eb; 
             --accent-green: #22c55e;
-            --accent-yellow: #f59e0b;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -142,12 +141,6 @@
             color: #4b5563;
         }
 
-        .status-cell {
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
         .link-voltar {
             display: inline-block;
             margin-top: 40px;
@@ -223,8 +216,7 @@
                     professor: headers.findIndex(h => h.includes('PROFESSOR')),
                     faixa: headers.indexOf('SUA FAIXA'),
                     peso: headers.indexOf('SEU PESO'),
-                    categoria: headers.indexOf('SUA CATEGORIA'),
-                    status: 17 // Coluna R (18ª coluna)
+                    categoria: headers.indexOf('SUA CATEGORIA')
                 };
 
                 const data = lines.slice(1).map(line => {
@@ -236,8 +228,7 @@
                         professor: values[idx.professor] || 'NÃO INFORMADO',
                         faixa: values[idx.faixa] || '',
                         peso: values[idx.peso] || '',
-                        categoria: values[idx.categoria] || '',
-                        status: values[idx.status] || 'Aguardando'
+                        categoria: values[idx.categoria] || ''
                     };
                 });
 
@@ -252,6 +243,7 @@
             const container = document.getElementById('listaEquipes');
             container.innerHTML = '';
             document.getElementById('loading-message').style.display = 'none';
+            const Blacklist = {};
             const estrutura = {};
 
             data.forEach(atleta => {
@@ -287,14 +279,10 @@
                                         <th>Faixa</th>
                                         <th>Peso</th>
                                         <th>Categoria</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${infoEquipe.professores[prof].map(a => {
-                                        const isConfirmado = a.status.toLowerCase().includes('confirmado');
-                                        const statusColor = isConfirmado ? 'var(--accent-green)' : 'var(--accent-yellow)';
-                                        
                                         return `
                                         <tr>
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
@@ -302,9 +290,6 @@
                                             <td data-label="Faixa">${a.faixa}</td>
                                             <td data-label="Peso">${a.peso}</td>
                                             <td data-label="Categoria">${a.categoria}</td>
-                                            <td data-label="Status" class="status-cell" style="color: ${statusColor}">
-                                                ● ${a.status}
-                                            </td>
                                         </tr>
                                         `;
                                     }).join('')}
