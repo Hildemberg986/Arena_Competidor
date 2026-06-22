@@ -75,24 +75,6 @@
         .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
         .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
 
-        /* Estilos do Status (Confirmada/Aguardando) */
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-        .status-confirmado {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-        .status-aguardando {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
         #photoModal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -169,8 +151,8 @@
             try {
                 const response = await fetch(CSV_URL);
                 const csvText = await response.text();
-                const linhas = csvText.split('\n').filter(l => l.trim() !== '');
-                const cabecalhoOriginal = linhas[0].split(',').map(c => c.trim().replace(/"/g, ''));
+                const lines = csvText.split('\n').filter(l => l.trim() !== '');
+                const cabecalhoOriginal = lines[0].split(',').map(c => c.trim().replace(/"/g, ''));
                 
                 cabecalhoOriginal.forEach((c, i) => {
                     const clean = c.toUpperCase();
@@ -179,11 +161,9 @@
                     if (clean === "FOTO" || clean.includes("FOTO")) colMap.FOTO = c;
                     if (clean.includes("EQUIPE")) colMap.EQUIPE = c;
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
-                    // Mapeia a coluna R (que é a 18ª coluna, ou seja, índice 17) para STATUS
-                    if (i === 17) colMap.STATUS = c;
                 });
 
-                dadosAtletas = linhas.slice(1).map(linha => {
+                dadosAtletas = lines.slice(1).map(linha => {
                     const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     let obj = {};
                     cabecalhoOriginal.forEach((c, i) => { obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; });
@@ -191,7 +171,7 @@
                 });
 
                 document.getElementById('loading').style.display = 'none';
-                renderizar(true); // Inicializa filtros e lista
+                renderizar(true);
             } catch (e) { document.getElementById('loading').innerHTML = "Erro na conexão."; }
         }
 
@@ -208,14 +188,12 @@
                 const select = document.getElementById(id);
                 const valorAtual = select.value;
                 
-                // Pega apenas as opções que existem nos dados ATUALMENTE filtrados
                 const opcoesSet = new Set();
                 filtrados.forEach(a => { if(a[campo]) opcoesSet.add(a[campo]) });
 
                 const arr = Array.from(opcoesSet).sort();
                 if(id === 'filtroFaixa') arr.sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99) - (ORDEM_FAIXAS[b.toUpperCase()]||99));
 
-                // Reconstruir o select mantendo "Todos"
                 select.innerHTML = '<option value="todos">Todos</option>';
                 arr.forEach(optValue => {
                     const el = document.createElement('option');
@@ -234,7 +212,6 @@
             const fC = document.getElementById('filtroCategoria').value;
             const fP = document.getElementById('filtroPeso').value;
 
-            // 1. Filtrar os dados reais para a tabela
             const filtradosParaTabela = dadosAtletas.filter(a => 
                 (fG === 'todos' || a['SEXO'] === fG) &&
                 (fF === 'todos' || a['SUA FAIXA'] === fF) &&
@@ -242,13 +219,10 @@
                 (fP === 'todos' || a['SEU PESO'] === fP)
             );
 
-            // 2. Lógica de Filtros Dependentes
-            // Se mudamos um filtro, precisamos saber quais opções restam nos outros
             if(atualizarFiltros) {
                 atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : dadosAtletas) : dadosAtletas);
             }
 
-            // 3. Gerar o HTML da lista
             container.innerHTML = '';
             const estrutura = {};
             filtradosParaTabela.forEach(a => {
@@ -256,7 +230,7 @@
                 const ch = `${a['SUA CATEGORIA']} - ${a['SEU PESO']} (${a['SEXO']})`;
                 if (!estrutura[fx]) estrutura[fx] = {};
                 if (!estrutura[fx][ch]) estrutura[fx][ch] = [];
-                estrutura[fx][ch].push(a);
+                if (estrutura[fx][ch]) estrutura[fx][ch].push(a);
             });
 
             Object.keys(estrutura).sort((a,b) => (ORDEM_FAIXAS[a.toUpperCase()]||99)-(ORDEM_FAIXAS[b.toUpperCase()]||99)).forEach(fx => {
@@ -273,16 +247,10 @@
                         <div class="accordion-header" onclick="toggleAcc(this)">${ch} (${atletas.length})</div>
                         <div class="accordion-content">
                             <table>
-                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th><th>Status</th></tr></thead>
+                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th></tr></thead>
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
-                                        
-                                        // Verifica o texto do status para aplicar a cor correta
-                                        const statusTxt = a[colMap.STATUS] || '---';
-                                        const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
-                                        const statusClass = isConfirmado ? 'status-confirmado' : 'status-aguardando';
-
                                         return `
                                         <tr>
                                             <td data-label="Atleta">
@@ -296,9 +264,6 @@
                                             </td>
                                             <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
                                             <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
-                                            <td data-label="Status">
-                                                <span class="status-badge ${statusClass}">${statusTxt}</span>
-                                            </td>
                                         </tr>
                                     `}).join('')}
                                 </tbody>
@@ -315,7 +280,6 @@
             el.nextElementSibling.classList.toggle('open');
         }
 
-        // Listener para mudanças nos selects
         document.querySelectorAll('select').forEach(s => {
             s.addEventListener('change', (e) => {
                 renderizar(true);
