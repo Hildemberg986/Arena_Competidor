@@ -126,7 +126,7 @@
     <script>
         const CSV_URL = 'https://script.google.com/macros/s/AKfycbxhGu_PmUEbp2dew7_XlVuf_1e4pMNBTJFyJqJUSVc_yQSdeVmpNq3SVDMA0Ci6dus47Q/exec';
         const FOTO_PADRAO = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-        const ORDEM_FAIXAS = { 'PRETA': 1, 'MARROM': 2, 'ROXA': 3, 'AZUL': 4, 'BRANCA': 5, 'VERDE': 6, 'LARANJA': 7, 'AMARELA': 8, 'CINZA': 9 };
+        const ORDEM_FAIXAS = { 'MARROM': 1, 'ROXA': 2, 'AZUL': 3, 'BRANCA': 4, 'VERDE': 5, 'LARANJA': 6, 'AMARELA': 7, 'CINZA': 8 };
         
         let dadosAtletas = [];
         let colMap = {};
@@ -163,12 +163,13 @@
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
                 });
 
+                // Filtragem na origem: Ignora qualquer linha cujo campo de faixa seja PRETA
                 dadosAtletas = lines.slice(1).map(linha => {
                     const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     let obj = {};
                     cabecalhoOriginal.forEach((c, i) => { obj[c] = colunas[i]?.replace(/"/g, '').trim() || ''; });
                     return obj;
-                });
+                }).filter(atleta => (atleta['SUA FAIXA'] || '').toUpperCase() !== 'PRETA');
 
                 document.getElementById('loading').style.display = 'none';
                 renderizar(true);
@@ -265,7 +266,7 @@
                                             <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
                                             <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
                                         </tr>
-                                    `}).join('')}
+                                        `}).join('')}
                                 </tbody>
                             </table>
                         </div>
