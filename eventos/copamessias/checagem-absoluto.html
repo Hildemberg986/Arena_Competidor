@@ -9,8 +9,6 @@
     <style>
         :root {
             --primary-color: #2563eb; 
-            --accent-green: #22c55e;
-            --accent-yellow: #f59e0b;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -117,12 +115,6 @@
             color: #374151;
         }
 
-        .status-badge {
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
         .link-voltar {
             display: block; width: fit-content; margin: 40px auto;
             padding: 14px 30px; background-color: #111827; color: #fff;
@@ -181,8 +173,7 @@
                     faixa: headers.indexOf('SUA FAIXA'),
                     cat: headers.indexOf('SUA CATEGORIA'),
                     sexo: headers.indexOf('SEXO'),
-                    abs: headers.indexOf('ABSOLUTO'),
-                    status: 17 // Coluna R
+                    abs: headers.indexOf('ABSOLUTO')
                 };
 
                 const data = rows.slice(1).map(row => ({
@@ -193,8 +184,7 @@
                     faixa: (row[idx.faixa] || 'BRANCA').toUpperCase(),
                     categoria: row[idx.cat] || '',
                     sexo: (row[idx.sexo] || '').toUpperCase(),
-                    absoluto: (row[idx.abs] || '').toUpperCase(),
-                    status: row[idx.status] || 'Aguardando'
+                    absoluto: (row[idx.abs] || '').toUpperCase()
                 })).filter(atleta => atleta.absoluto === 'SIM');
 
                 renderizar(data);
@@ -249,22 +239,15 @@
                                         <th>ORD</th>
                                         <th>Atleta</th>
                                         <th>Equipe</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${atletas.map(a => {
-                                        const isConfirmado = a.status.toLowerCase().includes('confirmado');
-                                        const statusColor = isConfirmado ? 'var(--accent-green)' : 'var(--accent-yellow)';
-                                        
                                         return `
                                         <tr>
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
                                             <td data-label="Atleta">${a.nome}</td>
                                             <td data-label="Equipe">${a.equipe}</td>
-                                            <td data-label="Status" class="status-badge" style="color: ${statusColor}">
-                                                ● ${a.status}
-                                            </td>
                                         </tr>
                                         `;
                                     }).join('')}
