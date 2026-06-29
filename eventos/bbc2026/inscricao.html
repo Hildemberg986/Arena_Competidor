@@ -193,7 +193,7 @@
                 <label for="equipeSelect">Sua Equipe:</label>
                 <select id="equipeSelect" required style="background-color: #fff; cursor: pointer;">
                     <option value="">Selecione a Equipe...</option>
-                     <option value="Anglicana Jiu Jitsu">Anglicana Jiu Jitsu</option>
+                    <option value="Anglicana Jiu Jitsu">Anglicana Jiu Jitsu</option>
                     <option value="Avanti Jiu-jitsu">Avanti Jiu-jitsu</option>
                     <option value="Boca Team">Boca Team</option>
                     <option value="BTT">BTT</option>
@@ -353,7 +353,6 @@
         const cpfInput = document.getElementById('cpf');
         const celularInput = document.getElementById('celular');
 
-        // --- DADOS COMPLETOS DA PARTE 2 ---
         const pesosPorDivisao = {
              "Pré-Mirim 1": { masculino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"], feminino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"] },
              "Pré-Mirim 2": { masculino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"], feminino: ["Pluma/Light-Feather até 17,9kg", "Pena/Feather até 20kg", "Leve/Light até 23kg", "Médio/Middle até 26kg", "Meio-Pesado/Medium-Heavy até 29kg", "Pesado/Heavy até 32kg", "Super-Pesado/Super-Heavy até 35kg", "Pesadíssimo/Ultra-Heavy acima de 35kg"] },
@@ -508,9 +507,7 @@
             limparOpcoesSelect(faixaInput, 'Selecione sua faixa', true);
             limparOpcoesSelect(pesoInput, 'Selecione a Faixa', true);
 
-            const permiteAbsoluto = ['Juvenil', 'Adulto', 'Master 1', 'Master 2', 'Master 3', 'Master 4', 'Master 5', 'Master 6', 'Master 7'].includes(categoria);
-            absolutoContainer.style.display = permiteAbsoluto ? 'flex' : 'none';
-            if (!permiteAbsoluto) absolutoCheckbox.checked = false;
+            validarRegraAbsoluto();
 
             if (categoria && faixasPorDivisao[categoria]) {
                 faixaInput.disabled = false;
@@ -536,7 +533,28 @@
                     pesoInput.appendChild(option);
                 });
             }
+            validarRegraAbsoluto();
             atualizarExtrato();
+        }
+
+        // --- NOVA FUNÇÃO PARA GERENCIAR O ABSOLUTO (FAIXA PRETA MASTER) ---
+        function validarRegraAbsoluto() {
+            const categoria = categoriaSelect.value;
+            const faixa = faixaInput.value;
+
+            const ehMaster = categoria.includes('Master');
+            const ehPreta = faixa === 'Preta';
+            const categoriasPermitidas = ['Juvenil', 'Adulto', 'Master 1', 'Master 2', 'Master 3', 'Master 4', 'Master 5', 'Master 6', 'Master 7'].includes(categoria);
+
+            // Se for da divisão Master E for Faixa Preta, NÃO permite Absoluto
+            if (ehMaster && ehPreta) {
+                absolutoContainer.style.display = 'none';
+                absolutoCheckbox.checked = false;
+            } else {
+                // Caso contrário, obedece à listagem de categorias que aceitam absoluto
+                absolutoContainer.style.display = categoriasPermitidas ? 'flex' : 'none';
+                if (!categoriasPermitidas) absolutoCheckbox.checked = false;
+            }
         }
 
         function atualizarExtrato() {
@@ -613,7 +631,7 @@
         pesoInput.addEventListener('change', atualizarExtrato);
         absolutoCheckbox.addEventListener('change', atualizarExtrato);
         cpfInput.addEventListener('input', function() { aplicarMascaraCPF(this); });
-        celularInput.addEventListener('input', function() { aplicarMascaraCelular(this); });
+        celularInput.addEventListener('input', function() { aplicarMascaraCellular(this); });
         equipeSelect.addEventListener('change', () => { equipeOutraInput.parentElement.style.display = equipeSelect.value === 'Outra' ? 'flex' : 'none'; });
         professorSelect.addEventListener('change', () => { professorOutroInput.parentElement.style.display = professorSelect.value === 'Outro' ? 'flex' : 'none'; });
         inscricaoForm.addEventListener('submit', enviarParaPlanilha);
