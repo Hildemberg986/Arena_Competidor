@@ -80,7 +80,7 @@
         .team-info p {
             font-size: 0.85rem;
             font-weight: 600;
-            color: var(--accent-green);
+            color: var(--text-secondary);
             margin: 4px 0 0 0;
             text-transform: uppercase;
         }
@@ -138,13 +138,6 @@
             font-weight: 700;
             font-size: 0.75rem;
             color: #4b5563;
-        }
-
-        .status-cell {
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--accent-green);
         }
 
         .link-voltar {
@@ -218,8 +211,7 @@
                     professor: headers.findIndex(h => h.includes('PROFESSOR')),
                     faixa: headers.indexOf('SUA FAIXA'),
                     peso: headers.indexOf('SEU PESO'),
-                    categoria: headers.indexOf('SUA CATEGORIA'),
-                    status: 17 // Coluna R
+                    categoria: headers.indexOf('SUA CATEGORIA')
                 };
 
                 const data = lines.slice(1).map(line => {
@@ -231,10 +223,9 @@
                         professor: values[idx.professor] || 'NÃO INFORMADO',
                         faixa: values[idx.faixa] || '',
                         peso: values[idx.peso] || '',
-                        categoria: values[idx.categoria] || '',
-                        status: values[idx.status] || ''
+                        categoria: values[idx.categoria] || ''
                     };
-                }).filter(atleta => atleta.status.toLowerCase().includes('confirmado'));
+                }); // Removido o filtro .filter() que limitava aos confirmados
 
                 renderEquipes(data);
             } catch (error) {
@@ -249,7 +240,7 @@
             document.getElementById('loading-message').style.display = 'none';
 
             if (data.length === 0) {
-                container.innerHTML = '<p style="text-align:center">Nenhum atleta confirmado no momento.</p>';
+                container.innerHTML = '<p style="text-align:center">Nenhum atleta inscrito no momento.</p>';
                 return;
             }
 
@@ -279,7 +270,6 @@
                                         <th>ORD</th>
                                         <th>Atleta</th>
                                         <th>Categoria</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -288,7 +278,6 @@
                                             <td data-label="ORD"><span class="ord-badge">${a.ord}</span></td>
                                             <td data-label="Atleta"><strong>${a.nome}</strong><br><small>${a.faixa} / ${a.peso}</small></td>
                                             <td data-label="Categoria">${a.categoria}</td>
-                                            <td data-label="Status" class="status-cell">● ${a.status}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -301,7 +290,7 @@
                     <div class="accordion-header" onclick="toggleAcc(this)">
                         <div class="team-info">
                             <h2>${nomeEquipe}</h2>
-                            <p>${infoEquipe.total} Atleta(s) Confirmado(s)</p>
+                            <p>${infoEquipe.total} Atleta(s) Inscrito(s)</p>
                         </div>
                     </div>
                     <div class="accordion-content">${htmlProfessores}</div>
