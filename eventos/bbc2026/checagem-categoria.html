@@ -75,19 +75,6 @@
         .atleta-nome { font-weight: 600; color: #111827; font-size: 0.95rem; }
         .atleta-ord { font-size: 0.7rem; color: var(--primary-color); font-weight: 800; margin-bottom: 2px; }
 
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-        .status-confirmado {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
         #photoModal {
             display: none; position: fixed; z-index: 2000; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -123,7 +110,7 @@
     </div>
 
     <div class="main-content">
-        <h1>Checagem de Inscritos Confirmados</h1>
+        <h1>Checagem de Todos os Inscritos</h1>
 
         <div class="filtros-container">
             <div class="filtro-grupo"><label>Gênero</label><select id="filtroGenero"><option value="todos">Todos</option></select></div>
@@ -174,7 +161,6 @@
                     if (clean === "FOTO" || clean.includes("FOTO")) colMap.FOTO = c;
                     if (clean.includes("EQUIPE")) colMap.EQUIPE = c;
                     if (clean.includes("PROFESSOR")) colMap.PROFESSOR = c;
-                    if (i === 17) colMap.STATUS = c;
                 });
 
                 dadosAtletas = linhas.slice(1).map(linha => {
@@ -226,20 +212,15 @@
             const fC = document.getElementById('filtroCategoria').value;
             const fP = document.getElementById('filtroPeso').value;
 
-            // FILTRO PRINCIPAL: Apenas quem contém "Confirmad" no Status
+            // Retornando toda a lista sem filtrar por status de pagamento
             const filtradosParaTabela = dadosAtletas.filter(a => {
-                const statusTxt = a[colMap.STATUS] || '';
-                const isConfirmado = statusTxt.toLowerCase().includes('confirmad');
-
-                return isConfirmado && 
-                    (fG === 'todos' || a['SEXO'] === fG) &&
+                return (fG === 'todos' || a['SEXO'] === fG) &&
                     (fF === 'todos' || a['SUA FAIXA'] === fF) &&
                     (fC === 'todos' || a['SUA CATEGORIA'] === fC) &&
                     (fP === 'todos' || a['SEU PESO'] === fP);
             });
 
             if(atualizarFiltros) {
-                // Filtros dependentes baseados apenas nos confirmados
                 atualizarOpcoesDosFiltros(filtradosParaTabela.length > 0 || (fG==='todos' && fF==='todos' && fC==='todos' && fP==='todos') ? (filtradosParaTabela.length > 0 ? filtradosParaTabela : []) : []);
             }
 
@@ -267,11 +248,10 @@
                         <div class="accordion-header" onclick="toggleAcc(this)">${ch} (${atletas.length})</div>
                         <div class="accordion-content">
                             <table>
-                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th><th>Status</th></tr></thead>
+                                <thead><tr><th>Atleta</th><th>Equipe</th><th>Professor</th></tr></thead>
                                 <tbody>
                                     ${atletas.map(a => {
                                         const urlFinal = tratarLinkFoto(a[colMap.FOTO]);
-                                        const statusTxt = a[colMap.STATUS] || '---';
 
                                         return `
                                         <tr>
@@ -286,9 +266,6 @@
                                             </td>
                                             <td data-label="Equipe">${a[colMap.EQUIPE] || '---'}</td>
                                             <td data-label="Professor">${a[colMap.PROFESSOR] || '---'}</td>
-                                            <td data-label="Status">
-                                                <span class="status-badge status-confirmado">${statusTxt}</span>
-                                            </td>
                                         </tr>
                                     `}).join('')}
                                 </tbody>
