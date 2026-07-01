@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detalhes do Campeonato - Arena Competidor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e62117;
+            --primary-soft: #fff1f0;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: var(--card);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-box {
+            max-width: 140px;
+        }
+
+        .logo-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        .loading p {
+            margin-top: 1rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .error-state i {
+            font-size: 4rem;
+            color: #ef4444;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        .error-state h2 {
+            color: var(--text);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .error-state p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Banner do Campeonato */
+        .championship-banner {
+            position: relative;
+            width: 100%;
+            padding-bottom: 40%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .championship-banner img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #f1f5f9;
+        }
+
+        .championship-banner .banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            color: white;
+        }
+
+        .banner-overlay h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-overlay .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-planejado {
+            background: rgba(59, 130, 246, 0.9);
+        }
+
+        .badge-ativo {
+            background: rgba(16, 185, 129, 0.9);
+            animation: pulse 2s infinite;
+        }
+
+        .badge-concluido {
+            background: rgba(100, 116, 139, 0.9);
+        }
+
+        .badge-cancelado {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Grid de Detalhes */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+        }
+
+        .card h2 i {
+            color: var(--primary);
+        }
+
+        /* Informações do Evento */
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-icon i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Card de Compra */
+        .purchase-card {
+            position: sticky;
+            top: 100px;
+        }
+
+        .price-display {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .price-amount span {
+            font-size: 1.5rem;
+        }
+
+        .price-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .qty-btn:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .qty-display {
+            font-size: 1.3rem;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .btn-purchase {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-purchase:hover {
+            background: #c81e14;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(230, 33, 23, 0.2);
+        }
+
+        .btn-purchase:disabled {
+            background: #e2e8f0;
+            color: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .total-display {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .total-display strong {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* Descrição */
+        .description-text {
+            color: var(--text-light);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        /* Categorias */
+        .categories-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .category-tag {
+            padding: 0.3rem 0.8rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .championship-banner {
+                padding-bottom: 60%;
+            }
+
+            .banner-overlay h1 {
+                font-size: 1.5rem;
+            }
+
+            .price-amount {
+                font-size: 2.5rem;
+            }
+
+            .purchase-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .championship-banner {
+                padding-bottom: 80%;
+            }
+
+            .banner-overlay {
+                padding: 1rem;
+            }
+
+            .banner-overlay h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo-box">
+            <img src="../../img/arena03.png" alt="Arena Competidor">
+        </div>
+        <button onclick="voltarParaBilheteria()" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Voltar
+        </button>
+    </header>
+
+    <main class="container" id="mainContent">
+        <div class="loading">
+            <i class="fa-solid fa-spinner"></i>
+            <p>Carregando detalhes do campeonato...</p>
+        </div>
+    </main>
+
+    <!-- Mensagem de sucesso -->
+    <div class="success-message" id="successMessage">
+        <i class="fa-solid fa-check-circle"></i> Compra realizada com sucesso!
+    </div>
+
+    <script>
+        const API_URL = 'http://0.0.0.0:8000/api/v1/campeonatos';
+
+        // Função para voltar à bilheteria
+        function voltarParaBilheteria() {
+            window.location.href = 'menu.html';
+        }
+
+        // Função para obter o ID do campeonato
+        function getChampionshipId() {
+            // Tenta obter da URL (query string)
+            const urlParams = new URLSearchParams(window.location.search);
+            const idFromUrl = urlParams.get('id');
+
+            if (idFromUrl) {
+                return idFromUrl;
+            }
+
+            // Tenta obter do localStorage
+            const idFromStorage = localStorage.getItem('currentChampionshipId');
+
+            if (idFromStorage) {
+                return idFromStorage;
+            }
+
+            // Tenta extrair da URL (path)
+            const path = window.location.pathname;
+            const match = path.match(/\/comprar[\/-]?(\d+)/);
+            if (match) {
+                return match[1];
+            }
+
+            return null;
+        }
+
+        // Função para formatar data
+        function formatDate(dateString) {
+            if (!dateString) return 'Data não definida';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        // Função para formatar hora
+        function formatTime(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Função para calcular dias restantes
+        function getDaysRemaining(dateString) {
+            if (!dateString) return null;
+            const now = new Date();
+            const eventDate = new Date(dateString);
+            const diffTime = eventDate - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        // Função para obter badge de status
+        function getStatusBadge(status) {
+            const statusMap = {
+                'planejado': { class: 'badge-planejado', icon: 'fa-calendar-plus', label: 'Planejado' },
+                'ativo': { class: 'badge-ativo', icon: 'fa-circle', label: 'Ativo' },
+                'concluido': { class: 'badge-concluido', icon: 'fa-check-circle', label: 'Concluído' },
+                'cancelado': { class: 'badge-cancelado', icon: 'fa-ban', label: 'Cancelado' }
+            };
+
+            const info = statusMap[status] || statusMap['planejado'];
+            return `
+                <span class="status-badge ${info.class}">
+                    <i class="fa-solid ${info.icon}"></i> ${info.label}
+                </span>`;
+        }
+
+        // Função para mostrar mensagem de sucesso
+        function showSuccessMessage(message) {
+            const msgElement = document.getElementById('successMessage');
+            msgElement.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${message}`;
+            msgElement.style.display = 'block';
+
+            setTimeout(() => {
+                msgElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Função para renderizar detalhes do campeonato
+        function renderChampionshipDetails(championship) {
+            const container = document.getElementById('mainContent');
+            const isAvailable = championship.status === 'ativo';
+            const isUpcoming = championship.status === 'planejado';
+            const daysRemaining = getDaysRemaining(championship.data_inicio);
+
+            container.innerHTML = `
+                <!-- Banner -->
+                <div class="championship-banner">
+                    ${championship.banner_url
+                    ? `<img src="${championship.banner_url}" alt="Banner do ${championship.nome_campeonato}">`
+                    : `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; color: white; opacity: 0.3;">
+                            <i class="fa-solid fa-trophy"></i>
+                           </div>`
+                }
+                    <div class="banner-overlay">
+                        <h1>${championship.nome_campeonato || 'Campeonato sem nome'}</h1>
+                        ${getStatusBadge(championship.status)}
+                    </div>
+                </div>
+
+                <!-- Grid de Detalhes -->
+                <div class="details-grid">
+                    <!-- Coluna Principal -->
+                    <div>
+                        <!-- Informações do Evento -->
+                        <div class="card">
+                            <h2><i class="fa-solid fa-circle-info"></i> Informações do Evento</h2>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Local</div>
+                                        <div class="info-value">
+                                            ${championship.local || 'Local não definido'}
+                                            ${championship.cidade ? `, ${championship.cidade}` : ''}
+                                            ${championship.estado ? ` - ${championship.estado}` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fa-regular fa-calendar"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Período</div>
+                                        <div class="info-value">
+                                            ${formatDate(championship.data_inicio)} até ${formatDate(championship.data_fim)}
+                                        </div>
+                                        ${daysRemaining !== null && daysRemaining > 0 ? `
+                                            <div style="margin-top: 0.3rem; color: ${daysRemaining <= 7 ? '#ef4444' : '#10b981'}; font-size: 0.85rem; font-weight: 600;">
+                                                <i class="fa-solid fa-clock"></i> ${daysRemaining} dias restantes
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Organizador</div>
+                                        <div class="info-value">${championship.organizador || 'Não informado'}</div>
+                                    </div>
+                                </div>
+
+                                ${championship.modalidade ? `
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fa-solid fa-futbol"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Modalidade</div>
+                                        <div class="info-value">${championship.modalidade}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+
+                                ${championship.categorias ? `
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fa-solid fa-tags"></i>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-label">Categorias</div>
+                                        <div class="categories-list">
+                                            ${championship.categorias.split(',').map(cat =>
+                    `<span class="category-tag">${cat.trim()}</span>`
+                ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Descrição -->
+                        ${championship.descricao ? `
+                        <div class="card" style="margin-top: 1.5rem;">
+                            <h2><i class="fa-solid fa-align-left"></i> Descrição</h2>
+                            <div class="description-text">
+                                ${championship.descricao}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Coluna de Compra -->
+                    <div class="purchase-card">
+                        <div class="card">
+                            <div class="price-display">
+                                <div class="price-label">Valor do Ingresso</div>
+                                <div class="price-amount">
+                                    <span>R$</span> ${championship.valor_ingresso || '50,00'}
+                                </div>
+                            </div>
+
+                            ${isAvailable ? `
+                                <div class="quantity-selector">
+                                    <button class="qty-btn" onclick="decreaseQty()" id="btnDecrease">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <span class="qty-display" id="quantity">1</span>
+                                    <button class="qty-btn" onclick="increaseQty()" id="btnIncrease">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+
+                                <div class="total-display" id="totalDisplay">
+                                    Total: <strong>R$ ${championship.valor_ingresso || '50,00'}</strong>
+                                </div>
+
+                                <button class="btn-purchase" onclick="confirmPurchase(${championship.id})">
+                                    <i class="fa-solid fa-cart-shopping"></i> Comprar Ingresso
+                                </button>
+                            ` : isUpcoming ? `
+                                <button class="btn-purchase" disabled>
+                                    <i class="fa-solid fa-clock"></i> Indisponível no momento
+                                </button>
+                                <p style="text-align: center; color: var(--text-light); font-size: 0.85rem;">
+                                    Os ingressos estarão disponíveis em breve
+                                </p>
+                            ` : `
+                                <button class="btn-purchase" disabled>
+                                    <i class="fa-solid fa-ban"></i> Evento ${championship.status === 'concluido' ? 'Realizado' : 'Cancelado'}
+                                </button>
+                            `}
+
+                            ${championship.vagas_total ? `
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); text-align: center;">
+                                <div style="color: var(--text-light); font-size: 0.85rem;">
+                                    <i class="fa-solid fa-users"></i> Vagas disponíveis: 
+                                    <strong>${championship.vagas_disponiveis || championship.vagas_total}</strong> / ${championship.vagas_total}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Inicializar quantidade e preço
+            window.currentQuantity = 1;
+            window.ticketPrice = parseFloat(championship.valor_ingresso || 50);
+            window.maxQuantity = parseInt(championship.vagas_disponiveis || 10);
+        }
+
+        // Função para aumentar quantidade
+        function increaseQty() {
+            if (window.currentQuantity < window.maxQuantity) {
+                window.currentQuantity++;
+                updateQuantityDisplay();
+            }
+        }
+
+        // Função para diminuir quantidade
+        function decreaseQty() {
+            if (window.currentQuantity > 1) {
+                window.currentQuantity--;
+                updateQuantityDisplay();
+            }
+        }
+
+        // Função para atualizar display de quantidade
+        function updateQuantityDisplay() {
+            document.getElementById('quantity').textContent = window.currentQuantity;
+            const total = (window.currentQuantity * window.ticketPrice).toFixed(2);
+            document.getElementById('totalDisplay').innerHTML =
+                `Total: <strong>R$ ${total}</strong>`;
+
+            // Desabilitar botões se necessário
+            document.getElementById('btnDecrease').disabled = window.currentQuantity <= 1;
+            document.getElementById('btnIncrease').disabled = window.currentQuantity >= window.maxQuantity;
+        }
+
+        // Função para confirmar compra
+        function confirmPurchase(id) {
+            const quantity = window.currentQuantity;
+            const total = (quantity * window.ticketPrice).toFixed(2);
+
+            if (confirm(`Confirmar compra de ${quantity} ingresso(s) no valor total de R$ ${total}?`)) {
+                // Salvar dados da compra no localStorage
+                const purchaseData = {
+                    championshipId: id,
+                    quantity: quantity,
+                    total: total,
+                    date: new Date().toISOString()
+                };
+                localStorage.setItem('lastPurchase', JSON.stringify(purchaseData));
+
+                // Mostrar mensagem de sucesso
+                showSuccessMessage(`Compra de ${quantity} ingresso(s) realizada com sucesso! Total: R$ ${total}`);
+
+                // Opcional: Redirecionar após alguns segundos
+                setTimeout(() => {
+                    voltarParaBilheteria();
+                }, 2000);
+            }
+        }
+
+        // Expor funções globalmente
+        window.increaseQty = increaseQty;
+        window.decreaseQty = decreaseQty;
+        window.confirmPurchase = confirmPurchase;
+
+        // Função para carregar detalhes do campeonato
+        async function loadChampionshipDetails() {
+            const id = getChampionshipId();
+
+            if (!id) {
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="error-state">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <h2>Campeonato não encontrado</h2>
+                        <p>Não foi possível identificar o campeonato solicitado.</p>
+                        <button onclick="voltarParaBilheteria()" class="btn-back" style="display: inline-flex;">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar para Bilheteria
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.status === 'success' && data.data) {
+                    renderChampionshipDetails(data.data);
+                } else {
+                    throw new Error('Dados inválidos recebidos da API');
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar detalhes:', error);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="error-state">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <h2>Erro ao carregar</h2>
+                        <p>Não foi possível carregar os detalhes do campeonato. Tente novamente mais tarde.</p>
+                        <button onclick="loadChampionshipDetails()" style="padding: 0.6rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;">
+                            <i class="fa-solid fa-rotate"></i> Tentar novamente
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Carregar ao iniciar
+        document.addEventListener('DOMContentLoaded', loadChampionshipDetails);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Painel Admin - Arena Competidor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e62117;
+            --primary-soft: #fff1f0;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: var(--card);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .logo-box { max-width: 140px; }
+        .logo-box img { width: 100%; height: auto; display: block; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-login, .btn-logout {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-logout {
+            background: #64748b;
+        }
+
+        .btn-login:hover { background: #c81e14; }
+        .btn-logout:hover { background: #475569; }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .header-text { margin-bottom: 2.5rem; }
+        .header-text h1 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+        .header-text p { color: var(--text-light); margin: 5px 0 0 0; font-size: 1rem; }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-item {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.1);
+        }
+
+        .icon-circle {
+            width: 72px;
+            height: 72px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover .icon-circle {
+            background: var(--primary);
+            color: white;
+            transform: rotate(-5deg) scale(1.1);
+        }
+
+        .menu-item h2 { font-size: 1.4rem; font-weight: 700; margin: 0 0 0.5rem 0; }
+        .menu-item p { color: var(--text-light); font-size: 0.95rem; margin: 0; line-height: 1.5; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .modal h2 {
+            font-size: 1.3rem;
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+        }
+
+        .modal p {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover { background: #c81e14; }
+
+        .btn-cancel {
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            color: var(--text-light);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .error-message {
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.show { display: block; }
+
+        footer {
+            text-align: center;
+            padding: 4rem 1rem 2rem;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 1.5rem 1rem; }
+            .header-text { margin-bottom: 1.5rem; text-align: center; }
+            .header-text h1 { font-size: 1.5rem; }
+            
+            .menu-grid { grid-template-columns: 1fr; gap: 1rem; }
+            
+            .menu-item {
+                padding: 1.5rem;
+                flex-direction: row;
+                text-align: left;
+                align-items: center;
+                gap: 1.2rem;
+            }
+
+            .icon-circle {
+                width: 56px;
+                height: 56px;
+                font-size: 1.4rem;
+                margin-bottom: 0;
+                flex-shrink: 0;
+                border-radius: 16px;
+            }
+
+            .menu-item h2 { font-size: 1.15rem; margin-bottom: 2px; }
+            .menu-item p { font-size: 0.85rem; }
+
+            .header-actions {
+                gap: 0.5rem;
+            }
+
+            .user-badge {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <img src="../../img/arena03.png" alt="Arena Competidor">
+        </div>
+        
+        <div class="header-actions" id="headerActions">
+            <button class="btn-login" id="btnLogin" onclick="openLoginModal()">
+                <i class="fa-solid fa-lock"></i> Admin
+            </button>
+            <div id="userBadge" style="display: none;">
+                <span class="user-badge">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="userName">Admin</span>
+                </span>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="header-text">
+            <h1>Painel de Controle</h1>
+            <p>Selecione uma área para gerenciar</p>
+        </section>
+
+        <nav class="menu-grid">
+            <a href="bilheteriadigital.html" class="menu-item">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-ticket-simple"></i>
+                </div>
+                <div>
+                    <h2>Ingressos</h2>
+                    <p>Vendas, lista de nomes e emissão de tickets.</p>
+                </div>
+            </a>
+
+            <a href="financeiro.html" class="menu-item">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h2>Financeiro</h2>
+                    <p>Relatórios de lucro e balanço do evento.</p>
+                </div>
+            </a>
+
+            <a href="../DTC/verificador.html" class="menu-item">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <div>
+                    <h2>Verificador</h2>
+                    <p>Validar ingressos via QR Code no acesso.</p>
+                </div>
+            </a>
+        </nav>
+    </main>
+
+    <!-- Modal de Login -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <h2>🔐 Acesso Administrativo</h2>
+            <p>Faça login para acessar o painel de controle</p>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="admin@arena.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <i class="fa-solid fa-circle-exclamation"></i> E-mail ou senha inválidos
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-right-to-bracket"></i> Entrar
+                </button>
+                
+                <button type="button" class="btn-cancel" onclick="closeLoginModal()">
+                    Cancelar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        Arena Competidor &copy; 2026 &bull; Todos os direitos reservados
+    </footer>
+
+    <script>
+        const ADMIN_CREDENTIALS = {
+            email: 'admin@arena.com',
+            password: 'admin123',
+            name: 'Administrador'
+        };
+
+        let isLoggedIn = false;
+
+        function checkLoginStatus() {
+            const loggedIn = sessionStorage.getItem('arena_admin_logged');
+            if (loggedIn === 'true') {
+                isLoggedIn = true;
+                updateUI();
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('loginForm').reset();
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+                isLoggedIn = true;
+                sessionStorage.setItem('arena_admin_logged', 'true');
+                sessionStorage.setItem('arena_admin_name', ADMIN_CREDENTIALS.name);
+                
+                closeLoginModal();
+                updateUI();
+            } else {
+                errorMessage.classList.add('show');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            sessionStorage.removeItem('arena_admin_logged');
+            sessionStorage.removeItem('arena_admin_name');
+            updateUI();
+        }
+
+        function updateUI() {
+            const btnLogin = document.getElementById('btnLogin');
+            const userBadge = document.getElementById('userBadge');
+            const userName = document.getElementById('userName');
+            
+            if (isLoggedIn) {
+                btnLogin.style.display = 'none';
+                userBadge.style.display = 'flex';
+                userBadge.style.alignItems = 'center';
+                userBadge.style.gap = '0.75rem';
+                
+                const adminName = sessionStorage.getItem('arena_admin_name') || 'Admin';
+                userName.textContent = adminName;
+            } else {
+                btnLogin.style.display = 'block';
+                userBadge.style.display = 'none';
+            }
+        }
+
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        checkLoginStatus();
+    </script>
+
+</body>
+</html>
