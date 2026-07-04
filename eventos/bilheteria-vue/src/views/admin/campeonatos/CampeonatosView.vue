@@ -8,7 +8,12 @@
       </div>
 
       <div class="header-actions">
-        <button type="button" class="secondary-btn" @click="loadCampeonatos" :disabled="loading">
+        <button
+          type="button"
+          class="secondary-btn"
+          @click="loadCampeonatos"
+          :disabled="loading"
+        >
           Recarregar
         </button>
         <button type="button" class="primary-btn" @click="openCreateForm">
@@ -33,7 +38,9 @@
 
         <div v-else-if="error" class="state-box error">
           <p>{{ error }}</p>
-          <button class="secondary-btn" type="button" @click="loadCampeonatos">Tentar novamente</button>
+          <button class="secondary-btn" type="button" @click="loadCampeonatos">
+            Tentar novamente
+          </button>
         </div>
 
         <div v-else-if="!campeonatos.length" class="state-box">
@@ -56,39 +63,75 @@
                 <td>
                   <div class="championship-name">
                     <span class="name-text">{{ item.nome_campeonato }}</span>
-                    <span class="organizer">{{ item.organizador || 'Sem organizador' }}</span>
+                    <span class="organizer">{{
+                      item.organizador || "Sem organizador"
+                    }}</span>
                   </div>
                 </td>
                 <td>
                   <div class="location-info">
-                    <span class="city">{{ item.cidade || '-' }}</span>
-                    <span class="state">{{ item.estado || '' }}</span>
+                    <span class="city">{{ item.cidade || "-" }}</span>
+                    <span class="state">{{ item.estado || "" }}</span>
                   </div>
                 </td>
                 <td>
                   <div class="period-info">
-                    <span>{{ formatPeriod(item.data_inicio, item.data_fim) }}</span>
+                    <span>{{
+                      formatPeriod(item.data_inicio, item.data_fim)
+                    }}</span>
                   </div>
                 </td>
                 <td>
-                  <span class="status-badge" :class="getStatusClass(item.status)">
-                    {{ item.status || 'planejado' }}
+                  <span
+                    class="status-badge"
+                    :class="getStatusClass(item.status)"
+                  >
+                    {{ item.status || "planejado" }}
                   </span>
                 </td>
                 <td class="actions-cell">
-                  <button type="button" class="action-btn edit-btn" @click="openEditForm(item)">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  <button
+                    type="button"
+                    class="action-btn edit-btn"
+                    @click="openEditForm(item)"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                      />
+                      <path
+                        d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                      />
                     </svg>
                     Editar
                   </button>
-                  <button type="button" class="action-btn delete-btn" @click="handleDelete(item)" :disabled="deletingId === item.id">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M3 6h18"/>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  <button
+                    type="button"
+                    class="action-btn delete-btn"
+                    @click="handleDelete(item)"
+                    :disabled="deletingId === item.id"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M3 6h18" />
+                      <path
+                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                      />
                     </svg>
-                    {{ deletingId === item.id ? 'Excluindo...' : 'Excluir' }}
+                    {{ deletingId === item.id ? "Excluindo..." : "Excluir" }}
                   </button>
                 </td>
               </tr>
@@ -102,8 +145,10 @@
     <div v-if="showForm" class="modal-overlay" @click.self="cancelForm">
       <div class="modal">
         <div class="modal-header">
-          <h3>{{ editingId ? 'Editar Campeonato' : 'Novo Campeonato' }}</h3>
-          <button type="button" class="modal-close" @click="cancelForm">✕</button>
+          <h3>{{ editingId ? "Editar Campeonato" : "Novo Campeonato" }}</h3>
+          <button type="button" class="modal-close" @click="cancelForm">
+            ✕
+          </button>
         </div>
 
         <form class="modal-form" @submit.prevent="handleSubmit">
@@ -111,84 +156,133 @@
             <div class="form-row">
               <label>
                 Nome do campeonato *
-                <input v-model.trim="form.nome_campeonato" type="text" required placeholder="Ex: Campeonato Municipal 2026">
+                <input
+                  v-model.trim="form.nome_campeonato"
+                  type="text"
+                  required
+                  placeholder="Ex: Campeonato Municipal 2026"
+                />
               </label>
             </div>
 
             <div class="form-row span-2">
               <label>
                 Descrição
-                <textarea v-model.trim="form.descricao" rows="3" placeholder="Descreva o campeonato..."></textarea>
+                <textarea
+                  v-model.trim="form.descricao"
+                  rows="3"
+                  placeholder="Descreva o campeonato..."
+                ></textarea>
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Data de início *
-                <input v-model="form.data_inicio" type="date" required>
+                <input v-model="form.data_inicio" type="date" required />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Data de fim *
-                <input v-model="form.data_fim" type="date" required>
+                <input v-model="form.data_fim" type="date" required />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Local *
-                <input v-model.trim="form.local" type="text" required placeholder="Ex: Ginásio Municipal">
+                <input
+                  v-model.trim="form.local"
+                  type="text"
+                  required
+                  placeholder="Ex: Ginásio Municipal"
+                />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Endereço *
-                <input v-model.trim="form.endereco" type="text" required placeholder="Ex: Rua das Flores, 123">
+                <input
+                  v-model.trim="form.endereco"
+                  type="text"
+                  required
+                  placeholder="Ex: Rua das Flores, 123"
+                />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Cidade *
-                <input v-model.trim="form.cidade" type="text" required placeholder="Ex: São Paulo">
+                <input
+                  v-model.trim="form.cidade"
+                  type="text"
+                  required
+                  placeholder="Ex: São Paulo"
+                />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Estado *
-                <input v-model.trim="form.estado" type="text" maxlength="2" required placeholder="SP">
+                <input
+                  v-model.trim="form.estado"
+                  type="text"
+                  maxlength="2"
+                  required
+                  placeholder="SP"
+                />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 CEP *
-                <input v-model.trim="form.cep" type="text" required placeholder="Ex: 12345-678">
+                <input
+                  v-model.trim="form.cep"
+                  type="text"
+                  required
+                  placeholder="Ex: 12345-678"
+                />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Organizador *
-                <input v-model.trim="form.organizador" type="text" required placeholder="Nome do organizador">
+                <input
+                  v-model.trim="form.organizador"
+                  type="text"
+                  required
+                  placeholder="Nome do organizador"
+                />
               </label>
             </div>
 
             <div class="form-row">
               <label>
                 Contato do organizador *
-                <input v-model.trim="form.contato_organizador" type="text" required placeholder="(11) 99999-9999">
+                <input
+                  v-model.trim="form.contato_organizador"
+                  type="text"
+                  required
+                  placeholder="(11) 99999-9999"
+                />
               </label>
             </div>
 
             <div class="form-row span-2">
               <label>
                 Banner URL
-                <input v-model.trim="form.banner_url" type="url" placeholder="https://exemplo.com/banner.jpg">
+                <input
+                  v-model.trim="form.banner_url"
+                  type="url"
+                  placeholder="https://exemplo.com/banner.jpg"
+                />
               </label>
             </div>
 
@@ -206,9 +300,11 @@
           </div>
 
           <div class="modal-actions">
-            <button class="secondary-btn" type="button" @click="cancelForm">Cancelar</button>
+            <button class="secondary-btn" type="button" @click="cancelForm">
+              Cancelar
+            </button>
             <button class="primary-btn" type="submit" :disabled="saving">
-              {{ saving ? 'Salvando...' : editingId ? 'Atualizar' : 'Criar' }}
+              {{ saving ? "Salvando..." : editingId ? "Atualizar" : "Criar" }}
             </button>
           </div>
         </form>
@@ -218,37 +314,42 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
-import { adminService } from '@/services/api'
-import { formatDateBR, getApiErrorMessage, unwrapCollection, unwrapItem } from '@/utils/adminHelpers'
+import { computed, onMounted, reactive, ref } from "vue";
+import { adminService } from "@/services/api";
+import {
+  formatDateBR,
+  getApiErrorMessage,
+  unwrapCollection,
+  unwrapItem,
+} from "@/utils/adminHelpers";
 
-const campeonatos = ref([])
-const loading = ref(false)
-const saving = ref(false)
-const deletingId = ref(null)
-const error = ref('')
-const feedback = ref('')
-const feedbackType = ref('success')
-const showForm = ref(false)
-const editingId = ref(null)
+const campeonatos = ref([]);
+const loading = ref(false);
+const saving = ref(false);
+const deletingId = ref(null);
+const error = ref("");
+const feedback = ref("");
+const feedbackType = ref("success");
+const showForm = ref(false);
+const editingId = ref(null);
 
 const emptyForm = () => ({
-  nome_campeonato: '',
-  descricao: '',
-  data_inicio: '',
-  data_fim: '',
-  local: '',
-  endereco: '',
-  cidade: '',
-  estado: '',
-  cep: '',
-  organizador: '',
-  contato_organizador: '',
-  banner_url: '',
-  status: 'planejado'
-})
+  nome_campeonato: "",
+  descricao: "",
+  data_inicio: "",
+  data_fim: "",
+  local: "",
+  endereco: "",
+  cidade: "",
+  estado: "",
+  cep: "",
+  organizador: "",
+  contato_organizador: "",
+  banner_url: "",
+  status: "planejado",
+});
 
-const form = reactive(emptyForm())
+const form = reactive(emptyForm());
 
 const canSubmit = computed(() => {
   return Boolean(
@@ -261,83 +362,86 @@ const canSubmit = computed(() => {
     form.estado.trim() &&
     form.cep.trim() &&
     form.organizador.trim() &&
-    form.contato_organizador.trim()
-  )
-})
+    form.contato_organizador.trim(),
+  );
+});
 
 function resetForm() {
-  Object.assign(form, emptyForm())
-  editingId.value = null
+  Object.assign(form, emptyForm());
+  editingId.value = null;
 }
 
 function openCreateForm() {
-  resetForm()
-  showForm.value = true
+  resetForm();
+  showForm.value = true;
 }
 
 function openEditForm(item) {
-  const data = unwrapItem(item) || item
+  const data = unwrapItem(item) || item;
   Object.assign(form, emptyForm(), {
     ...data,
-    data_inicio: data?.data_inicio ? String(data.data_inicio).slice(0, 10) : '',
-    data_fim: data?.data_fim ? String(data.data_fim).slice(0, 10) : '',
-    status: data?.status?.toLowerCase() || 'planejado'
-  })
-  editingId.value = data.id
-  showForm.value = true
+    data_inicio: data?.data_inicio ? String(data.data_inicio).slice(0, 10) : "",
+    data_fim: data?.data_fim ? String(data.data_fim).slice(0, 10) : "",
+    status: data?.status?.toLowerCase() || "planejado",
+  });
+  editingId.value = data.id;
+  showForm.value = true;
 }
 
 function cancelForm() {
-  showForm.value = false
-  feedback.value = ''
-  resetForm()
+  showForm.value = false;
+  feedback.value = "";
+  resetForm();
 }
 
 function formatPeriod(startDate, endDate) {
-  return `${formatDateBR(startDate)} - ${formatDateBR(endDate)}`
+  return `${formatDateBR(startDate)} - ${formatDateBR(endDate)}`;
 }
 
-function showMessage(message, type = 'success') {
-  feedback.value = message
-  feedbackType.value = type
+function showMessage(message, type = "success") {
+  feedback.value = message;
+  feedbackType.value = type;
 }
 
 function getStatusClass(status) {
   const statusMap = {
-    'planejado': 'status-planned',
-    'ativo': 'status-active',
-    'finalizado': 'status-finished',
-    'cancelado': 'status-canceled'
-  }
-  return statusMap[status?.toLowerCase()] || 'status-planned'
+    planejado: "status-planned",
+    ativo: "status-active",
+    finalizado: "status-finished",
+    cancelado: "status-canceled",
+  };
+  return statusMap[status?.toLowerCase()] || "status-planned";
 }
 
 async function loadCampeonatos() {
-  loading.value = true
-  error.value = ''
+  loading.value = true;
+  error.value = "";
 
   try {
-    const response = await adminService.getCampeonatos()
-    campeonatos.value = unwrapCollection(response)
+    const response = await adminService.getCampeonatos();
+    campeonatos.value = unwrapCollection(response);
   } catch (err) {
-    error.value = getApiErrorMessage(err, 'Não foi possível carregar os campeonatos.')
+    error.value = getApiErrorMessage(
+      err,
+      "Não foi possível carregar os campeonatos.",
+    );
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function handleSubmit() {
   if (!canSubmit.value || saving.value) {
-    return
+    return;
   }
 
-  saving.value = true
-  error.value = ''
+  saving.value = true;
+  error.value = "";
 
   const formatDateToISO = (dateStr) => {
-    if (!dateStr) return ''
-    return `${dateStr}T00:00:00`
-  }
+    if (!dateStr) return "";
+    return `${dateStr}T00:00:00`;
+  };
 
   const payload = {
     nome_campeonato: form.nome_campeonato.trim(),
@@ -351,192 +455,222 @@ async function handleSubmit() {
     cep: form.cep.trim(),
     organizador: form.organizador.trim(),
     contato_organizador: form.contato_organizador.trim(),
-    banner_url: form.banner_url.trim()
-  }
+    banner_url: form.banner_url.trim(),
+  };
 
   if (editingId.value) {
     const statusMap = {
-      'planejado': 'planejado',
-      'ativo': 'ativo',
-      'finalizado': 'finalizado',
-      'cancelado': 'cancelado',
-      'concluído': 'finalizado'
-    }
-    payload.status = statusMap[form.status?.toLowerCase()] || 'planejado'
+      planejado: "planejado",
+      ativo: "ativo",
+      finalizado: "finalizado",
+      cancelado: "cancelado",
+      concluído: "finalizado",
+    };
+    payload.status = statusMap[form.status?.toLowerCase()] || "planejado";
   }
 
   try {
     if (editingId.value) {
-      await adminService.updateCampeonato(editingId.value, payload)
-      showMessage('Campeonato atualizado com sucesso.')
+      await adminService.updateCampeonato(editingId.value, payload);
+      showMessage("Campeonato atualizado com sucesso.");
     } else {
-      await adminService.createCampeonato(payload)
-      showMessage('Campeonato criado com sucesso.')
+      await adminService.createCampeonato(payload);
+      showMessage("Campeonato criado com sucesso.");
     }
 
-    showForm.value = false
-    resetForm()
-    await loadCampeonatos()
+    showForm.value = false;
+    resetForm();
+    await loadCampeonatos();
   } catch (err) {
-    showMessage(getApiErrorMessage(err, 'Não foi possível salvar o campeonato.'), 'error')
+    showMessage(
+      getApiErrorMessage(err, "Não foi possível salvar o campeonato."),
+      "error",
+    );
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 async function handleDelete(item) {
-  const data = unwrapItem(item) || item
-  const confirmed = window.confirm(`Excluir o campeonato "${data.nome_campeonato}"?`)
+  const data = unwrapItem(item) || item;
+  const confirmed = window.confirm(
+    `Excluir o campeonato "${data.nome_campeonato}"?`,
+  );
 
   if (!confirmed) {
-    return
+    return;
   }
 
-  deletingId.value = data.id
+  deletingId.value = data.id;
 
   try {
-    await adminService.deleteCampeonato(data.id)
-    showMessage('Campeonato excluído com sucesso.')
-    await loadCampeonatos()
+    await adminService.deleteCampeonato(data.id);
+    showMessage("Campeonato excluído com sucesso.");
+    await loadCampeonatos();
   } catch (err) {
-    showMessage(getApiErrorMessage(err, 'Não foi possível excluir o campeonato.'), 'error')
+    showMessage(
+      getApiErrorMessage(err, "Não foi possível excluir o campeonato."),
+      "error",
+    );
   } finally {
-    deletingId.value = null
+    deletingId.value = null;
   }
 }
 
-onMounted(loadCampeonatos)
+onMounted(loadCampeonatos);
 </script>
 
 <style scoped>
+/* ============================================ */
+/* GERAL */
+/* ============================================ */
 .admin-page {
   display: grid;
-  gap: 1.5rem;
-  padding: 1rem;
+  gap: 1rem;
+  padding: 0.75rem;
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
+/* ============================================ */
+/* PAGE HEADER */
+/* ============================================ */
 .page-header {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  align-items: center;
-  padding: 1.5rem;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
   background: var(--card);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-
 .eyebrow {
   color: var(--primary);
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
 }
-
 .page-header h2 {
-  margin-top: 0.3rem;
-  font-size: 1.7rem;
+  margin-top: 0.2rem;
+  font-size: 1.3rem;
 }
-
 .page-header p {
   color: var(--text-light);
+  font-size: 0.8rem;
+  margin: 0;
 }
-
 .header-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
+/* ============================================ */
+/* ALERT */
+/* ============================================ */
+.alert {
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.alert.success {
+  background: #ecfdf5;
+  color: #047857;
+}
+.alert.error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* ============================================ */
+/* GRID & PANEL */
+/* ============================================ */
 .admin-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
-  align-items: start;
+  gap: 1rem;
 }
-
 .panel {
   background: var(--card);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1rem 1.25rem;
+  overflow: hidden;
 }
-
 .table-panel {
   display: flex;
   flex-direction: column;
 }
-
 .panel-header {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid #e2e8f0;
   flex-shrink: 0;
 }
-
 .panel-header h3 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   margin: 0;
 }
-
 .total-count {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-light);
   background: #f1f5f9;
-  padding: 0.3rem 0.8rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
+/* ============================================ */
+/* TABELA */
+/* ============================================ */
 .table-wrap {
   overflow-x: auto;
-  margin: 0 -0.5rem;
-  padding: 0 0.5rem;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
   flex: 1;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
-
 table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 800px;
+  min-width: 650px;
 }
-
 th,
 td {
-  padding: 1rem 0.75rem;
+  padding: 0.75rem 0.5rem;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
   vertical-align: middle;
 }
-
 th {
   color: var(--text-light);
-  font-size: 0.82rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 700;
   padding-top: 0;
+  white-space: nowrap;
 }
-
 tbody tr {
   transition: background-color 0.2s ease;
 }
-
 tbody tr:hover {
   background-color: #f8fafc;
 }
-
 tbody tr:last-child td {
   border-bottom: none;
 }
@@ -544,309 +678,260 @@ tbody tr:last-child td {
 .championship-name {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.15rem;
 }
-
 .name-text {
   font-weight: 600;
   color: var(--text);
+  font-size: 0.85rem;
 }
-
 .organizer {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--text-light);
 }
-
 .location-info {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.15rem;
 }
-
 .city {
   font-weight: 500;
+  font-size: 0.85rem;
 }
-
 .state {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--text-light);
 }
-
 .period-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
+/* ============================================ */
+/* AÇÕES */
+/* ============================================ */
 .actions-header {
   text-align: center;
 }
-
 .actions-cell {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.35rem;
   justify-content: center;
   align-items: center;
 }
-
 .action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.4rem 0.8rem;
+  gap: 0.25rem;
+  padding: 0.35rem 0.6rem;
   border-radius: 8px;
   border: 1px solid transparent;
   font: inherit;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   cursor: pointer;
   transition: all 0.2s ease;
   background: transparent;
   color: var(--text-light);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
-
 .action-btn svg {
   flex-shrink: 0;
+  width: 14px;
+  height: 14px;
 }
-
 .edit-btn {
   color: var(--primary);
   border-color: rgba(230, 33, 23, 0.2);
 }
-
-.edit-btn:hover:not(:disabled) {
+.edit-btn:active {
   background: rgba(230, 33, 23, 0.05);
   border-color: var(--primary);
 }
-
 .delete-btn {
   color: #b91c1c;
   border-color: rgba(185, 28, 28, 0.2);
 }
-
-.delete-btn:hover:not(:disabled) {
+.delete-btn:active {
   background: rgba(185, 28, 28, 0.05);
   border-color: #b91c1c;
 }
-
 .action-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* ============================================ */
+/* STATUS BADGE */
+/* ============================================ */
 .status-badge {
   display: inline-flex;
-  padding: 0.35rem 0.8rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: capitalize;
-  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
-
 .status-planned {
   background: #f1f5f9;
   color: #64748b;
 }
-
 .status-active {
   background: #dcfce7;
   color: #15803d;
 }
-
 .status-finished {
   background: #dbeafe;
   color: #1d4ed8;
 }
-
 .status-canceled {
   background: #fee2e2;
   color: #dc2626;
 }
 
+/* ============================================ */
+/* BOTÕES */
+/* ============================================ */
 .primary-btn,
 .secondary-btn {
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid transparent;
-  padding: 0.75rem 1.25rem;
+  padding: 0.65rem 1rem;
   font: inherit;
   font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
-
 .primary-btn {
   background: var(--primary);
   color: #fff;
 }
-
-.primary-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(230, 33, 23, 0.3);
+.primary-btn:active {
+  background: #c81e14;
 }
-
 .primary-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
-
 .secondary-btn {
   background: #fff;
   color: var(--text);
   border-color: #cbd5e1;
 }
-
-.secondary-btn:hover:not(:disabled) {
+.secondary-btn:active {
   background: #f8fafc;
-  border-color: #94a3b8;
 }
 
-.secondary-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.alert {
-  border-radius: 16px;
-  padding: 0.9rem 1rem;
-  font-weight: 700;
-}
-
-.alert.success {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.alert.error {
-  background: #fef2f2;
-  color: #b91c1c;
-}
-
+/* ============================================ */
+/* STATE BOX */
+/* ============================================ */
 .state-box {
-  min-height: 280px;
+  min-height: 200px;
   display: grid;
   place-items: center;
   text-align: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
   color: var(--text-light);
+  font-size: 0.9rem;
+  padding: 2rem 1rem;
 }
-
 .state-box.error {
   color: #b91c1c;
 }
-
 .spinner {
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
-  border: 3px solid rgba(230, 33, 23, 0.15);
+  border: 2.5px solid rgba(230, 33, 23, 0.15);
   border-top-color: var(--primary);
   animation: spin 0.8s linear infinite;
 }
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* Modal Styles */
+/* ============================================ */
+/* MODAL */
+/* ============================================ */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   z-index: 1000;
-  padding: 1rem;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.25s;
 }
-
 .modal {
   background: var(--card);
-  border-radius: 24px;
-  max-width: 800px;
+  border-radius: 20px 20px 0 0;
   width: 100%;
+  max-width: 600px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s;
 }
-
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid #e2e8f0;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  z-index: 1;
 }
-
 .modal-header h3 {
-  font-size: 1.4rem;
+  font-size: 1.15rem;
   margin: 0;
 }
-
 .modal-close {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text-light);
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  line-height: 1;
-}
-
-.modal-close:hover {
   background: #f1f5f9;
-  color: var(--text);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  -webkit-tap-highlight-color: transparent;
+}
+.modal-close:active {
+  background: #e2e8f0;
 }
 
 .modal-form {
-  padding: 2rem;
+  padding: 1.25rem;
   overflow-y: auto;
   flex: 1;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 }
-
-.modal-form::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modal-form::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.modal-form::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-.modal-form::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
 .form-grid {
   display: grid;
-  gap: 1rem;
+  gap: 0.75rem;
   grid-template-columns: 1fr 1fr;
 }
-
 .form-row {
   display: flex;
   flex-direction: column;
 }
-
 .form-row.span-2 {
   grid-column: span 2;
 }
@@ -854,25 +939,27 @@ tbody tr:last-child td {
 label {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
   font-weight: 700;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
-
 input,
 textarea,
 select {
   width: 100%;
   border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
   font: inherit;
+  font-size: 0.85rem;
   background: #fff;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
 }
-
 input:focus,
 textarea:focus,
 select:focus {
@@ -880,23 +967,26 @@ select:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(230, 33, 23, 0.1);
 }
-
 textarea {
   resize: vertical;
   min-height: 60px;
-  max-height: 120px;
 }
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding-top: 1.5rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  margin-top: 0.75rem;
   border-top: 1px solid #e2e8f0;
   flex-shrink: 0;
 }
+.modal-actions button {
+  flex: 1;
+}
 
+/* ============================================ */
+/* ANIMAÇÕES */
+/* ============================================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -905,84 +995,156 @@ textarea {
     opacity: 1;
   }
 }
-
 @keyframes slideUp {
   from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(100%);
   }
   to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 768px) {
+/* ============================================ */
+/* TABLET+ */
+/* ============================================ */
+@media (min-width: 769px) {
+  .admin-page {
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .page-header {
+    padding: 1.5rem;
+    border-radius: 24px;
+    align-items: center;
+  }
+  .page-header h2 {
+    font-size: 1.7rem;
+  }
+  .header-actions {
+    gap: 0.75rem;
+  }
+  .panel {
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+  .panel-header h3 {
+    font-size: 1.3rem;
+  }
+  th {
+    font-size: 0.8rem;
+  }
+  td {
+    padding: 1rem 0.75rem;
+  }
+  .action-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  .action-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  .name-text {
+    font-size: 0.95rem;
+  }
+  .city {
+    font-size: 0.9rem;
+  }
+  .status-badge {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.8rem;
+  }
+  .primary-btn,
+  .secondary-btn {
+    font-size: 0.9rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 14px;
+  }
+
+  .modal {
+    border-radius: 24px;
+    margin: auto;
+    max-height: 85vh;
+  }
+  .modal-header {
+    padding: 1.5rem 2rem;
+    border-radius: 24px 24px 0 0;
+  }
+  .modal-header h3 {
+    font-size: 1.4rem;
+  }
+  .modal-form {
+    padding: 2rem;
+  }
+  .form-grid {
+    gap: 1rem;
+  }
+  input,
+  textarea,
+  select {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.9rem;
+  }
+  .modal-actions {
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+  }
+  .modal-actions button {
+    flex: 0;
+  }
+
+  .state-box {
+    min-height: 280px;
+  }
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* ============================================ */
+/* MOBILE PEQUENO */
+/* ============================================ */
+@media (max-width: 480px) {
+  .page-header {
+    padding: 0.85rem 1rem;
+  }
+  .page-header h2 {
+    font-size: 1.15rem;
+  }
+  .header-actions {
+    width: 100%;
+  }
+  .header-actions button {
+    flex: 1;
+  }
+  .panel {
+    padding: 0.85rem;
+    border-radius: 16px;
+  }
+
   .form-grid,
   .form-row.span-2 {
     grid-template-columns: 1fr;
     grid-column: auto;
   }
-
-  .modal {
-    max-height: 95vh;
-    margin: 0.5rem;
-  }
-
-  .modal-header {
-    padding: 1rem 1.25rem;
-  }
-
-  .modal-form {
-    padding: 1.25rem;
-  }
-
-  .modal-actions {
-    flex-direction: column-reverse;
-  }
-
-  .modal-actions button {
-    width: 100%;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1rem;
-  }
-
-  .page-header h2 {
-    font-size: 1.45rem;
-  }
-
-  .header-actions {
-    justify-content: stretch;
-  }
-
-  .header-actions button {
-    flex: 1;
-  }
-
-  .panel {
-    padding: 1rem;
-  }
-
   .actions-cell {
     flex-direction: column;
-    gap: 0.3rem;
   }
-
   .action-btn {
     width: 100%;
     justify-content: center;
   }
 
-  table {
-    min-width: 600px;
+  th:nth-child(2),
+  td:nth-child(2),
+  th:nth-child(3),
+  td:nth-child(3) {
+    display: none;
   }
 
-  .admin-page {
-    padding: 0.5rem;
+  table {
+    min-width: auto;
   }
 }
 </style>

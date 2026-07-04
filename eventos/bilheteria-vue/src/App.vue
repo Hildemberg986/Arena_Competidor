@@ -16,12 +16,20 @@
           <i class="fa-solid fa-home"></i> Início
         </a>
 
-        <router-link v-if="!isAuthenticated" :to="{ name: 'login' }" class="btn-header login-btn">
+        <router-link
+          v-if="!isAuthenticated"
+          :to="{ name: 'login' }"
+          class="btn-header login-btn"
+        >
           <i class="fa-solid fa-right-to-bracket"></i> Login
         </router-link>
 
         <div v-else class="user-menu-wrap">
-          <button class="user-menu-trigger" type="button" @click.stop="toggleUserMenu">
+          <button
+            class="user-menu-trigger"
+            type="button"
+            @click.stop="toggleUserMenu"
+          >
             <img
               src="https://img.icons8.com/?size=100&id=85147&format=png&color=000000"
               alt="Conta do usuário"
@@ -34,12 +42,19 @@
               <span>{{ userProfile?.email }}</span>
             </div>
 
-            <router-link class="dropdown-action link-action" :to="{ name: 'meus-ingressos' }">
+            <router-link
+              class="dropdown-action link-action"
+              :to="{ name: 'meus-ingressos' }"
+            >
               <i class="fa-solid fa-ticket"></i>
               Ver meus ingressos
             </router-link>
 
-            <button class="dropdown-action danger" type="button" @click="handleLogout">
+            <button
+              class="dropdown-action danger"
+              type="button"
+              @click="handleLogout"
+            >
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
               Sair
             </button>
@@ -69,66 +84,67 @@ import { authService } from "@/services/api";
 
 const eventsStore = useEventsStore();
 const route = useRoute();
-const isAdminRoute = computed(() => route.path.startsWith('/admin'))
-const isAuthenticated = ref(false)
-const userProfile = ref(null)
-const userMenuOpen = ref(false)
+const isAdminRoute = computed(() => route.path.startsWith("/admin"));
+const isAuthenticated = ref(false);
+const userProfile = ref(null);
+const userMenuOpen = ref(false);
 
 const displayName = computed(() => {
-  const fullName = userProfile.value?.nome_completo || userProfile.value?.name || ''
+  const fullName =
+    userProfile.value?.nome_completo || userProfile.value?.name || "";
   if (fullName) {
-    return fullName.split(' ')[0]
+    return fullName.split(" ")[0];
   }
 
-  return userProfile.value?.email || 'Conta'
-})
+  return userProfile.value?.email || "Conta";
+});
 
 function closeMenus() {
-  userMenuOpen.value = false
+  userMenuOpen.value = false;
 }
 
 function toggleUserMenu() {
-  userMenuOpen.value = !userMenuOpen.value
+  userMenuOpen.value = !userMenuOpen.value;
 }
 
 async function loadAuthState() {
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem("access_token");
   if (!token) {
-    isAuthenticated.value = false
-    userProfile.value = null
-    return
+    isAuthenticated.value = false;
+    userProfile.value = null;
+    return;
   }
 
-  isAuthenticated.value = true
+  isAuthenticated.value = true;
 
   try {
-    const response = await authService.me()
-    userProfile.value = response?.data || response
+    const response = await authService.me();
+    userProfile.value = response?.data || response;
   } catch (error) {
-    handleLogout()
+    handleLogout();
   }
 }
 
 function handleLogout() {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('token_type')
-  localStorage.removeItem('cliente')
-  localStorage.removeItem('user')
-  localStorage.removeItem('currentUser')
-  localStorage.removeItem('auth_token')
-  isAuthenticated.value = false
-  userProfile.value = null
-  userMenuOpen.value = false
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("token_type");
+  localStorage.removeItem("cliente");
+  localStorage.removeItem("user");
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("auth_token");
+  isAuthenticated.value = false;
+  userProfile.value = null;
+  userMenuOpen.value = false;
 }
 
 function handleDocumentClick() {
-  closeMenus()
+  closeMenus();
 }
 
 onMounted(() => {
   eventsStore.fetchEvents();
   loadAuthState();
-  document.addEventListener('click', handleDocumentClick)
+  document.addEventListener("click", handleDocumentClick);
 });
 
 watch(
@@ -136,18 +152,18 @@ watch(
   () => {
     loadAuthState();
     closeMenus();
-  }
+  },
 );
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleDocumentClick)
+  document.removeEventListener("click", handleDocumentClick);
 });
 </script>
 
 <style>
-.link-action{
-  text-decoration: none;
-}
+/* ============================================ */
+/* VARIÁVEIS */
+/* ============================================ */
 :root {
   --primary: #e62117;
   --primary-soft: #fff1f0;
@@ -178,27 +194,33 @@ body {
 }
 
 #app {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
+.link-action {
+  text-decoration: none;
+}
+
+/* ============================================ */
+/* HEADER */
+/* ============================================ */
 .app-header {
   background: var(--card);
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .logo-box {
-  max-width: 140px;
+  max-width: 110px;
 }
-
 .logo-box img {
   width: 100%;
   height: auto;
@@ -207,241 +229,195 @@ body {
 
 .header-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.4rem;
   align-items: center;
   position: relative;
 }
 
 .btn-header {
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.75rem;
   border: 2px solid #e2e8f0;
   border-radius: 50px;
   background: var(--card);
   color: var(--text-light);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.2s;
   font-family: inherit;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   text-decoration: none;
+  white-space: nowrap;
 }
-
-.btn-header:hover {
+.btn-header:active {
   border-color: var(--primary);
   color: var(--primary);
 }
-
 .btn-header.active {
   background: var(--primary);
   border-color: var(--primary);
   color: white;
 }
-
 .login-btn {
   background: var(--primary);
   border-color: var(--primary);
   color: white;
 }
-
-.login-btn:hover {
-  filter: brightness(0.96);
-  color: white;
+.login-btn:active {
+  filter: brightness(0.9);
 }
 
+/* ============================================ */
+/* USER MENU */
+/* ============================================ */
 .user-menu-wrap {
   position: relative;
 }
-
 .user-menu-trigger {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border: 2px solid #e2e8f0;
-  border-radius: 999px;
+  border-radius: 50%;
   background: var(--card);
   display: grid;
   place-items: center;
   cursor: pointer;
   padding: 0;
 }
-
 .user-menu-trigger img {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .user-dropdown {
   position: absolute;
   right: 0;
-  top: calc(100% + 0.75rem);
-  width: 280px;
+  top: calc(100% + 0.5rem);
+  width: 260px;
   background: var(--card);
   border: 1px solid #e2e8f0;
-  border-radius: 18px;
+  border-radius: 16px;
   box-shadow: var(--shadow);
-  padding: 0.9rem;
+  padding: 0.75rem;
   z-index: 1200;
   display: grid;
-  gap: 0.65rem;
+  gap: 0.5rem;
 }
-
 .user-summary {
   display: grid;
-  gap: 0.15rem;
-  padding-bottom: 0.55rem;
+  gap: 0.1rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid #e2e8f0;
 }
-
 .user-summary strong {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
-
 .user-summary span {
   color: var(--text-light);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   word-break: break-word;
 }
 
 .dropdown-action {
   width: 100%;
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #f8fafc;
   color: var(--text);
-  padding: 0.85rem 0.9rem;
+  padding: 0.7rem 0.75rem;
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.5rem;
   font: inherit;
   font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
-
+.dropdown-action:active {
+  background: #f1f5f9;
+}
 .dropdown-action.danger {
   color: #b91c1c;
 }
 
-.tickets-panel {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.34);
-  display: grid;
-  place-items: start end;
-  padding: 6.5rem 1rem 1rem;
-  z-index: 1150;
-}
-
-.tickets-panel-card {
-  width: min(100%, 420px);
-  background: var(--card);
-  border-radius: 22px;
-  box-shadow: var(--shadow);
-  padding: 1rem;
-  display: grid;
-  gap: 0.9rem;
-}
-
-.tickets-panel-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: start;
-}
-
-.panel-kicker {
-  color: var(--primary);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.72rem;
-}
-
-.tickets-panel-header h2 {
-  font-size: 1.1rem;
-  margin-top: 0.2rem;
-}
-
-.panel-close {
-  border: 0;
-  background: #e2e8f0;
-  color: var(--text);
-  border-radius: 999px;
-  padding: 0.5rem 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.panel-state {
-  color: var(--text-light);
-  font-weight: 600;
-}
-
-.panel-state.error {
-  color: #b91c1c;
-}
-
-.tickets-list {
-  list-style: none;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.ticket-item {
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 0.9rem;
-  display: grid;
-  gap: 0.2rem;
-}
-
-.ticket-item strong {
-  font-size: 0.95rem;
-}
-
-.ticket-item span {
-  color: var(--text-light);
-  font-size: 0.85rem;
-}
-
+/* ============================================ */
+/* CONTAINER */
+/* ============================================ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 1rem 0.75rem;
   flex: 1;
   width: 100%;
+  box-sizing: border-box;
 }
 
+/* ============================================ */
+/* FOOTER */
+/* ============================================ */
 .app-footer {
   text-align: center;
-  padding: 3rem 1rem 1.5rem;
+  padding: 2rem 1rem 1.5rem;
   color: var(--text-light);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   margin-top: auto;
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
+/* ============================================ */
+/* TABLET+ */
+/* ============================================ */
+@media (min-width: 769px) {
   .app-header {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
   }
-
+  .logo-box {
+    max-width: 140px;
+  }
+  .btn-header {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  .header-actions {
+    gap: 0.75rem;
+  }
+  .user-menu-trigger {
+    width: 44px;
+    height: 44px;
+  }
+  .user-menu-trigger img {
+    width: 24px;
+    height: 24px;
+  }
   .user-dropdown {
-    width: min(280px, calc(100vw - 2rem));
+    width: 280px;
   }
-
-  .tickets-panel {
-    place-items: end center;
-    padding-top: 5.5rem;
+  .container {
+    padding: 2rem 1.5rem;
   }
+  .app-footer {
+    font-size: 0.75rem;
+  }
+}
 
-  .tickets-panel-card {
-    width: 100%;
+/* ============================================ */
+/* MOBILE */
+/* ============================================ */
+@media (max-width: 480px) {
+  .btn-header {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.6rem;
+    gap: 0.25rem;
+  }
+  .btn-header i {
+    font-size: 0.7rem;
+  }
+  .user-dropdown {
+    width: calc(100vw - 2rem);
+    right: -0.5rem;
   }
 }
 </style>

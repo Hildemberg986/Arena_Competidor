@@ -42,7 +42,9 @@
     <div v-else-if="!comprasAgrupadas.length" class="empty-state">
       <i class="fa-solid fa-ticket"></i>
       <h3>Você ainda não possui ingressos</h3>
-      <p>Quando comprar um ingresso, ele vai aparecer organizado aqui por compra.</p>
+      <p>
+        Quando comprar um ingresso, ele vai aparecer organizado aqui por compra.
+      </p>
     </div>
 
     <div v-else class="tickets-groups">
@@ -70,7 +72,9 @@
           </div>
           <div class="summary-row">
             <span>Valor total</span>
-            <strong class="total-price">{{ formatCurrency(compra.valor_total) }}</strong>
+            <strong class="total-price">{{
+              formatCurrency(compra.valor_total)
+            }}</strong>
           </div>
           <div class="summary-row">
             <span>Status</span>
@@ -106,7 +110,7 @@
                 :disabled="pdfLoading[ticket.id]"
               >
                 <i class="fa-solid fa-download"></i>
-                {{ pdfLoading[ticket.id] ? '...' : 'PDF' }}
+                {{ pdfLoading[ticket.id] ? "..." : "PDF" }}
               </button>
             </div>
           </div>
@@ -120,7 +124,11 @@
             :disabled="paymentLoading[compra.compra_id]"
           >
             <i class="fa-solid fa-credit-card"></i>
-            {{ paymentLoading[compra.compra_id] ? 'Processando...' : 'Pagar agora' }}
+            {{
+              paymentLoading[compra.compra_id]
+                ? "Processando..."
+                : "Pagar agora"
+            }}
           </button>
 
           <span v-if="compra.status === 'Aprovado'" class="status-confirmed">
@@ -149,16 +157,16 @@ const pdfLoading = ref({});
 const comprasAgrupadas = computed(() => {
   const grupos = new Map();
 
-  tickets.value.forEach(t => {
+  tickets.value.forEach((t) => {
     const chave = t.compra_id || t.id;
 
     if (!grupos.has(chave)) {
       grupos.set(chave, {
         compra_id: chave,
-        campeonato: t.nome_campeonato || '-',
-        local: t.local_campeonato || '',
-        lote: t.nome_lote || '-',
-        tipo: t.nome_tipo || '-',
+        campeonato: t.nome_campeonato || "-",
+        local: t.local_campeonato || "",
+        lote: t.nome_lote || "-",
+        tipo: t.nome_tipo || "-",
         quantidade: 0,
         valor_unitario: t.valor_unitario || 0,
         valor_total: 0,
@@ -179,34 +187,43 @@ const comprasAgrupadas = computed(() => {
 });
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(Number(value || 0));
 }
 
 function formatDateTime(dateString) {
   if (!dateString) return "-";
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return "-";
-  return date.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  return date.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function getStatusClass(status) {
   const map = {
-    'Pendente': 'status-pending',
-    'Aprovado': 'status-approved',
-    'Cancelado': 'status-cancelled',
-    'Estornado': 'status-refunded',
-    'Rejeitado': 'status-rejected',
+    Pendente: "status-pending",
+    Aprovado: "status-approved",
+    Cancelado: "status-cancelled",
+    Estornado: "status-refunded",
+    Rejeitado: "status-rejected",
   };
-  return map[status] || 'status-pending';
+  return map[status] || "status-pending";
 }
 
 function getStatusLabel(status) {
   const map = {
-    'Pendente': '⏳ Pendente',
-    'Aprovado': '✅ Aprovado',
-    'Cancelado': '🚫 Cancelado',
-    'Estornado': '↩️ Estornado',
-    'Rejeitado': '❌ Rejeitado',
+    Pendente: "⏳ Pendente",
+    Aprovado: "✅ Aprovado",
+    Cancelado: "🚫 Cancelado",
+    Estornado: "↩️ Estornado",
+    Rejeitado: "❌ Rejeitado",
   };
   return map[status] || status;
 }
@@ -223,7 +240,7 @@ function irParaPagamento(compra) {
 
 function baixarArquivo(blob, nomeArquivo) {
   const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = nomeArquivo;
   document.body.appendChild(link);
@@ -235,7 +252,7 @@ function baixarArquivo(blob, nomeArquivo) {
 async function baixarPDFIndividual(ticket) {
   if (!ticket?.id) return;
   if (ticket.checkin_em) {
-    alert('Este ingresso já foi utilizado e não pode ser baixado.');
+    alert("Este ingresso já foi utilizado e não pode ser baixado.");
     return;
   }
 
@@ -246,7 +263,10 @@ async function baixarPDFIndividual(ticket) {
     const nomeArquivo = `ingresso-${ticket.codigo_ingresso || ticket.id}.pdf`;
     baixarArquivo(blob, nomeArquivo);
   } catch (err) {
-    const mensagem = err?.response?.data?.detail || err.message || 'Erro ao baixar o ingresso.';
+    const mensagem =
+      err?.response?.data?.detail ||
+      err.message ||
+      "Erro ao baixar o ingresso.";
     alert(mensagem);
   } finally {
     pdfLoading.value[ticket.id] = false;
@@ -262,7 +282,10 @@ async function loadTickets() {
     const response = await ticketsService.getMyTickets();
     tickets.value = response?.data || response || [];
   } catch (err) {
-    error.value = err?.response?.data?.detail || err.message || "Falha ao carregar ingressos";
+    error.value =
+      err?.response?.data?.detail ||
+      err.message ||
+      "Falha ao carregar ingressos";
   } finally {
     loading.value = false;
   }
@@ -294,234 +317,263 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ============================================ */
+/* GERAL */
+/* ============================================ */
 .tickets-page {
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0.75rem;
+  box-sizing: border-box;
 }
 
+/* ============================================ */
+/* HERO */
+/* ============================================ */
 .tickets-hero {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  align-items: end;
+  gap: 0.75rem;
+  align-items: flex-start;
 }
-
 .eyebrow {
   color: var(--primary);
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
 }
-
 .tickets-hero h1 {
-  font-size: 2rem;
-  margin-top: 0.25rem;
+  font-size: 1.3rem;
+  margin-top: 0.2rem;
 }
-
 .subtitle {
   color: var(--text-light);
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
+  font-size: 0.85rem;
 }
 
 .back-btn,
 .primary-action {
   border: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--primary);
   color: #fff;
-  padding: 0.8rem 1rem;
+  padding: 0.6rem 0.85rem;
   font: inherit;
   font-weight: 700;
+  font-size: 0.85rem;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.4rem;
   cursor: pointer;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-btn:active,
+.primary-action:active {
+  background: #c81e14;
 }
 
+/* ============================================ */
+/* STATES */
+/* ============================================ */
 .empty-state,
 .loading-state {
-  min-height: 340px;
-  border-radius: 24px;
+  min-height: 250px;
+  border-radius: 20px;
   background: var(--card);
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 2rem;
-  gap: 0.75rem;
+  padding: 2rem 1rem;
+  gap: 0.5rem;
 }
-
 .empty-state i,
 .loading-state i {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: var(--primary);
 }
-
 .loading-state i {
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.empty-state.error i {
+  color: #b91c1c;
+}
+.empty-state h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+.empty-state p,
+.loading-state p {
+  color: var(--text-light);
+  font-size: 0.85rem;
 }
 
-.empty-state.error i { color: #b91c1c; }
-.empty-state p, .loading-state p { color: var(--text-light); }
-
+/* ============================================ */
+/* GROUPS */
+/* ============================================ */
 .tickets-groups {
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
 }
-
 .ticket-group {
   background: var(--card);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.25rem;
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .group-header {
   display: flex;
   justify-content: space-between;
-  align-items: start;
-  gap: 1rem;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
-
 .group-kicker {
   color: var(--primary);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  font-size: 0.65rem;
   font-weight: 800;
 }
-
 .group-header h2 {
-  margin-top: 0.2rem;
-  font-size: 1.15rem;
+  margin-top: 0.15rem;
+  font-size: 1rem;
 }
-
 .group-location {
   color: var(--text-light);
-  font-size: 0.9rem;
-  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
 }
-
 .group-location i {
   color: var(--primary);
-  margin-right: 0.3rem;
+  margin-right: 0.25rem;
 }
-
 .group-count {
   border-radius: 999px;
-  padding: 0.45rem 0.75rem;
+  padding: 0.3rem 0.6rem;
   background: var(--primary-soft);
   color: var(--primary);
   font-weight: 800;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   white-space: nowrap;
 }
 
+/* Summary */
 .group-summary {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background: #f8fafc;
-  border-radius: 14px;
-  padding: 1rem;
+  border-radius: 12px;
+  padding: 0.85rem;
 }
-
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .summary-row span {
   color: var(--text-light);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
-
 .summary-row strong {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
-
 .total-price {
   color: var(--primary);
-  font-size: 1.1rem !important;
+  font-size: 1rem !important;
 }
 
 .status-badge {
-  padding: 0.2rem 0.6rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
 }
-
-.status-approved { background: rgba(16, 185, 129, 0.15); color: #065f46; }
-.status-pending { background: rgba(245, 158, 11, 0.15); color: #92400e; }
-.status-cancelled { background: rgba(107, 114, 128, 0.15); color: #374151; }
-.status-refunded { background: rgba(107, 114, 128, 0.15); color: #374151; }
-.status-rejected { background: rgba(239, 68, 68, 0.15); color: #991b1b; }
-
-.group-tickets {
-  background: #f0fdf4;
-  border-radius: 12px;
-  padding: 1rem;
-}
-
-.tickets-title {
-  font-weight: 700;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
+.status-approved {
+  background: rgba(16, 185, 129, 0.15);
   color: #065f46;
 }
-
-.tickets-list {
-  display: grid;
-  gap: 0.5rem;
+.status-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #92400e;
+}
+.status-cancelled {
+  background: rgba(107, 114, 128, 0.15);
+  color: #374151;
+}
+.status-refunded {
+  background: rgba(107, 114, 128, 0.15);
+  color: #374151;
+}
+.status-rejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: #991b1b;
 }
 
+/* Tickets list */
+.group-tickets {
+  background: #f0fdf4;
+  border-radius: 10px;
+  padding: 0.85rem;
+}
+.tickets-title {
+  font-weight: 700;
+  font-size: 0.78rem;
+  margin-bottom: 0.4rem;
+  color: #065f46;
+}
+.tickets-list {
+  display: grid;
+  gap: 0.4rem;
+}
 .ticket-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background: white;
   border: 1px solid #bbf7d0;
-  border-radius: 10px;
-  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
 }
-
 .ticket-row-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
 }
-
 .code-chip {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   color: #15803d;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
   font-family: monospace;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
-
 .checkin-badge {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   background: #dbeafe;
   color: #1d4ed8;
-  padding: 0.15rem 0.5rem;
+  padding: 0.1rem 0.4rem;
   border-radius: 999px;
   font-weight: 600;
 }
@@ -530,97 +582,120 @@ onMounted(() => {
   border: none;
   background: #dcfce7;
   color: #15803d;
-  padding: 0.4rem 0.7rem;
-  border-radius: 8px;
+  padding: 0.3rem 0.55rem;
+  border-radius: 7px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.8rem;
-  transition: all 0.2s;
+  font-size: 0.72rem;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
   font-family: inherit;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
-
-.btn-download-individual:hover:not(:disabled) {
+.btn-download-individual:active {
   background: #bbf7d0;
 }
-
 .btn-download-individual:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* Actions */
 .group-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
-
 .btn-pay {
   border: none;
   border-radius: 12px;
-  padding: 0.7rem 1.2rem;
+  padding: 0.6rem 1rem;
   font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   font-family: inherit;
   background: var(--primary);
   color: white;
+  -webkit-tap-highlight-color: transparent;
 }
-
-.btn-pay:hover:not(:disabled) {
+.btn-pay:active {
   background: #c81e14;
-  transform: translateY(-2px);
 }
-
 .btn-pay:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 .status-confirmed {
   color: #10b981;
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
-
 .status-confirmed i {
-  margin-right: 0.4rem;
+  margin-right: 0.3rem;
 }
 
-@media (max-width: 768px) {
+/* ============================================ */
+/* TABLET+ */
+/* ============================================ */
+@media (min-width: 769px) {
+  .tickets-page {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  .tickets-hero h1 {
+    font-size: 2rem;
+  }
+  .ticket-group {
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+  .group-header h2 {
+    font-size: 1.15rem;
+  }
+  .btn-download-individual {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+  }
+  .btn-pay {
+    padding: 0.7rem 1.2rem;
+  }
+  .empty-state,
+  .loading-state {
+    min-height: 340px;
+  }
+  .empty-state i,
+  .loading-state i {
+    font-size: 2.5rem;
+  }
+}
+
+/* ============================================ */
+/* MOBILE */
+/* ============================================ */
+@media (max-width: 480px) {
   .tickets-hero {
     flex-direction: column;
-    align-items: start;
   }
-
-  .tickets-hero h1 {
-    font-size: 1.6rem;
-  }
-
   .ticket-group {
     padding: 1rem;
   }
-
   .group-actions {
     flex-direction: column;
     align-items: stretch;
   }
-
   .btn-pay {
     justify-content: center;
   }
-
   .ticket-row {
     flex-direction: column;
     align-items: stretch;
   }
-
   .btn-download-individual {
     justify-content: center;
   }
