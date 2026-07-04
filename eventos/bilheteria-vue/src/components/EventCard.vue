@@ -20,15 +20,15 @@
       <div class="event-info">
         <span>
           <i class="fa-regular fa-calendar"></i> 
-          {{ formatDate(event.data_inicio) }} - {{ formatDate(event.data_fim) }}
+          {{ formatDate(event.data_inicio) }}
         </span>
         <span v-if="event.organizador">
           <i class="fa-solid fa-user"></i> {{ event.organizador }}
         </span>
       </div>
       
-      <button class="btn-comprar" @click.stop="goToDetails">
-        <i :class="buttonIcon"></i> {{ buttonText }}
+      <button :class="['btn-card', `btn-${event.status}`]" @click.stop="goToDetails">
+        <i :class="`fa-solid ${buttonIcon}`"></i> {{ buttonText }}
       </button>
     </div>
   </div>
@@ -68,11 +68,12 @@ const eventLocation = computed(() => {
   return parts.length > 0 ? parts.join(', ') : 'Local não definido'
 })
 
+// Status config atualizado com finalizado
 const statusConfig = computed(() => {
   const configs = {
     ativo: { icon: 'fa-circle', label: 'Ativo' },
-    planejado: { icon: 'fa-calendar-plus', label: 'Planejado' },
-    concluido: { icon: 'fa-check-circle', label: 'Concluído' },
+    planejado: { icon: 'fa-calendar-plus', label: 'Em breve' },
+    finalizado: { icon: 'fa-circle-check', label: 'Finalizado' },
     cancelado: { icon: 'fa-ban', label: 'Cancelado' }
   }
   return configs[props.event.status] || configs.planejado
@@ -81,12 +82,13 @@ const statusConfig = computed(() => {
 const statusIcon = computed(() => statusConfig.value.icon)
 const statusLabel = computed(() => statusConfig.value.label)
 
+// Botão dinâmico por status
 const buttonConfig = computed(() => {
   const configs = {
-    ativo: { icon: 'fa-solid fa-cart-shopping', text: 'Comprar Ingresso' },
-    planejado: { icon: 'fa-solid fa-clock', text: 'Ver Detalhes' },
-    concluido: { icon: 'fa-solid fa-info-circle', text: 'Ver Detalhes' },
-    cancelado: { icon: 'fa-solid fa-info-circle', text: 'Ver Detalhes' }
+    ativo: { icon: 'fa-cart-shopping', text: 'Comprar Ingresso' },
+    planejado: { icon: 'fa-clock', text: 'Ver Detalhes' },
+    finalizado: { icon: 'fa-info-circle', text: 'Ver Detalhes' },
+    cancelado: { icon: 'fa-info-circle', text: 'Ver Detalhes' }
   }
   return configs[props.event.status] || configs.planejado
 })
@@ -188,7 +190,7 @@ function goToDetails() {
   animation: pulse 2s infinite;
 }
 
-.badge-concluido {
+.badge-finalizado {
   background: rgba(100, 116, 139, 0.95);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -264,11 +266,10 @@ function goToDetails() {
   color: var(--primary);
 }
 
-.btn-comprar {
+/* Botão dinâmico por status */
+.btn-card {
   width: 100%;
   padding: 0.8rem;
-  background: var(--primary);
-  color: white;
   border: none;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -283,13 +284,52 @@ function goToDetails() {
   font-family: inherit;
 }
 
-.btn-comprar:hover {
+.btn-ativo {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-ativo:hover {
   background: #c81e14;
   transform: translateY(-2px);
   box-shadow: 0 8px 15px rgba(230, 33, 23, 0.3);
 }
 
-.btn-comprar:active {
+.btn-planejado {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-planejado:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-finalizado {
+  background: #64748b;
+  color: white;
+}
+
+.btn-finalizado:hover {
+  background: #475569;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(100, 116, 139, 0.3);
+}
+
+.btn-cancelado {
+  background: #94a3b8;
+  color: white;
+  cursor: not-allowed;
+}
+
+.btn-cancelado:hover {
+  background: #94a3b8;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-card:active:not(.btn-cancelado) {
   transform: translateY(0);
 }
 

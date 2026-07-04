@@ -10,13 +10,11 @@
       @update:filter="eventsStore.setFilter"
     />
 
-    <!-- Loading State -->
     <div v-if="eventsStore.loading" class="loading">
       <i class="fa-solid fa-spinner"></i>
       <p>Carregando eventos...</p>
     </div>
 
-    <!-- Error State -->
     <div v-else-if="eventsStore.error" class="empty-state">
       <i class="fa-solid fa-circle-exclamation"></i>
       <h3>Erro ao carregar eventos</h3>
@@ -26,12 +24,11 @@
       </button>
     </div>
 
-    <!-- Events Grid -->
     <div v-else>
       <div v-if="eventsStore.filteredEvents.length === 0" class="empty-state">
         <i class="fa-solid fa-ticket"></i>
-        <h3>Nenhum evento disponível</h3>
-        <p>No momento não há eventos cadastrados. Volte em breve!</p>
+        <h3>Nenhum evento encontrado</h3>
+        <p>{{ emptyMessage }}</p>
       </div>
 
       <div v-else class="events-grid">
@@ -43,24 +40,40 @@
       </div>
     </div>
 
-    <!-- Seção Destaque -->
     <FeaturedSection 
-      v-if="eventsStore.featuredEvent"
+      v-if="eventsStore.featuredEvent && eventsStore.currentFilter === 'todos'"
       :event="eventsStore.featuredEvent"
     />
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useEventsStore } from '@/stores/events'
 import EventCard from '@/components/EventCard.vue'
 import EventFilters from '@/components/EventFilters.vue'
 import FeaturedSection from '@/components/FeaturedSection.vue'
 
 const eventsStore = useEventsStore()
+
+const emptyMessage = computed(() => {
+  const messages = {
+    'todos': 'No momento não há eventos disponíveis.',
+    'ativo': 'Não há eventos ativos no momento.',
+    'planejado': 'Não há eventos planejados.',
+    'finalizado': 'Nenhum evento finalizado.'
+  }
+  return messages[eventsStore.currentFilter] || 'Nenhum evento encontrado.'
+})
 </script>
 
 <style scoped>
+.home-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
 .header-text {
   margin-bottom: 2.5rem;
   text-align: center;

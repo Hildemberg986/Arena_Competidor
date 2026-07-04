@@ -10,17 +10,32 @@ export const useEventsStore = defineStore('events', () => {
 
   const filteredEvents = computed(() => {
     if (currentFilter.value === 'todos') {
-      return events.value
+      // Mostra apenas ativos e planejados (disponíveis para compra)
+      return events.value.filter(event => 
+        event.status === 'ativo' || event.status === 'planejado'
+      )
     }
-    return events.value.filter(event => event.status === currentFilter.value)
+    
+    // Filtro específico, mas nunca mostra cancelados
+    return events.value.filter(event => 
+      event.status === currentFilter.value && event.status !== 'cancelado'
+    )
   })
 
   const featuredEvent = computed(() => {
-    const activeEvents = events.value.filter(e => e.status === 'ativo')
-    if (activeEvents.length > 0) {
-      return activeEvents[0]
-    }
-    return events.value[0] || null
+    return events.value.find(event => event.status === 'ativo') || null
+  })
+
+  const activeEventsCount = computed(() => {
+    return events.value.filter(e => e.status === 'ativo').length
+  })
+
+  const plannedEventsCount = computed(() => {
+    return events.value.filter(e => e.status === 'planejado').length
+  })
+
+  const finishedEventsCount = computed(() => {
+    return events.value.filter(e => e.status === 'finalizado').length
   })
 
   async function fetchEvents() {
@@ -29,7 +44,12 @@ export const useEventsStore = defineStore('events', () => {
     try {
       const data = await eventsService.getEvents()
       if (data.status === 'success' && data.data) {
-        events.value = data.data
+        // Remove cancelados já na origem
+        events.value = data.data.filter(event => event.status !== 'cancelado')
+      } else if (Array.isArray(data)) {
+        events.value = data.filter(event => event.status !== 'cancelado')
+      } else if (data.data && Array.isArray(data.data)) {
+        events.value = data.data.filter(event => event.status !== 'cancelado')
       } else {
         throw new Error('Dados inválidos recebidos da API')
       }
@@ -52,6 +72,9 @@ export const useEventsStore = defineStore('events', () => {
     currentFilter,
     filteredEvents,
     featuredEvent,
+    activeEventsCount,
+    plannedEventsCount,
+    finishedEventsCount,
     fetchEvents,
     setFilter
   }
