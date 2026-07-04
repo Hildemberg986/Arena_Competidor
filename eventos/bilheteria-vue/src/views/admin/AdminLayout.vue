@@ -108,6 +108,7 @@ function handleLogout() {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   padding: 0.75rem 1rem;
+  padding-top: max(0.75rem, env(safe-area-inset-top));
   border-bottom: 1px solid #e2e8f0;
   justify-content: space-between;
   align-items: center;
@@ -155,6 +156,7 @@ function handleLogout() {
   max-height: 100dvh;
   overflow-y: auto;
   padding: 1.5rem 1.25rem;
+  padding-top: max(1.5rem, env(safe-area-inset-top));
   background: rgba(255, 255, 255, 0.9);
   border-right: 1px solid rgba(148, 163, 184, 0.18);
   backdrop-filter: blur(16px);
@@ -227,6 +229,7 @@ function handleLogout() {
 
 .admin-content {
   padding: 1.5rem;
+  padding-top: max(1.5rem, env(safe-area-inset-top));
 }
 
 /* ============================================ */
@@ -252,12 +255,14 @@ function handleLogout() {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    padding-top: max(1.5rem, env(safe-area-inset-top));
   }
   .admin-sidebar.sidebar-open {
     transform: translateX(0);
   }
   .admin-content {
     padding: 0.75rem;
+    padding-top: max(0.75rem, env(safe-area-inset-top));
   }
 }
 
