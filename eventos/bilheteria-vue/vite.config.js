@@ -34,12 +34,12 @@ export default defineConfig(({ mode }) => {
               type: 'image/png'
             },
             {
-              src: `${base}img/icons/icon-512x512.png`,
+              src: `${base}img/icons/favicon.ico`,
               sizes: '512x512',
               type: 'image/png'
             },
             {
-              src: `${base}img/icons/icon-512x512.png`,
+              src: `${base}img/icons/favicon.ico`,
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable'
