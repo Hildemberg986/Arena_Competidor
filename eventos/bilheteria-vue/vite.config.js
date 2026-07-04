@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
           background_color: "#f8fafc",
           display: "standalone",
           start_url: `${base}#/admin`,
-          scope: `${base}#/admin`,
+          scope: `${base}`,
           icons: [
             {
               src: `../../img/icon-192x192.png`,
