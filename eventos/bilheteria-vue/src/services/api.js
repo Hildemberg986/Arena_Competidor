@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.0.3:8000/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function getStorageItem(key) {
   if (typeof window === "undefined") {
