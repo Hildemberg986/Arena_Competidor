@@ -104,7 +104,7 @@ function handleLogout() {
   display: none;
   position: sticky;
   top: 0;
-  z-index: 100;
+  max-height: 80px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   padding: 0.75rem 1rem;
