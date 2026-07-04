@@ -29,17 +29,17 @@ export default defineConfig(({ mode }) => {
           start_url: `${base}#/`,
           icons: [
             {
-              src: `../../`,
+              src: `/favicon.ico`,
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: `${base}img/icons/favicon.ico`,
+              src: `/favicon.ico`,
               sizes: '512x512',
               type: 'image/png'
             },
             {
-              src: `${base}img/icons/favicon.ico`,
+              src: `/favicon.ico`,
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable'
