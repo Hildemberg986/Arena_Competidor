@@ -102,7 +102,7 @@ function handleLogout() {
 /* ============================================ */
 .admin-mobile-header {
   display: none;
-  position: sticky;
+  position: sticky;     
   top: 0;
   max-height: 80px;
   background: rgba(255, 255, 255, 0.95);

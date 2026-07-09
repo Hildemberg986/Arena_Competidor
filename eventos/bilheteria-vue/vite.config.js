@@ -17,35 +17,8 @@ export default defineConfig(({ mode }) => {
       vue(),
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["favicon.ico", "img/**/*"],
-        manifest: {
-          name: "Arena Competidor - Bilheteria Digital",
-          short_name: "Arena Competidor",
-          description: "Bilheteria digital para eventos esportivos",
-          theme_color: "#e62117",
-          background_color: "#f8fafc",
-          display: "standalone",
-          start_url: `${base}#/admin`,
-          scope: `${base}`,
-          icons: [
-            {
-              src: `../../img/icon-192x192.png`,
-              sizes: "192x192",
-              type: "image/png",
-            },
-            {
-              src: `../../img/icon-512x512.png`,
-              sizes: "512x512",
-              type: "image/png",
-            },
-            {
-              src: `../../img/icon-512x512.png`,
-              sizes: "512x512",
-              type: "image/png",
-              purpose: "maskable",
-            },
-          ],
-        },
+        // Não gera manifesto (usamos os nossos personalizados)
+        manifest: false,
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,jpg,webp}"],
           runtimeCaching: [
