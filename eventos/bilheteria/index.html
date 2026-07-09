@@ -5,11 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Bilheteria - Arena Competidor</title>
     <link rel="shortcut icon" type="image/x-icon" href="/eventos/bilheteria/assets/favicon.DGLa0yOp.ico">
+    
+    <!-- Manifesto dinâmico - troca conforme a rota -->
+    <link rel="manifest" href="/eventos/bilheteria/manifest-app.json" id="manifest-link">
+    <script>
+      const path = window.location.hash;
+      const link = document.getElementById('manifest-link');
+      if (path.includes('#/admin')) {
+        link.href = '/eventos/bilheteria/manifest-admin.json';
+      }
+    </script>
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script type="module" crossorigin src="/eventos/bilheteria/assets/main.Bieirdqu.js"></script>
+  <script type="module" crossorigin src="/eventos/bilheteria/assets/main.CLt-Dq1E.js"></script>
   <link rel="stylesheet" crossorigin href="/eventos/bilheteria/assets/main.CFiOFpwS.css">
-<link rel="manifest" href="/eventos/bilheteria/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/eventos/bilheteria/registerSW.js"></script></head>
+<script id="vite-plugin-pwa:register-sw" src="/eventos/bilheteria/registerSW.js"></script></head>
 <body>
     <div id="app"></div>    
 </body>
