@@ -78,6 +78,11 @@ export const authService = {
     return response.data;
   },
 
+  async loginPortaria(codigo) {
+    const response = await apiClient.post("/auth/login-portaria", { codigo });
+    return response.data;
+  },
+
   async me() {
     const response = await apiClient.get("/auth/me");
     return response.data;
@@ -188,7 +193,10 @@ export const adminService = {
   },
 
   async updateTipoInscricao(id, payload) {
-    const response = await adminApiClient.put(`/tipos-inscricao/${id}`, payload);
+    const response = await adminApiClient.put(
+      `/tipos-inscricao/${id}`,
+      payload,
+    );
     return response.data;
   },
 
@@ -235,7 +243,9 @@ export const adminService = {
   },
 
   async pagarManual(ticketId) {
-    const response = await adminApiClient.post(`/tickets/${ticketId}/pagar-manual`);
+    const response = await adminApiClient.post(
+      `/tickets/${ticketId}/pagar-manual`,
+    );
     return response.data;
   },
 

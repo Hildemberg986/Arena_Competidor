@@ -17,12 +17,11 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/LoginView.vue"),
+    component: () => import("@/views/WelcomeView.vue"),
   },
   {
     path: "/admin/login",
-    name: "admin-login",
-    component: () => import("@/views/admin/LoginView.vue"),
+    redirect: { name: "login" },
   },
   {
     path: "/admin",
@@ -80,7 +79,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(), // Remove o VITE_BASE_URL daqui
+  history: createWebHashHistory(),
   routes,
   scrollBehavior() {
     return { top: 0 };
@@ -100,13 +99,12 @@ router.beforeEach((to) => {
     if (hasAdminToken) {
       return { name: "admin-campeonatos" };
     }
-
-    return true;
+    return { name: "login" };
   }
 
   if (!hasAdminToken) {
     return {
-      name: "admin-login",
+      name: "login",
       query: {
         redirect: to.fullPath,
       },
