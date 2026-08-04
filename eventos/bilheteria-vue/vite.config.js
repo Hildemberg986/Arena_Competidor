@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
           theme_color: "#e62117",
           background_color: "#f8fafc",
           display: "standalone",
-          start_url: `${base}#/login`,
+          start_url: `${base}#/bem-vindo`,
           scope: `${base}`,
           icons: [
             {

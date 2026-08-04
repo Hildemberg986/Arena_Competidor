@@ -15,13 +15,19 @@ const routes = [
     props: true,
   },
   {
-    path: "/login",
-    name: "login",
+    path: "/bem-vindo",
+    name: "welcome",
     component: () => import("@/views/WelcomeView.vue"),
   },
   {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/LoginView.vue"),
+  },
+  {
     path: "/admin/login",
-    redirect: { name: "login" },
+    name: "admin-login",
+    component: () => import("@/views/admin/LoginView.vue"),
   },
   {
     path: "/admin",
@@ -99,12 +105,12 @@ router.beforeEach((to) => {
     if (hasAdminToken) {
       return { name: "admin-campeonatos" };
     }
-    return { name: "login" };
+    return true;
   }
 
   if (!hasAdminToken) {
     return {
-      name: "login",
+      name: "admin-login",
       query: {
         redirect: to.fullPath,
       },
