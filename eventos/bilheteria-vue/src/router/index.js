@@ -134,7 +134,7 @@ router.beforeEach((to) => {
       case "portaria":
         return "/portaria/login";
       default:
-        return "/login";
+        return "/";
     }
   }
 
