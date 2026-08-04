@@ -54,51 +54,28 @@
 <script setup>
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
+const auth = useAuthStore();
 
 onMounted(() => {
-  const token = localStorage.getItem("access_token");
-  const savedModo = localStorage.getItem("app_modo");
-
-  if (token && savedModo) {
-    // Já está logado e tem modo → vai direto pra área
-    redirecionarParaArea(savedModo);
-  } else if (savedModo) {
-    // Tem modo mas não está logado → vai pro login do modo
-    redirecionarParaLogin(savedModo);
+  if (auth.isAuthenticated && auth.appModo) {
+    auth.redirecionarPorModo();
   }
-  // Se não tem nada → mostra a tela de boas-vindas
 });
 
 function selecionarModo(tipo) {
-  localStorage.setItem("app_modo", tipo);
-  redirecionarParaLogin(tipo);
-}
-
-function redirecionarParaLogin(tipo) {
+  auth.setAppModo(tipo);
   switch (tipo) {
     case "admin":
       router.push("/admin/login");
       break;
     case "portaria":
-      router.push("/portaria/login"); // Nova rota
+      router.push("/portaria/login");
       break;
     default:
       router.push("/login");
-  }
-}
-
-function redirecionarParaArea(tipo) {
-  switch (tipo) {
-    case "admin":
-      router.push("/admin");
-      break;
-    case "portaria":
-      router.push("/admin/checkin");
-      break;
-    default:
-      router.push("/");
   }
 }
 </script>

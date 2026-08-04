@@ -76,41 +76,23 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { authService } from "@/services/api";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 const route = useRoute();
+const auth = useAuthStore();
+
 const email = ref("");
 const password = ref("");
 const adminToken = ref("");
-const loading = ref(false);
-const error = ref("");
 const showPassword = ref(false);
-const redirect = route.query.redirect || "/admin/campeonatos";
 
 async function handleLogin() {
-  loading.value = true;
-  error.value = "";
-
   try {
-    const data = await authService.login(email.value, password.value);
-    localStorage.setItem("access_token", data.access_token);
-    localStorage.setItem("token_type", data.token_type || "bearer");
-    localStorage.setItem("cliente", JSON.stringify(data.cliente || {}));
-    localStorage.setItem(
-      "user",
-      JSON.stringify(data.cliente || { email: email.value }),
-    );
-    localStorage.setItem("adminToken", adminToken.value.trim());
-    router.push(String(redirect));
+    await auth.loginAdmin(email.value, password.value, adminToken.value);
+    router.push("/admin");
   } catch (err) {
-    error.value =
-      err?.response?.data?.detail ||
-      err?.response?.data?.message ||
-      err.message ||
-      "Falha ao entrar";
-  } finally {
-    loading.value = false;
+    // erro já está em auth.error
   }
 }
 </script>

@@ -12,12 +12,9 @@
         >
           <i class="fa-solid fa-ticket"></i> Ingressos
         </router-link>
-        <a href="/" class="btn-header">
-          <i class="fa-solid fa-home"></i> Início
-        </a>
 
         <router-link
-          v-if="!isAuthenticated"
+          v-if="!auth.isAuthenticated"
           :to="{ name: 'login' }"
           class="btn-header login-btn"
         >
@@ -32,22 +29,21 @@
           >
             <img
               src="https://img.icons8.com/?size=100&id=85147&format=png&color=000000"
-              alt="Conta do usuário"
+              alt="Conta"
             />
           </button>
 
           <div v-if="userMenuOpen" class="user-dropdown" @click.stop>
             <div class="user-summary">
-              <strong>{{ displayName }}</strong>
-              <span>{{ userProfile?.email }}</span>
+              <strong>{{ auth.userName || "Usuário" }}</strong>
+              <span>{{ auth.userEmail }}</span>
             </div>
 
             <router-link
               class="dropdown-action link-action"
               :to="{ name: 'meus-ingressos' }"
             >
-              <i class="fa-solid fa-ticket"></i>
-              Ver meus ingressos
+              <i class="fa-solid fa-ticket"></i> Ver meus ingressos
             </router-link>
 
             <button
@@ -55,8 +51,7 @@
               type="button"
               @click="handleLogout"
             >
-              <i class="fa-solid fa-arrow-right-from-bracket"></i>
-              Sair
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
             </button>
           </div>
         </div>
@@ -77,87 +72,39 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useEventsStore } from "@/stores/events";
-import { authService } from "@/services/api";
+import { useAuthStore } from "@/stores/auth";
 
 const eventsStore = useEventsStore();
+const auth = useAuthStore();
 const route = useRoute();
+
 const isAdminRoute = computed(() => route.path.startsWith("/admin"));
-const isAuthenticated = ref(false);
-const userProfile = ref(null);
 const userMenuOpen = ref(false);
-
-const displayName = computed(() => {
-  const fullName =
-    userProfile.value?.nome_completo || userProfile.value?.name || "";
-  if (fullName) {
-    return fullName.split(" ")[0];
-  }
-
-  return userProfile.value?.email || "Conta";
-});
-
-function closeMenus() {
-  userMenuOpen.value = false;
-}
 
 function toggleUserMenu() {
   userMenuOpen.value = !userMenuOpen.value;
 }
 
-async function loadAuthState() {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    isAuthenticated.value = false;
-    userProfile.value = null;
-    return;
-  }
-
-  isAuthenticated.value = true;
-
-  try {
-    const response = await authService.me();
-    userProfile.value = response?.data || response;
-  } catch (error) {
-    handleLogout();
-  }
-}
-
-function handleLogout() {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("token_type");
-  localStorage.removeItem("cliente");
-  localStorage.removeItem("user");
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("auth_token");
-  isAuthenticated.value = false;
-  userProfile.value = null;
+function closeMenus() {
   userMenuOpen.value = false;
 }
 
-function handleDocumentClick() {
+function handleLogout() {
+  auth.logout();
   closeMenus();
 }
 
-onMounted(() => {
-  eventsStore.fetchEvents();
-  loadAuthState();
-  document.addEventListener("click", handleDocumentClick);
-});
-
+// Fecha menu ao mudar de rota
 watch(
   () => route.fullPath,
-  () => {
-    loadAuthState();
-    closeMenus();
-  },
+  () => closeMenus(),
 );
 
-onBeforeUnmount(() => {
-  document.removeEventListener("click", handleDocumentClick);
-});
+// Carrega eventos
+eventsStore.fetchEvents();
 </script>
 
 <style>
@@ -192,20 +139,16 @@ body {
   background-color: var(--bg);
   color: var(--text);
 }
-
 #app {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
-
 .link-action {
   text-decoration: none;
 }
 
-/* ============================================ */
 /* HEADER */
-/* ============================================ */
 .app-header {
   background: var(--card);
   padding: 0.75rem 1rem;
@@ -217,7 +160,6 @@ body {
   z-index: 1000;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
-
 .logo-box {
   max-width: 110px;
 }
@@ -226,7 +168,6 @@ body {
   height: auto;
   display: block;
 }
-
 .header-actions {
   display: flex;
   gap: 0.4rem;
@@ -269,9 +210,7 @@ body {
   filter: brightness(0.9);
 }
 
-/* ============================================ */
 /* USER MENU */
-/* ============================================ */
 .user-menu-wrap {
   position: relative;
 }
@@ -290,7 +229,6 @@ body {
   width: 20px;
   height: 20px;
 }
-
 .user-dropdown {
   position: absolute;
   right: 0;
@@ -319,7 +257,6 @@ body {
   font-size: 0.8rem;
   word-break: break-word;
 }
-
 .dropdown-action {
   width: 100%;
   border: 0;
@@ -343,9 +280,7 @@ body {
   color: #b91c1c;
 }
 
-/* ============================================ */
 /* CONTAINER */
-/* ============================================ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -355,9 +290,7 @@ body {
   box-sizing: border-box;
 }
 
-/* ============================================ */
 /* FOOTER */
-/* ============================================ */
 .app-footer {
   text-align: center;
   padding: 2rem 1rem 1.5rem;
@@ -367,9 +300,7 @@ body {
   margin-top: auto;
 }
 
-/* ============================================ */
 /* TABLET+ */
-/* ============================================ */
 @media (min-width: 769px) {
   .app-header {
     padding: 1rem 1.5rem;
@@ -403,9 +334,7 @@ body {
   }
 }
 
-/* ============================================ */
 /* MOBILE */
-/* ============================================ */
 @media (max-width: 480px) {
   .btn-header {
     font-size: 0.7rem;

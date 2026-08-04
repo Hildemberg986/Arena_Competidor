@@ -3,7 +3,7 @@
     <div class="auth-card">
       <p class="eyebrow">Arena Competidor</p>
       <h1>Entrar</h1>
-      <p class="subtitle">Acesse sua conta para finalizar a inscrição.</p>
+      <p class="subtitle">Acesse sua conta para comprar ingressos.</p>
 
       <form class="auth-form" @submit.prevent="handleLogin">
         <label>
@@ -31,7 +31,6 @@
               type="button"
               class="toggle-password"
               @click="showPassword = !showPassword"
-              :aria-label="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
             >
               <i
                 :class="
@@ -42,21 +41,21 @@
           </div>
         </label>
 
-        <button class="primary-btn" type="submit" :disabled="loading">
-          <i v-if="loading" class="fa-solid fa-spinner fa-spin"></i>
-          {{ loading ? "Entrando..." : "Entrar" }}
+        <button class="primary-btn" type="submit" :disabled="auth.loading">
+          <i v-if="auth.loading" class="fa-solid fa-spinner fa-spin"></i>
+          {{ auth.loading ? "Entrando..." : "Entrar" }}
         </button>
       </form>
 
-      <p v-if="error" class="error-text">
-        <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+      <p v-if="auth.error" class="error-text">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ auth.error }}
       </p>
 
       <div class="auth-links">
         <router-link :to="{ name: 'cadastro', query: { redirect } }"
           >← Criar conta</router-link
         >
-        <router-link to="/">Voltar</router-link>
+        <router-link to="/bem-vindo">Voltar</router-link>
       </div>
     </div>
   </div>
@@ -65,46 +64,28 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { authService } from "@/services/api";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 const route = useRoute();
+const auth = useAuthStore();
+
 const email = ref("");
 const password = ref("");
-const loading = ref(false);
-const error = ref("");
-const redirect = route.query.redirect || "/";
 const showPassword = ref(false);
+const redirect = route.query.redirect || "/";
 
 async function handleLogin() {
-  loading.value = true;
-  error.value = "";
   try {
-    const data = await authService.login(email.value, password.value);
-    localStorage.setItem("access_token", data.access_token);
-    localStorage.setItem("token_type", data.token_type || "bearer");
-    localStorage.setItem("cliente", JSON.stringify(data.cliente || {}));
-    localStorage.setItem(
-      "user",
-      JSON.stringify(data.cliente || { email: email.value }),
-    );
+    await auth.loginCliente(email.value, password.value);
     router.push(String(redirect));
-  } catch (err) {
-    error.value =
-      err?.response?.data?.detail ||
-      err?.response?.data?.message ||
-      err.message ||
-      "Falha ao entrar";
-  } finally {
-    loading.value = false;
+  } catch {
+    // erro já está em auth.error
   }
 }
 </script>
 
 <style scoped>
-/* ============================================ */
-/* GERAL */
-/* ============================================ */
 .auth-page {
   min-height: 100dvh;
   display: grid;
@@ -137,9 +118,6 @@ h1 {
   font-size: 0.85rem;
 }
 
-/* ============================================ */
-/* FORM */
-/* ============================================ */
 .auth-form {
   display: grid;
   gap: 0.85rem;
@@ -151,7 +129,6 @@ label {
   color: var(--text);
   font-size: 0.85rem;
 }
-
 input {
   height: 46px;
   border: 1px solid #cbd5e1;
@@ -160,12 +137,8 @@ input {
   font: inherit;
   font-size: 0.9rem;
   background: #fff;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
   box-sizing: border-box;
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
 }
 input:focus {
@@ -228,9 +201,6 @@ input::placeholder {
   cursor: not-allowed;
 }
 
-/* ============================================ */
-/* ERROR */
-/* ============================================ */
 .error-text {
   margin-top: 0.85rem;
   color: #b91c1c;
@@ -243,13 +213,7 @@ input::placeholder {
   padding: 0.65rem 0.85rem;
   border-radius: 10px;
 }
-.error-text i {
-  font-size: 0.9rem;
-}
 
-/* ============================================ */
-/* LINKS */
-/* ============================================ */
 .auth-links {
   display: flex;
   justify-content: space-between;
@@ -265,9 +229,6 @@ input::placeholder {
   color: #c81e14;
 }
 
-/* ============================================ */
-/* MOBILE */
-/* ============================================ */
 @media (max-width: 480px) {
   .auth-page {
     padding: 0.75rem;
