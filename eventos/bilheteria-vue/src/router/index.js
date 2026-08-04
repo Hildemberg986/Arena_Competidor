@@ -35,6 +35,17 @@ const routes = [
     component: () => import("@/views/portaria/PortariaLoginView.vue"),
   },
   {
+    path: "/portaria",
+    component: () => import("@/views/portaria/PortariaLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "portaria-checkin",
+        component: () => import("@/views/portaria/PortariaCheckinView.vue"),
+      },
+    ],
+  },
+  {
     path: "/admin",
     component: () => import("@/views/admin/AdminLayout.vue"),
     children: [
@@ -45,7 +56,8 @@ const routes = [
       {
         path: "campeonatos",
         name: "admin-campeonatos",
-        component: () => import("@/views/admin/campeonatos/CampeonatosView.vue"),
+        component: () =>
+          import("@/views/admin/campeonatos/CampeonatosView.vue"),
       },
       {
         path: "lotes",
@@ -55,7 +67,8 @@ const routes = [
       {
         path: "tipos-inscricao",
         name: "admin-tipos-inscricao",
-        component: () => import("@/views/admin/tipos-inscricao/TiposInscricaoView.vue"),
+        component: () =>
+          import("@/views/admin/tipos-inscricao/TiposInscricaoView.vue"),
       },
       {
         path: "precos",
@@ -65,7 +78,8 @@ const routes = [
       {
         path: "pagamento-manual",
         name: "admin-pagamento-manual",
-        component: () => import("@/views/admin/pagamento-manual/PagamentoManualView.vue"),
+        component: () =>
+          import("@/views/admin/pagamento-manual/PagamentoManualView.vue"),
       },
       {
         path: "checkin",
@@ -103,18 +117,24 @@ router.beforeEach((to) => {
   // 1. Se está na raiz ou bem-vindo e já tem modo + token → redireciona direto
   if ((to.path === "/" || to.path === "/bem-vindo") && token && appModo) {
     switch (appModo) {
-      case "admin": return "/admin";
-      case "portaria": return "/admin/checkin";
-      default: return true; // cliente vai pra home normalmente
+      case "admin":
+        return "/admin";
+      case "portaria":
+        return "/portaria";
+      default:
+        return true;
     }
   }
 
   // 2. Se está no bem-vindo com modo mas sem token → vai pro login certo
   if (to.path === "/bem-vindo" && appModo && !token) {
     switch (appModo) {
-      case "admin": return "/admin/login";
-      case "portaria": return "/portaria/login";
-      default: return "/login";
+      case "admin":
+        return "/admin/login";
+      case "portaria":
+        return "/portaria/login";
+      default:
+        return "/login";
     }
   }
 
@@ -124,7 +144,6 @@ router.beforeEach((to) => {
       if (adminToken) return { name: "admin-campeonatos" };
       return true;
     }
-
     if (!adminToken) {
       return { name: "admin-login", query: { redirect: to.fullPath } };
     }
@@ -133,8 +152,11 @@ router.beforeEach((to) => {
   // 4. Proteção da rota de portaria
   if (to.path.startsWith("/portaria")) {
     if (to.name === "portaria-login") {
-      if (adminToken) return "/admin/checkin";
+      if (adminToken) return "/portaria";
       return true;
+    }
+    if (!adminToken) {
+      return { name: "portaria-login", query: { redirect: to.fullPath } };
     }
   }
 

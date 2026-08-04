@@ -5,25 +5,28 @@
         <h1>Bem-vindo ao Arena Competidor</h1>
         <p>Compre ingressos, gerencie eventos ou faça check-in na portaria.</p>
 
-        <button class="welcome-btn" @click="selecionarModo('cliente')">
-          <span>Vamos lá</span>
-          <i class="fa-solid fa-arrow-right"></i>
+        <button
+          class="welcome-btn"
+          @click="irParaCliente"
+          @touchstart.prevent="startLongPress"
+          @touchend.prevent="cancelLongPress"
+          @mousedown.prevent="startLongPress"
+          @mouseup.prevent="cancelLongPress"
+        >
+          Vamos lá
         </button>
 
-        <p class="trocar-modulo" @click="clicksNoTexto">
-          {{ mostrarOpcoes ? "Esconder" : "" }}
-        </p>
-
         <div v-if="mostrarOpcoes" class="opcoes-extras">
-          <button class="welcome-btn admin" @click="selecionarModo('admin')">
-            <span class="btn-icon">🔧</span>
+          <button
+            class="welcome-btn secondary"
+            @click="selecionarModo('admin')"
+          >
             Administração
           </button>
           <button
-            class="welcome-btn portaria"
+            class="welcome-btn secondary"
             @click="selecionarModo('portaria')"
           >
-            <span class="btn-icon">🚪</span>
             Portaria
           </button>
         </div>
@@ -38,20 +41,22 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const mostrarOpcoes = ref(false);
+let longPressTimer = null;
 
-let clickCount = 0;
-let clickTimer = null;
-
-function clicksNoTexto() {
-  clickCount++;
-  clearTimeout(clickTimer);
-  if (clickCount >= 5) {
+function startLongPress() {
+  longPressTimer = setTimeout(() => {
     mostrarOpcoes.value = !mostrarOpcoes.value;
-    clickCount = 0;
+  }, 2000);
+}
+
+function cancelLongPress() {
+  clearTimeout(longPressTimer);
+}
+
+function irParaCliente() {
+  if (!mostrarOpcoes.value) {
+    selecionarModo("cliente");
   }
-  clickTimer = setTimeout(() => {
-    clickCount = 0;
-  }, 1000);
 }
 
 function selecionarModo(tipo) {
@@ -75,21 +80,22 @@ function selecionarModo(tipo) {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-  padding: 1rem;
+  background: #fff;
+  padding: 1.5rem;
   text-align: center;
 }
 .welcome-screen {
   width: 100%;
-  max-width: 380px;
+  max-width: 360px;
 }
 .welcome-content {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 h1 {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 p {
   color: #64748b;
@@ -98,44 +104,46 @@ p {
 }
 
 .welcome-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
+  width: 100%;
+  padding: 0.9rem;
   border: none;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #e62117;
   color: #fff;
   font: inherit;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 .welcome-btn:active {
   filter: brightness(0.9);
 }
-.welcome-btn.admin {
-  background: #6366f1;
-  width: 100%;
-}
-.welcome-btn.portaria {
-  background: #059669;
-  width: 100%;
-}
 
-.trocar-modulo {
-  font-size: 0.7rem;
-  color: transparent;
-  cursor: default;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  height: 20px;
+.welcome-btn.secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+.welcome-btn.secondary:active {
+  background: #e2e8f0;
 }
 
 .opcoes-extras {
   display: grid;
   gap: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
