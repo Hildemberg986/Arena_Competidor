@@ -33,7 +33,6 @@
               type="button"
               class="toggle-password"
               @click="showPassword = !showPassword"
-              :aria-label="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
             >
               <i
                 :class="
@@ -55,18 +54,20 @@
           />
         </label>
 
-        <button class="primary-btn" type="submit" :disabled="loading">
-          <i v-if="loading" class="fa-solid fa-spinner fa-spin"></i>
-          {{ loading ? "Entrando..." : "Entrar no admin" }}
+        <button class="primary-btn" type="submit" :disabled="auth.loading">
+          <i v-if="auth.loading" class="fa-solid fa-spinner fa-spin"></i>
+          {{ auth.loading ? "Entrando..." : "Entrar no admin" }}
         </button>
       </form>
 
-      <p v-if="error" class="error-text">
-        <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+      <p v-if="auth.error" class="error-text">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ auth.error }}
       </p>
 
       <div class="admin-links">
-        <router-link to="/login">← Login normal</router-link>
+        <button class="link-btn" @click="escolherOutroAcesso">
+          ← Escolher outro acesso
+        </button>
         <router-link to="/">Voltar ao site</router-link>
       </div>
     </div>
@@ -91,16 +92,19 @@ async function handleLogin() {
   try {
     await auth.loginAdmin(email.value, password.value, adminToken.value);
     router.push("/admin");
-  } catch (err) {
+  } catch {
     // erro já está em auth.error
   }
+}
+
+function escolherOutroAcesso() {
+  localStorage.removeItem("app_modo");
+  auth.logout();
+  router.push("/bem-vindo");
 }
 </script>
 
 <style scoped>
-/* ============================================ */
-/* GERAL */
-/* ============================================ */
 .admin-login-page {
   min-height: 100dvh;
   display: grid;
@@ -110,7 +114,6 @@ async function handleLogin() {
     radial-gradient(circle at top, rgba(230, 33, 23, 0.12), transparent 34%),
     linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
 }
-
 .admin-login-card {
   width: min(100%, 420px);
   background: rgba(255, 255, 255, 0.96);
@@ -120,7 +123,6 @@ async function handleLogin() {
   border: 1px solid rgba(148, 163, 184, 0.15);
   animation: fadeUp 0.4s ease;
 }
-
 .eyebrow {
   color: var(--primary);
   font-weight: 800;
@@ -139,9 +141,6 @@ h1 {
   line-height: 1.4;
 }
 
-/* ============================================ */
-/* FORM */
-/* ============================================ */
 .login-form {
   display: grid;
   gap: 0.85rem;
@@ -153,7 +152,6 @@ label {
   color: var(--text);
   font-size: 0.85rem;
 }
-
 input {
   height: 46px;
   border: 1px solid #cbd5e1;
@@ -162,12 +160,8 @@ input {
   font: inherit;
   font-size: 0.9rem;
   background: #fff;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
   box-sizing: border-box;
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
 }
 input:focus {
@@ -231,9 +225,6 @@ input::placeholder {
   cursor: not-allowed;
 }
 
-/* ============================================ */
-/* ERROR */
-/* ============================================ */
 .error-text {
   margin-top: 0.85rem;
   color: #b91c1c;
@@ -246,13 +237,7 @@ input::placeholder {
   padding: 0.65rem 0.85rem;
   border-radius: 10px;
 }
-.error-text i {
-  font-size: 0.9rem;
-}
 
-/* ============================================ */
-/* LINKS */
-/* ============================================ */
 .admin-links {
   display: flex;
   justify-content: space-between;
@@ -268,9 +253,21 @@ input::placeholder {
   color: #c81e14;
 }
 
-/* ============================================ */
-/* MOBILE */
-/* ============================================ */
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.link-btn:active {
+  color: #c81e14;
+}
+
 @media (max-width: 480px) {
   .admin-login-page {
     padding: 0.75rem;

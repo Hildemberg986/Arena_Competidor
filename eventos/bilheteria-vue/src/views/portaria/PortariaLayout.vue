@@ -22,8 +22,7 @@ const router = useRouter();
 const auth = useAuthStore();
 
 function handleLogout() {
-  auth.logout();
-  router.push("/bem-vindo");
+  auth.logoutTotal(); // Limpa tudo e vai pro bem-vindo
 }
 </script>
 

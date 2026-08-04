@@ -63,7 +63,9 @@
       </p>
 
       <div class="portaria-links">
-        <router-link to="/bem-vindo">← Escolher outro acesso</router-link>
+        <button class="link-btn" @click="escolherOutroAcesso">
+          ← Escolher outro acesso
+        </button>
         <router-link to="/">Voltar ao site</router-link>
       </div>
     </div>
@@ -92,6 +94,12 @@ async function handleLogin() {
   } catch {
     // erro já está em auth.error
   }
+}
+
+function escolherOutroAcesso() {
+  localStorage.removeItem("app_modo");
+  auth.logout();
+  router.push("/bem-vindo");
 }
 </script>
 
@@ -240,6 +248,21 @@ input::placeholder {
   font-weight: 700;
 }
 .portaria-links a:active {
+  color: #047857;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #059669;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.link-btn:active {
   color: #047857;
 }
 
