@@ -7,11 +7,14 @@
 
         <button
           class="welcome-btn"
+          ref="btnVamos"
           @click="irParaCliente"
-          @touchstart.prevent="startLongPress"
-          @touchend.prevent="cancelLongPress"
-          @mousedown.prevent="startLongPress"
-          @mouseup.prevent="cancelLongPress"
+          @mousedown="startLongPress"
+          @mouseup="cancelLongPress"
+          @mouseleave="cancelLongPress"
+          @touchstart="startLongPress"
+          @touchend="cancelLongPress"
+          @touchmove="cancelLongPress"
         >
           Vamos lá
         </button>
@@ -42,21 +45,27 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const mostrarOpcoes = ref(false);
 let longPressTimer = null;
+let wasLongPress = false;
 
-function startLongPress() {
+function startLongPress(e) {
+  wasLongPress = false;
   longPressTimer = setTimeout(() => {
+    wasLongPress = true;
     mostrarOpcoes.value = !mostrarOpcoes.value;
-  }, 2000);
+  }, 1500);
 }
 
 function cancelLongPress() {
   clearTimeout(longPressTimer);
 }
 
-function irParaCliente() {
-  if (!mostrarOpcoes.value) {
-    selecionarModo("cliente");
+function irParaCliente(e) {
+  // Se foi long press, não faz nada
+  if (wasLongPress) {
+    wasLongPress = false;
+    return;
   }
+  selecionarModo("cliente");
 }
 
 function selecionarModo(tipo) {
