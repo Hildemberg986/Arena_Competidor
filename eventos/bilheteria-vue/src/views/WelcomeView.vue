@@ -58,13 +58,17 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 onMounted(() => {
-  // Se já escolheu antes E está logado, vai direto
   const token = localStorage.getItem("access_token");
   const savedModo = localStorage.getItem("app_modo");
 
   if (token && savedModo) {
+    // Já está logado e tem modo → vai direto pra área
+    redirecionarParaArea(savedModo);
+  } else if (savedModo) {
+    // Tem modo mas não está logado → vai pro login do modo
     redirecionarParaLogin(savedModo);
   }
+  // Se não tem nada → mostra a tela de boas-vindas
 });
 
 function selecionarModo(tipo) {
@@ -78,10 +82,23 @@ function redirecionarParaLogin(tipo) {
       router.push("/admin/login");
       break;
     case "portaria":
-      router.push("/admin/login?modo=portaria");
+      router.push("/portaria/login"); // Nova rota
       break;
     default:
       router.push("/login");
+  }
+}
+
+function redirecionarParaArea(tipo) {
+  switch (tipo) {
+    case "admin":
+      router.push("/admin");
+      break;
+    case "portaria":
+      router.push("/admin/checkin");
+      break;
+    default:
+      router.push("/");
   }
 }
 </script>

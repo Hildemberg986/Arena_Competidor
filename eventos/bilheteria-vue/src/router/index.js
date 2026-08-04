@@ -30,6 +30,11 @@ const routes = [
     component: () => import("@/views/admin/LoginView.vue"),
   },
   {
+    path: "/portaria/login",
+    name: "portaria-login",
+    component: () => import("@/views/portaria/PortariaLoginView.vue"),
+  },
+  {
     path: "/admin",
     component: () => import("@/views/admin/AdminLayout.vue"),
     children: [
