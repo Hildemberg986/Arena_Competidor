@@ -52,14 +52,14 @@
           />
         </label>
 
-        <button class="primary-btn" type="submit" :disabled="loading">
-          <i v-if="loading" class="fa-solid fa-spinner fa-spin"></i>
-          {{ loading ? "Entrando..." : "Acessar Portaria" }}
+        <button class="primary-btn" type="submit" :disabled="auth.loading">
+          <i v-if="auth.loading" class="fa-solid fa-spinner fa-spin"></i>
+          {{ auth.loading ? "Entrando..." : "Acessar Portaria" }}
         </button>
       </form>
 
-      <p v-if="error" class="error-text">
-        <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+      <p v-if="auth.error" class="error-text">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ auth.error }}
       </p>
 
       <div class="portaria-links">
@@ -73,40 +73,24 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { authService } from "@/services/api";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 const route = useRoute();
+const auth = useAuthStore();
+
 const email = ref("");
 const password = ref("");
 const codigoPortaria = ref("");
-const loading = ref(false);
-const error = ref("");
 const showPassword = ref(false);
-const redirect = route.query.redirect || "/admin/checkin";
+const redirect = route.query.redirect || "/portaria";
 
 async function handleLogin() {
-  loading.value = true;
-  error.value = "";
-
   try {
-    const data = await authService.login(email.value, password.value);
-    localStorage.setItem("access_token", data.access_token);
-    localStorage.setItem("token_type", data.token_type || "bearer");
-    localStorage.setItem("user", JSON.stringify(data.cliente || {}));
-    localStorage.setItem(
-      "adminToken",
-      codigoPortaria.value.trim() || "portaria",
-    );
+    await auth.loginPortaria(email.value, password.value, codigoPortaria.value);
     router.push(String(redirect));
-  } catch (err) {
-    error.value =
-      err?.response?.data?.detail ||
-      err?.response?.data?.message ||
-      err.message ||
-      "Falha ao entrar";
-  } finally {
-    loading.value = false;
+  } catch {
+    // erro já está em auth.error
   }
 }
 </script>

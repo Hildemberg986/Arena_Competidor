@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header v-if="!isAdminRoute" class="app-header">
+    <header v-if="!isAdminRoute && !isPortariaRoute" class="app-header">
       <div class="logo-box">
         <img src="../../../img/arena03.png" alt="Arena Competidor" />
       </div>
@@ -58,13 +58,13 @@
       </div>
     </header>
 
-    <main v-if="!isAdminRoute" class="container">
+    <main v-if="!isAdminRoute && !isPortariaRoute" class="container">
       <router-view />
     </main>
 
     <router-view v-else />
 
-    <footer v-if="!isAdminRoute" class="app-footer">
+    <footer v-if="!isAdminRoute && !isPortariaRoute" class="app-footer">
       Arena Competidor &copy; 2026 &bull; Todos os direitos reservados &bull;
       Bilheteria Digital
     </footer>
@@ -82,12 +82,12 @@ const auth = useAuthStore();
 const route = useRoute();
 
 const isAdminRoute = computed(() => route.path.startsWith("/admin"));
+const isPortariaRoute = computed(() => route.path.startsWith("/portaria"));
 const userMenuOpen = ref(false);
 
 function toggleUserMenu() {
   userMenuOpen.value = !userMenuOpen.value;
 }
-
 function closeMenus() {
   userMenuOpen.value = false;
 }
@@ -97,13 +97,10 @@ function handleLogout() {
   closeMenus();
 }
 
-// Fecha menu ao mudar de rota
 watch(
   () => route.fullPath,
   () => closeMenus(),
 );
-
-// Carrega eventos
 eventsStore.fetchEvents();
 </script>
 
