@@ -79,7 +79,7 @@ function selecionarModo(tipo) {
       break;
     default:
       localStorage.setItem("app_modo", "cliente");
-      router.push("/login");
+      router.push("/");
   }
 }
 </script>
