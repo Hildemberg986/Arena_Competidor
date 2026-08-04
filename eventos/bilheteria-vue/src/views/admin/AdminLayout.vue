@@ -76,13 +76,15 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
+const auth = useAuthStore();
 const menuAberto = ref(false);
 
 function handleLogout() {
-  localStorage.removeItem("adminToken");
-  router.push({ name: "admin-login" });
+  auth.logout();
+  router.push("/bem-vindo");
 }
 </script>
 
@@ -102,7 +104,7 @@ function handleLogout() {
 /* ============================================ */
 .admin-mobile-header {
   display: none;
-  position: sticky;     
+  position: sticky;
   top: 0;
   max-height: 80px;
   background: rgba(255, 255, 255, 0.95);
