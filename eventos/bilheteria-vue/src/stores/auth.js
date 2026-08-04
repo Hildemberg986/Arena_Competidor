@@ -7,10 +7,10 @@ import router from "@/router/index";
 export const useAuthStore = defineStore("auth", () => {
   // ========== STATE ==========
   const user = ref(null);
-  const token = ref(localStorage.getItem("access_token") || null);
-  const tokenType = ref(localStorage.getItem("token_type") || "bearer");
-  const adminToken = ref(localStorage.getItem("adminToken") || null);
-  const appModo = ref(localStorage.getItem("app_modo") || null);
+  const token = ref(null);
+  const tokenType = ref("bearer");
+  const adminToken = ref(null);
+  const appModo = ref(null); // Começa null, será carregado do localStorage
   const loading = ref(false);
   const error = ref("");
 
@@ -91,8 +91,7 @@ export const useAuthStore = defineStore("auth", () => {
     loading.value = true;
     error.value = "";
     try {
-      const data = await authService.register(payload);
-      return data;
+      return await authService.register(payload);
     } catch (err) {
       error.value =
         err?.response?.data?.detail || err.message || "Falha ao cadastrar";
@@ -138,7 +137,7 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("auth_token");
     localStorage.removeItem("adminToken");
-    // Mantém app_modo para saber qual login mostrar
+    // Mantém app_modo
   }
 
   function logoutTotal() {
@@ -161,15 +160,28 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  // Inicializa
-  async function init() {
+  // Carrega dados do localStorage ao iniciar
+  function init() {
+    token.value = localStorage.getItem("access_token") || null;
+    tokenType.value = localStorage.getItem("token_type") || "bearer";
+    adminToken.value = localStorage.getItem("adminToken") || null;
+    appModo.value = localStorage.getItem("app_modo") || null;
+
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        user.value = JSON.parse(userStr);
+      } catch {
+        user.value = null;
+      }
+    }
+
     if (token.value) {
-      await fetchUser();
+      fetchUser();
     }
   }
 
   return {
-    // State
     user,
     token,
     tokenType,
@@ -177,13 +189,11 @@ export const useAuthStore = defineStore("auth", () => {
     appModo,
     loading,
     error,
-    // Getters
     isAuthenticated,
     isAdmin,
     isPortaria,
     userName,
     userEmail,
-    // Actions
     setAppModo,
     loginCliente,
     loginAdmin,

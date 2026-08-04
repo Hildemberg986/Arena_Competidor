@@ -45,8 +45,7 @@ const routes = [
       {
         path: "campeonatos",
         name: "admin-campeonatos",
-        component: () =>
-          import("@/views/admin/campeonatos/CampeonatosView.vue"),
+        component: () => import("@/views/admin/campeonatos/CampeonatosView.vue"),
       },
       {
         path: "lotes",
@@ -56,8 +55,7 @@ const routes = [
       {
         path: "tipos-inscricao",
         name: "admin-tipos-inscricao",
-        component: () =>
-          import("@/views/admin/tipos-inscricao/TiposInscricaoView.vue"),
+        component: () => import("@/views/admin/tipos-inscricao/TiposInscricaoView.vue"),
       },
       {
         path: "precos",
@@ -67,8 +65,7 @@ const routes = [
       {
         path: "pagamento-manual",
         name: "admin-pagamento-manual",
-        component: () =>
-          import("@/views/admin/pagamento-manual/PagamentoManualView.vue"),
+        component: () => import("@/views/admin/pagamento-manual/PagamentoManualView.vue"),
       },
       {
         path: "checkin",
@@ -97,29 +94,48 @@ const router = createRouter({
   },
 });
 
+// ========== GUARD GLOBAL ==========
 router.beforeEach((to) => {
-  if (!to.path.startsWith("/admin")) {
-    return true;
-  }
+  const token = localStorage.getItem("access_token");
+  const appModo = localStorage.getItem("app_modo");
+  const adminToken = localStorage.getItem("adminToken");
 
-  const hasAdminToken =
-    typeof window !== "undefined" &&
-    Boolean(window.localStorage.getItem("adminToken"));
-
-  if (to.name === "admin-login") {
-    if (hasAdminToken) {
-      return { name: "admin-campeonatos" };
+  // 1. Se está na raiz ou bem-vindo e já tem modo + token → redireciona direto
+  if ((to.path === "/" || to.path === "/bem-vindo") && token && appModo) {
+    switch (appModo) {
+      case "admin": return "/admin";
+      case "portaria": return "/admin/checkin";
+      default: return true; // cliente vai pra home normalmente
     }
-    return true;
   }
 
-  if (!hasAdminToken) {
-    return {
-      name: "admin-login",
-      query: {
-        redirect: to.fullPath,
-      },
-    };
+  // 2. Se está no bem-vindo com modo mas sem token → vai pro login certo
+  if (to.path === "/bem-vindo" && appModo && !token) {
+    switch (appModo) {
+      case "admin": return "/admin/login";
+      case "portaria": return "/portaria/login";
+      default: return "/login";
+    }
+  }
+
+  // 3. Proteção de rotas admin
+  if (to.path.startsWith("/admin")) {
+    if (to.name === "admin-login") {
+      if (adminToken) return { name: "admin-campeonatos" };
+      return true;
+    }
+
+    if (!adminToken) {
+      return { name: "admin-login", query: { redirect: to.fullPath } };
+    }
+  }
+
+  // 4. Proteção da rota de portaria
+  if (to.path.startsWith("/portaria")) {
+    if (to.name === "portaria-login") {
+      if (adminToken) return "/admin/checkin";
+      return true;
+    }
   }
 
   return true;
