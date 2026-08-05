@@ -16,12 +16,8 @@
     <p v-if="feedback" class="alert" :class="feedbackType">{{ feedback }}</p>
 
     <div class="admin-grid">
-      <!-- Painel de busca -->
       <div class="panel search-panel">
-        <div class="panel-header">
-          <h3>Buscar inscrições</h3>
-        </div>
-
+        <div class="panel-header"><h3>Buscar inscrições</h3></div>
         <div class="search-row">
           <div class="search-field">
             <label>Buscar por</label>
@@ -33,7 +29,6 @@
               <option value="codigo">Código do Ingresso</option>
             </select>
           </div>
-
           <div class="search-field">
             <label>{{ searchLabel }}</label>
             <div class="input-with-icon">
@@ -54,7 +49,6 @@
             </div>
           </div>
         </div>
-
         <div class="search-actions">
           <button
             class="primary-btn"
@@ -69,7 +63,6 @@
         </div>
       </div>
 
-      <!-- Tabela de resultados -->
       <div class="panel table-panel">
         <div class="panel-header">
           <h3>Resultados</h3>
@@ -80,14 +73,12 @@
           <span class="spinner"></span>
           <p>Carregando inscrições...</p>
         </div>
-
         <div v-else-if="error" class="state-box error">
           <p>{{ error }}</p>
-          <button class="secondary-btn" type="button" @click="buscarInscricoes">
+          <button class="secondary-btn" @click="buscarInscricoes">
             Tentar novamente
           </button>
         </div>
-
         <div v-else-if="!comprasAgrupadas.length" class="state-box">
           <p>Nenhuma inscrição encontrada.</p>
         </div>
@@ -103,11 +94,17 @@
                 <th>Qtd</th>
                 <th>Valor total</th>
                 <th>Status</th>
+                <th>Check-in</th>
                 <th class="actions-header">Ações</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="compra in comprasAgrupadas" :key="compra.compra_id">
+              <tr
+                v-for="compra in comprasAgrupadas"
+                :key="compra.compra_id"
+                @click="toggleDetalhes(compra)"
+                class="clickable-row"
+              >
                 <td>
                   <span class="code-text">#{{ compra.compra_id }}</span>
                   <span
@@ -142,7 +139,14 @@
                     >{{ compra.status }}</span
                   >
                 </td>
-                <td class="actions-cell">
+                <td>
+                  <span v-if="compra.checkins > 0" class="checkin-badge"
+                    ><i class="fa-solid fa-check-double"></i>
+                    {{ compra.checkins }}/{{ compra.quantidade }}</span
+                  >
+                  <span v-else class="info-text">-</span>
+                </td>
+                <td class="actions-cell" @click.stop>
                   <button
                     v-if="compra.tipo === 'presencial'"
                     class="action-btn reprint-btn"
@@ -157,16 +161,68 @@
                     :disabled="pdfLoading[compra.compra_id]"
                   >
                     <i
-                      class="fa-solid"
                       :class="
                         pdfLoading[compra.compra_id]
                           ? 'fa-spinner fa-spin'
                           : 'fa-download'
                       "
+                      class="fa-solid"
                     ></i>
-                    {{ pdfLoading[compra.compra_id] ? "..." : "PDFs" }}
+                    PDFs
                   </button>
                   <span v-else class="info-text">-</span>
+                </td>
+              </tr>
+              <!-- Detalhes expandidos -->
+              <tr v-if="compra.expandido" :key="compra.compra_id + '_det'">
+                <td :colspan="9" class="detalhes-cell">
+                  <div class="detalhes-list">
+                    <div
+                      v-for="ticket in compra.tickets"
+                      :key="ticket.id"
+                      class="detalhe-item"
+                    >
+                      <div class="detalhe-info">
+                        <span class="code-text">{{
+                          ticket.codigo_ingresso
+                        }}</span>
+                        <span v-if="ticket.checkin_em" class="checkin-badge"
+                          ><i class="fa-solid fa-check-double"></i>
+                          {{ formatDateTime(ticket.checkin_em) }}</span
+                        >
+                        <span
+                          v-if="ticket.mercado_pago_id === 'PRESENCIAL'"
+                          class="presencial-badge"
+                          >Presencial</span
+                        >
+                      </div>
+                      <div class="detalhe-actions">
+                        <button
+                          v-if="
+                            ticket.status_pagamento === 'Aprovado' &&
+                            !ticket.checkin_em
+                          "
+                          class="action-btn pdf-individual-btn"
+                          @click="baixarPDFIndividual(ticket)"
+                          :disabled="pdfLoading[ticket.id]"
+                        >
+                          <i
+                            :class="
+                              pdfLoading[ticket.id]
+                                ? 'fa-spinner fa-spin'
+                                : 'fa-file-pdf'
+                            "
+                            class="fa-solid"
+                          ></i>
+                          PDF
+                        </button>
+                        <span v-else-if="ticket.checkin_em" class="info-text"
+                          >✅ Usado</span
+                        >
+                        <span v-else class="info-text">Indisponível</span>
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -185,11 +241,7 @@
         <div class="modal">
           <div class="modal-header">
             <h3>Venda Presencial</h3>
-            <button
-              type="button"
-              class="modal-close"
-              @click="showVendaModal = false"
-            >
+            <button class="modal-close" @click="showVendaModal = false">
               ✕
             </button>
           </div>
@@ -197,8 +249,8 @@
             <div v-if="vendaError" class="modal-error">{{ vendaError }}</div>
             <div class="form-grid">
               <div class="form-row span-2">
-                <label>Campeonato *</label>
-                <select v-model.number="vendaForm.campeonato_id" required>
+                <label>Campeonato *</label
+                ><select v-model.number="vendaForm.campeonato_id" required>
                   <option :value="0" disabled>Selecione</option>
                   <option v-for="c in campeonatos" :key="c.id" :value="c.id">
                     {{ c.nome_campeonato }}
@@ -206,8 +258,8 @@
                 </select>
               </div>
               <div class="form-row">
-                <label>Quantidade *</label>
-                <input
+                <label>Quantidade *</label
+                ><input
                   v-model.number="vendaForm.quantidade"
                   type="number"
                   min="1"
@@ -216,8 +268,8 @@
                 />
               </div>
               <div class="form-row">
-                <label>Valor unitário (R$) *</label>
-                <input
+                <label>Valor unitário *</label
+                ><input
                   v-model.number="vendaForm.valor_unitario"
                   type="number"
                   min="0"
@@ -226,8 +278,8 @@
                 />
               </div>
               <div class="form-row">
-                <label>CPF (opcional)</label>
-                <input
+                <label>CPF (opcional)</label
+                ><input
                   v-model.trim="vendaForm.cpf"
                   type="text"
                   placeholder="000.000.000-00"
@@ -267,7 +319,6 @@ const pdfLoading = ref({});
 const error = ref("");
 const feedback = ref("");
 const feedbackType = ref("success");
-
 const searchType = ref("todos");
 const searchQuery = ref("");
 
@@ -281,27 +332,26 @@ const vendaForm = ref({
   cpf: "",
 });
 
-const searchLabel = computed(() => {
-  const labels = {
-    todos: "Buscar",
-    nome: "Nome",
-    cpf: "CPF",
-    compra_id: "ID Compra",
-    codigo: "Código",
-  };
-  return labels[searchType.value] || "Buscar";
-});
-
-const searchPlaceholder = computed(() => {
-  const p = {
-    todos: "Digite para buscar...",
-    nome: "Nome completo",
-    cpf: "000.000.000-00",
-    compra_id: "Número",
-    codigo: "TKT-XXXXXXXX",
-  };
-  return p[searchType.value] || "Digite...";
-});
+const searchLabel = computed(
+  () =>
+    ({
+      todos: "Buscar",
+      nome: "Nome",
+      cpf: "CPF",
+      compra_id: "ID Compra",
+      codigo: "Código",
+    })[searchType.value] || "Buscar",
+);
+const searchPlaceholder = computed(
+  () =>
+    ({
+      todos: "Digite...",
+      nome: "Nome completo",
+      cpf: "000.000.000-00",
+      compra_id: "Número",
+      codigo: "TKT-XXXXXXXX",
+    })[searchType.value] || "Digite...",
+);
 
 const comprasAgrupadas = computed(() => {
   const grupos = new Map();
@@ -316,17 +366,20 @@ const comprasAgrupadas = computed(() => {
         cpf: t.cpf,
         campeonato: t.nome_campeonato,
         quantidade: 0,
-        valor_unitario: t.valor_unitario || 0,
         valor_total: 0,
         status: t.status_pagamento,
         tipo: isPresencial ? "presencial" : "online",
+        checkins: 0,
+        tickets: [],
+        expandido: false,
       });
     }
     const g = grupos.get(chave);
     g.quantidade += 1;
     g.valor_total += Number(t.total || t.valor_unitario || 0);
+    if (t.checkin_em) g.checkins += 1;
+    g.tickets.push(t);
   });
-
   let resultado = Array.from(grupos.values());
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.trim().toLowerCase();
@@ -356,6 +409,16 @@ function formatCurrency(v) {
     currency: "BRL",
   }).format(Number(v || 0));
 }
+function formatDateTime(d) {
+  if (!d) return "-";
+  return new Date(d).toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 function formatarCPF(c) {
   if (!c || c === "00000000000") return "-";
   const x = String(c).replace(/\D/g, "");
@@ -380,6 +443,10 @@ function showMessage(m, t = "success") {
   feedback.value = m;
   feedbackType.value = t;
   setTimeout(() => (feedback.value = ""), 5000);
+}
+
+function toggleDetalhes(compra) {
+  compra.expandido = !compra.expandido;
 }
 
 function abrirModalVenda() {
@@ -426,8 +493,7 @@ async function buscarInscricoes() {
   loading.value = true;
   error.value = "";
   try {
-    const response = await adminService.getTickets();
-    tickets.value = unwrapCollection(response);
+    tickets.value = unwrapCollection(await adminService.getTickets());
   } catch (err) {
     error.value = getApiErrorMessage(err, "Erro ao buscar inscrições.");
   } finally {
@@ -446,20 +512,34 @@ function baixarArquivo(blob, nome) {
   window.URL.revokeObjectURL(url);
 }
 
+async function baixarPDFIndividual(ticket) {
+  if (!ticket?.id || ticket.checkin_em) return;
+  pdfLoading.value[ticket.id] = true;
+  try {
+    baixarArquivo(
+      await adminService.downloadTicketPDF(ticket.id),
+      `inscricao-${ticket.codigo_ingresso || ticket.id}.pdf`,
+    );
+  } catch {
+    showMessage("Erro ao baixar PDF.", "error");
+  } finally {
+    pdfLoading.value[ticket.id] = false;
+  }
+}
+
 async function baixarPDFsCompra(compra) {
   pdfLoading.value[compra.compra_id] = true;
   try {
-    const ticketsDaCompra = tickets.value.filter(
-      (t) =>
-        (t.compra_id || t.id) === compra.compra_id &&
-        t.status_pagamento === "Aprovado" &&
-        !t.checkin_em,
+    const validos = compra.tickets.filter(
+      (t) => t.status_pagamento === "Aprovado" && !t.checkin_em,
     );
-    for (const t of ticketsDaCompra) {
+    for (const t of validos) {
       try {
-        const blob = await adminService.downloadTicketPDF(t.id);
-        baixarArquivo(blob, `inscricao-${t.codigo_ingresso || t.id}.pdf`);
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        baixarArquivo(
+          await adminService.downloadTicketPDF(t.id),
+          `inscricao-${t.codigo_ingresso || t.id}.pdf`,
+        );
+        await new Promise((r) => setTimeout(r, 300));
       } catch {}
     }
   } catch {
@@ -471,8 +551,10 @@ async function baixarPDFsCompra(compra) {
 
 async function reimprimirVenda(compraId) {
   try {
-    const blob = await adminService.reimprimirVenda(compraId);
-    baixarArquivo(blob, `venda-presencial-${compraId}.pdf`);
+    baixarArquivo(
+      await adminService.reimprimirVenda(compraId),
+      `venda-presencial-${compraId}.pdf`,
+    );
     showMessage("✅ PDF reimpresso!");
   } catch {
     showMessage("Erro ao reimprimir.", "error");
@@ -482,9 +564,7 @@ async function reimprimirVenda(compraId) {
 async function loadCampeonatos() {
   try {
     campeonatos.value = unwrapCollection(await adminService.getCampeonatos());
-  } catch {
-    console.error("Erro campeonatos");
-  }
+  } catch {}
 }
 
 onMounted(() => {
@@ -503,7 +583,6 @@ onMounted(() => {
   margin: 0 auto;
   box-sizing: border-box;
 }
-
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -536,7 +615,6 @@ onMounted(() => {
   gap: 0.5rem;
   flex-shrink: 0;
 }
-
 .alert {
   border-radius: 14px;
   padding: 0.75rem 0.85rem;
@@ -551,7 +629,6 @@ onMounted(() => {
   background: #fef2f2;
   color: #b91c1c;
 }
-
 .admin-grid {
   display: grid;
   gap: 1rem;
@@ -582,9 +659,7 @@ onMounted(() => {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-weight: 600;
-  white-space: nowrap;
 }
-
 .search-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -624,7 +699,6 @@ onMounted(() => {
   border-radius: 10px;
   padding: 0 0.8rem;
   cursor: pointer;
-  font-size: 0.85rem;
 }
 .search-actions {
   display: flex;
@@ -641,11 +715,11 @@ table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 600px;
+  min-width: 700px;
 }
 th,
 td {
-  padding: 0.65rem 0.5rem;
+  padding: 0.6rem 0.45rem;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
   vertical-align: middle;
@@ -657,11 +731,12 @@ th {
   font-weight: 700;
   white-space: nowrap;
 }
-tbody tr:hover {
-  background-color: #f8fafc;
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.15s;
 }
-tbody tr:last-child td {
-  border-bottom: none;
+.clickable-row:hover {
+  background-color: #f8fafc;
 }
 
 .info-cell {
@@ -685,7 +760,7 @@ tbody tr:last-child td {
   font-family: monospace;
   font-weight: 700;
   color: var(--primary);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 .price-text {
   font-weight: 700;
@@ -710,13 +785,21 @@ tbody tr:last-child td {
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
   font-weight: 600;
-  margin-left: 0.35rem;
+  margin-left: 0.3rem;
+}
+.checkin-badge {
+  font-size: 0.65rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .actions-cell {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.3rem;
   justify-content: center;
 }
 .action-btn {
@@ -738,16 +821,16 @@ tbody tr:last-child td {
   color: #15803d;
   border-color: rgba(21, 128, 61, 0.2);
 }
-.pdf-btn:active {
-  background: #bbf7d0;
+.pdf-individual-btn {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: rgba(21, 128, 61, 0.15);
+  font-size: 0.68rem;
 }
 .reprint-btn {
   background: #e0e7ff;
   color: #4338ca;
   border-color: rgba(67, 56, 202, 0.2);
-}
-.reprint-btn:active {
-  background: #c7d2fe;
 }
 .action-btn:disabled {
   opacity: 0.5;
@@ -796,9 +879,6 @@ tbody tr:last-child td {
   background: var(--primary);
   color: #fff;
 }
-.primary-btn:active {
-  filter: brightness(0.9);
-}
 .primary-btn:disabled {
   opacity: 0.6;
 }
@@ -807,8 +887,34 @@ tbody tr:last-child td {
   color: var(--text);
   border-color: #cbd5e1;
 }
-.secondary-btn:active {
+
+/* Detalhes expandidos */
+.detalhes-cell {
+  padding: 0 !important;
   background: #f8fafc;
+}
+.detalhes-list {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.65rem 1rem;
+}
+.detalhe-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+}
+.detalhe-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.detalhe-actions {
+  flex-shrink: 0;
 }
 
 .state-box {
@@ -819,10 +925,6 @@ tbody tr:last-child td {
   gap: 0.5rem;
   color: var(--text-light);
   padding: 2rem;
-  font-size: 0.9rem;
-}
-.state-box.error {
-  color: #b91c1c;
 }
 .spinner {
   width: 1.5rem;
@@ -838,7 +940,6 @@ tbody tr:last-child td {
   }
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -859,12 +960,10 @@ tbody tr:last-child td {
   overflow-y: auto;
   box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.2);
   padding-bottom: env(safe-area-inset-bottom);
-  animation: slideUp 0.3s;
 }
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #e2e8f0;
   position: sticky;
@@ -874,7 +973,6 @@ tbody tr:last-child td {
 }
 .modal-header h3 {
   font-size: 1.1rem;
-  margin: 0;
 }
 .modal-close {
   background: #f1f5f9;
@@ -882,14 +980,7 @@ tbody tr:last-child td {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  font-size: 1rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-close:active {
-  background: #e2e8f0;
 }
 .modal-form {
   padding: 1.25rem;
@@ -952,16 +1043,7 @@ tbody tr:last-child td {
     opacity: 1;
   }
 }
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
 
-/* Tablet+ */
 @media (min-width: 769px) {
   .admin-page {
     gap: 1.5rem;
@@ -979,39 +1061,15 @@ tbody tr:last-child td {
     padding: 1.5rem;
     border-radius: 24px;
   }
-  .panel-header h3 {
-    font-size: 1.3rem;
-  }
-  th {
-    font-size: 0.75rem;
-  }
-  td {
-    padding: 0.8rem 0.6rem;
-  }
-  .action-btn {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.75rem;
-  }
   .modal {
     border-radius: 24px;
     margin: auto;
   }
-  .modal-header {
-    padding: 1.5rem 2rem;
-  }
-  .modal-header h3 {
-    font-size: 1.3rem;
-  }
 }
-
-/* Mobile pequeno */
 @media (max-width: 480px) {
   .page-header {
     padding: 0.85rem 1rem;
     flex-direction: column;
-  }
-  .page-header h2 {
-    font-size: 1.15rem;
   }
   .header-actions {
     width: 100%;
@@ -1038,8 +1096,10 @@ tbody tr:last-child td {
   td:nth-child(6) {
     display: none;
   }
-  table {
-    min-width: auto;
+  .detalhe-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
   }
 }
 </style>

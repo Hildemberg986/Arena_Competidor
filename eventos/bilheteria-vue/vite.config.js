@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
         registerType: "autoUpdate",
         manifest: {
           name: "Arena Competidor",
-          short_name: "Arena",
+          short_name: "Arena Competidor",
           description: "Bilheteria digital para eventos esportivos",
           theme_color: "#e62117",
           background_color: "#f8fafc",
