@@ -47,21 +47,11 @@
               <button
                 class="btn-search"
                 @click="buscarInscricoes"
-                :disabled="loading || !searchQuery.trim()"
+                :disabled="loading"
               >
                 <i class="fa-solid fa-search"></i>
               </button>
             </div>
-          </div>
-
-          <div class="search-field" v-if="searchType === 'todos'">
-            <label>Campeonato</label>
-            <select v-model="campeonatoFilter">
-              <option value="">Todos</option>
-              <option v-for="c in campeonatos" :key="c.id" :value="c.id">
-                {{ c.nome_campeonato }}
-              </option>
-            </select>
           </div>
         </div>
 
@@ -83,23 +73,7 @@
       <div class="panel table-panel">
         <div class="panel-header">
           <h3>Resultados</h3>
-          <div class="header-info">
-            <span class="total-count"
-              >{{ ticketsFiltrados.length }} inscrições</span
-            >
-            <button
-              v-if="ticketsFiltrados.length > 0"
-              class="action-btn pdf-btn"
-              @click="baixarPDFAgrupado"
-              :disabled="pdfLoading"
-            >
-              <i
-                class="fa-solid"
-                :class="pdfLoading ? 'fa-spinner fa-spin' : 'fa-file-pdf'"
-              ></i>
-              {{ pdfLoading ? "Gerando..." : "Baixar selecionados" }}
-            </button>
-          </div>
+          <span class="total-count">{{ comprasAgrupadas.length }} compras</span>
         </div>
 
         <div v-if="loading" class="state-box">
@@ -114,7 +88,7 @@
           </button>
         </div>
 
-        <div v-else-if="!ticketsFiltrados.length" class="state-box">
+        <div v-else-if="!comprasAgrupadas.length" class="state-box">
           <p>Nenhuma inscrição encontrada.</p>
         </div>
 
@@ -122,111 +96,77 @@
           <table>
             <thead>
               <tr>
-                <th>
-                  <input
-                    type="checkbox"
-                    v-model="selecionarTodos"
-                    @change="toggleTodos"
-                  />
-                </th>
-                <th>Código</th>
-                <th>Compra #</th>
-                <th>Nome</th>
+                <th>Compra</th>
+                <th>Cliente</th>
                 <th>CPF</th>
                 <th>Campeonato</th>
-                <th>Tipo / Lote</th>
-                <th>Valor</th>
+                <th>Qtd</th>
+                <th>Valor total</th>
                 <th>Status</th>
-                <th>Check-in</th>
                 <th class="actions-header">Ações</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="ticket in ticketsFiltrados" :key="ticket.id">
+              <tr v-for="compra in comprasAgrupadas" :key="compra.compra_id">
                 <td>
-                  <input
-                    type="checkbox"
-                    v-model="ticket.selecionado"
-                    @change="atualizarSelecao"
-                  />
-                </td>
-                <td>
-                  <span class="code-text">{{ ticket.codigo_ingresso }}</span>
-                </td>
-                <td>
-                  <span class="info-text"
-                    >#{{ ticket.compra_id || ticket.id }}</span
+                  <span class="code-text">#{{ compra.compra_id }}</span>
+                  <span
+                    v-if="compra.tipo === 'presencial'"
+                    class="presencial-badge"
+                    >Presencial</span
                   >
                 </td>
                 <td>
                   <div class="info-cell">
-                    <span class="info-main">{{ ticket.nome_completo }}</span>
-                    <span class="info-sub">{{ ticket.email || "-" }}</span>
+                    <span class="info-main">{{ compra.cliente }}</span>
+                    <span class="info-sub">{{ compra.email || "-" }}</span>
                   </div>
                 </td>
                 <td>
-                  <span class="info-text">{{ formatarCPF(ticket.cpf) }}</span>
+                  <span class="info-text">{{ formatarCPF(compra.cpf) }}</span>
                 </td>
                 <td>
-                  <span class="info-text">{{
-                    ticket.nome_campeonato || "-"
-                  }}</span>
+                  <span class="info-text">{{ compra.campeonato || "-" }}</span>
                 </td>
                 <td>
-                  <span class="info-text"
-                    >{{ ticket.nome_tipo || "-" }} /
-                    {{ ticket.nome_lote || "-" }}</span
-                  >
+                  <span class="qtd-badge">{{ compra.quantidade }}</span>
                 </td>
                 <td>
                   <span class="price-text">{{
-                    formatCurrency(ticket.valor_unitario)
+                    formatCurrency(compra.valor_total)
                   }}</span>
                 </td>
                 <td>
                   <span
-                    :class="[
-                      'status-badge',
-                      getStatusClass(ticket.status_pagamento),
-                    ]"
+                    :class="['status-badge', getStatusClass(compra.status)]"
+                    >{{ compra.status }}</span
                   >
-                    {{ ticket.status_pagamento }}
-                  </span>
-                </td>
-                <td>
-                  <span v-if="ticket.checkin_em" class="checkin-badge">
-                    <i class="fa-solid fa-check-double"></i>
-                    {{ formatDateTime(ticket.checkin_em) }}
-                  </span>
-                  <span v-else class="info-text">-</span>
                 </td>
                 <td class="actions-cell">
                   <button
-                    v-if="
-                      ticket.status_pagamento === 'Aprovado' &&
-                      !ticket.checkin_em
-                    "
-                    class="action-btn pdf-individual-btn"
-                    @click="baixarPDFIndividual(ticket)"
-                    :disabled="pdfLoadingIndividual[ticket.id]"
+                    v-if="compra.tipo === 'presencial'"
+                    class="action-btn reprint-btn"
+                    @click="reimprimirVenda(compra.compra_id)"
+                  >
+                    <i class="fa-solid fa-print"></i> Reimprimir
+                  </button>
+                  <button
+                    v-else-if="compra.status === 'Aprovado'"
+                    class="action-btn pdf-btn"
+                    @click="baixarPDFsCompra(compra)"
+                    :disabled="pdfLoading[compra.compra_id]"
                   >
                     <i
                       class="fa-solid"
                       :class="
-                        pdfLoadingIndividual[ticket.id]
+                        pdfLoading[compra.compra_id]
                           ? 'fa-spinner fa-spin'
-                          : 'fa-file-pdf'
+                          : 'fa-download'
                       "
                     ></i>
-                    PDF
+                    {{ pdfLoading[compra.compra_id] ? "..." : "PDFs" }}
                   </button>
-                  <button
-                    v-if="ticket.mercado_pago_id === 'PRESENCIAL'"
-                    class="action-btn reprint-btn"
-                    @click="reimprimirVenda(ticket)"
-                  >
-                    <i class="fa-solid fa-print"></i>
-                  </button>
+                  <span v-else class="info-text">-</span>
                 </td>
               </tr>
             </tbody>
@@ -236,82 +176,82 @@
     </div>
 
     <!-- Modal Venda Presencial -->
-    <div
-      v-if="showVendaModal"
-      class="modal-overlay"
-      @click.self="showVendaModal = false"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <h3>Venda Presencial</h3>
-          <button
-            type="button"
-            class="modal-close"
-            @click="showVendaModal = false"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="modal-form">
-          <div v-if="vendaError" class="modal-error">{{ vendaError }}</div>
-
-          <div class="form-grid">
-            <div class="form-row span-2">
-              <label>Campeonato *</label>
-              <select v-model.number="vendaForm.campeonato_id" required>
-                <option :value="0" disabled>Selecione</option>
-                <option v-for="c in campeonatos" :key="c.id" :value="c.id">
-                  {{ c.nome_campeonato }}
-                </option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label>Quantidade *</label>
-              <input
-                v-model.number="vendaForm.quantidade"
-                type="number"
-                min="1"
-                max="50"
-                required
-              />
-            </div>
-            <div class="form-row">
-              <label>Valor unitário (R$) *</label>
-              <input
-                v-model.number="vendaForm.valor_unitario"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-              />
-            </div>
-            <div class="form-row">
-              <label>CPF (opcional)</label>
-              <input
-                v-model.trim="vendaForm.cpf"
-                type="text"
-                placeholder="000.000.000-00"
-                maxlength="14"
-              />
-            </div>
-          </div>
-
-          <div class="modal-actions">
-            <button class="secondary-btn" @click="showVendaModal = false">
-              Cancelar
-            </button>
+    <Teleport to="body">
+      <div
+        v-if="showVendaModal"
+        class="modal-overlay"
+        @click.self="showVendaModal = false"
+      >
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Venda Presencial</h3>
             <button
-              class="primary-btn"
-              @click="realizarVendaPresencial"
-              :disabled="vendaLoading"
+              type="button"
+              class="modal-close"
+              @click="showVendaModal = false"
             >
-              <i v-if="vendaLoading" class="fa-solid fa-spinner fa-spin"></i>
-              {{ vendaLoading ? "Gerando..." : "Gerar Ingressos" }}
+              ✕
             </button>
+          </div>
+          <div class="modal-form">
+            <div v-if="vendaError" class="modal-error">{{ vendaError }}</div>
+            <div class="form-grid">
+              <div class="form-row span-2">
+                <label>Campeonato *</label>
+                <select v-model.number="vendaForm.campeonato_id" required>
+                  <option :value="0" disabled>Selecione</option>
+                  <option v-for="c in campeonatos" :key="c.id" :value="c.id">
+                    {{ c.nome_campeonato }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label>Quantidade *</label>
+                <input
+                  v-model.number="vendaForm.quantidade"
+                  type="number"
+                  min="1"
+                  max="50"
+                  required
+                />
+              </div>
+              <div class="form-row">
+                <label>Valor unitário (R$) *</label>
+                <input
+                  v-model.number="vendaForm.valor_unitario"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <div class="form-row">
+                <label>CPF (opcional)</label>
+                <input
+                  v-model.trim="vendaForm.cpf"
+                  type="text"
+                  placeholder="000.000.000-00"
+                  maxlength="14"
+                />
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="secondary-btn" @click="showVendaModal = false">
+                Cancelar
+              </button>
+              <button
+                class="primary-btn"
+                @click="realizarVendaPresencial"
+                :disabled="vendaLoading"
+              >
+                <i v-if="vendaLoading" class="fa-solid fa-spinner fa-spin"></i>
+                {{ vendaLoading ? "Gerando..." : "Gerar Ingressos" }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Teleport>
   </section>
 </template>
 
@@ -323,16 +263,13 @@ import { getApiErrorMessage, unwrapCollection } from "@/utils/adminHelpers";
 const tickets = ref([]);
 const campeonatos = ref([]);
 const loading = ref(false);
-const pdfLoading = ref(false);
-const pdfLoadingIndividual = ref({});
+const pdfLoading = ref({});
 const error = ref("");
 const feedback = ref("");
 const feedbackType = ref("success");
 
 const searchType = ref("todos");
 const searchQuery = ref("");
-const campeonatoFilter = ref("");
-const selecionarTodos = ref(false);
 
 const showVendaModal = ref(false);
 const vendaLoading = ref(false);
@@ -366,31 +303,46 @@ const searchPlaceholder = computed(() => {
   return p[searchType.value] || "Digite...";
 });
 
-const ticketsFiltrados = computed(() => {
-  let resultado = tickets.value;
-  if (campeonatoFilter.value) {
-    resultado = resultado.filter(
-      (t) => String(t.campeonato_id) === String(campeonatoFilter.value),
-    );
-  }
+const comprasAgrupadas = computed(() => {
+  const grupos = new Map();
+  tickets.value.forEach((t) => {
+    const chave = t.compra_id || t.id;
+    if (!grupos.has(chave)) {
+      const isPresencial = t.mercado_pago_id === "PRESENCIAL";
+      grupos.set(chave, {
+        compra_id: chave,
+        cliente: t.nome_completo,
+        email: t.email,
+        cpf: t.cpf,
+        campeonato: t.nome_campeonato,
+        quantidade: 0,
+        valor_unitario: t.valor_unitario || 0,
+        valor_total: 0,
+        status: t.status_pagamento,
+        tipo: isPresencial ? "presencial" : "online",
+      });
+    }
+    const g = grupos.get(chave);
+    g.quantidade += 1;
+    g.valor_total += Number(t.total || t.valor_unitario || 0);
+  });
+
+  let resultado = Array.from(grupos.values());
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.trim().toLowerCase();
-    resultado = resultado.filter((t) => {
+    resultado = resultado.filter((g) => {
       switch (searchType.value) {
         case "nome":
-          return (t.nome_completo || "").toLowerCase().includes(q);
+          return (g.cliente || "").toLowerCase().includes(q);
         case "cpf":
-          return (t.cpf || "").includes(q.replace(/\D/g, ""));
+          return (g.cpf || "").includes(q.replace(/\D/g, ""));
         case "compra_id":
-          return String(t.compra_id || t.id) === q;
-        case "codigo":
-          return (t.codigo_ingresso || "").toLowerCase().includes(q);
+          return String(g.compra_id) === q;
         default:
           return (
-            (t.nome_completo || "").toLowerCase().includes(q) ||
-            (t.cpf || "").includes(q.replace(/\D/g, "")) ||
-            String(t.compra_id || t.id) === q ||
-            (t.codigo_ingresso || "").toLowerCase().includes(q)
+            (g.cliente || "").toLowerCase().includes(q) ||
+            (g.cpf || "").includes(q.replace(/\D/g, "")) ||
+            String(g.compra_id) === q
           );
       }
     });
@@ -403,16 +355,6 @@ function formatCurrency(v) {
     style: "currency",
     currency: "BRL",
   }).format(Number(v || 0));
-}
-function formatDateTime(d) {
-  if (!d) return "-";
-  return new Date(d).toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 function formatarCPF(c) {
   if (!c || c === "00000000000") return "-";
@@ -430,19 +372,9 @@ function getStatusClass(s) {
   };
   return m[s] || "status-pendente";
 }
-function toggleTodos() {
-  ticketsFiltrados.value.forEach(
-    (t) => (t.selecionado = selecionarTodos.value),
-  );
-}
-function atualizarSelecao() {
-  selecionarTodos.value = ticketsFiltrados.value.every((t) => t.selecionado);
-}
 function limparBusca() {
   searchQuery.value = "";
   searchType.value = "todos";
-  campeonatoFilter.value = "";
-  tickets.value = [];
 }
 function showMessage(m, t = "success") {
   feedback.value = m;
@@ -481,7 +413,8 @@ async function realizarVendaPresencial() {
     });
     baixarArquivo(blob, "venda-presencial.pdf");
     showVendaModal.value = false;
-    showMessage("Venda realizada! PDF gerado.");
+    showMessage("✅ Venda realizada! PDF gerado.");
+    await buscarInscricoes();
   } catch (err) {
     vendaError.value = err.message || "Erro ao processar venda.";
   } finally {
@@ -494,10 +427,7 @@ async function buscarInscricoes() {
   error.value = "";
   try {
     const response = await adminService.getTickets();
-    tickets.value = unwrapCollection(response).map((t) => ({
-      ...t,
-      selecionado: false,
-    }));
+    tickets.value = unwrapCollection(response);
   } catch (err) {
     error.value = getApiErrorMessage(err, "Erro ao buscar inscrições.");
   } finally {
@@ -516,48 +446,34 @@ function baixarArquivo(blob, nome) {
   window.URL.revokeObjectURL(url);
 }
 
-async function baixarPDFIndividual(ticket) {
-  if (!ticket?.id) return;
-  pdfLoadingIndividual.value[ticket.id] = true;
+async function baixarPDFsCompra(compra) {
+  pdfLoading.value[compra.compra_id] = true;
   try {
-    const blob = await adminService.downloadTicketPDF(ticket.id);
-    baixarArquivo(blob, `inscricao-${ticket.codigo_ingresso || ticket.id}.pdf`);
-  } catch {
-    showMessage("Erro ao baixar PDF.", "error");
-  } finally {
-    pdfLoadingIndividual.value[ticket.id] = false;
-  }
-}
-
-async function baixarPDFAgrupado() {
-  const sel = ticketsFiltrados.value.filter((t) => t.selecionado);
-  if (!sel.length) {
-    showMessage("Selecione inscrições.", "error");
-    return;
-  }
-  pdfLoading.value = true;
-  try {
-    for (const t of sel) {
+    const ticketsDaCompra = tickets.value.filter(
+      (t) =>
+        (t.compra_id || t.id) === compra.compra_id &&
+        t.status_pagamento === "Aprovado" &&
+        !t.checkin_em,
+    );
+    for (const t of ticketsDaCompra) {
       try {
         const blob = await adminService.downloadTicketPDF(t.id);
         baixarArquivo(blob, `inscricao-${t.codigo_ingresso || t.id}.pdf`);
+        await new Promise((resolve) => setTimeout(resolve, 300));
       } catch {}
-      await new Promise((resolve) => setTimeout(resolve, 300));
     }
-    showMessage(`${sel.length} PDF(s) baixado(s)!`);
   } catch {
     showMessage("Erro ao baixar PDFs.", "error");
   } finally {
-    pdfLoading.value = false;
+    pdfLoading.value[compra.compra_id] = false;
   }
 }
 
-async function reimprimirVenda(ticket) {
-  const compraId = ticket.compra_id || ticket.id;
+async function reimprimirVenda(compraId) {
   try {
     const blob = await adminService.reimprimirVenda(compraId);
     baixarArquivo(blob, `venda-presencial-${compraId}.pdf`);
-    showMessage("PDF reimpresso!");
+    showMessage("✅ PDF reimpresso!");
   } catch {
     showMessage("Erro ao reimprimir.", "error");
   }
@@ -587,6 +503,7 @@ onMounted(() => {
   margin: 0 auto;
   box-sizing: border-box;
 }
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -617,6 +534,7 @@ onMounted(() => {
 .header-actions {
   display: flex;
   gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .alert {
@@ -643,23 +561,19 @@ onMounted(() => {
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 1rem 1.25rem;
+  overflow: hidden;
 }
 .panel-header {
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 .panel-header h3 {
   font-size: 1.1rem;
   margin: 0;
-}
-.header-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
 .total-count {
   font-size: 0.75rem;
@@ -668,11 +582,12 @@ onMounted(() => {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .search-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
   margin-bottom: 1rem;
 }
@@ -692,6 +607,8 @@ onMounted(() => {
   font-size: 0.85rem;
   background: #fff;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .input-with-icon {
   display: flex;
@@ -707,6 +624,7 @@ onMounted(() => {
   border-radius: 10px;
   padding: 0 0.8rem;
   cursor: pointer;
+  font-size: 0.85rem;
 }
 .search-actions {
   display: flex;
@@ -723,11 +641,11 @@ table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 1000px;
+  min-width: 600px;
 }
 th,
 td {
-  padding: 0.65rem 0.4rem;
+  padding: 0.65rem 0.5rem;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
   vertical-align: middle;
@@ -741,6 +659,9 @@ th {
 }
 tbody tr:hover {
   background-color: #f8fafc;
+}
+tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .info-cell {
@@ -764,30 +685,41 @@ tbody tr:hover {
   font-family: monospace;
   font-weight: 700;
   color: var(--primary);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
 }
 .price-text {
   font-weight: 700;
   color: var(--primary);
   font-size: 0.82rem;
 }
-.checkin-badge {
-  font-size: 0.65rem;
-  background: #dbeafe;
-  color: #1d4ed8;
+.qtd-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #475569;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.presencial-badge {
+  font-size: 0.6rem;
+  background: #e0e7ff;
+  color: #4338ca;
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
   font-weight: 600;
+  margin-left: 0.35rem;
   white-space: nowrap;
 }
 
 .actions-cell {
   display: flex;
-  gap: 0.3rem;
+  gap: 0.35rem;
   justify-content: center;
 }
-.action-btn,
-.pdf-btn {
+.action-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -802,19 +734,23 @@ tbody tr:hover {
   -webkit-tap-highlight-color: transparent;
 }
 .pdf-btn {
-  background: #fef2f2;
-  color: var(--primary);
-  border-color: rgba(230, 33, 23, 0.2);
-}
-.pdf-individual-btn {
   background: #dcfce7;
   color: #15803d;
   border-color: rgba(21, 128, 61, 0.2);
+}
+.pdf-btn:active {
+  background: #bbf7d0;
 }
 .reprint-btn {
   background: #e0e7ff;
   color: #4338ca;
   border-color: rgba(67, 56, 202, 0.2);
+}
+.reprint-btn:active {
+  background: #c7d2fe;
+}
+.action-btn:disabled {
+  opacity: 0.5;
 }
 
 .status-badge {
@@ -860,6 +796,9 @@ tbody tr:hover {
   background: var(--primary);
   color: #fff;
 }
+.primary-btn:active {
+  filter: brightness(0.9);
+}
 .primary-btn:disabled {
   opacity: 0.6;
 }
@@ -867,6 +806,9 @@ tbody tr:hover {
   background: #fff;
   color: var(--text);
   border-color: #cbd5e1;
+}
+.secondary-btn:active {
+  background: #f8fafc;
 }
 
 .state-box {
@@ -877,6 +819,10 @@ tbody tr:hover {
   gap: 0.5rem;
   color: var(--text-light);
   padding: 2rem;
+  font-size: 0.9rem;
+}
+.state-box.error {
+  color: #b91c1c;
 }
 .spinner {
   width: 1.5rem;
@@ -902,6 +848,7 @@ tbody tr:hover {
   align-items: flex-end;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.25s;
 }
 .modal {
   background: var(--card);
@@ -912,10 +859,12 @@ tbody tr:hover {
   overflow-y: auto;
   box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.2);
   padding-bottom: env(safe-area-inset-bottom);
+  animation: slideUp 0.3s;
 }
 .modal-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #e2e8f0;
   position: sticky;
@@ -924,7 +873,8 @@ tbody tr:hover {
   z-index: 1;
 }
 .modal-header h3 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+  margin: 0;
 }
 .modal-close {
   background: #f1f5f9;
@@ -932,7 +882,14 @@ tbody tr:hover {
   width: 30px;
   height: 30px;
   border-radius: 50%;
+  font-size: 1rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:active {
+  background: #e2e8f0;
 }
 .modal-form {
   padding: 1.25rem;
@@ -973,6 +930,8 @@ tbody tr:hover {
   font-size: 0.85rem;
   background: #fff;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .modal-actions {
   display: flex;
@@ -983,5 +942,104 @@ tbody tr:hover {
 }
 .modal-actions button {
   flex: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Tablet+ */
+@media (min-width: 769px) {
+  .admin-page {
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .page-header {
+    padding: 1.5rem;
+    border-radius: 24px;
+    align-items: center;
+  }
+  .page-header h2 {
+    font-size: 1.7rem;
+  }
+  .panel {
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+  .panel-header h3 {
+    font-size: 1.3rem;
+  }
+  th {
+    font-size: 0.75rem;
+  }
+  td {
+    padding: 0.8rem 0.6rem;
+  }
+  .action-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+  }
+  .modal {
+    border-radius: 24px;
+    margin: auto;
+  }
+  .modal-header {
+    padding: 1.5rem 2rem;
+  }
+  .modal-header h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .page-header {
+    padding: 0.85rem 1rem;
+    flex-direction: column;
+  }
+  .page-header h2 {
+    font-size: 1.15rem;
+  }
+  .header-actions {
+    width: 100%;
+  }
+  .header-actions button {
+    flex: 1;
+  }
+  .panel {
+    padding: 0.85rem;
+    border-radius: 16px;
+  }
+  .search-row {
+    grid-template-columns: 1fr;
+  }
+  .search-actions {
+    flex-direction: column;
+  }
+  .search-actions button {
+    width: 100%;
+  }
+  th:nth-child(3),
+  td:nth-child(3),
+  th:nth-child(6),
+  td:nth-child(6) {
+    display: none;
+  }
+  table {
+    min-width: auto;
+  }
 }
 </style>
