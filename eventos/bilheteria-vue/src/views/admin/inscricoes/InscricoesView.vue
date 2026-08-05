@@ -37,7 +37,6 @@
                 type="text"
                 :placeholder="searchPlaceholder"
                 @keyup.enter="buscarInscricoes"
-                autofocus
               />
               <button
                 class="btn-search"
@@ -87,6 +86,7 @@
           <table>
             <thead>
               <tr>
+                <th style="width: 40px"></th>
                 <th>Compra</th>
                 <th>Cliente</th>
                 <th>CPF</th>
@@ -99,132 +99,171 @@
               </tr>
             </thead>
             <tbody>
-              <tr
+              <template
                 v-for="compra in comprasAgrupadas"
                 :key="compra.compra_id"
-                @click="toggleDetalhes(compra)"
-                class="clickable-row"
               >
-                <td>
-                  <span class="code-text">#{{ compra.compra_id }}</span>
-                  <span
-                    v-if="compra.tipo === 'presencial'"
-                    class="presencial-badge"
-                    >Presencial</span
-                  >
-                </td>
-                <td>
-                  <div class="info-cell">
-                    <span class="info-main">{{ compra.cliente }}</span>
-                    <span class="info-sub">{{ compra.email || "-" }}</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="info-text">{{ formatarCPF(compra.cpf) }}</span>
-                </td>
-                <td>
-                  <span class="info-text">{{ compra.campeonato || "-" }}</span>
-                </td>
-                <td>
-                  <span class="qtd-badge">{{ compra.quantidade }}</span>
-                </td>
-                <td>
-                  <span class="price-text">{{
-                    formatCurrency(compra.valor_total)
-                  }}</span>
-                </td>
-                <td>
-                  <span
-                    :class="['status-badge', getStatusClass(compra.status)]"
-                    >{{ compra.status }}</span
-                  >
-                </td>
-                <td>
-                  <span v-if="compra.checkins > 0" class="checkin-badge"
-                    ><i class="fa-solid fa-check-double"></i>
-                    {{ compra.checkins }}/{{ compra.quantidade }}</span
-                  >
-                  <span v-else class="info-text">-</span>
-                </td>
-                <td class="actions-cell" @click.stop>
-                  <button
-                    v-if="compra.tipo === 'presencial'"
-                    class="action-btn reprint-btn"
-                    @click="reimprimirVenda(compra.compra_id)"
-                  >
-                    <i class="fa-solid fa-print"></i> Reimprimir
-                  </button>
-                  <button
-                    v-else-if="compra.status === 'Aprovado'"
-                    class="action-btn pdf-btn"
-                    @click="baixarPDFsCompra(compra)"
-                    :disabled="pdfLoading[compra.compra_id]"
-                  >
+                <tr
+                  class="clickable-row"
+                  :class="{ 'row-expanded': compra.expandido }"
+                >
+                  <td class="expand-cell" @click="toggleDetalhes(compra)">
                     <i
                       :class="
-                        pdfLoading[compra.compra_id]
-                          ? 'fa-spinner fa-spin'
-                          : 'fa-download'
+                        compra.expandido
+                          ? 'fa-solid fa-chevron-down'
+                          : 'fa-solid fa-chevron-right'
                       "
-                      class="fa-solid"
+                      class="expand-icon"
                     ></i>
-                    PDFs
-                  </button>
-                  <span v-else class="info-text">-</span>
-                </td>
-              </tr>
-              <!-- Detalhes expandidos -->
-              <tr v-if="compra.expandido" :key="compra.compra_id + '_det'">
-                <td :colspan="9" class="detalhes-cell">
-                  <div class="detalhes-list">
-                    <div
-                      v-for="ticket in compra.tickets"
-                      :key="ticket.id"
-                      class="detalhe-item"
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span class="code-text">#{{ compra.compra_id }}</span>
+                    <span
+                      v-if="compra.tipo === 'presencial'"
+                      class="presencial-badge"
+                      >Presencial</span
                     >
-                      <div class="detalhe-info">
-                        <span class="code-text">{{
-                          ticket.codigo_ingresso
-                        }}</span>
-                        <span v-if="ticket.checkin_em" class="checkin-badge"
-                          ><i class="fa-solid fa-check-double"></i>
-                          {{ formatDateTime(ticket.checkin_em) }}</span
-                        >
-                        <span
-                          v-if="ticket.mercado_pago_id === 'PRESENCIAL'"
-                          class="presencial-badge"
-                          >Presencial</span
-                        >
-                      </div>
-                      <div class="detalhe-actions">
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <div class="info-cell">
+                      <span class="info-main">{{ compra.cliente }}</span>
+                      <span class="info-sub">{{ compra.email || "-" }}</span>
+                    </div>
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span class="info-text">{{ formatarCPF(compra.cpf) }}</span>
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span class="info-text">{{
+                      compra.campeonato || "-"
+                    }}</span>
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span class="qtd-badge">{{ compra.quantidade }}</span>
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span class="price-text">{{
+                      formatCurrency(compra.valor_total)
+                    }}</span>
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span
+                      :class="['status-badge', getStatusClass(compra.status)]"
+                      >{{ compra.status }}</span
+                    >
+                  </td>
+                  <td @click="toggleDetalhes(compra)">
+                    <span v-if="compra.checkins > 0" class="checkin-badge"
+                      ><i class="fa-solid fa-check-double"></i>
+                      {{ compra.checkins }}/{{ compra.quantidade }}</span
+                    >
+                    <span v-else class="info-text">-</span>
+                  </td>
+                  <td class="actions-cell" @click.stop>
+                    <button
+                      v-if="compra.tipo === 'presencial'"
+                      class="action-btn reprint-btn"
+                      @click.stop="reimprimirVenda(compra.compra_id)"
+                    >
+                      <i class="fa-solid fa-print"></i> Reimprimir
+                    </button>
+                    <button
+                      v-else-if="
+                        compra.status === 'Aprovado' &&
+                        temIngressosDisponiveis(compra)
+                      "
+                      class="action-btn pdf-btn"
+                      @click.stop="baixarPDFsCompra(compra)"
+                      :disabled="pdfLoading[compra.compra_id]"
+                    >
+                      <i
+                        :class="
+                          pdfLoading[compra.compra_id]
+                            ? 'fa-solid fa-spinner fa-spin'
+                            : 'fa-solid fa-download'
+                        "
+                      ></i>
+                      PDFs
+                    </button>
+                    <span
+                      v-else-if="
+                        compra.status === 'Aprovado' &&
+                        !temIngressosDisponiveis(compra)
+                      "
+                      class="info-text used-text"
+                    >
+                      <i class="fa-solid fa-check-circle"></i> Todos usados
+                    </span>
+                    <span v-else class="info-text">-</span>
+                  </td>
+                </tr>
+                <!-- Detalhes expandidos -->
+                <tr v-if="compra.expandido">
+                  <td :colspan="10" class="detalhes-cell">
+                    <div class="detalhes-container">
+                      <div class="detalhes-header">
+                        <h4>Ingressos da compra #{{ compra.compra_id }}</h4>
                         <button
-                          v-if="
-                            ticket.status_pagamento === 'Aprovado' &&
-                            !ticket.checkin_em
-                          "
-                          class="action-btn pdf-individual-btn"
-                          @click="baixarPDFIndividual(ticket)"
-                          :disabled="pdfLoading[ticket.id]"
+                          class="close-details-btn"
+                          @click="toggleDetalhes(compra)"
                         >
-                          <i
-                            :class="
-                              pdfLoading[ticket.id]
-                                ? 'fa-spinner fa-spin'
-                                : 'fa-file-pdf'
-                            "
-                            class="fa-solid"
-                          ></i>
-                          PDF
+                          <i class="fa-solid fa-xmark"></i> Fechar
                         </button>
-                        <span v-else-if="ticket.checkin_em" class="info-text"
-                          >✅ Usado</span
+                      </div>
+                      <div class="detalhes-list">
+                        <div
+                          v-for="ticket in compra.tickets"
+                          :key="ticket.id"
+                          class="detalhe-item"
                         >
-                        <span v-else class="info-text">Indisponível</span>
+                          <div class="detalhe-info">
+                            <span class="code-text">{{
+                              ticket.codigo_ingresso
+                            }}</span>
+                            <span v-if="ticket.checkin_em" class="checkin-badge"
+                              ><i class="fa-solid fa-check-double"></i>
+                              {{ formatDateTime(ticket.checkin_em) }}</span
+                            >
+                            <span
+                              v-if="ticket.mercado_pago_id === 'PRESENCIAL'"
+                              class="presencial-badge"
+                              >Presencial</span
+                            >
+                          </div>
+                          <div class="detalhe-actions">
+                            <button
+                              v-if="
+                                ticket.status_pagamento === 'Aprovado' &&
+                                !ticket.checkin_em
+                              "
+                              class="action-btn pdf-individual-btn"
+                              @click.stop="baixarPDFIndividual(ticket)"
+                              :disabled="pdfLoading[ticket.id]"
+                            >
+                              <i
+                                :class="
+                                  pdfLoading[ticket.id]
+                                    ? 'fa-solid fa-spinner fa-spin'
+                                    : 'fa-solid fa-file-pdf'
+                                "
+                              ></i>
+                              PDF
+                            </button>
+                            <span
+                              v-else-if="ticket.checkin_em"
+                              class="info-text used-text"
+                              ><i class="fa-solid fa-check-circle"></i>
+                              Usado</span
+                            >
+                            <span v-else class="info-text">Indisponível</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
@@ -353,6 +392,9 @@ const searchPlaceholder = computed(
     })[searchType.value] || "Digite...",
 );
 
+// Usando um Map para armazenar o estado de expansão
+const expandedCompras = ref(new Map());
+
 const comprasAgrupadas = computed(() => {
   const grupos = new Map();
   tickets.value.forEach((t) => {
@@ -371,7 +413,7 @@ const comprasAgrupadas = computed(() => {
         tipo: isPresencial ? "presencial" : "online",
         checkins: 0,
         tickets: [],
-        expandido: false,
+        expandido: expandedCompras.value.get(chave) || false,
       });
     }
     const g = grupos.get(chave);
@@ -446,7 +488,27 @@ function showMessage(m, t = "success") {
 }
 
 function toggleDetalhes(compra) {
-  compra.expandido = !compra.expandido;
+  const currentState = expandedCompras.value.get(compra.compra_id) || false;
+
+  // Fecha todos
+  expandedCompras.value.clear();
+
+  // Se não estava aberto, abre este
+  if (!currentState) {
+    expandedCompras.value.set(compra.compra_id, true);
+  }
+
+  // Força a reatividade criando um novo Map
+  expandedCompras.value = new Map(expandedCompras.value);
+}
+
+function temIngressosDisponiveis(compra) {
+  if (!compra || !compra.tickets) return false;
+
+  // Verifica se existe pelo menos um ingresso aprovado e sem check-in
+  return compra.tickets.some(
+    (ticket) => ticket.status_pagamento === "Aprovado" && !ticket.checkin_em,
+  );
 }
 
 function abrirModalVenda() {
@@ -493,9 +555,17 @@ async function buscarInscricoes() {
   loading.value = true;
   error.value = "";
   try {
-    tickets.value = unwrapCollection(await adminService.getTickets());
+    const response = await adminService.getTickets();
+    const data = unwrapCollection(response);
+    if (Array.isArray(data)) {
+      tickets.value = data;
+    } else {
+      tickets.value = [];
+      error.value = "Formato de dados inválido";
+    }
   } catch (err) {
     error.value = getApiErrorMessage(err, "Erro ao buscar inscrições.");
+    tickets.value = [];
   } finally {
     loading.value = false;
   }
@@ -715,7 +785,7 @@ table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 700px;
+  min-width: 800px;
 }
 th,
 td {
@@ -731,12 +801,31 @@ th {
   font-weight: 700;
   white-space: nowrap;
 }
+
+/* Célula de expansão */
+.expand-cell {
+  width: 40px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+.expand-icon {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  transition: transform 0.3s ease;
+}
 .clickable-row {
   cursor: pointer;
   transition: background 0.15s;
 }
 .clickable-row:hover {
-  background-color: #f8fafc;
+  background-color: #f0f9ff;
+}
+.row-expanded {
+  background-color: #f0f9ff !important;
+}
+.clickable-row td {
+  cursor: pointer;
 }
 
 .info-cell {
@@ -797,10 +886,24 @@ th {
   white-space: nowrap;
 }
 
-.actions-cell {
+.used-text {
+  color: #059669;
+  font-size: 0.7rem;
   display: flex;
-  gap: 0.3rem;
-  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.actions-cell {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.actions-cell * {
+  cursor: default;
 }
 .action-btn {
   display: inline-flex;
@@ -815,11 +918,22 @@ th {
   cursor: pointer;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
 }
 .pdf-btn {
   background: #dcfce7;
   color: #15803d;
   border-color: rgba(21, 128, 61, 0.2);
+}
+.pdf-btn:hover:not(:disabled) {
+  background: #bbf7d0;
+}
+.pdf-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 .pdf-individual-btn {
   background: #f0fdf4;
@@ -827,13 +941,35 @@ th {
   border-color: rgba(21, 128, 61, 0.15);
   font-size: 0.68rem;
 }
+.pdf-individual-btn:hover:not(:disabled) {
+  background: #dcfce7;
+}
+.pdf-individual-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 .reprint-btn {
   background: #e0e7ff;
   color: #4338ca;
   border-color: rgba(67, 56, 202, 0.2);
 }
+.reprint-btn:hover:not(:disabled) {
+  background: #c7d2fe;
+}
+.reprint-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 .action-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .status-badge {
@@ -874,18 +1010,26 @@ th {
   align-items: center;
   gap: 0.35rem;
   -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
 }
 .primary-btn {
   background: var(--primary);
   color: #fff;
 }
+.primary-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
 .primary-btn:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
 }
 .secondary-btn {
   background: #fff;
   color: var(--text);
   border-color: #cbd5e1;
+}
+.secondary-btn:hover {
+  background: #f8fafc;
 }
 
 /* Detalhes expandidos */
@@ -893,10 +1037,41 @@ th {
   padding: 0 !important;
   background: #f8fafc;
 }
+.detalhes-container {
+  padding: 1rem;
+}
+.detalhes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+.detalhes-header h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.close-details-btn {
+  background: #e2e8f0;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.close-details-btn:hover {
+  background: #cbd5e1;
+}
 .detalhes-list {
   display: grid;
   gap: 0.35rem;
-  padding: 0.65rem 1rem;
 }
 .detalhe-item {
   display: flex;
@@ -1092,8 +1267,10 @@ th {
   }
   th:nth-child(3),
   td:nth-child(3),
-  th:nth-child(6),
-  td:nth-child(6) {
+  th:nth-child(4),
+  td:nth-child(4),
+  th:nth-child(7),
+  td:nth-child(7) {
     display: none;
   }
   .detalhe-item {

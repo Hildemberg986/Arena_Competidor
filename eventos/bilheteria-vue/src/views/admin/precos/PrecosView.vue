@@ -721,11 +721,12 @@ tbody tr:last-child td {
   text-align: center;
 }
 .actions-cell {
-  display: flex;
-  gap: 0.35rem;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1;
 }
+
 .action-btn {
   display: inline-flex;
   align-items: center;
