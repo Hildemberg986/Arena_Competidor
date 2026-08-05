@@ -231,9 +231,19 @@ export const adminService = {
     return response.data;
   },
 
-  // Tickets / Pagamento Manual / Check-in
+  // Tickets
   async getTickets() {
     const response = await adminApiClient.get("/tickets/");
+    return response.data;
+  },
+
+  async getTicketsByCpf(cpf) {
+    const response = await adminApiClient.get(`/tickets/cpf/${cpf}`);
+    return response.data;
+  },
+
+  async getTicketsByCampeonato(id) {
+    const response = await adminApiClient.get(`/tickets/campeonato/${id}`);
     return response.data;
   },
 
@@ -252,5 +262,81 @@ export const adminService = {
   async checkin(codigo) {
     const response = await adminApiClient.post(`/tickets/checkin/${codigo}`);
     return response.data;
+  },
+
+  // Venda Presencial
+  async vendaPresencial(payload) {
+    const response = await adminApiClient.post(
+      "/tickets/venda-presencial",
+      payload,
+    );
+    return response.data;
+  },
+
+  async vendaPresencialPDF(payload) {
+    const token = getStorageItem("access_token");
+    const tokenType = getStorageItem("token_type") || "bearer";
+    const adminToken = getStorageItem("adminToken") || "";
+
+    const response = await fetch(
+      `${API_BASE_URL}/tickets/venda-presencial/pdf`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${tokenType} ${token}`,
+          "X-Admin-Key": adminToken,
+        },
+        body: JSON.stringify(payload),
+      },
+    );
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.detail || "Erro ao gerar PDF da venda");
+    }
+
+    return response.blob();
+  },
+
+  async reimprimirVenda(compraId) {
+    const token = getStorageItem("access_token");
+    const tokenType = getStorageItem("token_type") || "bearer";
+    const adminToken = getStorageItem("adminToken") || "";
+
+    const response = await fetch(
+      `${API_BASE_URL}/tickets/venda-presencial/${compraId}/reimprimir`,
+      {
+        headers: {
+          Authorization: `${tokenType} ${token}`,
+          "X-Admin-Key": adminToken,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Erro ao reimprimir venda");
+    }
+
+    return response.blob();
+  },
+
+  async downloadTicketPDF(ticketId) {
+    const token = getStorageItem("access_token");
+    const tokenType = getStorageItem("token_type") || "bearer";
+    const adminToken = getStorageItem("adminToken") || "";
+
+    const response = await fetch(`${API_BASE_URL}/tickets/${ticketId}/pdf`, {
+      headers: {
+        Authorization: `${tokenType} ${token}`,
+        "X-Admin-Key": adminToken,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao baixar PDF");
+    }
+
+    return response.blob();
   },
 };

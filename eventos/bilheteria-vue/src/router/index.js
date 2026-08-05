@@ -86,6 +86,11 @@ const routes = [
         name: "admin-checkin",
         component: () => import("@/views/admin/checkin/CheckinView.vue"),
       },
+      {
+        path: "inscricoes",
+        name: "admin-inscricoes",
+        component: () => import("@/views/admin/inscricoes/InscricoesView.vue"),
+      },
     ],
   },
   {

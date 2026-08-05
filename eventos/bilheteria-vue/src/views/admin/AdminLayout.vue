@@ -31,12 +31,35 @@
       </div>
 
       <nav class="admin-nav">
-        <router-link :to="{ name: 'admin-campeonatos' }" @click="menuAberto = false">Campeonatos</router-link>
-        <router-link :to="{ name: 'admin-lotes' }" @click="menuAberto = false">Lotes</router-link>
-        <router-link :to="{ name: 'admin-tipos-inscricao' }" @click="menuAberto = false">Tipos de inscrição</router-link>
-        <router-link :to="{ name: 'admin-precos' }" @click="menuAberto = false">Preços</router-link>
-        <router-link :to="{ name: 'admin-pagamento-manual' }" @click="menuAberto = false">Pagamento manual</router-link>
-        <router-link :to="{ name: 'admin-checkin' }" @click="menuAberto = false">Check-in</router-link>
+        <router-link
+          :to="{ name: 'admin-campeonatos' }"
+          @click="menuAberto = false"
+          >Campeonatos</router-link
+        >
+        <router-link :to="{ name: 'admin-lotes' }" @click="menuAberto = false"
+          >Lotes</router-link
+        >
+        <router-link
+          :to="{ name: 'admin-tipos-inscricao' }"
+          @click="menuAberto = false"
+          >Tipos de inscrição</router-link
+        >
+        <router-link :to="{ name: 'admin-precos' }" @click="menuAberto = false"
+          >Preços</router-link
+        >
+        <router-link
+          :to="{ name: 'admin-pagamento-manual' }"
+          @click="menuAberto = false"
+          >Pagamento manual</router-link
+        >
+        <router-link :to="{ name: 'admin-checkin' }" @click="menuAberto = false"
+          >Check-in</router-link
+        >
+        <router-link
+          :to="{ name: 'admin-inscricoes' }"
+          @click="menuAberto = false"
+          >Inscrições</router-link
+        >
       </nav>
 
       <div class="admin-actions">
@@ -62,7 +85,7 @@ const auth = useAuthStore();
 const menuAberto = ref(false);
 
 function handleLogout() {
-  auth.logoutTotal();  // Limpa tudo e vai pro bem-vindo
+  auth.logoutTotal(); // Limpa tudo e vai pro bem-vindo
 }
 </script>
 
@@ -93,54 +116,113 @@ function handleLogout() {
   justify-content: space-between;
   align-items: center;
 }
-.mobile-brand h1 { font-size: 1rem; margin: 0; }
-.mobile-brand .eyebrow { font-size: 0.65rem; }
+.mobile-brand h1 {
+  font-size: 1rem;
+  margin: 0;
+}
+.mobile-brand .eyebrow {
+  font-size: 0.65rem;
+}
 .menu-toggle {
-  background: #f1f5f9; border: none; width: 36px; height: 36px;
-  border-radius: 10px; font-size: 1.1rem; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text); -webkit-tap-highlight-color: transparent;
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Overlay */
 .sidebar-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0, 0, 0, 0.4); z-index: 90; animation: fadeIn 0.2s;
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 90;
+  animation: fadeIn 0.2s;
 }
 
 /* ============================================ */
 /* SIDEBAR */
 /* ============================================ */
 .admin-sidebar {
-  position: sticky; top: 0; align-self: start;
-  min-height: 100dvh; max-height: 100dvh; overflow-y: auto;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow-y: auto;
   padding: 1.5rem 1.25rem;
   padding-top: max(1.5rem, env(safe-area-inset-top));
   background: rgba(255, 255, 255, 0.9);
   border-right: 1px solid rgba(148, 163, 184, 0.18);
   backdrop-filter: blur(16px);
 }
-.admin-brand h1 { margin: 0.35rem 0 0.5rem; font-size: 1.6rem; line-height: 1.1; }
-.admin-brand p { color: var(--text-light); font-size: 0.85rem; }
-.eyebrow { color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem; }
+.admin-brand h1 {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+.admin-brand p {
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+.eyebrow {
+  color: var(--primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+}
 
-.admin-nav { display: grid; gap: 0.5rem; margin-top: 1.5rem; }
+.admin-nav {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
 .admin-nav a,
 .logout-btn {
-  border-radius: 14px; border: 1px solid rgba(148, 163, 184, 0.22);
-  padding: 0.75rem 0.9rem; font: inherit; font-weight: 700;
-  font-size: 0.9rem; text-decoration: none; transition: all 0.2s ease;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.admin-nav a { background: #fff; color: var(--text); }
-.admin-nav a:active { background: #f8fafc; }
-.admin-nav a.router-link-active { background: var(--primary); border-color: var(--primary); color: #fff; }
-
-.admin-actions { margin-top: 1.5rem; }
-.logout-btn {
-  background: #fff5f5; color: #b91c1c; cursor: pointer; width: 100%;
+.admin-nav a {
+  background: #fff;
+  color: var(--text);
 }
-.logout-btn:active { background: #fee2e2; }
+.admin-nav a:active {
+  background: #f8fafc;
+}
+.admin-nav a.router-link-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.admin-actions {
+  margin-top: 1.5rem;
+}
+.logout-btn {
+  background: #fff5f5;
+  color: #b91c1c;
+  cursor: pointer;
+  width: 100%;
+}
+.logout-btn:active {
+  background: #fee2e2;
+}
 
 .admin-content {
   padding: 1.5rem;
@@ -151,24 +233,57 @@ function handleLogout() {
 /* MOBILE */
 /* ============================================ */
 @media (max-width: 960px) {
-  .admin-shell { grid-template-columns: 1fr; }
-  .admin-mobile-header { display: flex; }
-  .sidebar-overlay { display: block; }
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+  .admin-mobile-header {
+    display: flex;
+  }
+  .sidebar-overlay {
+    display: block;
+  }
   .admin-sidebar {
-    position: fixed; top: 0; left: 0; width: 280px; z-index: 95;
-    transform: translateX(-100%); transition: transform 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    z-index: 95;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     padding-top: max(1.5rem, env(safe-area-inset-top));
   }
-  .admin-sidebar.sidebar-open { transform: translateX(0); }
-  .admin-content { padding: 0.75rem; padding-top: max(0.75rem, env(safe-area-inset-top)); }
+  .admin-sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+  .admin-content {
+    padding: 0.75rem;
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+  }
 }
 
 @media (max-width: 480px) {
-  .admin-sidebar { width: 85vw; max-width: 300px; padding: 1rem 1rem; }
-  .admin-brand h1 { font-size: 1.3rem; }
-  .admin-nav a, .logout-btn { padding: 0.65rem 0.8rem; font-size: 0.85rem; }
+  .admin-sidebar {
+    width: 85vw;
+    max-width: 300px;
+    padding: 1rem 1rem;
+  }
+  .admin-brand h1 {
+    font-size: 1.3rem;
+  }
+  .admin-nav a,
+  .logout-btn {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.85rem;
+  }
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 </style>
