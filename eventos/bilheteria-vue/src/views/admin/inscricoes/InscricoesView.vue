@@ -196,6 +196,12 @@
                       <i class="fa-solid fa-check-circle"></i> Todos usados
                     </span>
                     <span v-else class="info-text">-</span>
+                    <button
+                      class="action-btn details-btn"
+                      @click.stop="toggleDetalhes(compra)"
+                    >
+                      <i class="fa-solid fa-info-circle"></i> Detalhar
+                    </button>
                   </td>
                 </tr>
                 <!-- Detalhes expandidos -->
@@ -218,9 +224,8 @@
                           class="detalhe-item"
                         >
                           <div class="detalhe-info">
-                            <span class="code-text">{{
-                              ticket.codigo_ingresso
-                            }}</span>
+                            <span class="code-text">{{ ticket.codigo_ingresso }}</span>
+                            <span class="person-name">{{ ticket.nome_completo || ticket.nome || '-' }}</span>
                             <span v-if="ticket.checkin_em" class="checkin-badge"
                               ><i class="fa-solid fa-check-double"></i>
                               {{ formatDateTime(ticket.checkin_em) }}</span
@@ -919,6 +924,22 @@ th {
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
   transition: all 0.2s ease;
+}
+
+.details-btn {
+  background: #eef2ff;
+  color: #3730a3;
+  border-color: rgba(55, 48, 163, 0.12);
+}
+.details-btn:hover:not(:disabled) {
+  background: #e0e7ff;
+}
+
+.person-name {
+  font-size: 0.78rem;
+  color: var(--text);
+  margin-left: 0.5rem;
+  font-weight: 600;
 }
 .pdf-btn {
   background: #dcfce7;
